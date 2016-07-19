@@ -8,6 +8,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.itdoes.common.util.Exceptions;
@@ -18,6 +20,8 @@ import com.itdoes.common.util.Exceptions;
 public class JettyServer {
 	private static final String DEFAULT_WEBAPP_PATH = "src/main/webapp";
 	private static final String WEBDEFAULT_WINDOWS_PATH = "jetty/webdefault-windows.xml";
+
+	private static Logger logger = LoggerFactory.getLogger(JettyServer.class);
 
 	private final int port;
 	private final String contextPath;
@@ -35,9 +39,9 @@ public class JettyServer {
 
 	public void start() {
 		try {
-			System.out.println("[INFO] Jetty Server starting...");
+			logger.info("Jetty Server starting...");
 			server.start();
-			System.out.println("[INFO] Jetty Server started at " + getAddress());
+			logger.info("Jetty Server started at: {}", getAddress());
 		} catch (Throwable t) {
 			throw Exceptions.unchecked(t);
 		}
@@ -58,7 +62,7 @@ public class JettyServer {
 		try {
 			WebAppContext context = (WebAppContext) server.getHandler();
 
-			System.out.println("[INFO] Jetty Server Context stopping...");
+			logger.info("Jetty Server Context stopping...");
 			context.stop();
 
 			WebAppClassLoader classLoader = new WebAppClassLoader(context);
@@ -67,7 +71,7 @@ public class JettyServer {
 			context.setClassLoader(classLoader);
 
 			context.start();
-			System.out.println("[INFO] Jetty Server Context started at" + getAddress());
+			logger.info("Jetty Server Context started at: {}", getAddress());
 		} catch (Throwable t) {
 			throw Exceptions.unchecked(t);
 		}
