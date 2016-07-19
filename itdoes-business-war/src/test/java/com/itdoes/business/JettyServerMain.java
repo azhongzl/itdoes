@@ -1,0 +1,36 @@
+package com.itdoes.business;
+
+import com.itdoes.common.test.jetty.JettyServer;
+import com.itdoes.common.test.spring.Profiles;
+
+/**
+ * @author Jalen Zhong
+ */
+public class JettyServerMain {
+	private static final int PORT = 8080;
+	private static final String CONTEXT_PATH = "/itdoes";
+
+	public static void main(String[] args) {
+		try {
+			Profiles.activeProfile(Profiles.DEVELOPMENT);
+
+			JettyServer server = new JettyServer(PORT, CONTEXT_PATH);
+
+			server.start();
+
+			System.out.println("[HINT] Hit Enter to reload context");
+			while (true) {
+				char c = (char) System.in.read();
+				if (c == '\n') {
+					server.reload();
+				}
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+			System.exit(-1);
+		}
+	}
+
+	private JettyServerMain() {
+	}
+}
