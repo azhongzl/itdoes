@@ -598,7 +598,7 @@
 
 	<profiles>
 		<profile>
-			<id>run-smoke</id>
+			<id>smoke</id>
 			<build>
 				<plugins>
 					<plugin>
