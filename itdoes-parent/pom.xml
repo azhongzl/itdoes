@@ -21,7 +21,7 @@
 		<jstl.version>1.2</jstl.version>
 		<jsp-api.version>2.0</jsp-api.version>
 		<shiro.version>1.2.6</shiro.version>
-		<ehcache.version>2.10.2.2.21</ehcache.version>
+		<ehcache.version>2.6.11</ehcache.version>
 		<hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
 		<jackson.version>2.8.0</jackson.version>
 		<dom4j.version>1.6.1</dom4j.version>
