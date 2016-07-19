@@ -6,6 +6,7 @@
 	<artifactId>itdoes</artifactId>
 	<version>1.0</version>
 	<packaging>pom</packaging>
+
 	<modules>
 		<module>itdoes-parent</module>
 		<module>itdoes-common-jar</module>
