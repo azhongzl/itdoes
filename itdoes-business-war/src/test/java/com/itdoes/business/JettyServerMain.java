@@ -18,7 +18,7 @@ public class JettyServerMain {
 
 			server.start();
 
-			System.out.println("[HINT] Hit Enter to reload context");
+			System.out.println("[HINT] Hit Enter to reload server");
 			while (true) {
 				char c = (char) System.in.read();
 				if (c == '\n') {
