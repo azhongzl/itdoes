@@ -6,7 +6,7 @@
 		<groupId>com.itdoes</groupId>
 		<artifactId>itdoes-parent</artifactId>
 		<version>1.0</version>
-		<relativePath>../itdoes-parent</relativePath>
+		<relativePath>../itdoes-parent/</relativePath>
 	</parent>
 	<artifactId>itdoes-common-war</artifactId>
 	<packaging>war</packaging>
