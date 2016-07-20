@@ -275,7 +275,7 @@
 
 	<profiles>
 		<profile>
-			<id>functional-test</id>
+			<id>functionaltest</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -297,7 +297,7 @@
 		</profile>
 
 		<profile>
-			<id>refresh-db</id>
+			<id>refreshdb</id>
 			<build>
 				<plugins>
 					<plugin>
