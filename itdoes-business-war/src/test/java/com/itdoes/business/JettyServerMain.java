@@ -8,7 +8,7 @@ import com.itdoes.common.test.spring.Profiles;
  */
 public class JettyServerMain {
 	private static final int PORT = 8080;
-	private static final String CONTEXT_PATH = "/itdoes";
+	private static final String CONTEXT_PATH = "/biz";
 
 	public static void main(String[] args) {
 		try {
