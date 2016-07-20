@@ -1,4 +1,4 @@
-package com.itdoes.common.test.log;
+package com.itdoes.common.test.logback;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,6 +6,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Jalen Zhong
+ */
 public class LogbackListAppenderTest {
 	@Test
 	public void log() {

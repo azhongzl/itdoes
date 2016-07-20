@@ -1,4 +1,4 @@
-package com.itdoes.common.test.log;
+package com.itdoes.common.test.logback;
 
 import java.util.List;
 
@@ -10,6 +10,9 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 
+/**
+ * @author Jalen Zhong
+ */
 public class LogbackListAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 	private final List<ILoggingEvent> logs = Lists.newArrayList();
 
