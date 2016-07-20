@@ -154,7 +154,11 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.eclipse.jetty.aggregate</groupId>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-webapp</artifactId>
 		</dependency>
 
@@ -216,7 +220,7 @@
 						<configuration>
 							<includes>
 								<include>com/itdoes/common/test/**/*.class</include>
-								<include>jetty/webdefault-windows.xml</include>
+								<include>jetty/*.xml</include>
 							</includes>
 							<excludes>
 								<exclude>com/itdoes/common/test/**/*Test.class</exclude>
