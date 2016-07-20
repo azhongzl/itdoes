@@ -86,10 +86,6 @@ public class JettyServer {
 		return contextPath;
 	}
 
-	public String getUrl() {
-		return url;
-	}
-
 	private void init() {
 		server.setStopAtShutdown(true);
 
