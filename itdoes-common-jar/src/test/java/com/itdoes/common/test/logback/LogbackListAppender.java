@@ -70,12 +70,12 @@ public class LogbackListAppender extends UnsynchronizedAppenderBase<ILoggingEven
 	}
 
 	public void addToLogger(String loggerName) {
-		Logger logger = (Logger) LoggerFactory.getLogger(loggerName);
+		final Logger logger = (Logger) LoggerFactory.getLogger(loggerName);
 		logger.addAppender(this);
 	}
 
 	public void addToLogger(Class<?> loggerClass) {
-		Logger logger = (Logger) LoggerFactory.getLogger(loggerClass);
+		final Logger logger = (Logger) LoggerFactory.getLogger(loggerClass);
 		logger.addAppender(this);
 	}
 
@@ -84,12 +84,12 @@ public class LogbackListAppender extends UnsynchronizedAppenderBase<ILoggingEven
 	}
 
 	public void removeFromLogger(String loggerName) {
-		Logger logger = (Logger) LoggerFactory.getLogger(loggerName);
+		final Logger logger = (Logger) LoggerFactory.getLogger(loggerName);
 		logger.detachAppender(this);
 	}
 
 	public void removeFromLogger(Class<?> loggerClass) {
-		Logger logger = (Logger) LoggerFactory.getLogger(loggerClass);
+		final Logger logger = (Logger) LoggerFactory.getLogger(loggerClass);
 		logger.detachAppender(this);
 	}
 

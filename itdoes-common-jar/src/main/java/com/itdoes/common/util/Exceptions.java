@@ -12,6 +12,12 @@ public class Exceptions {
 		}
 	}
 
+    public static String getStackTraceString(Throwable t){
+        final StringWriter stringWriter = new StringWriter();
+        t.printStackTrace(new PrintWriter(stringWriter));
+        return stringWriter.toString();
+    }
+
 	private Exceptions() {
 	}
 }

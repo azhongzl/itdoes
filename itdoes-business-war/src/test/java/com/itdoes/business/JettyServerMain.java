@@ -14,13 +14,13 @@ public class JettyServerMain {
 		try {
 			Profiles.activeProfile(Profiles.DEVELOPMENT);
 
-			JettyServer server = new JettyServer(PORT, CONTEXT_PATH);
+			final JettyServer server = new JettyServer(PORT, CONTEXT_PATH);
 
 			server.start();
 
 			System.out.println("[HINT] Hit Enter to reload server");
 			while (true) {
-				char c = (char) System.in.read();
+				final char c = (char) System.in.read();
 				if (c == '\n') {
 					server.reload();
 				}

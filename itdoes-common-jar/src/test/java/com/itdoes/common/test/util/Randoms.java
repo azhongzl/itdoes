@@ -15,7 +15,7 @@ public class Randoms {
 	}
 
 	public static String randomName(String prefix) {
-		return prefix + randomLong();
+		return new StringBuilder().append(prefix).append(randomLong()).toString();
 	}
 
 	public static <T> T randomOne(List<T> list) {
@@ -36,8 +36,7 @@ public class Randoms {
 	}
 
 	public static <T> List<T> randomAny(List<T> list) {
-		int size = RANDOM.nextInt(list.size());
-		return randomAny(list, size);
+		return randomAny(list, RANDOM.nextInt(list.size()));
 	}
 
 	private Randoms() {
