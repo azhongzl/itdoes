@@ -9,8 +9,8 @@ public class Profiles {
 
 	public static final String PRODUCTION = "production";
 	public static final String DEVELOPMENT = "development";
-	public static final String UNIT_TEST = "unit";
-	public static final String FUNCTIONAL_TEST = "functional";
+	public static final String UNIT_TEST = "unittest";
+	public static final String FUNCTIONAL_TEST = "functionaltest";
 
 	public static void activeProfile(String profile) {
 		System.setProperty(ACTIVE_PROFILE_KEY, profile);
