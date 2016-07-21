@@ -163,11 +163,11 @@ public class Reflections {
 		}
 	}
 
-	public static Class<?> getClassGenericType(Class<?> clazz) {
-		return getClassGenericType(clazz, 0);
+	public static Class<?> getGenericType(Class<?> clazz) {
+		return getGenericType(clazz, 0);
 	}
 
-	public static Class<?> getClassGenericType(Class<?> clazz, int index) {
+	public static Class<?> getGenericType(Class<?> clazz, int index) {
 		final Type genericSuperclass = clazz.getGenericSuperclass();
 		if (!(genericSuperclass instanceof ParameterizedType)) {
 			LOGGER.warn("{}'s generic superclass {} is not ParameterizedType", clazz.getSimpleName(),
