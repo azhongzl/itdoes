@@ -18,7 +18,6 @@ import com.itdoes.common.jpa.Specifications;
 
 /**
  * @author Jalen Zhong
- * @param <T>
  */
 @Component
 @Transactional(readOnly = true)
