@@ -12,9 +12,8 @@
 	<packaging>war</packaging>
 
 	<properties>
-		<jdbc.driver.groupId>com.h2database</jdbc.driver.groupId>
-		<jdbc.driver.artifactId>h2</jdbc.driver.artifactId>
-		<jdbc.driver.version>${h2.version}</jdbc.driver.version>
+		<jdbc.driver.groupId>mysql</jdbc.driver.groupId>
+		<jdbc.driver.artifactId>mysql-connector-java</jdbc.driver.artifactId>
 	</properties>
 
 	<dependencies>
@@ -59,7 +58,6 @@
 		<dependency>
 			<groupId>${jdbc.driver.groupId}</groupId>
 			<artifactId>${jdbc.driver.artifactId}</artifactId>
-			<version>${jdbc.driver.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 
