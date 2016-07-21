@@ -28,7 +28,7 @@ public class Ids {
 	public static String randomBase62(int length) {
 		final byte[] randomBytes = new byte[length];
 		RANDOM.nextBytes(randomBytes);
-		return Codecs.encodeBase62(randomBytes);
+		return Codecs.base62Encode(randomBytes);
 	}
 
 	private Ids() {

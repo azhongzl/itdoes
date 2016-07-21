@@ -30,7 +30,7 @@ public class ShiroDbRealm extends AbstractShiroRealm {
 		}
 
 		// TODO Salt should be enabled in future
-		// byte[] salt = Codecs.decodeHex(user.getSalt());
+		// byte[] salt = Codecs.hexDecode(user.getSalt());
 		// return new SimpleAuthenticationInfo(user, user.getPassword(),
 		// ByteSource.Util.bytes(salt), getName());
 		return new SimpleAuthenticationInfo(user, user.getPassword(), getName());
