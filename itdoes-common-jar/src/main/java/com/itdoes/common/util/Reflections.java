@@ -77,7 +77,7 @@ public class Reflections {
 		Validate.notBlank(methodName, "MethodName cannot be blank");
 
 		for (Class<?> superclass = obj.getClass(); !Object.class.equals(superclass); superclass = superclass
-				.getClass()) {
+				.getSuperclass()) {
 			try {
 				final Method method = superclass.getDeclaredMethod(methodName, paramTypes);
 				makeAccessible(method);
