@@ -2,6 +2,9 @@ package com.itdoes.business.web;
 
 import org.springframework.http.HttpStatus;
 
+/**
+ * @author Jalen Zhong
+ */
 public class Result {
 	public static Result success(Object[] data) {
 		return new Result(HttpStatus.OK.value(), null, data);

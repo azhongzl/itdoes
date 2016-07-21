@@ -12,6 +12,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+/**
+ * @author Jalen Zhong
+ */
 @Entity
 @Table(name = "invcompany")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
