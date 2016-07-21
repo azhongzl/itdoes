@@ -39,7 +39,7 @@
 			</property>
 		</bean>
 
-		<bean id="greenmail" class="com.itdoes.common.test.greenmail.GreenMailServer" lazy-init="false">
+		<bean id="greenMail" class="com.itdoes.common.test.greenmail.GreenMailServer" lazy-init="false">
 			<property name="port" value="${mailserver.port}" />
 		</bean>
 	</beans>
