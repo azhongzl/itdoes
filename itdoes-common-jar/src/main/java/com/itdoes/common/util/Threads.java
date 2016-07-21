@@ -31,7 +31,7 @@ public class Threads {
 		return new ThreadFactoryBuilder().setNameFormat(nameFormat).build();
 	}
 
-	public static void shutdownThenShutdownNow(ExecutorService pool, int shutdownTimeout, int shutdownNowTimeout,
+	public static void shutdownThenNow(ExecutorService pool, int shutdownTimeout, int shutdownNowTimeout,
 			TimeUnit unit) {
 		pool.shutdown();
 		try {
