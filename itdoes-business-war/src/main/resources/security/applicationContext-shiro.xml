@@ -11,7 +11,7 @@
 	</bean>
 
 	<bean id="shiroDbRealm" class="com.itdoes.business.service.ShiroDbRealm">
-		<property name="accountService" ref="accountService" />
+		<property name="userService" ref="userService" />
 	</bean>
 
 	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
