@@ -2,6 +2,7 @@ package com.itdoes.business.entity;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -37,10 +38,13 @@ public class InvCompany {
 
 	private Integer commQty;
 
+	@Column(name = "avgty")
 	private Integer avgQty;
 
+	@Column(name = "maxgty")
 	private Integer maxQty;
 
+	@Column(name = "mingty")
 	private Integer minQty;
 
 	private Date eta;
