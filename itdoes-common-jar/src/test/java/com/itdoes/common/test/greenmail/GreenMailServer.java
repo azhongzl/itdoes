@@ -7,6 +7,9 @@ import org.springframework.beans.factory.InitializingBean;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 
+/**
+ * @author Jalen Zhong
+ */
 public class GreenMailServer implements InitializingBean, DisposableBean, FactoryBean<GreenMail> {
 	public static final String DEFAULT_USERNAME = "greenmail@localhost.com";
 	public static final String DEFAULT_PASSWORD = "greenmail";
