@@ -8,6 +8,28 @@ function inventory() {
 		showinventory();
 	}
 
+	$("#item_no").keypress(function(event) {
+		var keycode = (event.keyCode ? event.keyCode : event.which);
+		if (keycode == 13) {
+			inventorydata = [ {
+				item : '41311W',
+				img : "http://kuzcolighting.com/images/41311W-list.jpg",
+				fields : [ {
+					inventoryid : "SRY",
+					onhandqty : 59,
+					onorderqty : 432
+				}, {
+					inventoryid : "LLC",
+					onhandqty : 159,
+					onorderqty : 132
+				} ]
+			} ];
+
+			showinventory();
+
+		}
+	})
+
 	$("#scanner_btn").click(function() {
 		// var barcoderesult = scanCode();
 		inventorydata = [ {
@@ -25,6 +47,7 @@ function inventory() {
 		} ];
 
 		showinventory();
+		$("#item_no").val(inventorydata[0].item);
 	});
 }
 
@@ -47,6 +70,26 @@ function orderentry() {
 	if (itemlist.length > 0) {
 		showitemlist();
 	}
+	$("#item_no")
+			.keypress(
+					function(event) {
+						var keycode = (event.keyCode ? event.keyCode
+								: event.which);
+						if (keycode == 13) {
+							var itemarray = [];
+							itemarray[0] = [ "41311W", 1, 12.34,
+									"<a href='#'onclick='itemdelete(\"41311W\")'>Del</a>" ];
+							itemlist[itemlist.length] = itemarray[0];
+							itemarray[0] = [ "52022BN", 1, 12.34,
+									"<a href='#'onclick='itemdelete(\"52022BN\")'>Del</a>" ];
+							itemlist[itemlist.length] = itemarray[0];
+							itemarray[0] = [ "601001CH-LED", 1, 12.34,
+									"<a href='#'onclick='itemdelete(\"601001CH-LED\")'>Del</a>" ];
+							itemlist[itemlist.length] = itemarray[0];
+							showitemlist()
+
+						}
+					})
 	$("#scanner_btn")
 			.click(
 					function() {
@@ -138,10 +181,10 @@ function showitemlist() {
 		if ($(this).index() == 1) {
 			var row = $(this).parent().index();
 			var col = $(this).index();
-			var num = prompt("please input QTY:", $(this).text());
+			var num = prompt("please input QTY:");
 
 			$(this).text(num);
-			itemlist[row-1][col] = num;
+			itemlist[row - 1][col] = num;
 		}
 	});
 
@@ -166,7 +209,7 @@ function showinventory() {
 					+ inventorydata[0].fields[1].onhandqty
 					+ '&nbsp&nbsp<b>Onorder:</b>'
 					+ inventorydata[0].fields[1].onorderqty + '</p>');
-	$("#item_no").val(inventorydata[0].item);
+
 }
 
 function showmenu() {
@@ -182,7 +225,21 @@ function showmenu() {
 }
 
 function itemcancel() {
-	alert("");
 	itemlist = [];
 	orderentry();
+}
+function logout() {
+	$("div.wrap").hide();
+	itemlist = [];
+	inventorydata = [];
+	$("div#content").html("");
+	$(document).ready(function() {
+		$("div#loginWindow").show();
+	});
+
+}
+
+function ordercheck() {
+ 	$("#content").empty();
+ 	alert("show order list");
 }
