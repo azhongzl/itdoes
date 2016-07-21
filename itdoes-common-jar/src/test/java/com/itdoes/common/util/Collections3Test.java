@@ -17,7 +17,7 @@ public class Collections3Test {
 		final TestBean bean1 = new TestBean();
 		bean1.setId(1);
 		final TestBean bean2 = new TestBean();
-		bean1.setId(2);
+		bean2.setId(2);
 
 		final List<TestBean> list = Lists.newArrayList(bean1, bean2);
 		assertThat(Collections3.propToString(list, "id", ",")).isEqualTo("1,2");
@@ -29,7 +29,7 @@ public class Collections3Test {
 		final TestBean bean1 = new TestBean();
 		bean1.setId(1);
 		final TestBean bean2 = new TestBean();
-		bean1.setId(2);
+		bean2.setId(2);
 
 		final List<TestBean> list = Lists.newArrayList(bean1, bean2);
 		final List<Integer> result = Collections3.propToList(list, "id");
