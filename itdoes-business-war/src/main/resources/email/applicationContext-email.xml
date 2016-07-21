@@ -5,11 +5,6 @@
 
 	<description>Email Configuration</description>
 
-	<bean id="mimeMailService" class="com.itdoes.business.demos.utilities.email.MimeMailService">
-		<property name="mailSender" ref="mailSender" />
-		<property name="freemarkerConfiguration" ref="freemarkerConfiguration" />
-	</bean>
-
 	<bean id="freemarkerConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">
 		<property name="templateLoaderPath" value="classpath:/email" />
 	</bean>
@@ -44,7 +39,7 @@
 			</property>
 		</bean>
 
-		<bean id="greenmail" class="com.itdoes.common.test.mail.MailServerSimulator" lazy-init="false">
+		<bean id="greenmail" class="com.itdoes.common.test.greenmail.GreenMailServer" lazy-init="false">
 			<property name="port" value="${mailserver.port}" />
 		</bean>
 	</beans>
