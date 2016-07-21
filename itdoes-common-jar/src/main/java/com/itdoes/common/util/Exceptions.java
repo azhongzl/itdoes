@@ -2,12 +2,17 @@ package com.itdoes.common.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author Jalen Zhong
  */
 public class Exceptions {
 	public static RuntimeException unchecked(Throwable t) {
+		if (t instanceof InvocationTargetException) {
+			return unchecked(((InvocationTargetException) t).getTargetException());
+		}
+
 		if (t instanceof RuntimeException) {
 			return (RuntimeException) t;
 		} else {
