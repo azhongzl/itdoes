@@ -18,6 +18,8 @@ public class Digests {
 	private static final String SHA256 = "SHA-256";
 	private static final String MD5 = "MD5";
 
+	private static final int DEFAULT_SALT_SIZE = 8;
+
 	private static final SecureRandom RANDOM = new SecureRandom();
 
 	private static final int BUFFER_LENGTH = 8 * 1024;
@@ -107,10 +109,14 @@ public class Digests {
 		}
 	}
 
-	public static byte[] generateSalt(int length) {
-		Validate.isTrue(length > 0, "Length must be a positive integer", length);
+	public static byte[] generateSalt() {
+		return generateSalt(DEFAULT_SALT_SIZE);
+	}
 
-		final byte[] bytes = new byte[length];
+	public static byte[] generateSalt(int size) {
+		Validate.isTrue(size > 0, "Salt size must be a positive integer", size);
+
+		final byte[] bytes = new byte[size];
 		RANDOM.nextBytes(bytes);
 		return bytes;
 	}
