@@ -1,5 +1,6 @@
 package com.itdoes.common.jpa;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -12,7 +13,6 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
-import com.google.common.collect.Lists;
 import com.itdoes.common.util.Collections3;
 
 /**
@@ -25,7 +25,7 @@ public class Specifications {
 			@Override
 			public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
 				if (!Collections3.isEmpty(filters)) {
-					final List<Predicate> predicates = Lists.newArrayList();
+					final List<Predicate> predicates = new ArrayList<Predicate>(filters.size());
 
 					for (SearchFilter filter : filters) {
 						final String[] names = StringUtils.split(filter.field, ".");
