@@ -37,7 +37,7 @@ public class Collections3Test {
 	}
 
 	@Test
-	public void prePostfix() {
+	public void prePost() {
 		final List<String> list = Lists.newArrayList("aa", "bb");
 		final String result = Collections3.prePost(list, "<li>", "</li>");
 		assertThat(result).isEqualTo("<li>aa</li><li>bb</li>");

@@ -26,7 +26,7 @@ public class ExceptionsTest {
 	}
 
 	@Test
-	public void getStackTraceAsString() {
+	public void getStackTraceString() {
 		final Exception e = new Exception("My Exception");
 		final RuntimeException re = new RuntimeException(e);
 		Exceptions.getStackTraceString(re);

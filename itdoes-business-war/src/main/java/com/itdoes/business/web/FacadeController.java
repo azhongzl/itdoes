@@ -2,13 +2,13 @@ package com.itdoes.business.web;
 
 import java.util.List;
 
-import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.common.collect.Lists;
 import com.itdoes.business.entity.InvCompany;
 import com.itdoes.business.service.FacadeService;
 import com.itdoes.common.jpa.SearchFilter;

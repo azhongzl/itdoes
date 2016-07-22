@@ -10,7 +10,7 @@ public class IdsTest {
 	public void ids() {
 		Ids.uuid();
 		Ids.uuidWithoutHyphen();
-		Ids.randomLong();
+		Ids.randomLongAll();
 		Ids.randomLongAbs();
 		Ids.randomBase62(8);
 	}

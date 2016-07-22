@@ -25,13 +25,13 @@ public class ReflectionsTest {
 		try {
 			Reflections.getFieldValue(bean, "notExist");
 			failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
-		} catch (Exception e) {
+		} catch (IllegalArgumentException e) {
 		}
 
 		try {
 			Reflections.setFieldValue(bean, "notExist", 2);
 			failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
-		} catch (Exception e) {
+		} catch (IllegalArgumentException e) {
 		}
 	}
 

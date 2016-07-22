@@ -171,7 +171,7 @@ public class Reflections {
 		final Type genericSuperclass = clazz.getGenericSuperclass();
 		if (!(genericSuperclass instanceof ParameterizedType)) {
 			LOGGER.warn("{}'s generic superclass {} is not ParameterizedType", clazz.getSimpleName(),
-					genericSuperclass);
+					genericSuperclass.getTypeName());
 			return Object.class;
 		}
 

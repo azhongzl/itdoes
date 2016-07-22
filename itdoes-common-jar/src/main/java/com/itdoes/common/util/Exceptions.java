@@ -27,7 +27,7 @@ public class Exceptions {
 	}
 
 	public static String getErrorMessageWithNestedException(Throwable t) {
-		Throwable nestedException = t.getCause();
+		final Throwable nestedException = t.getCause();
 		if (nestedException == null) {
 			return t.getMessage();
 		}
