@@ -8,6 +8,28 @@ function inventory() {
 		showinventory();
 	}
 
+	$("#item_no").keypress(function(event) {
+		var keycode = (event.keyCode ? event.keyCode : event.which);
+		if (keycode == 13) {
+			inventorydata = [ {
+				item : '41311W',
+				img : "http://kuzcolighting.com/images/41311W-list.jpg",
+				fields : [ {
+					inventoryid : "SRY",
+					onhandqty : 59,
+					onorderqty : 432
+				}, {
+					inventoryid : "LLC",
+					onhandqty : 159,
+					onorderqty : 132
+				} ]
+			} ];
+
+			showinventory();
+
+		}
+	})
+
 	$("#scanner_btn").click(function() {
 		// var barcoderesult = scanCode();
 		inventorydata = [ {
@@ -25,6 +47,7 @@ function inventory() {
 		} ];
 
 		showinventory();
+		$("#item_no").val(inventorydata[0].item);
 	});
 }
 
@@ -47,6 +70,20 @@ function orderentry() {
 	if (itemlist.length > 0) {
 		showitemlist();
 	}
+	$("#item_no")
+			.keypress(
+					function(event) {
+						var keycode = (event.keyCode ? event.keyCode
+								: event.which);
+						if (keycode == 13) {
+							var itemarray = [];
+							itemarray[0] = [ "41311W", 1, 12.34,
+									"<a href='#'onclick='itemdelete(\"41311W\")'>Del</a>" ];
+							itemlist[itemlist.length] = itemarray[0];
+							showitemlist()
+
+						}
+					})
 	$("#scanner_btn")
 			.click(
 					function() {
@@ -55,12 +92,7 @@ function orderentry() {
 						itemarray[0] = [ "41311W", 1, 12.34,
 								"<a href='#'onclick='itemdelete(\"41311W\")'>Del</a>" ];
 						itemlist[itemlist.length] = itemarray[0];
-						itemarray[0] = [ "52022BN", 1, 12.34,
-								"<a href='#'onclick='itemdelete(\"52022BN\")'>Del</a>" ];
-						itemlist[itemlist.length] = itemarray[0];
-						itemarray[0] = [ "601001CH-LED", 1, 12.34,
-								"<a href='#'onclick='itemdelete(\"601001CH-LED\")'>Del</a>" ];
-						itemlist[itemlist.length] = itemarray[0];
+
 						showitemlist()
 
 					});
@@ -122,27 +154,34 @@ function showitemlist() {
 	for (var k = 0; k < itemlist.length; k++) {
 		mytable = mytable + "<tr>";
 		for (var j = 0; j < itemlist[k].length; j++) {
-			mytable = mytable + "<td>" + itemlist[k][j] + "</td>";
-			if (j == (itemlist[k].length - 1)) {
-				mytable = mytable + "</tr>";
+			if (j == 1) {
+				mytable = mytable + "<td><input class='itemchange' value="
+						+ itemlist[k][j] + ">" + "</input></td>";
+				if (j == (itemlist[k].length - 1)) {
+					mytable = mytable + "</tr>";
+				}
+			} else {
+				mytable = mytable + "<td>" + itemlist[k][j] + "</td>";
+				if (j == (itemlist[k].length - 1)) {
+					mytable = mytable + "</tr>";
+				}
 			}
+
 		}
 	}
 	mytable = mytable + "</table>";
-	mytable = mytable
-			+ "<button  class='hwq2button white' onclick='#'>Submit</button>";
-	mytable = mytable
-			+ "<button  class='hwq2button white' onclick='itemcancel()'>Cancel</button></div>";
-	$("div#content").append(mytable);
-	$("table td ").click(function() {
-		if ($(this).index() == 1) {
-			var row = $(this).parent().index();
-			var col = $(this).index();
-			var num = prompt("please input QTY:", $(this).text());
 
-			$(this).text(num);
-			itemlist[row-1][col] = num;
-		}
+	mytable = mytable
+			+ "<button  class='menubutton white' onclick='#'>Submit</button>";
+	mytable = mytable
+			+ "<button  class='menubutton white' onclick='itemcancel()'>Cancel</button></div>";
+	$("div#content").append(mytable);
+
+	$("table td ").change(function() {
+		var row = $(this).parent().index();
+		var col = $(this).index();
+		var allinput = $("table.orderlist input");
+		itemlist[row - 1][col] = allinput[row - 1].value;
 	});
 
 }
@@ -166,14 +205,14 @@ function showinventory() {
 					+ inventorydata[0].fields[1].onhandqty
 					+ '&nbsp&nbsp<b>Onorder:</b>'
 					+ inventorydata[0].fields[1].onorderqty + '</p>');
-	$("#item_no").val(inventorydata[0].item);
+
 }
 
 function showmenu() {
 	$("div#mainmenu").html("");
 	var mymenu = "";
 	for (i = 0; i < menudata.length; i++) {
-		mymenu = mymenu + "<button class='hwq2button white' onclick='"
+		mymenu = mymenu + "<button class='menubutton white' onclick='"
 				+ menudata[i].onclick + "'>" + menudata[i].menuname
 				+ "</button>";
 
@@ -182,7 +221,52 @@ function showmenu() {
 }
 
 function itemcancel() {
-	alert("");
 	itemlist = [];
 	orderentry();
+}
+function logout() {
+	$("div.wrap").hide();
+	itemlist = [];
+	inventorydata = [];
+	$("div#content").html("");
+	$(document).ready(function() {
+		$("div#loginWindow").show();
+	});
+
+}
+
+function ordercheck() {
+	$("#content").empty();
+	alert("show order list");
+	ajaxget();
+
+}
+function ajaxget() {
+	var test = [];
+	$.ajax({
+		type : "GET",
+		url : "http://localhost:8080/biz/search",
+		data : {
+			filter : "166",
+			item : "41311W"
+		},
+		dataType : "json",
+		success : function(result) {
+			$.each(result.data, function(i, n) {
+				if (n.skuNo == 6109) {
+					test.push(result.data[i]);
+				}
+			});
+			$.each(test, function(i, n) {
+				alert(i + "|||||" + n.onHandQty);
+			});
+
+		},
+		timeout : 7000,
+		error : function(xhr) {
+			alert("错误提示： " + xhr.status + " " + xhr.statusText);
+		},
+
+	})
+
 }
