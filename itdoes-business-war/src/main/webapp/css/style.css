@@ -45,16 +45,11 @@ img {
 	-ms-interpolation-mode: bicubic;
 	max-width: 100%;
 }
-
-input {
+#loginWindow input {
 	font-size: 100%;
 	margin: 10px;
 	vertical-align: baseline;
 	*vertical-align: middle;
-}
-
- input {
-	line-height: normal;
 }
 
  input[type="button"], input[type="reset"], input[type="submit"]
@@ -71,9 +66,6 @@ input[type="checkbox"], input[type="radio"] {
 	*width: 13px;
 }
 
-.inline input, .inline label {
-	display: inline-block !important;
-}
 /* typography */
 p {
 	font-size: 0.9em;
@@ -158,26 +150,6 @@ footer {
 	font-size: 25px;
 }
 
-.menu {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-.menu li {
-	display: block;
-	margin-bottom: 5px;
-}
-
-.menu a {
-	padding: 5px;
-	font-size: 1.0em;
-	color: #2d2d2d;
-}
-
-.menu a:hover {
-	color: #b43641;
-}
 
 .icon .span, .icon a, .icon span {
 	padding: 5px 5px 5px 40px;
@@ -197,34 +169,6 @@ footer {
 	left: 0;
 }
 
-.info a:before, .info span:before, .info .span:before {
-	background: url('../img/info.png') no-repeat;
-}
-
-.home a:before, .home span:before, .home .span:before {
-	background: url('../img/home.png') no-repeat;
-}
-
-.gear a:before, .gear span:before, .gear .span:before {
-	background: url('../img/gear.png') no-repeat;
-}
-
-.bubble a:before, .bubble span:before, .bubble .span:before {
-	background: url('../img/bubble.png') no-repeat;
-}
-
-.add a:before, .add span:before, .add .span:before {
-	background: url('../img/add.png') no-repeat;
-}
-
-.call a:before, .call span:before, .call .span:before {
-	background: url('../img/call.png') no-repeat;
-}
-
-.navigation a:before, .navigation span:before, .navigation .span:before
-	{
-	background: url('../img/navigation.png') no-repeat;
-}
 
 .separator {
 	margin: 2px 0;
@@ -336,7 +280,7 @@ form fieldset a:hover {
 	background-color: #f5f5f5
 }
 
-.hwq2button {
+.menubutton {
 	display: inline-block;
 	zoom: 1; /* zoom and *display = ie7 hack for display:inline-block */
 	vertical-align: baseline;
@@ -356,17 +300,18 @@ form fieldset a:hover {
 	box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
 }
 
-.hwq2button:hover {
+.menubutton:hover {
 	text-decoration: none;
 }
 
-.hwq2button:active {
+.menubutton:active {
 	position: relative;
 	top: 1px;
 }
 
 .white {
 	color: #606060;
+
 	border: solid 1px #b7b7b7;
 	background: #fff;
 	background: -webkit-gradient(linear, left top, left bottom, from(#fff),
@@ -393,3 +338,16 @@ form fieldset a:hover {
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed',
 		endColorstr='#ffffff');
 }
+
+
+.itemchange {
+	width:30px;
+	background-color:#f8f8f8;
+	color:#0000ff;
+	border:.2px solid #808080;
+
+}
+
+
+
+
