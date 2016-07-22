@@ -53,6 +53,8 @@ public class Specifications {
 						case LTE:
 							predicates.add(builder.lessThanOrEqualTo(expression, (Comparable) filter.value));
 							break;
+						default:
+							throw new IllegalArgumentException("Cannot find Operator: " + filter.operator);
 						}
 					}
 
