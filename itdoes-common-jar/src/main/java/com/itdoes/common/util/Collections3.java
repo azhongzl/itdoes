@@ -49,7 +49,7 @@ public class Collections3 {
 		return StringUtils.join(propToList(collection, propertyName), separator);
 	}
 
-	public static String prefixPostfix(final Collection<?> collection, final String prefix, final String postfix) {
+	public static String prePost(final Collection<?> collection, final String prefix, final String postfix) {
 		final StringBuilder builder = new StringBuilder();
 		for (Object obj : collection) {
 			builder.append(prefix).append(obj).append(postfix);

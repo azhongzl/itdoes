@@ -17,12 +17,12 @@ public class Ids {
 		return uuid().replaceAll("-", "");
 	}
 
-	public static long randomLong() {
+	public static long randomLongAll() {
 		return RANDOM.nextLong();
 	}
 
 	public static long randomLongAbs() {
-		return Math.abs(randomLong());
+		return Math.abs(randomLongAll());
 	}
 
 	public static String randomBase62(int length) {

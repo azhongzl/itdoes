@@ -20,14 +20,14 @@ public class Exceptions {
 		}
 	}
 
-	public static String getStackTraceAsString(Throwable t) {
+	public static String getStackTraceString(Throwable t) {
 		final StringWriter stringWriter = new StringWriter();
 		t.printStackTrace(new PrintWriter(stringWriter));
 		return stringWriter.toString();
 	}
 
 	public static String getErrorMessageWithNestedException(Throwable t) {
-		Throwable nestedException = t.getCause();
+		final Throwable nestedException = t.getCause();
 		if (nestedException == null) {
 			return t.getMessage();
 		}
