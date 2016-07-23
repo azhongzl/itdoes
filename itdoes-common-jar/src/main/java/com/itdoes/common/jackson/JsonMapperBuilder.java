@@ -14,19 +14,15 @@ import com.google.common.collect.Sets;
  * @author Jalen Zhong
  */
 public class JsonMapperBuilder {
+	public static JsonMapperBuilder newBuilder() {
+		return new JsonMapperBuilder();
+	}
+
 	public static JsonMapperBuilder defaultBuilder() {
-		return new JsonMapperBuilder().disableFailOnUnknownProperties();
+		return newBuilder().disableFailOnUnknownProperties().nonEmpty();
 	}
 
-	public static JsonMapperBuilder nonEmptyBuilder() {
-		return defaultBuilder().setSerializationInclusionNonEmpty();
-	}
-
-	public static JsonMapperBuilder nonDefaultBuilder() {
-		return defaultBuilder().setSerializationInclusionNonDefault();
-	}
-
-	private final Set<Include> serializationInclusions = Sets.newHashSet();
+	private Include serializationInclusion;
 	private final Set<SerializationFeature> enableSerializationFeatures = Sets.newHashSet();
 	private final Set<DeserializationFeature> enableDeserializationFeatures = Sets.newHashSet();
 	private final Set<SerializationFeature> disableSerializationFeatures = Sets.newHashSet();
@@ -34,7 +30,7 @@ public class JsonMapperBuilder {
 	private final Set<Module> registerModules = Sets.newHashSet();
 
 	public JsonMapperBuilder setSerializationInclusion(Include include) {
-		serializationInclusions.add(include);
+		serializationInclusion = include;
 		return this;
 	}
 
@@ -63,11 +59,11 @@ public class JsonMapperBuilder {
 		return this;
 	}
 
-	public JsonMapperBuilder setSerializationInclusionNonEmpty() {
+	public JsonMapperBuilder nonEmpty() {
 		return setSerializationInclusion(Include.NON_EMPTY);
 	}
 
-	public JsonMapperBuilder setSerializationInclusionNonDefault() {
+	public JsonMapperBuilder nonDefault() {
 		return setSerializationInclusion(Include.NON_DEFAULT);
 	}
 
@@ -87,8 +83,8 @@ public class JsonMapperBuilder {
 	public JsonMapper build() {
 		final ObjectMapper mapper = new ObjectMapper();
 
-		for (Include include : serializationInclusions) {
-			mapper.setSerializationInclusion(include);
+		if (serializationInclusion != null) {
+			mapper.setSerializationInclusion(serializationInclusion);
 		}
 		for (SerializationFeature feature : enableSerializationFeatures) {
 			mapper.enable(feature);
