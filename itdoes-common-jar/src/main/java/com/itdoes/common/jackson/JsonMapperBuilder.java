@@ -71,13 +71,13 @@ public class JsonMapperBuilder {
 		return setSerializationInclusion(Include.NON_DEFAULT);
 	}
 
-	public JsonMapperBuilder disableFailOnUnknownProperties() {
-		return disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-	}
-
 	public JsonMapperBuilder enableEnumsUsingToString() {
 		return enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
 				.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+	}
+
+	public JsonMapperBuilder disableFailOnUnknownProperties() {
+		return disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 	}
 
 	public JsonMapperBuilder registerModuleJaxb() {
