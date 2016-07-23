@@ -15,15 +15,15 @@ import com.google.common.collect.Sets;
  */
 public class JsonMapperBuilder {
 	public static JsonMapperBuilder defaultBuilder() {
-		return new JsonMapperBuilder().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+		return new JsonMapperBuilder().disableFailOnUnknownProperties();
 	}
 
 	public static JsonMapperBuilder nonEmptyBuilder() {
-		return defaultBuilder().setSerializationInclusion(Include.NON_EMPTY);
+		return defaultBuilder().setSerializationInclusionNonEmpty();
 	}
 
 	public static JsonMapperBuilder nonDefaultBuilder() {
-		return defaultBuilder().setSerializationInclusion(Include.NON_DEFAULT);
+		return defaultBuilder().setSerializationInclusionNonDefault();
 	}
 
 	private final Set<Include> serializationInclusions = Sets.newHashSet();
@@ -63,15 +63,25 @@ public class JsonMapperBuilder {
 		return this;
 	}
 
+	public JsonMapperBuilder setSerializationInclusionNonEmpty() {
+		return setSerializationInclusion(Include.NON_EMPTY);
+	}
+
+	public JsonMapperBuilder setSerializationInclusionNonDefault() {
+		return setSerializationInclusion(Include.NON_DEFAULT);
+	}
+
+	public JsonMapperBuilder disableFailOnUnknownProperties() {
+		return disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	}
+
 	public JsonMapperBuilder enableEnumsUsingToString() {
-		enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-		enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-		return this;
+		return enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
+				.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
 	}
 
 	public JsonMapperBuilder registerModuleJaxb() {
-		registerModule(new JaxbAnnotationModule());
-		return this;
+		return registerModule(new JaxbAnnotationModule());
 	}
 
 	public JsonMapper build() {
