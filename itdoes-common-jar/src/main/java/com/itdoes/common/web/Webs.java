@@ -58,7 +58,7 @@ public class Webs {
 			if ("*".equals(ifNoneMatch)) {
 				matched = true;
 			} else {
-				final StringTokenizer tokenizer = new StringTokenizer(ifNoneMatch);
+				final StringTokenizer tokenizer = new StringTokenizer(ifNoneMatch, ",");
 				while (tokenizer.hasMoreTokens()) {
 					final String currentToken = tokenizer.nextToken();
 					if (currentToken.trim().equals(etag)) {
