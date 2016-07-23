@@ -18,10 +18,6 @@ public class JsonMapperBuilder {
 		return new JsonMapperBuilder();
 	}
 
-	public static JsonMapperBuilder defaultBuilder() {
-		return newBuilder().disableFailOnUnknownProperties().nonEmpty();
-	}
-
 	private Include serializationInclusion;
 	private final Set<SerializationFeature> enableSerializationFeatures = Sets.newHashSet();
 	private final Set<DeserializationFeature> enableDeserializationFeatures = Sets.newHashSet();

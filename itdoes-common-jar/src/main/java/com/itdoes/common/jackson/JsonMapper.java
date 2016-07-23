@@ -28,6 +28,10 @@ public class JsonMapper {
 	}
 
 	public <T> T fromJson(String jsonString, Class<T> clazz) {
+		if (jsonString == null) {
+			return null;
+		}
+
 		try {
 			return mapper.readValue(jsonString, clazz);
 		} catch (IOException e) {
@@ -36,6 +40,10 @@ public class JsonMapper {
 	}
 
 	public <T> T fromJson(String jsonString, JavaType javaType) {
+		if (jsonString == null) {
+			return null;
+		}
+
 		try {
 			return mapper.readValue(jsonString, javaType);
 		} catch (IOException e) {
@@ -44,11 +52,13 @@ public class JsonMapper {
 		}
 	}
 
-	public JavaType buildCollectionType(Class<? extends Collection<?>> collectionClass, Class<?> elementClass) {
+	@SuppressWarnings("rawtypes")
+	public JavaType buildCollectionType(Class<? extends Collection> collectionClass, Class<?> elementClass) {
 		return mapper.getTypeFactory().constructCollectionType(collectionClass, elementClass);
 	}
 
-	public JavaType buildMapType(Class<? extends Map<?, ?>> mapClass, Class<?> keyClass, Class<?> valueClass) {
+	@SuppressWarnings("rawtypes")
+	public JavaType buildMapType(Class<? extends Map> mapClass, Class<?> keyClass, Class<?> valueClass) {
 		return mapper.getTypeFactory().constructMapType(mapClass, keyClass, valueClass);
 	}
 
