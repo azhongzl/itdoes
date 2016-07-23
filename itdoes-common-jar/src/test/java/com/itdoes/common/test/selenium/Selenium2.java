@@ -151,7 +151,7 @@ public class Selenium2 {
 		return findElement(by).getAttribute("value");
 	}
 
-	public void snapshot(String path, String outputFilename) {
+	public void screenshot(String path, String outputFilename) {
 		final File srcFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 		final File targetFile = new File(path, outputFilename);
 		try {
