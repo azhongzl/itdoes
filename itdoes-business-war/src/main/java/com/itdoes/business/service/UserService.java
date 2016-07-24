@@ -3,6 +3,7 @@ package com.itdoes.business.service;
 import org.springframework.stereotype.Service;
 
 import com.itdoes.business.entity.EmployeeMaster;
+import com.itdoes.common.business.BaseService;
 
 /**
  * @author Jalen Zhong

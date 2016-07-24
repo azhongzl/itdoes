@@ -1,4 +1,4 @@
-package com.itdoes.business.repository;
+package com.itdoes.common.business;
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;

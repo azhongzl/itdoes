@@ -1,4 +1,4 @@
-package com.itdoes.business.service;
+package com.itdoes.common.business;
 
 import org.springframework.transaction.annotation.Transactional;
 

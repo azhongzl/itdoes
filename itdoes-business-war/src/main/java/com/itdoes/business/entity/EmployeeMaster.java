@@ -11,6 +11,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.itdoes.common.business.BaseEntity;
+
 /**
  * @author Jalen Zhong
  */

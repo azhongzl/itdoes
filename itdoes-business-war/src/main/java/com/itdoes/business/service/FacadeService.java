@@ -11,9 +11,11 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.itdoes.business.entity.BaseEntity;
-import com.itdoes.business.repository.BaseDao;
+import com.itdoes.common.business.BaseDao;
+import com.itdoes.common.business.BaseEntity;
+import com.itdoes.common.business.BaseService;
 import com.itdoes.common.business.Businesses;
+import com.itdoes.common.business.Businesses.EntityDaoPair;
 import com.itdoes.common.jpa.SearchFilter;
 import com.itdoes.common.jpa.Specifications;
 
@@ -22,7 +24,7 @@ import com.itdoes.common.jpa.Specifications;
  */
 @Service
 public class FacadeService extends BaseService implements ApplicationContextAware {
-	private Map daoMap;
+	private Map<String, EntityDaoPair> entityDaoMap;
 
 	// @Autowired
 	// private InvCompanyDao invCompanyDao;
@@ -32,33 +34,41 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	@PostConstruct
 	public void init() {
 		// daoMap.put(InvCompany.class, invCompanyDao);
-		daoMap = Businesses.getDaoMap(BaseEntity.class, BaseDao.class, applicationContext);
+		entityDaoMap = Businesses.getPairMap(BaseEntity.class, BaseDao.class, applicationContext);
 	}
 
-	public Object get(Class entityClass, Integer id) {
-		return getDao(entityClass).findOne(id);
+	public Object get(String ec, Integer id) {
+		return getDao(ec).findOne(id);
 	}
 
-	public List<? extends BaseEntity> getAll(Class entityClass, List<SearchFilter> filters) {
-		return getDao(entityClass).findAll(Specifications.build(entityClass, filters));
-	}
-
-	@Transactional(readOnly = false)
-	public void save(Object entity) {
-		getDao(entity.getClass()).save(entity);
+	public List<? extends BaseEntity> getAll(String ec, List<SearchFilter> filters) {
+		return getDao(ec).findAll(Specifications.build(getEntityClass(ec), filters));
 	}
 
 	@Transactional(readOnly = false)
-	public void delete(Class entityClass, Integer id) {
-		getDao(entityClass).delete(id);
+	public void save(String ec, Object entity) {
+		getDao(ec).save(entity);
 	}
 
-	private BaseDao getDao(Class entityClass) {
-		final BaseDao baseDao = (BaseDao) daoMap.get(entityClass);
-		if (baseDao == null) {
-			throw new IllegalStateException("Dao cannot be found by entity class: " + entityClass);
+	@Transactional(readOnly = false)
+	public void delete(String ec, Integer id) {
+		getDao(ec).delete(id);
+	}
+
+	private BaseDao getDao(String ec) {
+		return getPair(ec).dao;
+	}
+
+	private Class getEntityClass(String ec) {
+		return getPair(ec).entityClass;
+	}
+
+	private EntityDaoPair getPair(String ec) {
+		final EntityDaoPair pair = entityDaoMap.get(ec);
+		if (pair == null) {
+			throw new IllegalArgumentException("Entity Class and Dao pair cannot be found by: " + ec);
 		}
-		return baseDao;
+		return pair;
 	}
 
 	@Override
