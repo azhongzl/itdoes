@@ -24,7 +24,7 @@ import com.itdoes.common.jpa.Specifications;
  */
 @Service
 public class FacadeService extends BaseService implements ApplicationContextAware {
-	private Map<String, EntityDaoPair> entityDaoMap;
+	private Map<String, EntityDaoPair> pairMap;
 
 	// @Autowired
 	// private InvCompanyDao invCompanyDao;
@@ -34,7 +34,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	@PostConstruct
 	public void init() {
 		// daoMap.put(InvCompany.class, invCompanyDao);
-		entityDaoMap = Businesses.getPairMap(BaseEntity.class, BaseDao.class, applicationContext);
+		pairMap = Businesses.getPairMap(BaseEntity.class, BaseDao.class, applicationContext);
 	}
 
 	public Object get(String ec, Integer id) {
@@ -64,7 +64,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	}
 
 	private EntityDaoPair getPair(String ec) {
-		final EntityDaoPair pair = entityDaoMap.get(ec);
+		final EntityDaoPair pair = pairMap.get(ec);
 		if (pair == null) {
 			throw new IllegalArgumentException("Entity Class and Dao pair cannot be found by: " + ec);
 		}
