@@ -13,13 +13,13 @@ import com.itdoes.common.util.Reflections;
  */
 public class Businesses {
 	public static Map<String, EntityDaoPair> getPairMap(String entityPackage, Class baseEntityClass,
-			ApplicationContext context) {
+			ClassLoader classLoader, ApplicationContext context) {
 		final List<Class> entityClasses = Reflections.getClasses(entityPackage, new Reflections.ClassFilter() {
 			@Override
 			public boolean isOk(Class clazz) {
-				return clazz.isAssignableFrom(baseEntityClass);
+				return baseEntityClass.isAssignableFrom(clazz);
 			}
-		});
+		}, classLoader);
 		final Map pairMap = new HashMap(entityClasses.size());
 		for (Class entityClass : entityClasses) {
 			final String key = entityClass.getSimpleName();

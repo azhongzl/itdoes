@@ -36,7 +36,8 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	@PostConstruct
 	public void init() {
 		// daoMap.put(InvCompany.class, invCompanyDao);
-		pairMap = Businesses.getPairMap(ENTITY_PACKAGE, BaseEntity.class, applicationContext);
+		pairMap = Businesses.getPairMap(ENTITY_PACKAGE, BaseEntity.class, FacadeService.class.getClassLoader(),
+				applicationContext);
 	}
 
 	public Object get(String ec, Integer id) {
