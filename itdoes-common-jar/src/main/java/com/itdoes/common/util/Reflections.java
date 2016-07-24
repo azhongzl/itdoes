@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -204,6 +205,15 @@ public class Reflections {
 		}
 
 		return clazz;
+	}
+
+	public static List<Class> getClasses(String basePackage, ClassFilter filter) {
+		// TODO
+		return null;
+	}
+
+	public static interface ClassFilter {
+		boolean isOk(Class clazz);
 	}
 
 	private Reflections() {

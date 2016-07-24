@@ -6,17 +6,20 @@ import java.util.Map;
 
 import org.springframework.context.ApplicationContext;
 
+import com.itdoes.common.util.Reflections;
+
 /**
  * @author Jalen Zhong
  */
 public class Businesses {
-	public static Map<String, EntityDaoPair> getPairMap(Class baseEntityClass, Class baseDaoClass,
+	public static Map<String, EntityDaoPair> getPairMap(String entityPackage, Class baseEntityClass,
 			ApplicationContext context) {
-		// TODO
-		final List<Class> entityClasses = null;
-		// final List<Class> entityClasses =
-		// Reflections.getClasses(baseEntityClass.getPackage(),
-		// baseEntityClass);
+		final List<Class> entityClasses = Reflections.getClasses(entityPackage, new Reflections.ClassFilter() {
+			@Override
+			public boolean isOk(Class clazz) {
+				return clazz.isAssignableFrom(baseEntityClass);
+			}
+		});
 		final Map pairMap = new HashMap(entityClasses.size());
 		for (Class entityClass : entityClasses) {
 			final String key = entityClass.getSimpleName();
