@@ -5,6 +5,5 @@ import com.itdoes.business.entity.InvCompany;
 /**
  * @author Jalen Zhong
  */
-public interface InvCompanyDao extends GenericDao<InvCompany> {
-
+public interface InvCompanyDao extends BaseDao<InvCompany> {
 }

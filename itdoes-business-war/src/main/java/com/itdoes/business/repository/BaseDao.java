@@ -8,6 +8,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @author Jalen Zhong
  */
 @NoRepositoryBean
-public interface GenericDao<T> extends PagingAndSortingRepository<T, Integer>, JpaSpecificationExecutor<T> {
-
+public interface BaseDao<T> extends PagingAndSortingRepository<T, Integer>, JpaSpecificationExecutor<T> {
 }

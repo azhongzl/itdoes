@@ -8,7 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -18,7 +17,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "employeemaster")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class EmployeeMaster {
+public class EmployeeMaster extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer employeeId;
@@ -329,10 +328,5 @@ public class EmployeeMaster {
 
 	public void setPhoneExt(String phoneExt) {
 		this.phoneExt = phoneExt;
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
 	}
 }

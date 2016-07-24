@@ -18,7 +18,7 @@ import com.itdoes.common.jpa.SearchFilter;
  */
 @RestController
 @RequestMapping(value = "/")
-public class FacadeController {
+public class FacadeController extends BaseController {
 	@Autowired
 	private FacadeService facadeService;
 

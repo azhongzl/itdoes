@@ -6,12 +6,11 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
 import com.itdoes.business.entity.InvCompany;
-import com.itdoes.business.repository.GenericDao;
+import com.itdoes.business.repository.BaseDao;
 import com.itdoes.business.repository.InvCompanyDao;
 import com.itdoes.common.jpa.SearchFilter;
 import com.itdoes.common.jpa.Specifications;
@@ -19,10 +18,9 @@ import com.itdoes.common.jpa.Specifications;
 /**
  * @author Jalen Zhong
  */
-@Component
-@Transactional(readOnly = true)
-public class FacadeService {
-	private final Map<Class, GenericDao> daoMap = Maps.newHashMap();
+@Service
+public class FacadeService extends BaseService {
+	private final Map<Class, BaseDao> daoMap = Maps.newHashMap();
 
 	@Autowired
 	private InvCompanyDao invCompanyDao;
@@ -33,12 +31,12 @@ public class FacadeService {
 	}
 
 	public List getAll(Class entityClass, List<SearchFilter> filters) {
-		final GenericDao dao = getDao(entityClass);
+		final BaseDao dao = getDao(entityClass);
 		return dao.findAll(Specifications.build(entityClass, filters));
 	}
 
-	private GenericDao getDao(Class entityClass) {
-		GenericDao genericDao = daoMap.get(entityClass);
+	private BaseDao getDao(Class entityClass) {
+		BaseDao genericDao = daoMap.get(entityClass);
 		if (genericDao == null) {
 			throw new IllegalArgumentException("Dao cannot be found by entity class: " + entityClass);
 		}

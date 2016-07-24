@@ -9,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -19,7 +18,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "invcompany")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class InvCompany {
+public class InvCompany extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer InventoryId;
@@ -203,10 +202,5 @@ public class InvCompany {
 
 	public void setReserveQty(Integer reserveQty) {
 		this.reserveQty = reserveQty;
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
 	}
 }
