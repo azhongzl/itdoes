@@ -21,7 +21,7 @@ import com.itdoes.common.jpa.SearchFilter.Operator;
  * @author Jalen Zhong
  */
 public abstract class BaseController {
-	public static final JsonMapper JSON_MAPPER = JsonMapperBuilder.newBuilder().nonEmpty().build();
+	private static final JsonMapper JSON_MAPPER = JsonMapperBuilder.newBuilder().nonEmpty().build();
 
 	protected static final String DEFAULT_PAGE_SIZE = "100";
 
@@ -29,7 +29,7 @@ public abstract class BaseController {
 	private static final char FILTER_SEPARATOR = '_';
 	private static final char SORT_SEPARATOR = '_';
 
-	protected static String toJson(Result result) {
+	public static String toJson(Result result) {
 		return JSON_MAPPER.toJson(result);
 	}
 

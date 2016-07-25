@@ -29,7 +29,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.parseMediaType(MediaTypes.APPLICATION_JSON_UTF_8));
 		final Result result = new Result(HttpStatus.BAD_REQUEST.value(), errors, null);
-		final String jsonResult = BaseController.JSON_MAPPER.toJson(result);
+		final String jsonResult = BaseController.toJson(result);
 		return handleExceptionInternal(e, jsonResult, headers, HttpStatus.BAD_REQUEST, request);
 	}
 
@@ -38,7 +38,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.parseMediaType(MediaTypes.APPLICATION_JSON_UTF_8));
 		final Result result = new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
-		final String jsonResult = BaseController.JSON_MAPPER.toJson(result);
+		final String jsonResult = BaseController.toJson(result);
 		return handleExceptionInternal(e, jsonResult, headers, HttpStatus.INTERNAL_SERVER_ERROR, request);
 	}
 }
