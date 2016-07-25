@@ -236,35 +236,66 @@ function logout() {
 }
 
 function ordercheck() {
-	$("#content").empty();
-	alert("show order list");
-	ajaxget();
+	showorderlist();
 
 }
+
+function showorderlist() {
+	$("#content").empty();
+
+	$.each(orderlist, function(i, n) {
+
+		$("#content").append(
+				"<a href='#' onclick='showorderdetail(" + '"' + n.orderid + '"'
+						+ ")'>" + n.orderid + '&nbsp' + n.orderdate + "</a>");
+		$("#content").append("<hr class='separator' />");
+	})
+
+}
+
+function showorderdetail(order) {
+	$("#content").empty();
+	var companyorderlist = [];
+	$.each(orderlist, function(i, n) {
+		if (n.orderid == order) {
+			$.each(n.itemlist, function(j, obj) {
+				companyorderlist.push(obj);
+			});
+		}
+	});
+	$.each(companyorderlist, function(i, n) {
+		$("#content").append("<p>" + n.item + "&nbsp" + n.itemqty + "</p>");
+		$("#content").append("<hr class='separator' />");
+
+	});
+
+}
+
 function ajaxget() {
 	var test = [];
 	$.ajax({
 		type : "GET",
-		url : "http://localhost:8080/biz/search",
+		url : "http://localhost:8080/biz/facade/search",
 		data : {
-			filter : "166",
-			item : "41311W"
+			ec : "InvCompany",
+			ff_skuNo : 166,
+			ff_companyId : 1,
+			ff_inventoryId : 21782
 		},
 		dataType : "json",
 		success : function(result) {
 			$.each(result.data, function(i, n) {
-				if (n.skuNo == 6109) {
-					test.push(result.data[i]);
-				}
+				test.push(result.data[i]);
+				alert(test.length);
 			});
 			$.each(test, function(i, n) {
 				alert(i + "|||||" + n.onHandQty);
 			});
 
 		},
-		timeout : 7000,
+		timeout : 3000,
 		error : function(xhr) {
-			alert("错误提示： " + xhr.status + " " + xhr.statusText);
+			alert("error： " + xhr.status + " " + xhr.statusText);
 		},
 
 	})

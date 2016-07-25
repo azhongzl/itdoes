@@ -34,11 +34,6 @@
 			item : "601001CH-LED",
 			itemqty : 1,
 			itemprice : 64.88,
-		} , {
-			item_no : " ",
-			item : "98075",
-			itemqty : 1,
-			itemprice : 32.47,
 		}  ]
 	},
 	 {
@@ -59,10 +54,5 @@
 			item : "601001CH-LED",
 			itemqty : 1,
 			itemprice : 64.88,
-		} , {
-			item_no : " ",
-			item : "WS8424-BN",
-			itemqty : 1,
-			itemprice : 32.47,
-		}  ]
+		}   ]
 	}]
