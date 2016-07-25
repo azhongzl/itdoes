@@ -55,7 +55,7 @@ public class FacadeController extends BaseController {
 			@RequestParam(value = "page_sort", required = false) String pageSort, ServletRequest request) {
 		final List<SearchFilter> filters = buildFilters(request);
 		final PageRequest pageRequest = buildPageRequest(pageNo, pageSize, pageSort);
-		final Page<? extends BaseEntity> page = facadeService.getAll(ec, filters, pageRequest);
+		final Page<? extends BaseEntity> page = facadeService.search(ec, filters, pageRequest);
 		final List<? extends BaseEntity> list = page.getContent();
 		return toJson(Result.success(list.toArray(new BaseEntity[list.size()])));
 	}

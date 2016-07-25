@@ -32,14 +32,10 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 
 	private Map<String, EntityDaoPair> pairMap;
 
-	// @Autowired
-	// private InvCompanyDao invCompanyDao;
-
 	private ApplicationContext applicationContext;
 
 	@PostConstruct
 	public void init() {
-		// daoMap.put(InvCompany.class, invCompanyDao);
 		pairMap = Businesses.getPairMap(ENTITY_PACKAGE, FacadeService.class.getClassLoader(), applicationContext);
 	}
 
@@ -47,7 +43,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		return (T) getDao(ec).findOne(id);
 	}
 
-	public <T extends BaseEntity> Page<T> getAll(String ec, List<SearchFilter> filters, PageRequest pageRequest) {
+	public <T extends BaseEntity> Page<T> search(String ec, List<SearchFilter> filters, PageRequest pageRequest) {
 		final EntityDaoPair pair = getPair(ec);
 		return (Page<T>) getDao(pair).findAll(Specifications.build(getEntityClass(pair), filters), pageRequest);
 	}
