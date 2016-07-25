@@ -5,8 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -29,9 +27,8 @@ public class TempInvCompany extends BaseEntity {
 	@Column(name = "comment")
 	private String comment;
 
-	@ManyToOne
-	@JoinColumn(name = "partid")
-	private TempPart part;
+	@Column(name = "partid")
+	private Integer partId;
 
 	public Integer getInvCompanyId() {
 		return invCompanyId;
@@ -49,11 +46,11 @@ public class TempInvCompany extends BaseEntity {
 		this.comment = comment;
 	}
 
-	public TempPart getPart() {
-		return part;
+	public Integer getPartId() {
+		return partId;
 	}
 
-	public void setPart(TempPart part) {
-		this.part = part;
+	public void setPart(Integer partId) {
+		this.partId = partId;
 	}
 }
