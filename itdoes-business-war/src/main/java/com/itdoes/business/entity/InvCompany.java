@@ -7,8 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -27,9 +25,7 @@ public class InvCompany extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer inventoryId;
 
-	@ManyToOne
-	@JoinColumn(name = "skuno")
-	private Part part;
+	private Integer skuNo;
 
 	private Integer companyId;
 
@@ -74,12 +70,12 @@ public class InvCompany extends BaseEntity {
 		this.inventoryId = inventoryId;
 	}
 
-	public Part getPart() {
-		return part;
+	public Integer getSkuNo() {
+		return skuNo;
 	}
 
-	public void setPart(Part part) {
-		this.part = part;
+	public void setSkuNo(Integer skuNo) {
+		this.skuNo = skuNo;
 	}
 
 	public Integer getCompanyId() {

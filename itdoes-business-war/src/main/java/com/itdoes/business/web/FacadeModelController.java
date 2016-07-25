@@ -1,5 +1,6 @@
 package com.itdoes.business.web;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,9 @@ public class FacadeModelController extends BaseController {
 	private FacadeService facadeService;
 
 	@RequestMapping(value = "create", method = RequestMethod.POST)
-	public String create(@RequestParam(value = "ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity) {
+	public String create(@RequestParam(value = "ec") String ec, HttpServletRequest request) {
+		BaseEntity entity = (BaseEntity)request.getAttribute("entity");
+		System.out.println(entity.getClass() + ":" + entity);
 		facadeService.save(ec, entity);
 		return toJson(Result.success(new BaseEntity[] { entity }));
 	}
@@ -43,6 +46,7 @@ public class FacadeModelController extends BaseController {
 		if (id != null) {
 			model.addAttribute("entity", facadeService.get(ec, id));
 		} else {
+			BaseEntity be = facadeService.newInstance(ec);
 			model.addAttribute("entity", facadeService.newInstance(ec));
 		}
 	}
