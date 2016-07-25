@@ -236,11 +236,48 @@ function logout() {
 }
 
 function ordercheck() {
-	$("#content").empty();
-	alert("show order list");
-	ajaxget();
+	showorderlist();
 
 }
+
+function showorderlist() {
+	$("#content").empty();
+
+	$.each(orderlist, function(i, n) {
+  
+		$("#content").append(
+				"<a href='#' onclick='showorderdetail(" +'"'+n.orderid+'"' + ")'>"
+						+ n.orderid +'&nbsp'+n.orderdate + "</a>");
+		$("#content").append("<hr class='separator' />");
+	})
+
+}
+
+function showorderdetail(order) {
+	$("#content").empty();
+	var companyorderlist = [];
+	$.each(orderlist, function(i, n) {
+		if (n.orderid == order) {
+			companyorderlist.push(orderlist[i].itemlist);
+		  alert(companyorderlist);
+		}
+	});
+		$.each(companyorderlist, function(i, n) {	
+			alert(n.length);
+			
+	/*
+	 * $("#content").append( "<p>" + n.item + "&nbsp" + n.itemqty + "</p>");
+	 * $("#content").append("<hr class='separator' />");
+	 */
+			});
+	
+			
+	
+	
+	
+
+}
+
 function ajaxget() {
 	var test = [];
 	$.ajax({
@@ -264,7 +301,7 @@ function ajaxget() {
 		},
 		timeout : 7000,
 		error : function(xhr) {
-			alert("错误提示： " + xhr.status + " " + xhr.statusText);
+			alert("error： " + xhr.status + " " + xhr.statusText);
 		},
 
 	})
