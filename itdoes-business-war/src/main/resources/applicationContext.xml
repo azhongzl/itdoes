@@ -10,5 +10,5 @@
 
 	<!-- optional -->
 	<import resource="cache/applicationContext-ehcache.xml" />
-	<import resource="mail/applicationContext-mail.xml" />
+	<import resource="email/applicationContext-email.xml" />
 </beans>

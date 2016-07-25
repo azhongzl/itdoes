@@ -1,16 +1,15 @@
 package com.itdoes.business.service;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
 
 import com.itdoes.business.entity.EmployeeMaster;
+import com.itdoes.common.business.BaseService;
 
 /**
  * @author Jalen Zhong
  */
-@Component
-@Transactional(readOnly = true)
-public class UserService {
+@Service
+public class UserService extends BaseService {
 	public EmployeeMaster findUser(String username) {
 		// TODO
 		final EmployeeMaster user = new EmployeeMaster();

@@ -1,4 +1,4 @@
-package com.itdoes.business.web;
+package com.itdoes.common.business;
 
 import org.springframework.http.HttpStatus;
 

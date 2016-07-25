@@ -31,7 +31,7 @@ public class PropertiesLoader {
 				is = resource.getInputStream();
 				props.load(is);
 			} catch (IOException e) {
-				throw new RuntimeException("Error in loadng properties from file: " + path, e);
+				throw new IllegalArgumentException("Error in loadng properties from file: " + path, e);
 			} finally {
 				IOUtils.closeQuietly(is);
 			}

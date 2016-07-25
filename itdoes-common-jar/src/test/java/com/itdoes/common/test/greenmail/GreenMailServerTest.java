@@ -12,7 +12,7 @@ import com.itdoes.common.test.spring.SpringTestCase;
 /**
  * @author Jalen Zhong
  */
-@ContextConfiguration(locations = { "/applicationContext-mail.xml" })
+@ContextConfiguration(locations = { "/applicationContext-email.xml" })
 public class GreenMailServerTest extends SpringTestCase {
 	@Autowired
 	private GreenMail greenMail;

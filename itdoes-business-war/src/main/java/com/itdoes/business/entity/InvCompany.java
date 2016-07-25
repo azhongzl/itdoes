@@ -9,9 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import com.itdoes.common.business.BaseEntity;
 
 /**
  * @author Jalen Zhong
@@ -19,12 +20,12 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "invcompany")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class InvCompany {
+public class InvCompany extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer InventoryId;
+	private Integer inventoryId;
 
-	private Integer SkuNo;
+	private Integer skuNo;
 
 	private Integer companyId;
 
@@ -62,19 +63,19 @@ public class InvCompany {
 	private Integer reserveQty;
 
 	public Integer getInventoryId() {
-		return InventoryId;
+		return inventoryId;
 	}
 
 	public void setInventoryId(Integer inventoryId) {
-		InventoryId = inventoryId;
+		this.inventoryId = inventoryId;
 	}
 
 	public Integer getSkuNo() {
-		return SkuNo;
+		return skuNo;
 	}
 
 	public void setSkuNo(Integer skuNo) {
-		SkuNo = skuNo;
+		this.skuNo = skuNo;
 	}
 
 	public Integer getCompanyId() {
@@ -203,10 +204,5 @@ public class InvCompany {
 
 	public void setReserveQty(Integer reserveQty) {
 		this.reserveQty = reserveQty;
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
 	}
 }

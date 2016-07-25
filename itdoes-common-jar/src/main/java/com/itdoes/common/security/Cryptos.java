@@ -118,7 +118,7 @@ public class Cryptos {
 	private static byte[] aes(int mode, byte[] data, byte[] key) {
 		try {
 			final SecretKey secretKey = new SecretKeySpec(key, AES);
-			final Cipher cipher = Cipher.getInstance(AES_CBC);
+			final Cipher cipher = Cipher.getInstance(AES);
 			cipher.init(mode, secretKey);
 			return cipher.doFinal(data);
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException

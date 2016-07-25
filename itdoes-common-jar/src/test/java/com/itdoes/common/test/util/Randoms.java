@@ -10,12 +10,16 @@ import java.util.Random;
 public class Randoms {
 	private static final Random RANDOM = new Random();
 
-	public static long randomLong() {
+	public static long randomLongAll() {
 		return RANDOM.nextLong();
 	}
 
+	public static long randomLongAbs() {
+		return Math.abs(randomLongAll());
+	}
+
 	public static String randomName(String prefix) {
-		return new StringBuilder().append(prefix).append(randomLong()).toString();
+		return new StringBuilder().append(prefix).append(randomLongAbs()).toString();
 	}
 
 	public static <T> T randomOne(List<T> list) {
