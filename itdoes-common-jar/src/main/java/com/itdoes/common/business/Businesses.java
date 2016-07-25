@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.StringUtils;
 
 import com.itdoes.common.util.Reflections;
 
@@ -23,7 +24,7 @@ public class Businesses {
 		final Map<String, EntityDaoPair> pairMap = new HashMap<String, EntityDaoPair>(entityClasses.size());
 		for (Class<?> entityClass : entityClasses) {
 			final String key = entityClass.getSimpleName();
-			final String daoBeanName = key + "Dao";
+			final String daoBeanName = StringUtils.uncapitalize(key) + "Dao";
 			final BaseDao<?, ?> dao = (BaseDao<?, ?>) context.getBean(daoBeanName);
 			if (dao == null) {
 				throw new IllegalArgumentException("Cannot find bean for name: " + daoBeanName);
