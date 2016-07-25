@@ -1,7 +1,5 @@
 package com.itdoes.business.web;
 
-import java.io.Serializable;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +39,7 @@ public class FacadeModelController extends BaseController {
 
 	@ModelAttribute
 	public void getEntity(@RequestParam(value = "ec") String ec,
-			@RequestParam(value = "id", required = false) Serializable id, Model model) {
+			@RequestParam(value = "id", required = false) String id, Model model) {
 		if (id != null) {
 			model.addAttribute("entity", facadeService.get(ec, id));
 		} else {

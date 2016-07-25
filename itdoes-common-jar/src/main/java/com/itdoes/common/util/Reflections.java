@@ -1,6 +1,7 @@
 package com.itdoes.common.util;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -293,6 +294,39 @@ public class Reflections {
 		};
 
 		boolean isOk(Class<?> clazz);
+	}
+
+	public static <A extends Annotation> Class<?> getFieldClassWithAnnotation(Class<?> clazz,
+			Class<A> annotationClass) {
+		final Field[] fields = clazz.getDeclaredFields();
+		if (fields != null && fields.length > 0) {
+			for (Field field : fields) {
+				final A annotation = field.getAnnotation(annotationClass);
+				if (annotation != null) {
+					return field.getType();
+				}
+			}
+		}
+		return null;
+	}
+
+	public static Object convert(String value, Class<?> toClass) {
+		if (toClass.equals(Integer.class)) {
+			return Integer.valueOf(value);
+		} else if (toClass.equals(Long.class)) {
+			return Long.valueOf(value);
+		} else if (toClass.equals(Byte.class)) {
+			return Byte.valueOf(value);
+		} else if (toClass.equals(Short.class)) {
+			return Short.valueOf(value);
+		} else if (toClass.equals(Float.class)) {
+			return Float.valueOf(value);
+		} else if (toClass.equals(Double.class)) {
+			return Double.valueOf(value);
+		} else if (toClass.equals(Boolean.class)) {
+			return Boolean.valueOf(value);
+		}
+		return value;
 	}
 
 	private Reflections() {

@@ -1,6 +1,5 @@
 package com.itdoes.business.web;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.servlet.ServletRequest;
@@ -61,13 +60,13 @@ public class FacadeController extends BaseController {
 	}
 
 	@RequestMapping(value = "get", method = RequestMethod.GET)
-	public String get(@RequestParam(value = "ec") String ec, @RequestParam("id") Serializable id) {
+	public String get(@RequestParam(value = "ec") String ec, @RequestParam("id") String id) {
 		final BaseEntity entity = facadeService.get(ec, id);
 		return toJson(Result.success(new BaseEntity[] { entity }));
 	}
 
 	@RequestMapping(value = "delete")
-	public String delete(@RequestParam(value = "ec") String ec, @RequestParam("id") Serializable id) {
+	public String delete(@RequestParam(value = "ec") String ec, @RequestParam("id") String id) {
 		facadeService.delete(ec, id);
 		return toJson(Result.success(null));
 	}

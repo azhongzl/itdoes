@@ -22,6 +22,7 @@ import com.itdoes.common.business.Businesses.EntityDaoPair;
 import com.itdoes.common.jpa.SearchFilter;
 import com.itdoes.common.jpa.Specifications;
 import com.itdoes.common.util.Exceptions;
+import com.itdoes.common.util.Reflections;
 
 /**
  * @author Jalen Zhong
@@ -39,8 +40,10 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		pairMap = Businesses.getPairMap(ENTITY_PACKAGE, FacadeService.class.getClassLoader(), applicationContext);
 	}
 
-	public <T extends BaseEntity, ID extends Serializable> T get(String ec, ID id) {
-		return (T) getDao(ec).findOne(id);
+	public <T extends BaseEntity> T get(String ec, String idString) {
+		final EntityDaoPair pair = getPair(ec);
+		final Serializable id = convertId(idString, getIdClass(pair));
+		return (T) getDao(pair).findOne(id);
 	}
 
 	public <T extends BaseEntity> Page<T> search(String ec, List<SearchFilter> filters, PageRequest pageRequest) {
@@ -54,8 +57,10 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	}
 
 	@Transactional(readOnly = false)
-	public <ID extends Serializable> void delete(String ec, ID id) {
-		getDao(ec).delete(id);
+	public void delete(String ec, String idString) {
+		final EntityDaoPair pair = getPair(ec);
+		final Serializable id = convertId(idString, getIdClass(pair));
+		getDao(pair).delete(id);
 	}
 
 	public <T extends BaseEntity> T newInstance(String ec) {
@@ -79,6 +84,10 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		return (Class<T>) pair.entityClass;
 	}
 
+	private Class<?> getIdClass(EntityDaoPair pair) {
+		return pair.idClass;
+	}
+
 	private <T extends BaseEntity, ID extends Serializable> BaseDao<T, ID> getDao(EntityDaoPair pair) {
 		return (BaseDao<T, ID>) pair.dao;
 	}
@@ -89,6 +98,10 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 			throw new IllegalArgumentException("Entity Class and Dao pair cannot be found by: " + ec);
 		}
 		return pair;
+	}
+
+	private Serializable convertId(String id, Class<?> idClass) {
+		return (Serializable) Reflections.convert(id, idClass);
 	}
 
 	@Override
