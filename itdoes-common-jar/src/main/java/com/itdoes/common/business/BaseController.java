@@ -12,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
+import com.itdoes.common.jackson.JsonMapper;
+import com.itdoes.common.jackson.JsonMapperBuilder;
 import com.itdoes.common.jpa.SearchFilter;
 import com.itdoes.common.jpa.SearchFilter.Operator;
 
@@ -19,6 +21,8 @@ import com.itdoes.common.jpa.SearchFilter.Operator;
  * @author Jalen Zhong
  */
 public abstract class BaseController {
+	public static final JsonMapper JSON_MAPPER = JsonMapperBuilder.newBuilder().nonEmpty().build();
+
 	protected static final String DEFAULT_PAGE_SIZE = "100";
 
 	private static final String FILTER_PREFIX = "ff_";

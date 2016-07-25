@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.itdoes.common.jackson.JsonMapper;
-import com.itdoes.common.jackson.JsonMapperBuilder;
+import com.itdoes.common.business.BaseController;
 import com.itdoes.common.util.Validators;
 import com.itdoes.common.web.MediaTypes;
 
@@ -23,12 +22,10 @@ import com.itdoes.common.web.MediaTypes;
  */
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-	private static final JsonMapper JSON_MAPPER = JsonMapperBuilder.newBuilder().build();
-
 	@ExceptionHandler(value = { ConstraintViolationException.class })
 	public final ResponseEntity<?> handleException(ConstraintViolationException e, WebRequest request) {
 		final Map<String, String> errors = Validators.propertyMessages(e);
-		final String body = JSON_MAPPER.toJson(errors);
+		final String body = BaseController.JSON_MAPPER.toJson(errors);
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.parseMediaType(MediaTypes.TEXT_PLAIN_UTF_8));
 		return handleExceptionInternal(e, body, headers, HttpStatus.BAD_REQUEST, request);
