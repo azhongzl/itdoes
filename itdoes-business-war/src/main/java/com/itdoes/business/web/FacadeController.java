@@ -1,5 +1,6 @@
 package com.itdoes.business.web;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +33,15 @@ public class FacadeController extends BaseController {
 	}
 
 	@RequestMapping(value = "get", method = RequestMethod.GET)
-	public Result get(@RequestParam(value = "ec") String ec, @RequestParam("id") Integer id) {
+	public Result get(@RequestParam(value = "ec") String ec, @RequestParam("id") Serializable id) {
 		final BaseEntity entity = facadeService.get(ec, id);
-		return null;
+		return Result.success(new BaseEntity[] { entity });
 	}
 
 	@RequestMapping(value = "delete")
-	public Result delete(@RequestParam(value = "ec") String ec, @RequestParam("id") Integer id) {
+	public Result delete(@RequestParam(value = "ec") String ec, @RequestParam("id") Serializable id) {
 		facadeService.delete(ec, id);
-		return null;
+		return Result.success(null);
 	}
 
 	private FilterWrapper parseFilter(String filter) {

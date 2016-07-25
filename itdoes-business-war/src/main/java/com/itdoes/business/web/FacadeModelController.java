@@ -1,5 +1,7 @@
 package com.itdoes.business.web;
 
+import java.io.Serializable;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,19 +29,19 @@ public class FacadeModelController extends BaseController {
 	@RequestMapping(value = "create", method = RequestMethod.POST)
 	public Result create(@RequestParam(value = "ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity) {
 		facadeService.save(ec, entity);
-		return null;
+		return Result.success(new BaseEntity[] { entity });
 	}
 
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	public Result update(@RequestParam(value = "ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity) {
 		facadeService.save(ec, entity);
-		return null;
+		return Result.success(new BaseEntity[] { entity });
 	}
 
 	@ModelAttribute
 	public void getEntity(@RequestParam(value = "ec") String ec,
-			@RequestParam(value = "id", defaultValue = "-1") Integer id, Model model) {
-		if (id != -1) {
+			@RequestParam(value = "id", required = false) Serializable id, Model model) {
+		if (id != null) {
 			model.addAttribute("entity", facadeService.get(ec, id));
 		} else {
 			model.addAttribute("entity", facadeService.newInstance(ec));
