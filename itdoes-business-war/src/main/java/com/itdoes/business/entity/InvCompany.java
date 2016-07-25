@@ -23,9 +23,9 @@ import com.itdoes.common.business.BaseEntity;
 public class InvCompany extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer InventoryId;
+	private Integer inventoryId;
 
-	private Integer SkuNo;
+	private Integer skuNo;
 
 	private Integer companyId;
 
@@ -63,19 +63,19 @@ public class InvCompany extends BaseEntity {
 	private Integer reserveQty;
 
 	public Integer getInventoryId() {
-		return InventoryId;
+		return inventoryId;
 	}
 
 	public void setInventoryId(Integer inventoryId) {
-		InventoryId = inventoryId;
+		this.inventoryId = inventoryId;
 	}
 
 	public Integer getSkuNo() {
-		return SkuNo;
+		return skuNo;
 	}
 
 	public void setSkuNo(Integer skuNo) {
-		SkuNo = skuNo;
+		this.skuNo = skuNo;
 	}
 
 	public Integer getCompanyId() {
