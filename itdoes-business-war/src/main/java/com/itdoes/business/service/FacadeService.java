@@ -9,6 +9,8 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,9 +47,9 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		return (T) getDao(ec).findOne(id);
 	}
 
-	public <T extends BaseEntity> List<T> getAll(String ec, List<SearchFilter> filters) {
+	public <T extends BaseEntity> Page<T> getAll(String ec, List<SearchFilter> filters, PageRequest pageRequest) {
 		final EntityDaoPair pair = getPair(ec);
-		return (List<T>) getDao(pair).findAll(Specifications.build(getEntityClass(pair), filters));
+		return (Page<T>) getDao(pair).findAll(Specifications.build(getEntityClass(pair), filters), pageRequest);
 	}
 
 	@Transactional(readOnly = false)
@@ -60,7 +62,6 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		getDao(ec).delete(id);
 	}
 
-	@Transactional()
 	public <T extends BaseEntity> T newInstance(String ec) {
 		final Class<T> entityClass = getEntityClass(ec);
 		try {
