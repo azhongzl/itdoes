@@ -218,7 +218,7 @@ public class Reflections {
 		return clazz;
 	}
 
-	public static List<Class> getClasses(String basePackage, ClassLoader classLoader) {
+	public static List<Class<?>> getClasses(String basePackage, ClassLoader classLoader) {
 		return getClasses(basePackage, ClassFilter.ALL, classLoader);
 	}
 
@@ -226,7 +226,7 @@ public class Reflections {
 	 * @see org.springframework.core.io.support.PathMatchingResourcePatternResolver#getResources(String)
 	 * @see org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider#findCandidateComponents(String)
 	 */
-	public static List<Class> getClasses(String basePackage, ClassFilter classFilter, ClassLoader classLoader) {
+	public static List<Class<?>> getClasses(String basePackage, ClassFilter classFilter, ClassLoader classLoader) {
 		final PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 		final String packageSearchPath = getPackageSearchPath(basePackage);
 		final Resource[] resources;
@@ -237,10 +237,10 @@ public class Reflections {
 					+ " from package search path: " + packageSearchPath, e);
 		}
 
-		final List<Class> classes = Lists.newArrayList();
+		final List<Class<?>> classes = Lists.newArrayList();
 		for (Resource resource : resources) {
 			final String className = getClassName(resource, basePackage);
-			final Class clazz;
+			final Class<?> clazz;
 			try {
 				clazz = classLoader.loadClass(className);
 			} catch (ClassNotFoundException e) {
@@ -259,7 +259,7 @@ public class Reflections {
 		try {
 			uri = resource.getURI().toString();
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException("Error in getURI from Resource", e);
 		}
 
 		final String dotUri = uri.replace(PATH_SEPARATOR, PACKAGE_SEPARATOR);
@@ -270,6 +270,10 @@ public class Reflections {
 		}
 
 		final int lastIndex = dotUri.lastIndexOf(PACKAGE_SEPARATOR);
+		if (lastIndex == -1) {
+			throw new IllegalArgumentException(
+					"getClassName failed, \"" + dotUri + "\".lastIndexOf(\"" + PACKAGE_SEPARATOR + "\") == -1");
+		}
 
 		final String className = dotUri.substring(index, lastIndex);
 		return className;
@@ -283,12 +287,12 @@ public class Reflections {
 	public static interface ClassFilter {
 		ClassFilter ALL = new ClassFilter() {
 			@Override
-			public boolean isOk(Class clazz) {
+			public boolean isOk(Class<?> clazz) {
 				return true;
 			}
 		};
 
-		boolean isOk(Class clazz);
+		boolean isOk(Class<?> clazz);
 	}
 
 	private Reflections() {

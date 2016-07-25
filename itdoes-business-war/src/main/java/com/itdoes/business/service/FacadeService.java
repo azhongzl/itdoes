@@ -1,5 +1,6 @@
 package com.itdoes.business.service;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import com.itdoes.common.business.Businesses;
 import com.itdoes.common.business.Businesses.EntityDaoPair;
 import com.itdoes.common.jpa.SearchFilter;
 import com.itdoes.common.jpa.Specifications;
+import com.itdoes.common.util.Exceptions;
 
 /**
  * @author Jalen Zhong
@@ -36,34 +38,52 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	@PostConstruct
 	public void init() {
 		// daoMap.put(InvCompany.class, invCompanyDao);
-		pairMap = Businesses.getPairMap(ENTITY_PACKAGE, BaseEntity.class, FacadeService.class.getClassLoader(),
-				applicationContext);
+		pairMap = Businesses.getPairMap(ENTITY_PACKAGE, FacadeService.class.getClassLoader(), applicationContext);
 	}
 
-	public Object get(String ec, Integer id) {
-		return getDao(ec).findOne(id);
+	public <T extends BaseEntity, ID extends Serializable> T get(String ec, ID id) {
+		return (T) getDao(ec).findOne(id);
 	}
 
-	public List<? extends BaseEntity> getAll(String ec, List<SearchFilter> filters) {
-		return getDao(ec).findAll(Specifications.build(getEntityClass(ec), filters));
+	public <T extends BaseEntity> List<T> getAll(String ec, List<SearchFilter> filters) {
+		final EntityDaoPair pair = getPair(ec);
+		return (List<T>) getDao(pair).findAll(Specifications.build(getEntityClass(pair), filters));
 	}
 
 	@Transactional(readOnly = false)
-	public void save(String ec, Object entity) {
+	public <T extends BaseEntity> void save(String ec, T entity) {
 		getDao(ec).save(entity);
 	}
 
 	@Transactional(readOnly = false)
-	public void delete(String ec, Integer id) {
+	public <ID extends Serializable> void delete(String ec, ID id) {
 		getDao(ec).delete(id);
 	}
 
-	private BaseDao getDao(String ec) {
-		return getPair(ec).dao;
+	@Transactional()
+	public <T extends BaseEntity> T newInstance(String ec) {
+		final Class<T> entityClass = getEntityClass(ec);
+		try {
+			return entityClass.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw Exceptions.unchecked(e);
+		}
 	}
 
-	private Class getEntityClass(String ec) {
-		return getPair(ec).entityClass;
+	private <T extends BaseEntity> Class<T> getEntityClass(String ec) {
+		return getEntityClass(getPair(ec));
+	}
+
+	private <T extends BaseEntity, ID extends Serializable> BaseDao<T, ID> getDao(String ec) {
+		return getDao(getPair(ec));
+	}
+
+	private <T extends BaseEntity> Class<T> getEntityClass(EntityDaoPair pair) {
+		return (Class<T>) pair.entityClass;
+	}
+
+	private <T extends BaseEntity, ID extends Serializable> BaseDao<T, ID> getDao(EntityDaoPair pair) {
+		return (BaseDao<T, ID>) pair.dao;
 	}
 
 	private EntityDaoPair getPair(String ec) {

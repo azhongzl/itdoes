@@ -6,5 +6,5 @@ import com.itdoes.common.business.BaseDao;
 /**
  * @author Jalen Zhong
  */
-public interface InvCompanyDao extends BaseDao<InvCompany> {
+public interface InvCompanyDao extends BaseDao<InvCompany, Integer> {
 }
