@@ -29,6 +29,10 @@ public abstract class BaseController {
 	private static final char FILTER_SEPARATOR = '_';
 	private static final char SORT_SEPARATOR = '_';
 
+	protected static String toJson(Result result) {
+		return JSON_MAPPER.toJson(result);
+	}
+
 	protected static List<SearchFilter> buildFilters(ServletRequest request) {
 		final List<SearchFilter> filters = Lists.newArrayList();
 

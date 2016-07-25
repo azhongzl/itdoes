@@ -11,10 +11,10 @@ public class Result {
 	}
 
 	private final int status;
-	private final String message;
+	private final Object message;
 	private final Object[] data;
 
-	public Result(int status, String message, Object[] data) {
+	public Result(int status, Object message, Object[] data) {
 		this.status = status;
 		this.message = message;
 		this.data = data;
@@ -24,7 +24,7 @@ public class Result {
 		return status;
 	}
 
-	public String getMessage() {
+	public Object getMessage() {
 		return message;
 	}
 

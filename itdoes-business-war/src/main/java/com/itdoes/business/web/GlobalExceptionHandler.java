@@ -14,6 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.itdoes.common.business.BaseController;
+import com.itdoes.common.business.Result;
 import com.itdoes.common.util.Validators;
 import com.itdoes.common.web.MediaTypes;
 
@@ -25,16 +26,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(value = { ConstraintViolationException.class })
 	public final ResponseEntity<?> handleException(ConstraintViolationException e, WebRequest request) {
 		final Map<String, String> errors = Validators.propertyMessages(e);
-		final String body = BaseController.JSON_MAPPER.toJson(errors);
 		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.parseMediaType(MediaTypes.TEXT_PLAIN_UTF_8));
-		return handleExceptionInternal(e, body, headers, HttpStatus.BAD_REQUEST, request);
+		headers.setContentType(MediaType.parseMediaType(MediaTypes.APPLICATION_JSON_UTF_8));
+		final Result result = new Result(HttpStatus.BAD_REQUEST.value(), errors, null);
+		final String jsonResult = BaseController.JSON_MAPPER.toJson(result);
+		return handleExceptionInternal(e, jsonResult, headers, HttpStatus.BAD_REQUEST, request);
 	}
 
 	@ExceptionHandler(value = { Exception.class })
 	public final ResponseEntity<?> handleException(RuntimeException e, WebRequest request) {
 		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.parseMediaType(MediaTypes.TEXT_PLAIN_UTF_8));
-		return handleExceptionInternal(e, e.getMessage(), headers, HttpStatus.INTERNAL_SERVER_ERROR, request);
+		headers.setContentType(MediaType.parseMediaType(MediaTypes.APPLICATION_JSON_UTF_8));
+		final Result result = new Result(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
+		final String jsonResult = BaseController.JSON_MAPPER.toJson(result);
+		return handleExceptionInternal(e, jsonResult, headers, HttpStatus.INTERNAL_SERVER_ERROR, request);
 	}
 }

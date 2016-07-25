@@ -18,12 +18,13 @@ import com.itdoes.common.business.BaseController;
 import com.itdoes.common.business.BaseEntity;
 import com.itdoes.common.business.Result;
 import com.itdoes.common.jpa.SearchFilter;
+import com.itdoes.common.web.MediaTypes;
 
 /**
  * @author Jalen Zhong
  */
 @RestController
-@RequestMapping(value = "/facade")
+@RequestMapping(value = "/facade", produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class FacadeController extends BaseController {
 	@Autowired
 	private FacadeService facadeService;
@@ -48,7 +49,7 @@ public class FacadeController extends BaseController {
 	 * </pre>
 	 */
 	@RequestMapping(value = "search", method = RequestMethod.GET)
-	public Result search(@RequestParam(value = "ec") String ec,
+	public String search(@RequestParam(value = "ec") String ec,
 			@RequestParam(value = "page_no", defaultValue = "1") int pageNo,
 			@RequestParam(value = "page_size", defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
 			@RequestParam(value = "page_sort", required = false) String pageSort, ServletRequest request) {
@@ -56,18 +57,18 @@ public class FacadeController extends BaseController {
 		final PageRequest pageRequest = buildPageRequest(pageNo, pageSize, pageSort);
 		final Page<? extends BaseEntity> page = facadeService.getAll(ec, filters, pageRequest);
 		final List<? extends BaseEntity> list = page.getContent();
-		return Result.success(list.toArray(new BaseEntity[list.size()]));
+		return toJson(Result.success(list.toArray(new BaseEntity[list.size()])));
 	}
 
 	@RequestMapping(value = "get", method = RequestMethod.GET)
-	public Result get(@RequestParam(value = "ec") String ec, @RequestParam("id") Serializable id) {
+	public String get(@RequestParam(value = "ec") String ec, @RequestParam("id") Serializable id) {
 		final BaseEntity entity = facadeService.get(ec, id);
-		return Result.success(new BaseEntity[] { entity });
+		return toJson(Result.success(new BaseEntity[] { entity }));
 	}
 
 	@RequestMapping(value = "delete")
-	public Result delete(@RequestParam(value = "ec") String ec, @RequestParam("id") Serializable id) {
+	public String delete(@RequestParam(value = "ec") String ec, @RequestParam("id") Serializable id) {
 		facadeService.delete(ec, id);
-		return Result.success(null);
+		return toJson(Result.success(null));
 	}
 }

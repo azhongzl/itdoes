@@ -16,26 +16,27 @@ import com.itdoes.business.service.FacadeService;
 import com.itdoes.common.business.BaseController;
 import com.itdoes.common.business.BaseEntity;
 import com.itdoes.common.business.Result;
+import com.itdoes.common.web.MediaTypes;
 
 /**
  * @author Jalen Zhong
  */
 @RestController
-@RequestMapping(value = "/facade")
+@RequestMapping(value = "/facade", produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class FacadeModelController extends BaseController {
 	@Autowired
 	private FacadeService facadeService;
 
 	@RequestMapping(value = "create", method = RequestMethod.POST)
-	public Result create(@RequestParam(value = "ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity) {
+	public String create(@RequestParam(value = "ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity) {
 		facadeService.save(ec, entity);
-		return Result.success(new BaseEntity[] { entity });
+		return toJson(Result.success(new BaseEntity[] { entity }));
 	}
 
 	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public Result update(@RequestParam(value = "ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity) {
+	public String update(@RequestParam(value = "ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity) {
 		facadeService.save(ec, entity);
-		return Result.success(new BaseEntity[] { entity });
+		return toJson(Result.success(new BaseEntity[] { entity }));
 	}
 
 	@ModelAttribute
