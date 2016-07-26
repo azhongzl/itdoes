@@ -3,15 +3,23 @@ package com.itdoes.business.entity;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.itdoes.common.business.BaseEntity;
 
 /**
  * @author Jalen Zhong
  */
+@Entity
+@Table(name = "orderdetail")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class OrderDetail extends BaseEntity {
 	@Id
 	@Column(name = "orderdetailid")
