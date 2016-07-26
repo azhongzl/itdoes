@@ -50,7 +50,7 @@ public class TempInvCompany extends BaseEntity {
 		return partId;
 	}
 
-	public void setPart(Integer partId) {
+	public void setPartId(Integer partId) {
 		this.partId = partId;
 	}
 }

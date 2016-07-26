@@ -2,20 +2,54 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Hi Jalen, this is a temp html</title>
 </head>
 <body>
 	<form action="/biz/facade/create" method="post">
-		<input type="text" name="ec" value="TempPart" />
-		<input type="text" name="barCode" value="barCode" />
-        <input type="text" name="registerDate" value="0" />
-        <input type="submit" value="Submit Part">
+		<table>
+			<tr>
+				<td>ec:</td>
+				<td><input type="text" name="ec" value="TempPart" /></td>
+			</tr>
+			<tr>
+				<td>partId:</td>
+				<td><input type="text" name="partId" value="" /></td>
+			</tr>
+			<tr>
+				<td>barCode:</td>
+				<td><input type="text" name="barCode" value="barCode" /></td>
+			</tr>
+			<tr>
+				<td>registerDate</td>
+				<td><input type="text" name="registerDate" value="0" /></td>
+			</tr>
+			<tr>
+				<td><input type="submit" value="Submit Part"></td>
+			</tr>
+		</table>
 	</form>
 	<form action="/biz/facade/create" method="post">
-		<input type="text" name="ec" value="TempInvCompany" />
-		<input type="text" name="comment" value="comment" />
-        <input type="text" name="partId" value="" />
-        <input type="submit" value="Submit InvCompany">
+		<table>
+			<tr>
+				<td>ec:</td>
+				<td><input type="text" name="ec" value="TempInvCompany" /></td>
+			</tr>
+			<tr>
+				<td>invCompanyId:</td>
+				<td><input type="text" name="invCompanyId" value="" /></td>
+			</tr>
+			<tr>
+				<td>comment:</td>
+				<td><input type="text" name="comment" value="comment" /></td>
+			</tr>
+			<tr>
+				<td>partId:</td>
+				<td><input type="text" name="partId" value="3" /></td>
+			</tr>
+			<tr>
+				<td><input type="submit" value="Submit InvCompany"></td>
+			</tr>
+		</table>
 	</form>
 </body>
 </html>

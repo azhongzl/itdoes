@@ -296,14 +296,13 @@ public class Reflections {
 		boolean isOk(Class<?> clazz);
 	}
 
-	public static <A extends Annotation> Class<?> getFieldClassWithAnnotation(Class<?> clazz,
-			Class<A> annotationClass) {
+	public static <A extends Annotation> Field getFieldWithAnnotation(Class<?> clazz, Class<A> annotationClass) {
 		final Field[] fields = clazz.getDeclaredFields();
 		if (fields != null && fields.length > 0) {
 			for (Field field : fields) {
 				final A annotation = field.getAnnotation(annotationClass);
 				if (annotation != null) {
-					return field.getType();
+					return field;
 				}
 			}
 		}
