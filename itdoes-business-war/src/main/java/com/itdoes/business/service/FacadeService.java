@@ -40,12 +40,14 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 				applicationContext);
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T extends BaseEntity> T get(String ec, String idString) {
 		final EntityPair pair = getEntityPair(ec);
 		final Serializable id = convertId(idString, getIdClass(pair));
 		return (T) getDao(pair).findOne(id);
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T extends BaseEntity> Page<T> search(String ec, List<SearchFilter> filters, PageRequest pageRequest) {
 		final EntityPair pair = getEntityPair(ec);
 		return (Page<T>) getDao(pair).findAll(Specifications.build(getEntityClass(pair), filters), pageRequest);
@@ -72,6 +74,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		return pair;
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T extends BaseEntity> Class<T> getEntityClass(EntityPair pair) {
 		return (Class<T>) pair.entityClass;
 	}
@@ -80,6 +83,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		return pair.idField.getType();
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T extends BaseEntity, ID extends Serializable> BaseDao<T, ID> getDao(EntityPair pair) {
 		return (BaseDao<T, ID>) pair.dao;
 	}
