@@ -1,5 +1,7 @@
 package com.itdoes.common.business;
 
+import java.beans.PropertyEditorSupport;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -10,6 +12,8 @@ import org.apache.commons.lang3.Validate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 
 import com.google.common.collect.Lists;
 import com.itdoes.common.jackson.JsonMapper;
@@ -84,5 +88,25 @@ public abstract class BaseController {
 		}
 
 		return new PageRequest(pageNo - 1, pageSize, sort);
+	}
+
+	@InitBinder
+	public void initBinder(WebDataBinder binder) {
+		binder.registerCustomEditor(Date.class, new PropertyEditorSupport() {
+			@Override
+			public void setAsText(String value) {
+				if (StringUtils.isBlank(value)) {
+					setValue(null);
+				} else {
+					setValue(new Date(Long.valueOf(value)));
+				}
+			}
+
+			@Override
+			public String getAsText() {
+				final Date date = (Date) getValue();
+				return date != null ? String.valueOf(date.getTime()) : "";
+			}
+		});
 	}
 }

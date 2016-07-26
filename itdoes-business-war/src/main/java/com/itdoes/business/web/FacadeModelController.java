@@ -1,17 +1,13 @@
 package com.itdoes.business.web;
 
-import java.beans.PropertyEditorSupport;
-import java.util.Date;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,14 +44,15 @@ public class FacadeModelController extends BaseController {
 	@Autowired
 	private FacadeService facadeService;
 
-	@RequestMapping(value = "create", method = RequestMethod.POST)
+	@RequestMapping(value = "post", method = RequestMethod.POST)
 	public String create(@RequestParam(value = "ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity) {
 		facadeService.save(ec, entity);
 		return toJson(Result.success(new BaseEntity[] { entity }));
 	}
 
-	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public String update(@RequestParam(value = "ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity) {
+	@RequestMapping(value = "put/{id}", method = RequestMethod.POST)
+	public String update(@RequestParam(value = "ec") String ec, @PathVariable("id") String id,
+			@Valid @ModelAttribute("entity") BaseEntity entity) {
 		facadeService.save(ec, entity);
 		return toJson(Result.success(new BaseEntity[] { entity }));
 	}
@@ -74,25 +71,5 @@ public class FacadeModelController extends BaseController {
 		} else {
 			model.addAttribute("entity", facadeService.get(ec, id));
 		}
-	}
-
-	@InitBinder
-	public void initBinder(WebDataBinder binder) {
-		binder.registerCustomEditor(Date.class, new PropertyEditorSupport() {
-			@Override
-			public void setAsText(String value) {
-				if (StringUtils.isBlank(value)) {
-					setValue(null);
-				} else {
-					setValue(new Date(Long.valueOf(value)));
-				}
-			}
-
-			@Override
-			public String getAsText() {
-				final Date date = (Date) getValue();
-				return date != null ? String.valueOf(date.getTime()) : "";
-			}
-		});
 	}
 }
