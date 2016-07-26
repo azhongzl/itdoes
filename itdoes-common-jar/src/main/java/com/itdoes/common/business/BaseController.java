@@ -7,11 +7,11 @@ import javax.servlet.ServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.assertj.core.util.Lists;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
+import com.google.common.collect.Lists;
 import com.itdoes.common.jackson.JsonMapper;
 import com.itdoes.common.jackson.JsonMapperBuilder;
 import com.itdoes.common.jpa.SearchFilter;

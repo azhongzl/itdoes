@@ -38,7 +38,7 @@ public class FreeMarkersTest {
 	public void renderWithErrorTemplate() {
 		Map<String, String> model = Maps.newHashMap();
 		model.put("username", "Jalen");
-		FreeMarkers.render("Hello ${", model);
+		FreeMarkers.render("Hello ${}", model);
 	}
 
 	@Test
