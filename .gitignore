@@ -6,3 +6,6 @@
 
 # Maven 
 target/
+
+# Local
+application.local.properties

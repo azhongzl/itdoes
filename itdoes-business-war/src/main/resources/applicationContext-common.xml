@@ -74,7 +74,7 @@
 
 	<beans profile="development">
 		<context:property-placeholder ignore-resource-not-found="true"
-			location="classpath*:/application.properties, classpath*:/application.development.properties" />
+			location="classpath*:/application.properties, classpath*:/application.development.properties, classpath*:/application.local.properties" />
 
 		<bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
 			<property name="driverClassName" value="${jdbc.driver}" />
@@ -87,7 +87,7 @@
 
 	<beans profile="functionaltest">
 		<context:property-placeholder ignore-resource-not-found="true"
-			location="classpath*:/application.properties, classpath*:/application.functionaltest.properties, classpath*:/application.functionaltest-local.properties" />
+			location="classpath*:/application.properties, classpath*:/application.functionaltest.properties, classpath*:/application.local.properties" />
 
 		<bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
 			<property name="driverClassName" value="${jdbc.driver}" />
@@ -104,7 +104,7 @@
 
 	<beans profile="unittest">
 		<context:property-placeholder ignore-resource-not-found="true"
-			location="classpath*:/application.properties, classpath*:/application.unittest.properties" />
+			location="classpath*:/application.properties, classpath*:/application.unittest.properties, classpath*:/application.local.properties" />
 
 		<bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
 			<property name="driverClass" value="${jdbc.driver}" />
