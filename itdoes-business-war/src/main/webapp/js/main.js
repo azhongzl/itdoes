@@ -11,6 +11,14 @@ function inventory() {
 	$("#item_no").keypress(function(event) {
 		var keycode = (event.keyCode ? event.keyCode : event.which);
 		if (keycode == 13) {
+			var itemname = $("#item_no").val();
+			alert(itemname);
+			var checkkey = {
+				ec : "Part",
+				ff_partNo : itemname,
+			}
+			ajaxget(checkkey);
+
 			inventorydata = [ {
 				item : '41311W',
 				img : "http://kuzcolighting.com/images/41311W-list.jpg",
@@ -70,32 +78,25 @@ function orderentry() {
 	if (itemlist.length > 0) {
 		showitemlist();
 	}
-	$("#item_no")
-			.keypress(
-					function(event) {
-						var keycode = (event.keyCode ? event.keyCode
-								: event.which);
-						if (keycode == 13) {
-							var itemarray = [];
-							itemarray[0] = [ "41311W", 1, 12.34,
-									"<a href='#'onclick='itemdelete(\"41311W\")'>Del</a>" ];
-							itemlist[itemlist.length] = itemarray[0];
-							showitemlist()
+	$("#item_no").keypress(function(event) {
+		var keycode = (event.keyCode ? event.keyCode : event.which);
+		if (keycode == 13) {
+			var itemarray = [];
+			itemarray[0] = [ "41311W", 1, 12.34 ];
+			itemlist[itemlist.length] = itemarray[0];
+			showitemlist()
 
-						}
-					})
-	$("#scanner_btn")
-			.click(
-					function() {
-						var itemarray = [];
-						// var barcoderesult = scanCode();
-						itemarray[0] = [ "41311W", 1, 12.34,
-								"<a href='#'onclick='itemdelete(\"41311W\")'>Del</a>" ];
-						itemlist[itemlist.length] = itemarray[0];
+		}
+	})
+	$("#scanner_btn").click(function() {
+		var itemarray = [];
+		// var barcoderesult = scanCode();
+		itemarray[0] = [ "41311W", 1, 12.34, ];
+		itemlist[itemlist.length] = itemarray[0];
 
-						showitemlist()
+		showitemlist()
 
-					});
+	});
 
 }
 
@@ -163,7 +164,15 @@ function showitemlist() {
 			} else {
 				mytable = mytable + "<td>" + itemlist[k][j] + "</td>";
 				if (j == (itemlist[k].length - 1)) {
-					mytable = mytable + "</tr>";
+					// mytable = mytable+"<td>" + "<a
+					// href='#'onclick='itemdelete(\"41311W\")'>Del</a>" +
+					// "</td>" + "</tr>";
+					var str = (itemlist[k][0])
+
+					mytable = mytable + "<td>"
+							+ "<a href='#'onclick='itemdelete(" + '\"'
+							+ str.toUpperCase() + '\"' + ")'>Del</a>" + "</td>"
+							+ "</tr>";
 				}
 			}
 
@@ -222,7 +231,7 @@ function showmenu() {
 
 function itemcancel() {
 	itemlist = [];
-	orderentry();
+	$("div#itemlistdiv").remove();
 }
 function logout() {
 	$("div.wrap").hide();
@@ -236,8 +245,13 @@ function logout() {
 }
 
 function ordercheck() {
-	showorderlist();
+	// showorderlist();
+	var checkkey = {
+		ec : "Part",
 
+		ff_partNo : "41311W",
+	}
+	ajaxget(checkkey);
 }
 
 function showorderlist() {
@@ -255,43 +269,56 @@ function showorderlist() {
 
 function showorderdetail(order) {
 	$("#content").empty();
+	/*
+	 * var companyorderlist = []; $.each(orderlist, function(i, n) { if
+	 * (n.orderid == order) { $.each(n.orderitemlist, function(j, obj) {
+	 * companyorderlist.push(obj); }); } }); $.each(companyorderlist,
+	 * function(i, n) { $("#content").append("<p>" + n.item + "&nbsp" +
+	 * n.itemqty + "</p>"); $("#content").append("<hr class='separator' />");
+	 * });
+	 * 
+	 */
 	var companyorderlist = [];
 	$.each(orderlist, function(i, n) {
 		if (n.orderid == order) {
-			$.each(n.itemlist, function(j, obj) {
-				companyorderlist.push(obj);
-			});
+			$.each(n.orderitemlist,
+					function(j, obj) {
+						companyorderlist.push([ obj.item, obj.itemqty,
+								obj.itemprice ]);
+
+					});
+			itemlist = companyorderlist
+			showitemlist();
 		}
 	});
-	$.each(companyorderlist, function(i, n) {
-		$("#content").append("<p>" + n.item + "&nbsp" + n.itemqty + "</p>");
-		$("#content").append("<hr class='separator' />");
-
-	});
-
 }
 
-function ajaxget() {
-	var test = [];
+function ajaxget(checkkey) {
+	var checklist = [];
 	$.ajax({
 		type : "GET",
 		url : "http://localhost:8080/biz/facade/search",
-		data : {
-			ec : "InvCompany",
-			ff_skuNo : 166,
-			ff_companyId : 1,
-			ff_inventoryId : 21782
-		},
+		data : checkkey,
 		dataType : "json",
 		success : function(result) {
+			if (result.data == undefined) {
+				alert("no result");
+			} else {
+				$.each(result.data, function(i, n) {
+					checklist.push(result.data[i]);
+					alert(test.length);
+				});
+				$.each(checklist, function(i, n) {
+					alert(i + "|||||" + n.partNo);
+				});
+			}
 			$.each(result.data, function(i, n) {
-				test.push(result.data[i]);
+				checklist.push(result.data[i]);
 				alert(test.length);
 			});
-			$.each(test, function(i, n) {
-				alert(i + "|||||" + n.onHandQty);
+			$.each(checklist, function(i, n) {
+				alert(i + "|||||" + n.partNo);
 			});
-
 		},
 		timeout : 3000,
 		error : function(xhr) {
@@ -299,5 +326,5 @@ function ajaxget() {
 		},
 
 	})
-
+	return checklist;
 }
