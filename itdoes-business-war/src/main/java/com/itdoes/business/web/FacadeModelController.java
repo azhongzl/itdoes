@@ -3,6 +3,7 @@ package com.itdoes.business.web;
 import java.beans.PropertyEditorSupport;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.itdoes.business.service.FacadeService;
 import com.itdoes.common.business.BaseController;
 import com.itdoes.common.business.BaseEntity;
+import com.itdoes.common.business.Businesses.EntityPair;
 import com.itdoes.common.business.Result;
+import com.itdoes.common.util.Exceptions;
 import com.itdoes.common.web.MediaTypes;
 
 /**
@@ -58,12 +61,18 @@ public class FacadeModelController extends BaseController {
 	}
 
 	@ModelAttribute
-	public void getEntity(@RequestParam(value = "ec") String ec,
-			@RequestParam(value = "id", required = false) String id, Model model) {
-		if (id != null) {
-			model.addAttribute("entity", facadeService.get(ec, id));
+	public void getEntity(@RequestParam(value = "ec") String ec, HttpServletRequest request, Model model) {
+		final EntityPair pair = facadeService.getEntityPair(ec);
+		final String id = request.getParameter(pair.idField.getName());
+		if (StringUtils.isBlank(id)) {
+			try {
+				final Object entity = pair.entityClass.newInstance();
+				model.addAttribute("entity", entity);
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw Exceptions.unchecked(e);
+			}
 		} else {
-			model.addAttribute("entity", facadeService.newInstance(ec));
+			model.addAttribute("entity", facadeService.get(ec, id));
 		}
 	}
 

@@ -18,10 +18,9 @@ import com.itdoes.common.business.BaseDao;
 import com.itdoes.common.business.BaseEntity;
 import com.itdoes.common.business.BaseService;
 import com.itdoes.common.business.Businesses;
-import com.itdoes.common.business.Businesses.EntityDaoPair;
+import com.itdoes.common.business.Businesses.EntityPair;
 import com.itdoes.common.jpa.SearchFilter;
 import com.itdoes.common.jpa.Specifications;
-import com.itdoes.common.util.Exceptions;
 import com.itdoes.common.util.Reflections;
 
 /**
@@ -31,73 +30,58 @@ import com.itdoes.common.util.Reflections;
 public class FacadeService extends BaseService implements ApplicationContextAware {
 	private static final String ENTITY_PACKAGE = "com.itdoes.business.entity";
 
-	private Map<String, EntityDaoPair> pairMap;
+	private Map<String, EntityPair> entityPairs;
 
 	private ApplicationContext applicationContext;
 
 	@PostConstruct
 	public void init() {
-		pairMap = Businesses.getPairMap(ENTITY_PACKAGE, FacadeService.class.getClassLoader(), applicationContext);
+		entityPairs = Businesses.getEntityPairs(ENTITY_PACKAGE, FacadeService.class.getClassLoader(),
+				applicationContext);
 	}
 
 	public <T extends BaseEntity> T get(String ec, String idString) {
-		final EntityDaoPair pair = getPair(ec);
+		final EntityPair pair = getEntityPair(ec);
 		final Serializable id = convertId(idString, getIdClass(pair));
 		return (T) getDao(pair).findOne(id);
 	}
 
 	public <T extends BaseEntity> Page<T> search(String ec, List<SearchFilter> filters, PageRequest pageRequest) {
-		final EntityDaoPair pair = getPair(ec);
+		final EntityPair pair = getEntityPair(ec);
 		return (Page<T>) getDao(pair).findAll(Specifications.build(getEntityClass(pair), filters), pageRequest);
 	}
 
 	@Transactional(readOnly = false)
 	public <T extends BaseEntity> void save(String ec, T entity) {
-		getDao(ec).save(entity);
+		final EntityPair pair = getEntityPair(ec);
+		getDao(pair).save(entity);
 	}
 
 	@Transactional(readOnly = false)
 	public void delete(String ec, String idString) {
-		final EntityDaoPair pair = getPair(ec);
+		final EntityPair pair = getEntityPair(ec);
 		final Serializable id = convertId(idString, getIdClass(pair));
 		getDao(pair).delete(id);
 	}
 
-	public <T extends BaseEntity> T newInstance(String ec) {
-		final Class<T> entityClass = getEntityClass(ec);
-		try {
-			return entityClass.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw Exceptions.unchecked(e);
+	public EntityPair getEntityPair(String ec) {
+		final EntityPair pair = entityPairs.get(ec);
+		if (pair == null) {
+			throw new IllegalArgumentException("Cannot find EntityPair for \"" + ec + "\" in FacadeService");
 		}
+		return pair;
 	}
 
-	private <T extends BaseEntity> Class<T> getEntityClass(String ec) {
-		return getEntityClass(getPair(ec));
-	}
-
-	private <T extends BaseEntity, ID extends Serializable> BaseDao<T, ID> getDao(String ec) {
-		return getDao(getPair(ec));
-	}
-
-	private <T extends BaseEntity> Class<T> getEntityClass(EntityDaoPair pair) {
+	private <T extends BaseEntity> Class<T> getEntityClass(EntityPair pair) {
 		return (Class<T>) pair.entityClass;
 	}
 
-	private Class<?> getIdClass(EntityDaoPair pair) {
-		return pair.idClass;
+	private Class<?> getIdClass(EntityPair pair) {
+		return pair.idField.getType();
 	}
 
-	private <T extends BaseEntity, ID extends Serializable> BaseDao<T, ID> getDao(EntityDaoPair pair) {
+	private <T extends BaseEntity, ID extends Serializable> BaseDao<T, ID> getDao(EntityPair pair) {
 		return (BaseDao<T, ID>) pair.dao;
-	}
-
-	private EntityDaoPair getPair(String ec) {
-		final EntityDaoPair pair = pairMap.get(ec);
-		if (pair == null) {
-			throw new IllegalArgumentException("Entity Class and Dao pair cannot be found by: " + ec);
-		}
-		return pair;
 	}
 
 	private Serializable convertId(String id, Class<?> idClass) {

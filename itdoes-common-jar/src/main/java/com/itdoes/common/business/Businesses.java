@@ -1,5 +1,6 @@
 package com.itdoes.common.business;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ import com.itdoes.common.util.Reflections;
  * @author Jalen Zhong
  */
 public class Businesses {
-	public static Map<String, EntityDaoPair> getPairMap(String entityPackage, ClassLoader classLoader,
+	public static Map<String, EntityPair> getEntityPairs(String entityPackage, ClassLoader classLoader,
 			ApplicationContext context) {
 		final List<Class<?>> entityClasses = Reflections.getClasses(entityPackage, new Reflections.ClassFilter() {
 			@Override
@@ -23,12 +24,12 @@ public class Businesses {
 				return BaseEntity.class.isAssignableFrom(clazz);
 			}
 		}, classLoader);
-		final Map<String, EntityDaoPair> pairMap = new HashMap<String, EntityDaoPair>(entityClasses.size());
+		final Map<String, EntityPair> pairs = new HashMap<String, EntityPair>(entityClasses.size());
 		for (Class<?> entityClass : entityClasses) {
 			final String key = entityClass.getSimpleName();
 
-			final Class<?> idClass = Reflections.getFieldClassWithAnnotation(entityClass, Id.class);
-			if (idClass == null) {
+			final Field idField = Reflections.getFieldWithAnnotation(entityClass, Id.class);
+			if (idField == null) {
 				throw new IllegalArgumentException("Cannot find @Id annotation for class: " + key);
 			}
 
@@ -37,19 +38,19 @@ public class Businesses {
 			if (dao == null) {
 				throw new IllegalArgumentException("Cannot find bean for name: " + daoBeanName);
 			}
-			pairMap.put(key, new EntityDaoPair(entityClass, idClass, dao));
+			pairs.put(key, new EntityPair(entityClass, idField, dao));
 		}
-		return pairMap;
+		return pairs;
 	}
 
-	public static class EntityDaoPair {
+	public static class EntityPair {
 		public Class<?> entityClass;
-		public Class<?> idClass;
+		public Field idField;
 		public BaseDao<?, ?> dao;
 
-		public EntityDaoPair(Class<?> entityClass, Class<?> idClass, BaseDao<?, ?> dao) {
+		public EntityPair(Class<?> entityClass, Field idField, BaseDao<?, ?> dao) {
 			this.entityClass = entityClass;
-			this.idClass = idClass;
+			this.idField = idField;
 			this.dao = dao;
 		}
 	}
