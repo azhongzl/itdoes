@@ -8,47 +8,95 @@ function inventory() {
 		showinventory();
 	}
 
-	$("#item_no").keypress(function(event) {
-		var keycode = (event.keyCode ? event.keyCode : event.which);
-		if (keycode == 13) {
-			inventorydata = [ {
-				item : '41311W',
-				img : "http://kuzcolighting.com/images/41311W-list.jpg",
-				fields : [ {
-					inventoryid : "SRY",
-					onhandqty : 59,
-					onorderqty : 432
-				}, {
-					inventoryid : "LLC",
-					onhandqty : 159,
-					onorderqty : 132
-				} ]
-			} ];
+	$("#item_no").keypress(
+			function(event) {
+				var keycode = (event.keyCode ? event.keyCode : event.which);
+				if (keycode == 13) {
+					var itemname = $("#item_no").val();
+					var checkkey = {
+						ec : "Part",
+						ff_partNo : itemname.toUpperCase(),
+					}
+					var checkresult1 = ajaxsearch(checkkey);
 
-			showinventory();
+					checkkey = {
+						ec : "InvCompany",
+						ff_skuNo : checkresult1[0].skuNo,
+						ff_invType : "I",
+					}
+					var checkresult2 = ajaxsearch(checkkey);
+					$.each(checkresult2, function(i, n) {
+						if (n.onHandQty == undefined) {
+							checkresult2[i].onHandQty = 0;
+						}
+						if (n.onOrderQty == undefined) {
+							checkresult2[i].onOrderQty = 0;
+						}
+					});
+					inventorydata = [ {
+						item : checkresult1[0].partNo,
+						img : "http://kuzcolighting.com/images/"
+								+ checkresult1[0].partNo + "-list.jpg",
+						fields : [ {
+							inventoryid : checkresult2[0].companyId,
+							onhandqty : checkresult2[0].onHandQty,
+							onorderqty : checkresult2[0].onOrderQty
+						}, {
+							inventoryid : checkresult2[1].companyId,
+							onhandqty : checkresult2[1].onHandQty,
+							onorderqty : checkresult2[1].onOrderQty
+						} ]
+					} ];
 
-		}
-	})
+					showinventory();
 
-	$("#scanner_btn").click(function() {
-		// var barcoderesult = scanCode();
-		inventorydata = [ {
-			item : '41311W',
-			img : "http://kuzcolighting.com/images/41311W-list.jpg",
-			fields : [ {
-				inventoryid : "SRY",
-				onhandqty : 59,
-				onorderqty : 432
-			}, {
-				inventoryid : "LLC",
-				onhandqty : 159,
-				onorderqty : 132
-			} ]
-		} ];
+				}
+			})
 
-		showinventory();
-		$("#item_no").val(inventorydata[0].item);
-	});
+	$("#scanner_btn").click(
+			function() {
+				// var barcoderesult = scanCode();
+				var barcoderesult = "10691759026402"
+				barcoderesult = barcoderesult.substr(
+						barcoderesult.indexOf("6"), 11)
+				var checkkey = {
+					ec : "Part",
+					ff_barCode : barcoderesult,
+				}
+				var checkresult1 = ajaxsearch(checkkey);
+
+				checkkey = {
+					ec : "InvCompany",
+					ff_skuNo : checkresult1[0].skuNo,
+					ff_invType : "I",
+				}
+				var checkresult2 = ajaxsearch(checkkey);
+				$.each(checkresult2, function(i, n) {
+					if (n.onHandQty == undefined) {
+						checkresult2[i].onHandQty = 0;
+					}
+					if (n.onOrderQty == undefined) {
+						checkresult2[i].onOrderQty = 0;
+					}
+				});
+				inventorydata = [ {
+					item : checkresult1[0].partNo,
+					img : "http://kuzcolighting.com/images/"
+							+ checkresult1[0].partNo + "-list.jpg",
+					fields : [ {
+						inventoryid : checkresult2[0].companyId,
+						onhandqty : checkresult2[0].onHandQty,
+						onorderqty : checkresult2[0].onOrderQty
+					}, {
+						inventoryid : checkresult2[1].companyId,
+						onhandqty : checkresult2[1].onHandQty,
+						onorderqty : checkresult2[1].onOrderQty
+					} ]
+				} ];
+
+				showinventory();
+				$("#item_no").val(inventorydata[0].item);
+			});
 }
 
 function scanCode() {
@@ -70,32 +118,25 @@ function orderentry() {
 	if (itemlist.length > 0) {
 		showitemlist();
 	}
-	$("#item_no")
-			.keypress(
-					function(event) {
-						var keycode = (event.keyCode ? event.keyCode
-								: event.which);
-						if (keycode == 13) {
-							var itemarray = [];
-							itemarray[0] = [ "41311W", 1, 12.34,
-									"<a href='#'onclick='itemdelete(\"41311W\")'>Del</a>" ];
-							itemlist[itemlist.length] = itemarray[0];
-							showitemlist()
+	$("#item_no").keypress(function(event) {
+		var keycode = (event.keyCode ? event.keyCode : event.which);
+		if (keycode == 13) {
+			var itemarray = [];
+			itemarray[0] = [ "41311W", 1, 12.34 ];
+			itemlist[itemlist.length] = itemarray[0];
+			showitemlist()
 
-						}
-					})
-	$("#scanner_btn")
-			.click(
-					function() {
-						var itemarray = [];
-						// var barcoderesult = scanCode();
-						itemarray[0] = [ "41311W", 1, 12.34,
-								"<a href='#'onclick='itemdelete(\"41311W\")'>Del</a>" ];
-						itemlist[itemlist.length] = itemarray[0];
+		}
+	})
+	$("#scanner_btn").click(function() {
+		var itemarray = [];
+		// var barcoderesult = scanCode();
+		itemarray[0] = [ "41311W", 1, 12.34, ];
+		itemlist[itemlist.length] = itemarray[0];
 
-						showitemlist()
+		showitemlist()
 
-					});
+	});
 
 }
 
@@ -163,7 +204,15 @@ function showitemlist() {
 			} else {
 				mytable = mytable + "<td>" + itemlist[k][j] + "</td>";
 				if (j == (itemlist[k].length - 1)) {
-					mytable = mytable + "</tr>";
+					// mytable = mytable+"<td>" + "<a
+					// href='#'onclick='itemdelete(\"41311W\")'>Del</a>" +
+					// "</td>" + "</tr>";
+					var str = (itemlist[k][0])
+
+					mytable = mytable + "<td>"
+							+ "<a href='#'onclick='itemdelete(" + '\"'
+							+ str.toUpperCase() + '\"' + ")'>Del</a>" + "</td>"
+							+ "</tr>";
 				}
 			}
 
@@ -192,8 +241,8 @@ function showinventory() {
 
 	$("#content").append(
 			'<p><img src=' + '"' + inventorydata[0].img + '"' + ' height="80"'
-					+ ' width="80"' + '/></p>' + '<p>' + '<b>Iitem:</b>'
-					+ inventorydata[0].item + '</p>' + '<p><b>Warehouse:</b>'
+					+ ' width="80"' + '/></p>' + '<p><b>Iitem:</b>' + inventorydata[0].item + '</p>'
+					+  '<p><b>Warehouse:</b>'
 					+ inventorydata[0].fields[0].inventoryid
 					+ '&nbsp&nbsp<b>Onhand:</b>'
 					+ inventorydata[0].fields[0].onhandqty
@@ -222,7 +271,7 @@ function showmenu() {
 
 function itemcancel() {
 	itemlist = [];
-	orderentry();
+	$("div#itemlistdiv").remove();
 }
 function logout() {
 	$("div.wrap").hide();
@@ -255,49 +304,56 @@ function showorderlist() {
 
 function showorderdetail(order) {
 	$("#content").empty();
+	/*
+	 * var companyorderlist = []; $.each(orderlist, function(i, n) { if
+	 * (n.orderid == order) { $.each(n.orderitemlist, function(j, obj) {
+	 * companyorderlist.push(obj); }); } }); $.each(companyorderlist,
+	 * function(i, n) { $("#content").append("<p>" + n.item + "&nbsp" +
+	 * n.itemqty + "</p>"); $("#content").append("<hr class='separator' />");
+	 * });
+	 * 
+	 */
 	var companyorderlist = [];
 	$.each(orderlist, function(i, n) {
 		if (n.orderid == order) {
-			$.each(n.itemlist, function(j, obj) {
-				companyorderlist.push(obj);
-			});
+			$.each(n.orderitemlist,
+					function(j, obj) {
+						companyorderlist.push([ obj.item, obj.itemqty,
+								obj.itemprice ]);
+
+					});
+			itemlist = companyorderlist
+			showitemlist();
 		}
 	});
-	$.each(companyorderlist, function(i, n) {
-		$("#content").append("<p>" + n.item + "&nbsp" + n.itemqty + "</p>");
-		$("#content").append("<hr class='separator' />");
-
-	});
-
 }
 
-function ajaxget() {
-	var test = [];
+function ajaxsearch(checkkey) {
+	var checklist = [];
 	$.ajax({
 		type : "GET",
 		url : "http://localhost:8080/biz/facade/search",
-		data : {
-			ec : "InvCompany",
-			ff_skuNo : 166,
-			ff_companyId : 1,
-			ff_inventoryId : 21782
-		},
+		data : checkkey,
 		dataType : "json",
+		async : false,
 		success : function(result) {
-			$.each(result.data, function(i, n) {
-				test.push(result.data[i]);
-				alert(test.length);
-			});
-			$.each(test, function(i, n) {
-				alert(i + "|||||" + n.onHandQty);
-			});
+			if (result.data == undefined) {
+				alert("no result");
+			} else {
+				$.each(result.data, function(i, n) {
+					checklist.push(result.data[i]);
 
+				});
+
+			}
 		},
 		timeout : 3000,
 		error : function(xhr) {
 			alert("error： " + xhr.status + " " + xhr.statusText);
 		},
 
-	})
+	});
+
+	return (checklist);
 
 }

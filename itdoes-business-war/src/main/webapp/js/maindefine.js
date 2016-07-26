@@ -19,7 +19,7 @@
 	var orderlist = [ {
 		orderid : '58963-0',
 		orderdate : "06/19/2016",
-		itemlist : [ {
+		orderitemlist : [ {
 			item_no : " ",
 			item : "52022BN",
 			itemqty : 59,
@@ -39,7 +39,7 @@
 	 {
 		orderid : '66666-0',
 		orderdate : "07/20/2016",
-		itemlist : [ {
+		orderitemlist : [ {
 			item_no : " ",
 			item : "FM9711-SV",
 			itemqty : 10,
