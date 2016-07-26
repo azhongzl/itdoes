@@ -7,6 +7,7 @@ import javax.servlet.ServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,14 +60,14 @@ public class FacadeController extends BaseController {
 		return toJson(Result.success(list.toArray(new BaseEntity[list.size()])));
 	}
 
-	@RequestMapping(value = "get", method = RequestMethod.GET)
-	public String get(@RequestParam(value = "ec") String ec, @RequestParam("id") String id) {
+	@RequestMapping(value = "get/{id}", method = RequestMethod.GET)
+	public String get(@RequestParam(value = "ec") String ec, @PathVariable("id") String id) {
 		final BaseEntity entity = facadeService.get(ec, id);
 		return toJson(Result.success(new BaseEntity[] { entity }));
 	}
 
-	@RequestMapping(value = "delete")
-	public String delete(@RequestParam(value = "ec") String ec, @RequestParam("id") String id) {
+	@RequestMapping(value = "delete/{id}")
+	public String delete(@RequestParam(value = "ec") String ec, @PathVariable("id") String id) {
 		facadeService.delete(ec, id);
 		return toJson(Result.success(null));
 	}
