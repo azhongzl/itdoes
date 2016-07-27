@@ -22,8 +22,9 @@
 			<value>
 				/login = authc
 				/logout = logout
-				/account/** = user
-				/api/secure/** = authcBasic
+				/facade/TempInvCompany/** = user
+				/facade/TempPart/** = roles[system]
+				/** = anon
 			</value>
 		</property>
 	</bean>
