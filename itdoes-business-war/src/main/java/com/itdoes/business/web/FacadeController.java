@@ -48,7 +48,7 @@ public class FacadeController extends BaseController {
 	 *   page_sort=username_a
 	 * </pre>
 	 */
-	@RequestMapping(value = "{ec}/search", method = RequestMethod.GET)
+	@RequestMapping(value = "/{ec}/search", method = RequestMethod.GET)
 	public String search(@PathVariable("ec") String ec, @RequestParam(value = "page_no", defaultValue = "1") int pageNo,
 			@RequestParam(value = "page_size", defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
 			@RequestParam(value = "page_sort", required = false) String pageSort, ServletRequest request) {
@@ -59,13 +59,13 @@ public class FacadeController extends BaseController {
 		return toJson(Result.success(list.toArray(new BaseEntity[list.size()])));
 	}
 
-	@RequestMapping(value = "{ec}/get/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{ec}/get/{id}", method = RequestMethod.GET)
 	public String get(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		final BaseEntity entity = facadeService.get(ec, id);
 		return toJson(Result.success(new BaseEntity[] { entity }));
 	}
 
-	@RequestMapping(value = "{ec}/delete/{id}")
+	@RequestMapping(value = "/{ec}/delete/{id}")
 	public String delete(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		facadeService.delete(ec, id);
 		return toJson(Result.success(null));

@@ -8,11 +8,7 @@
 	<form action="/biz/facade/TempPart/post" method="post">
 		<table>
 			<tr>
-				<td>TempPart</td>
-			</tr>
-			<tr>
-				<td>partId:</td>
-				<td><input type="text" name="partId" value="" /></td>
+				<td>TempPart POST</td>
 			</tr>
 			<tr>
 				<td>barCode:</td>
@@ -28,10 +24,10 @@
 		</table>
 	</form>
 
-	<form action="/biz/facade/TempPart/put/" method="post">
+	<form action="/biz/facade/TempPart/put" method="post">
 		<table>
 			<tr>
-				<td>TempPart</td>
+				<td>TempPart PUT</td>
 			</tr>
 			<tr>
 				<td>partId:</td>
@@ -47,19 +43,17 @@
 			</tr>
 			<tr>
 				<td><input type="submit" value="Submit Part"
-					onclick="this.form.action='/biz/facade/TempPart/put/'+ document.getElementById('partIdPut').value"></td>
+					onclick="this.form.action=this.form.action + '/' + document.getElementById('partIdPut').value"></td>
 			</tr>
 		</table>
 	</form>
 
+	<br />
+
 	<form action="/biz/facade/TempInvCompany/post" method="post">
 		<table>
 			<tr>
-				<td>TempInvCompany</td>
-			</tr>
-			<tr>
-				<td>invCompanyId:</td>
-				<td><input type="text" name="invCompanyId" value="" /></td>
+				<td>TempInvCompany POST</td>
 			</tr>
 			<tr>
 				<td>comment:</td>
@@ -75,10 +69,10 @@
 		</table>
 	</form>
 
-	<form action="/biz/facade/TempInvCompany/put/1" method="post">
+	<form action="/biz/facade/TempInvCompany/put" method="post">
 		<table>
 			<tr>
-				<td>TempInvCompany</td>
+				<td>TempInvCompany PUT</td>
 			</tr>
 			<tr>
 				<td>invCompanyId:</td>
@@ -95,7 +89,7 @@
 			</tr>
 			<tr>
 				<td><input type="submit" value="Submit InvCompany"
-					onclick="this.form.action='/biz/facade/TempInvCompany/put/'+ document.getElementById('invCompanyIdPut').value"></td>
+					onclick="this.form.action=this.form.action + '/' + document.getElementById('invCompanyIdPut').value"></td>
 			</tr>
 		</table>
 	</form>
