@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
@@ -24,18 +25,24 @@ public class JettyServer {
 
 	private final int port;
 	private final String contextPath;
+	private final String[] taglibJarNames;
 	private final String url;
 
 	private final Server server;
 
-	public JettyServer(int port, String contextPath) {
+	public JettyServer(int port, String contextPath, String[] taglibJarNames) {
 		this.port = port;
 		this.contextPath = contextPath;
+		this.taglibJarNames = taglibJarNames;
 		this.url = new StringBuilder().append("http://localhost:").append(port).append(contextPath).toString();
 
 		this.server = new Server();
 
 		init();
+	}
+
+	public JettyServer(int port, String contextPath) {
+		this(port, contextPath, null);
 	}
 
 	public void start() {
@@ -46,17 +53,6 @@ public class JettyServer {
 		} catch (Throwable t) {
 			throw Exceptions.unchecked(t);
 		}
-	}
-
-	public void setTaglibJarNames(String... jarNames) {
-		final List<String> jarNamePatterns = Lists.newArrayList(".*/jstl-[^/]*\\.jar$", ".*/.*taglibs[^/]*\\.jar$");
-		for (String jarName : jarNames) {
-			jarNamePatterns.add(".*/" + jarName + "-[^/]*\\.jar$");
-		}
-
-		final WebAppContext context = (WebAppContext) server.getHandler();
-		context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
-				StringUtils.join(jarNamePatterns, '|'));
 	}
 
 	public void reload() {
@@ -98,8 +94,25 @@ public class JettyServer {
 		connector.setReuseAddress(false);
 		server.addConnector(connector);
 
-		final WebAppContext context = new WebAppContext(DEFAULT_WEBAPP_PATH, contextPath);
-		context.setDefaultsDescriptor(WEBDEFAULT_PATH);
-		server.setHandler(context);
+		final Configuration.ClassList classlist = Configuration.ClassList.setServerDefault(server);
+		classlist.addBefore("org.eclipse.jetty.webapp.JettyWebXmlConfiguration",
+				"org.eclipse.jetty.annotations.AnnotationConfiguration");
+
+		final WebAppContext webapp = new WebAppContext(DEFAULT_WEBAPP_PATH, contextPath);
+		webapp.setDefaultsDescriptor(WEBDEFAULT_PATH);
+		setTaglibJarNames(webapp);
+		server.setHandler(webapp);
+	}
+
+	private void setTaglibJarNames(WebAppContext context) {
+		final List<String> jarNamePatterns = Lists.newArrayList(".*/jstl-[^/]*\\.jar$", ".*/.*taglibs[^/]*\\.jar$");
+		if (taglibJarNames != null) {
+			for (String jarName : taglibJarNames) {
+				jarNamePatterns.add(".*/" + jarName + "-[^/]*\\.jar$");
+			}
+		}
+
+		context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
+				StringUtils.join(jarNamePatterns, '|'));
 	}
 }
