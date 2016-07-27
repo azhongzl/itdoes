@@ -21,20 +21,6 @@ import com.itdoes.common.web.MediaTypes;
 
 /**
  * @author Jalen Zhong
- * 
- *         <pre>
- *         Two ways for Date<->String convert:
- *         1) Add in Entity field
- *         &#64;DateTimeFormat(pattern = "yyyy-MM-dd") 
- *          
- *         2) Add in Controller
- *         &#64;InitBinder
- *         public void initBinder(WebDataBinder binder) {
- *         	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
- *         	dateFormat.setLenient(false);
- *         	binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
- *         }
- *         </pre>
  */
 @RestController
 @RequestMapping(value = "/facade", produces = MediaTypes.APPLICATION_JSON_UTF_8)
