@@ -1,6 +1,5 @@
 package com.itdoes.business.web;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class FacadePostController extends BaseController {
 	}
 
 	@ModelAttribute
-	public void getEntity(@PathVariable(value = "ec") String ec, HttpServletRequest request, Model model) {
+	public void getEntity(@PathVariable(value = "ec") String ec, Model model) {
 		final EntityPair pair = facadeService.getEntityPair(ec);
 		try {
 			final Object entity = pair.entityClass.newInstance();

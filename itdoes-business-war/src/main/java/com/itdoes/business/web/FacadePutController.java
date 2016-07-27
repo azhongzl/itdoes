@@ -26,8 +26,7 @@ public class FacadePutController extends BaseController {
 	private FacadeService facadeService;
 
 	@RequestMapping(value = "/{ec}/put/{id}", method = RequestMethod.POST)
-	public String put(@PathVariable("ec") String ec, @PathVariable("id") String id,
-			@Valid @ModelAttribute("entity") BaseEntity entity) {
+	public String put(@PathVariable("ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity) {
 		facadeService.save(ec, entity);
 		return toJson(Result.success(new BaseEntity[] { entity }));
 	}
