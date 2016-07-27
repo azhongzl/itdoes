@@ -113,30 +113,68 @@ function loginWindowClose() {
 }
 
 function orderentry() {
-
+	var testkey = 0
+	var itemarray = []
 	showscanbtn();
 	if (itemlist.length > 0) {
 		showitemlist();
 	}
-	$("#item_no").keypress(function(event) {
-		var keycode = (event.keyCode ? event.keyCode : event.which);
-		if (keycode == 13) {
-			var itemarray = [];
-			itemarray[0] = [ "41311W", 1, 12.34 ];
-			itemlist[itemlist.length] = itemarray[0];
-			showitemlist()
+	$("#item_no").keypress(
+			function(event) {
+				testkey = 0;
+				var keycode = (event.keyCode ? event.keyCode : event.which);
+				if (keycode == 13) {
+					var itemname = $("#item_no").val();
+					var checkkey = {
+						ec : "Part",
+						ff_partNo : itemname.toUpperCase(),
+					}
+					var checkresult1 = ajaxsearch(checkkey);
+					itemarray = [];
+					itemarray[0] = [ checkresult1[0].skuNo,
+							checkresult1[0].partNo, 1,
+							checkresult1[0].unitPrice ];
+					$.each(itemlist, function(i, n) {
+						if (n[0] == checkresult1[0].skuNo) {
+							itemlist[i][2] = itemlist[i][2] + 1;
+							testkey = 1;
+						}
+					})
+					if (testkey == 0) {
+						itemlist[itemlist.length] = itemarray[0];
+					}
+					showitemlist()
+				}
+			})
+	$("#scanner_btn").click(
+			function() {
+				testkey = 0;
+				itemarray = [];
+				// var barcoderesult = scanCode();
+				var barcoderesult = "10691759026402"
+				barcoderesult = barcoderesult.substr(
+						barcoderesult.indexOf("6"), 11)
+				var checkkey = {
+					ec : "Part",
+					ff_barCode : barcoderesult,
+				}
+				var checkresult1 = ajaxsearch(checkkey);
+				var itemarray = [];
+				itemarray[0] = [ checkresult1[0].skuNo, checkresult1[0].partNo,
+						1, checkresult1[0].unitPrice ];
+				$.each(itemlist, function(i, n) {
+					if (n[0] == checkresult1[0].skuNo) {
+						itemlist[i][2] = itemlist[i][2] + 1;
+						testkey = 1;
+					}
+				})
+				if (testkey == 0) {
+					itemlist[itemlist.length] = itemarray[0];
+				}
 
-		}
-	})
-	$("#scanner_btn").click(function() {
-		var itemarray = [];
-		// var barcoderesult = scanCode();
-		itemarray[0] = [ "41311W", 1, 12.34, ];
-		itemlist[itemlist.length] = itemarray[0];
+				showitemlist()
 
-		showitemlist()
-
-	});
+			});
 
 }
 
@@ -194,34 +232,27 @@ function showitemlist() {
 	}
 	for (var k = 0; k < itemlist.length; k++) {
 		mytable = mytable + "<tr>";
-		for (var j = 0; j < itemlist[k].length; j++) {
-			if (j == 1) {
+		for (var j = 1; j < itemlist[k].length; j++) {
+			if (j == 2) {
 				mytable = mytable + "<td><input class='itemchange' value="
 						+ itemlist[k][j] + ">" + "</input></td>";
-				if (j == (itemlist[k].length - 1)) {
-					mytable = mytable + "</tr>";
-				}
+
 			} else {
 				mytable = mytable + "<td>" + itemlist[k][j] + "</td>";
 				if (j == (itemlist[k].length - 1)) {
-					// mytable = mytable+"<td>" + "<a
-					// href='#'onclick='itemdelete(\"41311W\")'>Del</a>" +
-					// "</td>" + "</tr>";
-					var str = (itemlist[k][0])
-
+					var str = (itemlist[k][1])
 					mytable = mytable + "<td>"
 							+ "<a href='#'onclick='itemdelete(" + '\"'
 							+ str.toUpperCase() + '\"' + ")'>Del</a>" + "</td>"
 							+ "</tr>";
 				}
 			}
-
 		}
 	}
 	mytable = mytable + "</table>";
 
 	mytable = mytable
-			+ "<button  class='menubutton white' onclick='#'>Submit</button>";
+			+ "<button  class='menubutton white' onclick='ordersave()'>Submit</button>";
 	mytable = mytable
 			+ "<button  class='menubutton white' onclick='itemcancel()'>Cancel</button></div>";
 	$("div#content").append(mytable);
@@ -230,10 +261,11 @@ function showitemlist() {
 		var row = $(this).parent().index();
 		var col = $(this).index();
 		var allinput = $("table.orderlist input");
-		itemlist[row - 1][col] = allinput[row - 1].value;
+		itemlist[row - 1][col+1] = allinput[row - 1].value;
 	});
 
 }
+
 function showinventory() {
 	if ($("#content p")) {
 		$("#content p").remove();
@@ -241,8 +273,8 @@ function showinventory() {
 
 	$("#content").append(
 			'<p><img src=' + '"' + inventorydata[0].img + '"' + ' height="80"'
-					+ ' width="80"' + '/></p>' + '<p><b>Iitem:</b>' + inventorydata[0].item + '</p>'
-					+  '<p><b>Warehouse:</b>'
+					+ ' width="80"' + '/></p>' + '<p><b>Iitem:</b>'
+					+ inventorydata[0].item + '</p>' + '<p><b>Warehouse:</b>'
 					+ inventorydata[0].fields[0].inventoryid
 					+ '&nbsp&nbsp<b>Onhand:</b>'
 					+ inventorydata[0].fields[0].onhandqty
@@ -273,6 +305,7 @@ function itemcancel() {
 	itemlist = [];
 	$("div#itemlistdiv").remove();
 }
+
 function logout() {
 	$("div.wrap").hide();
 	itemlist = [];
@@ -304,15 +337,7 @@ function showorderlist() {
 
 function showorderdetail(order) {
 	$("#content").empty();
-	/*
-	 * var companyorderlist = []; $.each(orderlist, function(i, n) { if
-	 * (n.orderid == order) { $.each(n.orderitemlist, function(j, obj) {
-	 * companyorderlist.push(obj); }); } }); $.each(companyorderlist,
-	 * function(i, n) { $("#content").append("<p>" + n.item + "&nbsp" +
-	 * n.itemqty + "</p>"); $("#content").append("<hr class='separator' />");
-	 * });
-	 * 
-	 */
+
 	var companyorderlist = [];
 	$.each(orderlist, function(i, n) {
 		if (n.orderid == order) {
@@ -342,10 +367,51 @@ function ajaxsearch(checkkey) {
 			} else {
 				$.each(result.data, function(i, n) {
 					checklist.push(result.data[i]);
-
 				});
-
 			}
+		},
+		timeout : 3000,
+		error : function(xhr) {
+			alert("error： " + xhr.status + " " + xhr.statusText);
+		},
+	});
+	return (checklist);
+}
+
+function ordersave() {
+	var orderno = prompt("Please enter OrderNo:");
+	var checkkey = {
+		ec : "OrderHeader",
+		ff_orderNo : orderno,
+		ff_companyId : 221,
+		ff_entryDate : 1450376920000,
+		ff_ntryId : 56,
+	}
+	ajaxcreate(checkkey);
+	$.each(itemlist, function(i, n) {
+		var checkkey = {
+			ec : "OrderDetail",
+			ff_orderNo : orderno,
+			ff_skuNo : n[0],
+			ff_partNO : n[1],
+			ff_orderQty : n[2],
+		}
+		ajaxcreate(checkkey);
+	});
+}
+
+function ajaxcreate(savedata) {
+	var checklist = [];
+	$.ajax({
+		type : "POST",
+		url : "http://localhost:8080/biz/facade/create",
+		data : savedata,
+		dataType : "json",
+		async : false,
+		success : function() {
+
+			alert("OK");
+
 		},
 		timeout : 3000,
 		error : function(xhr) {
@@ -353,7 +419,5 @@ function ajaxsearch(checkkey) {
 		},
 
 	});
-
-	return (checklist);
 
 }
