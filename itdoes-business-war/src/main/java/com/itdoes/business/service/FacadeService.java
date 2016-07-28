@@ -1,12 +1,15 @@
 package com.itdoes.business.service;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -41,17 +44,25 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 				applicationContext);
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T extends BaseEntity> T get(String ec, String idString) {
+	public BaseEntity get(String ec, String idString) {
 		final EntityPair pair = getEntityPair(ec);
-		final Serializable id = convertId(idString, getIdClass(pair));
-		return (T) getDao(pair).findOne(id);
+		final Serializable id = convertId(idString, getIdField(pair));
+		final BaseEntity entity = getDao(pair).findOne(id);
+		if (hasSecureColumns(pair)) {
+			check(ec, entity, OperatorMode.GET);
+		}
+		return entity;
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T extends BaseEntity> Page<T> search(String ec, List<SearchFilter> filters, PageRequest pageRequest) {
 		final EntityPair pair = getEntityPair(ec);
-		return (Page<T>) getDao(pair).findAll(Specifications.build(getEntityClass(pair), filters), pageRequest);
+		final Page<T> pages = (Page<T>) getDao(pair).findAll(Specifications.build(getEntityClass(pair), filters),
+				pageRequest);
+		if (hasSecureColumns(pair)) {
+			check(ec, pages.getContent(), OperatorMode.GET);
+		}
+		return pages;
 	}
 
 	public long count(String ec, List<SearchFilter> filters) {
@@ -68,7 +79,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	@Transactional(readOnly = false)
 	public void delete(String ec, String idString) {
 		final EntityPair pair = getEntityPair(ec);
-		final Serializable id = convertId(idString, getIdClass(pair));
+		final Serializable id = convertId(idString, getIdField(pair));
 		getDao(pair).delete(id);
 	}
 
@@ -89,8 +100,8 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		return (Class<T>) pair.entityClass;
 	}
 
-	private Class<?> getIdClass(EntityPair pair) {
-		return pair.idField.getType();
+	private Field getIdField(EntityPair pair) {
+		return pair.idField;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -98,8 +109,51 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		return (BaseDao<T, ID>) pair.dao;
 	}
 
-	private Serializable convertId(String id, Class<?> idClass) {
-		return (Serializable) Reflections.convert(id, idClass);
+	private Serializable convertId(String id, Field idField) {
+		return (Serializable) Reflections.convert(id, idField.getType());
+	}
+
+	public static enum OperatorMode {
+		GET, POST, PUT
+	}
+
+	private boolean hasSecureColumns(EntityPair pair) {
+		return !pair.secureProps.isEmpty();
+	}
+
+	private <T extends BaseEntity> void check(String ec, List<T> entities, OperatorMode mode) {
+		for (T entity : entities) {
+			check(ec, entity, mode);
+		}
+	}
+
+	private void check(String ec, BaseEntity entity, OperatorMode mode) {
+		final EntityPair pair = getEntityPair(ec);
+		final List<String> props = pair.secureProps;
+		final Subject subject = SecurityUtils.getSubject();
+		for (String prop : props) {
+			switch (mode) {
+			case GET:
+				if (subject.isPermitted(prop + Businesses.PROP_S + Businesses.PROP_READ)) {
+					Reflections.invokeSet(entity, prop, null);
+				}
+				break;
+			case POST:
+				if (subject.isPermitted(prop + Businesses.PROP_S + Businesses.PROP_WRITE)) {
+					Reflections.invokeSet(entity, prop, null);
+				}
+				break;
+			case PUT:
+				if (subject.isPermitted(prop + Businesses.PROP_S + Businesses.PROP_WRITE)) {
+					final BaseEntity dbEntity = getDao(pair)
+							.findOne((Serializable) Reflections.invokeGet(entity, getIdField(pair).getName()));
+					Reflections.invokeSet(entity, prop, Reflections.invokeGet(dbEntity, prop));
+				}
+				break;
+			default:
+				throw new IllegalArgumentException("Illegal mode provided: " + mode);
+			}
+		}
 	}
 
 	@Override
