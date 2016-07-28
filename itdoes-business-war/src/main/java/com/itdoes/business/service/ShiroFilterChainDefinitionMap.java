@@ -14,7 +14,7 @@ import com.itdoes.common.shiro.AbstractShiroFilterChainDefinitionMap;
 public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefinitionMap {
 	private static final String PERMS_PATTERN = "perms[\"{0}\"]";
 	private static final char PERM_SEPARATOR = ':';
-	private static final String PERM_ANY = "/**";
+	private static final String URL_ANY = "/**";
 
 	private FacadeService facadeService;
 
@@ -36,7 +36,7 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 	private void addDynamicDefinition(Map<String, String> dynamicDefinitions, String entityClassSimpleName,
 			String command) {
 		dynamicDefinitions.put(
-				FacadeController.FACADE_URL_PREFIX + "/" + entityClassSimpleName + "/" + command + PERM_ANY,
+				FacadeController.FACADE_URL_PREFIX + "/" + entityClassSimpleName + "/" + command + URL_ANY,
 				MessageFormat.format(PERMS_PATTERN, entityClassSimpleName + PERM_SEPARATOR + command));
 	}
 
