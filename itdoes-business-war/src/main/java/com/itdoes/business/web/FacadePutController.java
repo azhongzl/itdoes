@@ -20,12 +20,12 @@ import com.itdoes.common.web.MediaTypes;
  * @author Jalen Zhong
  */
 @RestController
-@RequestMapping(value = "/facade", produces = MediaTypes.APPLICATION_JSON_UTF_8)
+@RequestMapping(value = FacadeController.FACADE_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class FacadePutController extends BaseController {
 	@Autowired
 	private FacadeService facadeService;
 
-	@RequestMapping(value = "/{ec}/put/{id}", method = RequestMethod.POST)
+	@RequestMapping(value = "/{ec}/" + FacadeController.FACADE_URL_PUT + "/{id}", method = RequestMethod.POST)
 	public String put(@PathVariable("ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity) {
 		facadeService.save(ec, entity);
 		return toJson(Result.success(new BaseEntity[] { entity }));

@@ -3,6 +3,7 @@ package com.itdoes.business.service;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -77,6 +78,10 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 			throw new IllegalArgumentException("Cannot find EntityPair for \"" + ec + "\" in FacadeService");
 		}
 		return pair;
+	}
+
+	public Set<String> getEntityClassSimpleNames() {
+		return entityPairs.keySet();
 	}
 
 	@SuppressWarnings("unchecked")
