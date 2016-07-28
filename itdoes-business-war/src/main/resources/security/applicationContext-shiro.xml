@@ -20,7 +20,6 @@
 			<value>
 				/login = authc
 				/logout = logout
-				/** = anon
 			</value>
 		</property>
 	</bean>

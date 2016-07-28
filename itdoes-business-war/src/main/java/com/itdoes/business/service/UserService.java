@@ -2,6 +2,9 @@ package com.itdoes.business.service;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
@@ -14,6 +17,18 @@ import com.itdoes.common.util.Codecs;
  */
 @Service
 public class UserService extends BaseService {
+	@Autowired
+	FacadeService facadeService;
+
+	@PostConstruct
+	public void initRoles() {
+		for (String ec : facadeService.getEntityClassSimpleNames()) {
+			ROLE_SYSTEM.getPermissionList().add(ec);
+		}
+
+		ROLE_USER.getPermissionList().add("TempInvCompany");
+	}
+
 	public TempUser findUser(String username) {
 		if (username.equals(JALEN.getUsername())) {
 			return JALEN;
@@ -26,15 +41,8 @@ public class UserService extends BaseService {
 		return Lists.newArrayList(JALEN, USER);
 	}
 
-	private static final TempRole ROLE_SYSTEM = new TempRole();
-	private static final TempRole ROLE_USER = new TempRole();
-	static {
-		ROLE_SYSTEM.setName("system");
-		ROLE_SYSTEM.getPermissionList().add("TempPart:*,TempInvCompany:*");
-
-		ROLE_USER.setName("user");
-		ROLE_USER.getPermissionList().add("TempInvCompany:*");
-	}
+	private static final TempRole ROLE_SYSTEM = new TempRole("system");
+	private static final TempRole ROLE_USER = new TempRole("user");
 
 	private static final TempUser JALEN = new TempUser();
 	private static final TempUser USER = new TempUser();
@@ -43,13 +51,12 @@ public class UserService extends BaseService {
 		JALEN.setPlainPassword("jalen");
 		JALEN.setStatus("A");
 		JALEN.getRoleList().add(ROLE_SYSTEM);
+		encryptUser(JALEN);
 
 		USER.setUsername("user");
 		USER.setPlainPassword("user");
 		USER.setStatus("A");
 		USER.getRoleList().add(ROLE_USER);
-
-		encryptUser(JALEN);
 		encryptUser(USER);
 	}
 

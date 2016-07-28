@@ -11,7 +11,7 @@ import org.springframework.beans.factory.FactoryBean;
 /**
  * @author Jalen Zhong
  */
-public abstract class AbstractShiroFilterChainDefinitionMap implements FactoryBean<Ini.Section> {
+public abstract class AbstractShiroFilterChainDefinitionMap implements FactoryBean<Section> {
 	private String staticDefinitions;
 
 	@Override
@@ -19,7 +19,7 @@ public abstract class AbstractShiroFilterChainDefinitionMap implements FactoryBe
 		final Ini ini = new Ini();
 		ini.load(staticDefinitions);
 		// did they explicitly state a 'urls' section? Not necessary, but just in case:
-		Ini.Section section = ini.getSection(IniFilterChainResolverFactory.URLS);
+		Section section = ini.getSection(IniFilterChainResolverFactory.URLS);
 		if (CollectionUtils.isEmpty(section)) {
 			// no urls section. Since this _is_ a urls chain definition property, just assume the default section
 			// contains only the definitions:
@@ -36,7 +36,7 @@ public abstract class AbstractShiroFilterChainDefinitionMap implements FactoryBe
 
 	@Override
 	public Class<?> getObjectType() {
-		return Ini.Section.class;
+		return Section.class;
 	}
 
 	@Override
