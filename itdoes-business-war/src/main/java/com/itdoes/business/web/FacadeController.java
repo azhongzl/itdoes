@@ -50,21 +50,26 @@ import com.itdoes.common.web.MediaTypes;
  *         page_sort=username_a, "a" = ASC, "d" = DESC
  *         </ul>
  *         <tr style="background-color: rgb(238, 238, 255);">
+ *         <td><code>Count</code>
+ *         <td>/facade/(Entity_Class)/count
+ *         <td>GET</a>
+ *         <td>The same as "Filter" parameter of "Search" operation, but without "Page" parameter
+ *         <tr>
  *         <td><code>Get</code>
  *         <td>/facade/(Entity_Class)/get/(id)
  *         <td>GET</a>
  *         <td>
- *         <tr>
+ *         <tr style="background-color: rgb(238, 238, 255);">
  *         <td><code>Delete</code>
  *         <td>/facade/(Entity_Class)/delete/(id)
  *         <td>GET or POST
  *         <td>
- *         <tr style="background-color: rgb(238, 238, 255);">
+ *         <tr>
  *         <td><code>Post</code>
  *         <td>/facade/(Entity_Class)/post
  *         <td>POST
  *         <td>
- *         <tr>
+ *         <tr style="background-color: rgb(238, 238, 255);">
  *         <td><code>Put</code>
  *         <td>/facade/(Entity_Class)/put/(id)
  *         <td>POST
@@ -87,6 +92,13 @@ public class FacadeController extends BaseController {
 		final Page<? extends BaseEntity> page = facadeService.search(ec, filters, pageRequest);
 		final List<? extends BaseEntity> list = page.getContent();
 		return toJson(Result.success(list.toArray(new BaseEntity[list.size()])));
+	}
+
+	@RequestMapping(value = "/{ec}/count", method = RequestMethod.GET)
+	public String count(@PathVariable("ec") String ec, ServletRequest request) {
+		final List<SearchFilter> filters = buildFilters(request);
+		final long count = facadeService.count(ec, filters);
+		return toJson(Result.success(new Long[] { count }));
 	}
 
 	@RequestMapping(value = "/{ec}/get/{id}", method = RequestMethod.GET)

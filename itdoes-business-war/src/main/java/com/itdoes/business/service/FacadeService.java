@@ -53,6 +53,11 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		return (Page<T>) getDao(pair).findAll(Specifications.build(getEntityClass(pair), filters), pageRequest);
 	}
 
+	public long count(String ec, List<SearchFilter> filters) {
+		final EntityPair pair = getEntityPair(ec);
+		return getDao(pair).count(Specifications.build(getEntityClass(pair), filters));
+	}
+
 	@Transactional(readOnly = false)
 	public <T extends BaseEntity> void save(String ec, T entity) {
 		final EntityPair pair = getEntityPair(ec);
