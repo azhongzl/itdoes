@@ -43,6 +43,29 @@ public class Collections3Test {
 		assertThat(result).isEqualTo("<li>aa</li><li>bb</li>");
 	}
 
+	@Test
+	public void getFirstLast() {
+		List<String> list = Lists.newArrayList("a", "b", "c");
+		assertThat(Collections3.isEmpty(list)).isFalse();
+		assertThat(Collections3.getFirst(list)).isEqualTo(list.get(0));
+		assertThat(Collections3.getLast(list)).isEqualTo(list.get(list.size() - 1));
+	}
+
+	@Test
+	public void listsOperation() {
+		List<String> listA = Lists.newArrayList("a", "b", "c");
+		List<String> listB = Lists.newArrayList("a", "b");
+
+		List<String> result = Collections3.union(listA, listB);
+		assertThat(result).containsSequence("a", "b", "c", "a", "b");
+
+		result = Collections3.subtract(listA, listB);
+		assertThat(result).containsOnly("c");
+
+		result = Collections3.intersection(listA, listB);
+		assertThat(result).containsOnly("a", "b");
+	}
+
 	public static class TestBean {
 		private int id;
 
