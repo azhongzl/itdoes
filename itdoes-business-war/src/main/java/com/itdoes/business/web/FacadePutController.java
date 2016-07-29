@@ -3,7 +3,6 @@ package com.itdoes.business.web;
 import javax.servlet.ServletRequest;
 import javax.validation.Valid;
 
-import org.apache.shiro.subject.Subject;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,11 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.itdoes.common.business.BaseEntity;
-import com.itdoes.common.business.Businesses;
 import com.itdoes.common.business.Businesses.EntityPair;
 import com.itdoes.common.business.Result;
 import com.itdoes.common.dozer.BeanMapper;
-import com.itdoes.common.util.Reflections;
 import com.itdoes.common.web.MediaTypes;
 
 /**
@@ -28,12 +25,8 @@ public class FacadePutController extends FacadeBaseController {
 	@RequestMapping(value = "/{ec}/" + FacadeMainController.FACADE_URL_PUT + "/{id}", method = RequestMethod.POST)
 	public String put(@PathVariable("ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity,
 			ServletRequest request) {
-		final EntityPair pair = facadeService.getEntityPair(ec);
-		if (hasSecureColumns(pair)) {
-			handleSecureColumns(pair, entity, (BaseEntity) request.getAttribute("oldEntity"));
-		}
-
-		facadeService.put(ec, entity);
+		final BaseEntity oldEntity = (BaseEntity) request.getAttribute("oldEntity");
+		facadeService.put(ec, entity, oldEntity);
 		return toJson(Result.success(new BaseEntity[] { entity }));
 	}
 
@@ -47,13 +40,6 @@ public class FacadePutController extends FacadeBaseController {
 		if (hasSecureColumns(pair)) {
 			final BaseEntity oldEntity = (BaseEntity) BeanMapper.map(entity, pair.entityClass);
 			request.setAttribute("oldEntity", oldEntity);
-		}
-	}
-
-	protected void handleSecureColumn(EntityPair pair, BaseEntity entity, BaseEntity oldEntity, Subject subject,
-			String tableName, String secureFieldName) {
-		if (!subject.isPermitted(Businesses.getWritePermission(tableName, secureFieldName))) {
-			Reflections.invokeSet(entity, secureFieldName, Reflections.invokeGet(oldEntity, secureFieldName));
 		}
 	}
 }

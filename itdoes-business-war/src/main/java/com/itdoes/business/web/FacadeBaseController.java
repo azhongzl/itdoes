@@ -1,14 +1,9 @@
 package com.itdoes.business.web;
 
-import java.lang.reflect.Field;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itdoes.business.service.FacadeService;
 import com.itdoes.common.business.BaseController;
-import com.itdoes.common.business.BaseEntity;
 import com.itdoes.common.business.Businesses.EntityPair;
 
 /**
@@ -83,17 +78,4 @@ public abstract class FacadeBaseController extends BaseController {
 	protected boolean hasSecureColumns(EntityPair pair) {
 		return !pair.secureFields.isEmpty();
 	}
-
-	protected void handleSecureColumns(EntityPair pair, BaseEntity entity, BaseEntity oldEntity) {
-		final Subject subject = SecurityUtils.getSubject();
-
-		final String tableName = pair.entityClass.getSimpleName();
-		for (Field secureField : pair.secureFields) {
-			final String secureFieldName = secureField.getName();
-			handleSecureColumn(pair, entity, oldEntity, subject, tableName, secureFieldName);
-		}
-	}
-
-	protected abstract void handleSecureColumn(EntityPair pair, BaseEntity entity, BaseEntity oldEntity,
-			Subject subject, String tableName, String secureFieldName);
 }

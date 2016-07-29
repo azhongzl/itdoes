@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.servlet.ServletRequest;
 
-import org.apache.shiro.subject.Subject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,11 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.itdoes.common.business.BaseEntity;
-import com.itdoes.common.business.Businesses;
-import com.itdoes.common.business.Businesses.EntityPair;
 import com.itdoes.common.business.Result;
 import com.itdoes.common.jpa.SearchFilter;
-import com.itdoes.common.util.Reflections;
 import com.itdoes.common.web.MediaTypes;
 
 /**
@@ -35,14 +31,6 @@ public class FacadeMainController extends FacadeBaseController {
 		final PageRequest pageRequest = buildPageRequest(pageNo, pageSize, pageSort);
 		final Page<? extends BaseEntity> page = facadeService.search(ec, filters, pageRequest);
 		final List<? extends BaseEntity> list = page.getContent();
-
-		final EntityPair pair = facadeService.getEntityPair(ec);
-		if (hasSecureColumns(pair)) {
-			for (BaseEntity entity : list) {
-				handleSecureColumns(pair, entity, null);
-			}
-		}
-
 		return toJson(Result.success(list.toArray(new BaseEntity[list.size()])));
 	}
 
@@ -56,12 +44,6 @@ public class FacadeMainController extends FacadeBaseController {
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_GET + "/{id}", method = RequestMethod.GET)
 	public String get(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		final BaseEntity entity = facadeService.get(ec, id);
-
-		final EntityPair pair = facadeService.getEntityPair(ec);
-		if (hasSecureColumns(pair)) {
-			handleSecureColumns(pair, entity, null);
-		}
-
 		return toJson(Result.success(new BaseEntity[] { entity }));
 	}
 
@@ -69,12 +51,5 @@ public class FacadeMainController extends FacadeBaseController {
 	public String delete(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		facadeService.delete(ec, id);
 		return toJson(Result.success(null));
-	}
-
-	protected void handleSecureColumn(EntityPair pair, BaseEntity entity, BaseEntity oldEntity, Subject subject,
-			String tableName, String secureFieldName) {
-		if (!subject.isPermitted(Businesses.getReadPermission(tableName, secureFieldName))) {
-			Reflections.invokeSet(entity, secureFieldName, null);
-		}
 	}
 }
