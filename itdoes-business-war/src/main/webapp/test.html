@@ -1,52 +1,40 @@
 
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta charset="utf-8" />
+
+<title>KUZCOLIGHTING</title>
+<link rel="stylesheet" type="text/css" href="css/style.css">
 <script type="text/javascript" src="js/jquery.min.js"></script>
-	<script type="text/javascript">
-	$(document).ready(function(){
-		 $("input").change(function(){
-			  alert("The text has been changed."); 
-				alert($(this).val());
-				  
-			  });
-		   });
 
+<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript" src="js/maindefine.js"></script>
+<script type="text/javascript">
+function aaaa(){
+test();
+	
+/*	var url2 = "http://localhost:8080/biz/facade/" + "OrderHeader"
+	+ "/delete/";
+			var test=$("#testa").val();
+			url2=url2+test;
+            alert(url2);
+			ajaxdelete(url2);
+*/
+$.each(itemlist,function(i,n){
+	$.each(n,function(j,m){
+	alert(m);
 
+	});
+});
+}
 
 </script>
 </head>
 
 <body>
-	<input type="text" name="a1" value="123"></input>
-	<input type="text" name="a2" value="123"></input>
-	<input type="text" name="a3" value="123"></input>
-	<input type="text" name="a4" value="123"></input>
-	<input type="text" name="a5" value="123"></input>
-
+	<input id="testa" type="text" name="a1" value=" "></input>
+	<input type="button" name="a2" onclick="aaaa()" value=" try "></input>
 
 </body>
 </html>
-{"status":200,"data":[
-{"skuNo":132,"partNo":"41311W","companyId":1052,"partDesc":"1LT PNT, OPL CYL GLS IN CLR CYL LGS","partType":"part","barCode":"69175900130",
-"img":"part_img_41311W.jpg","imgBig":"part_imgbig_41311W.jpg","status":"A","unitPrice":36.3,"avgOrderQty":0,"minQty":166,"maxQty":996,"maxOrderQty":0,
-"entryDate":1462475387000,"entryID":13,"stock":"S","unitQty":6,"param":"4","prodType":"d","skidQty":120,"barCodeSuffix":"307","lastCost":12.047,"warrantyDays":365}]}
-
-{"orderId":56160,"orderNo":"46982-1","pono":"4090707-2","companyId":1405,"dateFlag":1441350000000,"entryDate":1450376920000,
-"entryId":169,"menufestDate":1450974198000,"menufestId":164,"pickDate":1451319137000,"pickId":164,"pickBy":"ryang","reviewBy":"ryan",
-"shipDate":1451493882000,"shipId":164,"orderStatus":"ship","havePart":false,"isMtl":true,"havePackingSlip":true,"needInspect":false,
-"myCompanyId":1,"isRush":false,"isCod":false,"signed":false,"skidType":"R","invTypeName":"JOB ORDER","ptComment":"PLEASE TAG ALL CARTONS WITH TYPE",
-"ptType":"JOB ORDER","priority":10,"salesId":2149},
-
-
-{"status":200,
-"data":[
-{"orderDetailId":215890,"orderNo":"40504-2","skuNo":2118,"comment":"2LT VANITY, SQUARE BUBBLE CRYS GLS",
-"orderQty":1,"shipQty":1,"partNO":"701042",
-"shipped":true,"stock":"S","reserveQty":-1}]}
-
-
-{"status":200,"data":
-[{"orderDetailId":240243,"orderNo":"48120-0","skuNo":13720,"comment":"CUSTOM 601465CH-LED<br>TYPE: LW3",
-"orderQty":16,"partNO":"Z601465CH-LED","shipped":false,"stock":"S"}]}

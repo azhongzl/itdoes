@@ -45,6 +45,7 @@ img {
 	-ms-interpolation-mode: bicubic;
 	max-width: 100%;
 }
+
 #loginWindow input {
 	font-size: 100%;
 	margin: 10px;
@@ -52,8 +53,7 @@ img {
 	*vertical-align: middle;
 }
 
- input[type="button"], input[type="reset"], input[type="submit"]
-	{
+input[type="button"], input[type="reset"], input[type="submit"] {
 	cursor: pointer;
 	-webkit-appearance: button;
 	*overflow: visible;
@@ -74,8 +74,8 @@ p {
 
 /* styling */
 body {
-	font: 14px/100% Arial, Helvetica, sans-serif;
-	<!--font-family: 'Open Sans', Arial, Helvetica, sans-serif;-->
+	font: 14px/100% Arial, Helvetica, sans-serif; <!--
+	font-family: 'Open Sans', Arial, Helvetica, sans-serif; -->
 	background: #ffffff;
 	border-top: 2px solid #2d2d2d;
 }
@@ -136,10 +136,9 @@ footer {
 #content p {
 	font-size: 12px;
 }
+
 #mainmenu {
-
 	width: 100%;
-
 }
 
 .contentimg {
@@ -149,7 +148,6 @@ footer {
 	height: 85%;
 	font-size: 25px;
 }
-
 
 .icon .span, .icon a, .icon span {
 	padding: 5px 5px 5px 40px;
@@ -168,7 +166,6 @@ footer {
 	top: 0;
 	left: 0;
 }
-
 
 .separator {
 	margin: 2px 0;
@@ -311,7 +308,6 @@ form fieldset a:hover {
 
 .white {
 	color: #606060;
-
 	border: solid 1px #b7b7b7;
 	background: #fff;
 	background: -webkit-gradient(linear, left top, left bottom, from(#fff),
@@ -339,15 +335,20 @@ form fieldset a:hover {
 		endColorstr='#ffffff');
 }
 
-
 .itemchange {
-	width:30px;
-	background-color:#f8f8f8;
-	color:#0000ff;
-	border:.2px solid #808080;
-
+	width: 30px;
+	background-color: #f8f8f8;
+	color: #0000ff;
+	border: .2px solid #808080;
 }
 
+#order_btn {
 
+	float: right;
+}
 
+.a_style {
+	
+line-height: 200%
 
+}

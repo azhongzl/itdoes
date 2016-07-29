@@ -1,6 +1,6 @@
 var itemlist = [];
+var url = "http://localhost:8080/biz/facade/"
 var inventorydata = [];
-
 function inventory() {
 
 	showscanbtn();
@@ -13,18 +13,19 @@ function inventory() {
 				var keycode = (event.keyCode ? event.keyCode : event.which);
 				if (keycode == 13) {
 					var itemname = $("#item_no").val();
+					var url1 = "http://localhost:8080/biz/facade/" + "Part"
+							+ "/search";
 					var checkkey = {
-						ec : "Part",
 						ff_partNo : itemname.toUpperCase(),
 					}
-					var checkresult1 = ajaxsearch(checkkey);
-
+					var checkresult1 = ajaxsearch(checkkey, url1);
+					var url2 = "http://localhost:8080/biz/facade/"
+							+ "InvCompany" + "/search";
 					checkkey = {
-						ec : "InvCompany",
 						ff_skuNo : checkresult1[0].skuNo,
 						ff_invType : "I",
 					}
-					var checkresult2 = ajaxsearch(checkkey);
+					var checkresult2 = ajaxsearch(checkkey, url2);
 					$.each(checkresult2, function(i, n) {
 						if (n.onHandQty == undefined) {
 							checkresult2[i].onHandQty = 0;
@@ -59,18 +60,20 @@ function inventory() {
 				var barcoderesult = "10691759026402"
 				barcoderesult = barcoderesult.substr(
 						barcoderesult.indexOf("6"), 11)
+
+				var url1 = url + "Part" + "/search";
 				var checkkey = {
-					ec : "Part",
+
 					ff_barCode : barcoderesult,
 				}
-				var checkresult1 = ajaxsearch(checkkey);
-
+				var checkresult1 = ajaxsearch(checkkey, url1);
+				var url2 = url + "InvCompany" + "/search";
 				checkkey = {
-					ec : "InvCompany",
+
 					ff_skuNo : checkresult1[0].skuNo,
 					ff_invType : "I",
 				}
-				var checkresult2 = ajaxsearch(checkkey);
+				var checkresult2 = ajaxsearch(checkkey, url2);
 				$.each(checkresult2, function(i, n) {
 					if (n.onHandQty == undefined) {
 						checkresult2[i].onHandQty = 0;
@@ -113,68 +116,79 @@ function loginWindowClose() {
 }
 
 function orderentry() {
-	var testkey = 0
-	var itemarray = []
+	var testkey = 0;
+	var itemarray = {};
 	showscanbtn();
-	if (itemlist.length > 0) {
+	if ((itemlist.length > 0) && (itemlist[0].orderNo == undefined)) {
 		showitemlist();
+	} else {
+		itemlist = [];
 	}
-	$("#item_no").keypress(
-			function(event) {
-				testkey = 0;
-				var keycode = (event.keyCode ? event.keyCode : event.which);
-				if (keycode == 13) {
-					var itemname = $("#item_no").val();
-					var checkkey = {
-						ec : "Part",
-						ff_partNo : itemname.toUpperCase(),
-					}
-					var checkresult1 = ajaxsearch(checkkey);
-					itemarray = [];
-					itemarray[0] = [ checkresult1[0].skuNo,
-							checkresult1[0].partNo, 1,
-							checkresult1[0].unitPrice ];
-					$.each(itemlist, function(i, n) {
-						if (n[0] == checkresult1[0].skuNo) {
-							itemlist[i][2] = itemlist[i][2] + 1;
-							testkey = 1;
+	$("#item_no")
+			.keypress(
+					function(event) {
+						testkey = 0;
+						var keycode = (event.keyCode ? event.keyCode
+								: event.which);
+						if (keycode == 13) {
+							var itemname = $("#item_no").val();
+							var url1 = "http://localhost:8080/biz/facade/"
+									+ "Part" + "/search";
+							var checkkey = {
+								ff_partNo : itemname.toUpperCase(),
+							}
+							var checkresult1 = ajaxsearch(checkkey, url1);
+							itemarray = {
+								skuNo : checkresult1[0].skuNo,
+								partNo : checkresult1[0].partNo,
+								orderQty : 1,
+								unitPrice : checkresult1[0].unitPrice,
+							};
+							$
+									.each(
+											itemlist,
+											function(i, n) {
+												if (n.skuNo == checkresult1[0].skuNo) {
+													itemlist[i].orderQty = parseInt(itemlist[i].orderQty) + 1;
+													testkey = 1;
+												}
+											});
+							if (testkey == 0) {
+								itemlist.push(itemarray);
+							}
+							showitemlist()
 						}
 					})
-					if (testkey == 0) {
-						itemlist[itemlist.length] = itemarray[0];
-					}
-					showitemlist()
-				}
-			})
-	$("#scanner_btn").click(
-			function() {
-				testkey = 0;
-				itemarray = [];
-				// var barcoderesult = scanCode();
-				var barcoderesult = "10691759026402"
-				barcoderesult = barcoderesult.substr(
-						barcoderesult.indexOf("6"), 11)
-				var checkkey = {
-					ec : "Part",
-					ff_barCode : barcoderesult,
-				}
-				var checkresult1 = ajaxsearch(checkkey);
-				var itemarray = [];
-				itemarray[0] = [ checkresult1[0].skuNo, checkresult1[0].partNo,
-						1, checkresult1[0].unitPrice ];
-				$.each(itemlist, function(i, n) {
-					if (n[0] == checkresult1[0].skuNo) {
-						itemlist[i][2] = itemlist[i][2] + 1;
-						testkey = 1;
-					}
-				})
-				if (testkey == 0) {
-					itemlist[itemlist.length] = itemarray[0];
-				}
+	$("#scanner_btn").click(function() {
+		testkey = 0;
+		itemarray = {};
+		// var barcoderesult = scanCode();
+		var barcoderesult = "10691759026402"
+		barcoderesult = barcoderesult.substr(barcoderesult.indexOf("6"), 11)
+		var url2 = url + "Part" + "/search";
+		var checkkey = {
 
-				showitemlist()
+			ff_barCode : barcoderesult,
+		}
+		var checkresult1 = ajaxsearch(checkkey, url2);
+		itemarray = {
+			skuNo : checkresult1[0].skuNo,
+			partNo : checkresult1[0].partNo,
+			orderQty : 1,
+			unitPrice : checkresult1[0].unitPrice,
+		};
+		$.each(itemlist, function(i, n) {
+			if (n.skuNo == checkresult1[0].skuNo) {
+				itemlist[i].orderQty = parseInt(itemlist[i].orderQty) + 1;
+				testkey = 1;
+			}
+		});
+		if (testkey == 0) {
+			itemlist.push(itemarray);
+		}
+		showitemlist()
 
-			});
+	});
 
 }
 
@@ -182,12 +196,12 @@ function itemdelete(itemno) {
 	var itemlist1 = [];
 	var j = 0
 
-	for (i = 0; i < itemlist.length; i++) {
-		if ($.inArray(itemno, itemlist[i]) == -1) {
+	$.each(itemlist, function(i, n) {
+		if (n.skuNo != itemno) {
 			itemlist1[j] = itemlist[i];
-			j++;
+			j = j + 1;
 		}
-	}
+	});
 
 	itemlist = itemlist1;
 	if (itemlist.length > 0) {
@@ -211,13 +225,19 @@ function showscanbtn() {
 		"type" : "button",
 		"id" : "scanner_btn",
 		"value" : "Scan",
-		"class" : "hwq2button white",
-		"placeholder" : "please input...",
+		"class" : "menubutton white",
 	}).appendTo("div#content");
 	$("#item_no").focus();
 }
 
 function showitemlist() {
+
+	if (itemlist[0].orderNo == undefined) {
+		var temporderno = "";
+	} else {
+		var temporderno = itemlist[0].orderNo;
+	}
+
 	var itemlistth = [ "Item", "QTY", "Price", "Del" ];
 	if ($("div#itemlistdiv")) {
 		$("div#itemlistdiv").remove();
@@ -230,29 +250,20 @@ function showitemlist() {
 			mytable = mytable + "</tr>";
 		}
 	}
-	for (var k = 0; k < itemlist.length; k++) {
-		mytable = mytable + "<tr>";
-		for (var j = 1; j < itemlist[k].length; j++) {
-			if (j == 2) {
-				mytable = mytable + "<td><input class='itemchange' value="
-						+ itemlist[k][j] + ">" + "</input></td>";
 
-			} else {
-				mytable = mytable + "<td>" + itemlist[k][j] + "</td>";
-				if (j == (itemlist[k].length - 1)) {
-					var str = (itemlist[k][1])
-					mytable = mytable + "<td>"
-							+ "<a href='#'onclick='itemdelete(" + '\"'
-							+ str.toUpperCase() + '\"' + ")'>Del</a>" + "</td>"
-							+ "</tr>";
-				}
-			}
-		}
-	}
+	$.each(itemlist, function(i, n) {
+
+		mytable = mytable + "<tr>" + "<td>" + n.partNo + "</td>"
+				+ "<td><input class='itemchange' value=" + n.orderQty + ">"
+				+ "</input></td>" + "<td>" + n.unitPrice + "</td>" + "<td>"
+				+ "<a href='#'onclick='itemdelete(" + '\"' + n.skuNo + '\"'
+				+ ")'>Del</a>" + "</td>" + "</tr>";
+
+	});
+
 	mytable = mytable + "</table>";
-
-	mytable = mytable
-			+ "<button  class='menubutton white' onclick='ordersave()'>Submit</button>";
+	mytable = mytable + "<button  class='menubutton white' onclick='ordersave("
+			+ '\"' + temporderno + '\"' + ")'>Submit</button>";
 	mytable = mytable
 			+ "<button  class='menubutton white' onclick='itemcancel()'>Cancel</button></div>";
 	$("div#content").append(mytable);
@@ -261,7 +272,7 @@ function showitemlist() {
 		var row = $(this).parent().index();
 		var col = $(this).index();
 		var allinput = $("table.orderlist input");
-		itemlist[row - 1][col+1] = allinput[row - 1].value;
+		itemlist[row - 1].orderQty = allinput[row - 1].value;
 	});
 
 }
@@ -324,100 +335,118 @@ function ordercheck() {
 
 function showorderlist() {
 	$("#content").empty();
+	companyId: 221
+	var url1 = url + "OrderHeader" + "/search";
+	var checkkey = {
+		ff_companyId : 221,
+	}
+	var checkresult1 = ajaxsearch(checkkey, url1);
 
-	$.each(orderlist, function(i, n) {
+	$.each(checkresult1, function(i, n) {
 
 		$("#content").append(
-				"<a href='#' onclick='showorderdetail(" + '"' + n.orderid + '"'
-						+ ")'>" + n.orderid + '&nbsp' + n.orderdate + "</a>");
+				"<a href='#' class='a_style'  onclick='showorderdetail(" + '"'
+						+ n.orderNo + '"' + ")'>" + n.orderNo + "</a>");
+		$("<input>", {
+			"type" : "button",
+			"id" : "order_btn",
+			"value" : "Modify",
+			"class" : "menubutton white",
+			"onclick" : "#",
+		}).appendTo("div#content");
 		$("#content").append("<hr class='separator' />");
-	})
-
+	});
 }
 
 function showorderdetail(order) {
+	var checkresult2 = [];
 	$("#content").empty();
-
-	var companyorderlist = [];
-	$.each(orderlist, function(i, n) {
-		if (n.orderid == order) {
-			$.each(n.orderitemlist,
-					function(j, obj) {
-						companyorderlist.push([ obj.item, obj.itemqty,
-								obj.itemprice ]);
-
-					});
-			itemlist = companyorderlist
-			showitemlist();
-		}
-	});
-}
-
-function ajaxsearch(checkkey) {
-	var checklist = [];
-	$.ajax({
-		type : "GET",
-		url : "http://localhost:8080/biz/facade/search",
-		data : checkkey,
-		dataType : "json",
-		async : false,
-		success : function(result) {
-			if (result.data == undefined) {
-				alert("no result");
-			} else {
-				$.each(result.data, function(i, n) {
-					checklist.push(result.data[i]);
-				});
-			}
-		},
-		timeout : 3000,
-		error : function(xhr) {
-			alert("error： " + xhr.status + " " + xhr.statusText);
-		},
-	});
-	return (checklist);
-}
-
-function ordersave() {
-	var orderno = prompt("Please enter OrderNo:");
+	var temporderno = order;
+	var url1 = url + "OrderDetail" + "/search";
+	var url2 = url + "Part" + "/search";
 	var checkkey = {
-		ec : "OrderHeader",
-		ff_orderNo : orderno,
-		ff_companyId : 221,
-		ff_entryDate : 1450376920000,
-		ff_ntryId : 56,
+		ff_orderNo : temporderno,
 	}
-	ajaxcreate(checkkey);
-	$.each(itemlist, function(i, n) {
-		var checkkey = {
-			ec : "OrderDetail",
-			ff_orderNo : orderno,
-			ff_skuNo : n[0],
-			ff_partNO : n[1],
-			ff_orderQty : n[2],
-		}
-		ajaxcreate(checkkey);
+	var checkresult1 = ajaxsearch(checkkey, url1);
+
+	$.each(checkresult1, function(i, n) {
+
+		var checkkey1 = {
+			ff_skuNo : n.skuNo,
+		};
+		checkresult2 = ajaxsearch(checkkey1, url2);
+		checkresult1[i].unitPrice = checkresult2[0].unitPrice;
+		checkresult1[i].partNo = checkresult1[i].partNO;
 	});
+	itemlist = checkresult1
+	showitemlist(temporderno);
+
 }
 
-function ajaxcreate(savedata) {
-	var checklist = [];
-	$.ajax({
-		type : "POST",
-		url : "http://localhost:8080/biz/facade/create",
-		data : savedata,
-		dataType : "json",
-		async : false,
-		success : function() {
+function ordersave(order) {
+	var checkresult = [];
+	if (order == "") {
+		var orderno = prompt("Please enter OrderNo:");
+		var url1 = url + "OrderHeader" + "/post";
+		var checkkey = {
+			orderNo : orderno,
+			companyId : 221,
+			entryId : 56,
+		}
+		ajaxcreate(checkkey, url1);
+		var url2 = url + "OrderDetail" + "/post";
 
-			alert("OK");
+		$.each(itemlist, function(i, n) {
+			var checkkey = {
+				orderNo : orderno,
+				skuNo : n.skuNo,
+				partNO : n.partNo,
+				orderQty : n.orderQty,
+			}
+			ajaxcreate(checkkey, url2);
+		});
+	} else {
+		var orderno = order;
+		var url1 = url + "OrderDetail" + "/search";
+		var url2 = url + "OrderDetail" + "/put/";
+		var url3 = url + "OrderDetail" + "/delete/";
+		var checkkey = {
+			ff_orderNo : orderno,
+		}
 
-		},
-		timeout : 3000,
-		error : function(xhr) {
-			alert("error： " + xhr.status + " " + xhr.statusText);
-		},
+		checkresult = ajaxsearch(checkkey, url1);
+		var changekey = 0;
+		$.each(checkresult, function(i, n) {
+			changekey = 0;
+			$.each(itemlist, function(j, m) {
+				if (n.orderDetailId == m.orderDetailId) {
+					changekey = 1;
+					if ((n.orderQty != m.orderQty)&&( m.orderQty!=0)) {
 
-	});
+						var checkkey = {
+							orderQty : m.orderQty,
+						}
+						ajaxput(checkkey, (url2 + n.orderDetailId));
+					}
+                   if(m.orderQty==0){
+                	   changekey = 0;
+                   }
+				}
+			});
+			if (changekey == 0) {
+				ajaxdelete(url3 + n.orderDetailId);
+			}
+		});
+		checkresult = ajaxsearch(checkkey, url1);
+		if(checkresult.length==0){
 
+			var checkkey = {
+				ff_orderNo : orderno,
+			}
+			checkresult = ajaxsearch(checkkey, (url + "OrderHeader" + "/search"));
+			ajaxdelete((url + "OrderHeader" + "/delete/")+ checkresult[0].orderId)
+		};
+	}
+
+	itemcancel()
 }
