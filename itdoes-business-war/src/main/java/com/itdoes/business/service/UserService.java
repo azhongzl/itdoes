@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
 import com.itdoes.common.business.BaseService;
+import com.itdoes.common.business.Businesses;
 import com.itdoes.common.security.Digests;
 import com.itdoes.common.util.Codecs;
 
@@ -25,8 +26,12 @@ public class UserService extends BaseService {
 		for (String ec : facadeService.getEntityClassSimpleNames()) {
 			ROLE_SYSTEM.getPermissionList().add(ec);
 		}
+		ROLE_SYSTEM.getPermissionList().add(Businesses.getAllPermission("TempPart", "barCode"));
+		ROLE_SYSTEM.getPermissionList().add(Businesses.getAllPermission("TempInvCompany", "comment"));
+		ROLE_SYSTEM.getPermissionList().add(Businesses.getAllPermission("TempInvCompany", "partId"));
 
 		ROLE_USER.getPermissionList().add("TempInvCompany");
+		ROLE_USER.getPermissionList().add(Businesses.getReadPermission("TempInvCompany", "comment"));
 	}
 
 	public TempUser findUser(String username) {

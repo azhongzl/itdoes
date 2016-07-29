@@ -16,9 +16,11 @@ import com.itdoes.common.util.Reflections;
  * @author Jalen Zhong
  */
 public class Businesses {
+	private static final char TABLE_COLUMN_SEPARATOR = '-';
 	private static final char PERM_SEPARATOR = ':';
 	private static final String PERM_READ = "read";
 	private static final String PERM_WRITE = "write";
+	private static final String PERM_ANY = "*";
 
 	public static Map<String, EntityPair> getEntityPairs(String entityPackage, ClassLoader classLoader,
 			ApplicationContext context) {
@@ -68,16 +70,20 @@ public class Businesses {
 		}
 	}
 
-	public static String getReadPermission(String fieldName) {
-		return getPermission(fieldName, PERM_READ);
+	public static String getAllPermission(String tableName, String fieldName) {
+		return getPermission(tableName, fieldName, PERM_ANY);
 	}
 
-	public static String getWritePermission(String fieldName) {
-		return getPermission(fieldName, PERM_WRITE);
+	public static String getReadPermission(String tableName, String fieldName) {
+		return getPermission(tableName, fieldName, PERM_READ);
 	}
 
-	private static String getPermission(String fieldName, String mode) {
-		return fieldName + Businesses.PERM_SEPARATOR + mode;
+	public static String getWritePermission(String tableName, String fieldName) {
+		return getPermission(tableName, fieldName, PERM_WRITE);
+	}
+
+	private static String getPermission(String tableName, String fieldName, String mode) {
+		return tableName + TABLE_COLUMN_SEPARATOR + fieldName + PERM_SEPARATOR + mode;
 	}
 
 	private Businesses() {
