@@ -11,6 +11,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.itdoes.common.business.BaseEntity;
+import com.itdoes.common.business.SecureColumn;
 
 /**
  * @author Jalen Zhong
@@ -24,9 +25,11 @@ public class TempInvCompany extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer invCompanyId;
 
+	@SecureColumn
 	@Column(name = "comment")
 	private String comment;
 
+	@SecureColumn
 	@Column(name = "partid")
 	private Integer partId;
 

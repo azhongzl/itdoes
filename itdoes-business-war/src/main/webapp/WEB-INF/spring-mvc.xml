@@ -28,7 +28,6 @@
 	<mvc:default-servlet-handler />
 
 	<mvc:view-controller path="/" view-name="index" />
-	<mvc:view-controller path="/web/mashup-client" view-name="/web/mashup-client" />
 
 	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="exceptionMappings">

@@ -3,6 +3,7 @@ package com.itdoes.business.service;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -41,20 +42,30 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends BaseEntity> T get(String ec, String idString) {
-		final EntityPair pair = getEntityPair(ec);
-		final Serializable id = convertId(idString, getIdClass(pair));
-		return (T) getDao(pair).findOne(id);
-	}
-
-	@SuppressWarnings("unchecked")
 	public <T extends BaseEntity> Page<T> search(String ec, List<SearchFilter> filters, PageRequest pageRequest) {
 		final EntityPair pair = getEntityPair(ec);
 		return (Page<T>) getDao(pair).findAll(Specifications.build(getEntityClass(pair), filters), pageRequest);
 	}
 
+	public BaseEntity get(String ec, String idString) {
+		final EntityPair pair = getEntityPair(ec);
+		final Serializable id = convertId(idString, pair.idField.getType());
+		return getDao(pair).findOne(id);
+	}
+
+	public long count(String ec, List<SearchFilter> filters) {
+		final EntityPair pair = getEntityPair(ec);
+		return getDao(pair).count(Specifications.build(getEntityClass(pair), filters));
+	}
+
 	@Transactional(readOnly = false)
-	public <T extends BaseEntity> void save(String ec, T entity) {
+	public <T extends BaseEntity> void post(String ec, T entity) {
+		final EntityPair pair = getEntityPair(ec);
+		getDao(pair).save(entity);
+	}
+
+	@Transactional(readOnly = false)
+	public <T extends BaseEntity> void put(String ec, T entity) {
 		final EntityPair pair = getEntityPair(ec);
 		getDao(pair).save(entity);
 	}
@@ -62,7 +73,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	@Transactional(readOnly = false)
 	public void delete(String ec, String idString) {
 		final EntityPair pair = getEntityPair(ec);
-		final Serializable id = convertId(idString, getIdClass(pair));
+		final Serializable id = convertId(idString, pair.idField.getType());
 		getDao(pair).delete(id);
 	}
 
@@ -74,13 +85,13 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		return pair;
 	}
 
+	public Set<String> getEntityClassSimpleNames() {
+		return entityPairs.keySet();
+	}
+
 	@SuppressWarnings("unchecked")
 	private <T extends BaseEntity> Class<T> getEntityClass(EntityPair pair) {
 		return (Class<T>) pair.entityClass;
-	}
-
-	private Class<?> getIdClass(EntityPair pair) {
-		return pair.idField.getType();
 	}
 
 	@SuppressWarnings("unchecked")

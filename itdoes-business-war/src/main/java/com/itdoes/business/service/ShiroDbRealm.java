@@ -7,9 +7,10 @@ import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.util.ByteSource;
 
-import com.itdoes.business.entity.EmployeeMaster;
 import com.itdoes.common.shiro.AbstractShiroRealm;
+import com.itdoes.common.util.Codecs;
 
 /**
  * @author Jalen Zhong
@@ -19,30 +20,29 @@ public class ShiroDbRealm extends AbstractShiroRealm {
 
 	@Override
 	protected AuthenticationInfo doAuthentication(UsernamePasswordToken token) throws AuthenticationException {
-		EmployeeMaster user = userService.findUser(token.getUsername());
+		final TempUser user = userService.findUser(token.getUsername());
 		if (user == null) {
 			return null;
 		}
 
-		// TODO Check user status here
-		if ("disabled".equals(user.getStatus())) {
+		if (!TempUser.isActive(user)) {
 			throw new DisabledAccountException();
 		}
 
-		// TODO Salt should be enabled in future
-		// byte[] salt = Codecs.hexDecode(user.getSalt());
-		// return new SimpleAuthenticationInfo(user, user.getPassword(),
-		// ByteSource.Util.bytes(salt), getName());
-		return new SimpleAuthenticationInfo(user, user.getPassword(), getName());
+		final byte[] salt = Codecs.hexDecode(user.getSalt());
+		return new SimpleAuthenticationInfo(user, user.getPassword(), ByteSource.Util.bytes(salt), getName());
 	}
 
 	@Override
 	protected AuthorizationInfo doAuthorization(Object principal) {
-		// TODO Roles and permissions should be derived from user
-		// EmployeeMaster user = (EmployeeMaster) principal;
-		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-		info.addRole("admin");
-		info.addStringPermission("user:edit");
+		final TempUser user = (TempUser) principal;
+		final SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+		for (TempRole role : user.getRoleList()) {
+			info.addRole(role.getName());
+			for (String permission : role.getPermissionList()) {
+				info.addStringPermission(permission);
+			}
+		}
 		return info;
 	}
 
