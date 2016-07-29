@@ -7,5 +7,4 @@ import com.itdoes.common.business.BaseDao;
  * @author Jalen Zhong
  */
 public interface TempPartDao extends BaseDao<TempPart, Integer> {
-
 }
