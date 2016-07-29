@@ -16,7 +16,7 @@ import com.itdoes.common.util.Reflections;
  * @author Jalen Zhong
  */
 public class Businesses {
-	private static final char TABLE_COLUMN_SEPARATOR = '-';
+	private static final char TABLE_COLUMN_SEPARATOR = '.';
 	private static final char PERM_SEPARATOR = ':';
 	private static final String PERM_READ = "read";
 	private static final String PERM_WRITE = "write";
