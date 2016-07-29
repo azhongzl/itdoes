@@ -1,57 +1,40 @@
 
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta charset="utf-8" />
+
+<title>KUZCOLIGHTING</title>
+<link rel="stylesheet" type="text/css" href="css/style.css">
 <script type="text/javascript" src="js/jquery.min.js"></script>
-	<script type="text/javascript">
-	$(document).ready(function(){
-		 $("input").change(function(){
-			  alert("The text has been changed."); 
-				alert($(this).val());
-				  
-			  });
-		   });
 
+<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript" src="js/maindefine.js"></script>
+<script type="text/javascript">
+function aaaa(){
+test();
+	
+/*	var url2 = "http://localhost:8080/biz/facade/" + "OrderHeader"
+	+ "/delete/";
+			var test=$("#testa").val();
+			url2=url2+test;
+            alert(url2);
+			ajaxdelete(url2);
+*/
+$.each(itemlist,function(i,n){
+	$.each(n,function(j,m){
+	alert(m);
 
+	});
+});
+}
 
 </script>
 </head>
 
 <body>
-	<input type="text" name="a1" value="123"></input>
-	<input type="text" name="a2" value="123"></input>
-	<input type="text" name="a3" value="123"></input>
-	<input type="text" name="a4" value="123"></input>
-	<input type="text" name="a5" value="123"></input>
-
+	<input id="testa" type="text" name="a1" value=" "></input>
+	<input type="button" name="a2" onclick="aaaa()" value=" try "></input>
 
 </body>
 </html>
-
-{"status":200,
-"data":[
-{"skuNo":166,"partNo":"41814B","companyId":1052,"partType":"part",
-"barCode":"69175900163","img":"part_img_41814B.jpg",
-"imgBig":"part_imgbig_41814B.jpg","status":"A",
-"unitPrice":44.5,"avgOrderQty":0,"maxOrderQty":0,"entryDate":1462475390000,"entryID":13,"stock":"S","unitQty":1,
-"param":"4","prodType":"d","skidQty":1,"barCodeSuffix":"185","lastCost":34.382,"warrantyDays":365}]}
-
-
-
-
-{"status":200,"data":[
-{"inventoryId":1,"skuNo":166,"companyId":1,"onHandQty":57,"transOutQty":0,"transInQty":0,"avgQty":0,"maxQty":0,"minQty":0,
-"comment":"PROMO ITEM TBD NO FURTHER DISCOUNTS HC LIGHTING INTMYCOMMAL  LTD","invType":"I","onOrderQtyGift":0},
-{"inventoryId":36659,"skuNo":166,"companyId":2719,"avgQty":0,"maxQty":0,"invType":"I","reserveQty":0}]}
-
-
-{"status":200,
-"data":[{"inventoryId":20578,"skuNo":10097,"companyId":1,"onHandQty":711,"onOrderQty":297,"commQty":6,"avgQty":0,"maxQty":0,"
-comment":"LED LIN VAN, 2400lm, 27W, 3000K, CH HC LIGHTING INTMYCOMMAL  LTD","invType":"I","onOrderQtyGift":0,"reserveQty":1},
-{"inventoryId":37721,"skuNo":10097,"companyId":2719,"onHandQty":448,"onOrderQty":500,"commQty":1,"avgQty":0,"maxQty":0,"invType":"I","reserveQty":0}
-]}
-
-
-
-
