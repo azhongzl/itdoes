@@ -8,22 +8,17 @@ import java.util.Map;
 import javax.persistence.Id;
 
 import org.apache.commons.lang3.StringUtils;
-import org.assertj.core.util.Lists;
 import org.springframework.context.ApplicationContext;
 
-import com.itdoes.common.util.PropertiesLoader;
 import com.itdoes.common.util.Reflections;
 
 /**
  * @author Jalen Zhong
  */
 public class Businesses {
-	public static final char PROP_S = ':';
-	public static final String PROP_READ = "read";
-	public static final String PROP_WRITE = "write";
-
-	private static final PropertiesLoader PL = new PropertiesLoader("classpath*:/dataPermission.properties");
-	private static final char PROP_SEPARATOR = ',';
+	private static final char PERM_SEPARATOR = ':';
+	private static final String PERM_READ = "read";
+	private static final String PERM_WRITE = "write";
 
 	public static Map<String, EntityPair> getEntityPairs(String entityPackage, ClassLoader classLoader,
 			ApplicationContext context) {
@@ -51,21 +46,10 @@ public class Businesses {
 				throw new IllegalArgumentException("Cannot find bean for name: " + daoBeanName);
 			}
 
-			// Secure Props
-			final String propsString = PL.getProperty(key);
-			final List<String> secureProps = Lists.newArrayList();
-			if (!StringUtils.isBlank(propsString)) {
-				final String[] props = StringUtils.split(propsString, PROP_SEPARATOR);
-				if (props != null && props.length > 0) {
-					for (String prop : props) {
-						if (!StringUtils.isBlank(prop)) {
-							secureProps.add(prop.trim());
-						}
-					}
-				}
-			}
+			// Secure Fields
+			final List<Field> secureFields = Reflections.getFieldsWithAnnotation(entityClass, SecureColumn.class);
 
-			pairs.put(key, new EntityPair(entityClass, idField, dao, secureProps));
+			pairs.put(key, new EntityPair(entityClass, idField, dao, secureFields));
 		}
 		return pairs;
 	}
@@ -74,14 +58,26 @@ public class Businesses {
 		public final Class<?> entityClass;
 		public final Field idField;
 		public final BaseDao<?, ?> dao;
-		public final List<String> secureProps;
+		public final List<Field> secureFields;
 
-		public EntityPair(Class<?> entityClass, Field idField, BaseDao<?, ?> dao, List<String> secureProps) {
+		public EntityPair(Class<?> entityClass, Field idField, BaseDao<?, ?> dao, List<Field> secureFields) {
 			this.entityClass = entityClass;
 			this.idField = idField;
 			this.dao = dao;
-			this.secureProps = secureProps;
+			this.secureFields = secureFields;
 		}
+	}
+
+	public static String getReadPermission(String fieldName) {
+		return getPermission(fieldName, PERM_READ);
+	}
+
+	public static String getWritePermission(String fieldName) {
+		return getPermission(fieldName, PERM_WRITE);
+	}
+
+	private static String getPermission(String fieldName, String mode) {
+		return fieldName + Businesses.PERM_SEPARATOR + mode;
 	}
 
 	private Businesses() {

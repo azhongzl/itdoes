@@ -13,6 +13,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.itdoes.common.business.BaseEntity;
+import com.itdoes.common.business.SecureColumn;
 
 /**
  * @author Jalen Zhong
@@ -26,6 +27,7 @@ public class TempPart extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer partId;
 
+	@SecureColumn
 	@Column(name = "barCode")
 	private String barCode;
 

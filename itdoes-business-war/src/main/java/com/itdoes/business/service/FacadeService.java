@@ -44,25 +44,25 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 				applicationContext);
 	}
 
-	public BaseEntity get(String ec, String idString) {
-		final EntityPair pair = getEntityPair(ec);
-		final Serializable id = convertId(idString, getIdField(pair));
-		final BaseEntity entity = getDao(pair).findOne(id);
-		if (hasSecureColumns(pair)) {
-			check(ec, entity, OperatorMode.GET);
-		}
-		return entity;
-	}
-
 	@SuppressWarnings("unchecked")
 	public <T extends BaseEntity> Page<T> search(String ec, List<SearchFilter> filters, PageRequest pageRequest) {
 		final EntityPair pair = getEntityPair(ec);
 		final Page<T> pages = (Page<T>) getDao(pair).findAll(Specifications.build(getEntityClass(pair), filters),
 				pageRequest);
 		if (hasSecureColumns(pair)) {
-			check(ec, pages.getContent(), OperatorMode.GET);
+			handleSecureColumns(pair, pages.getContent(), OperatorMode.GET);
 		}
 		return pages;
+	}
+
+	public BaseEntity get(String ec, String idString) {
+		final EntityPair pair = getEntityPair(ec);
+		final Serializable id = convertId(idString, pair.idField.getType());
+		final BaseEntity entity = getDao(pair).findOne(id);
+		if (hasSecureColumns(pair)) {
+			handleSecureColumns(pair, entity, OperatorMode.GET);
+		}
+		return entity;
 	}
 
 	public long count(String ec, List<SearchFilter> filters) {
@@ -71,15 +71,27 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	}
 
 	@Transactional(readOnly = false)
-	public <T extends BaseEntity> void save(String ec, T entity) {
+	public <T extends BaseEntity> void post(String ec, T entity) {
 		final EntityPair pair = getEntityPair(ec);
+		if (hasSecureColumns(pair)) {
+			handleSecureColumns(pair, entity, OperatorMode.POST);
+		}
+		getDao(pair).save(entity);
+	}
+
+	@Transactional(readOnly = false)
+	public <T extends BaseEntity> void put(String ec, T entity) {
+		final EntityPair pair = getEntityPair(ec);
+		if (hasSecureColumns(pair)) {
+			handleSecureColumns(pair, entity, OperatorMode.PUT);
+		}
 		getDao(pair).save(entity);
 	}
 
 	@Transactional(readOnly = false)
 	public void delete(String ec, String idString) {
 		final EntityPair pair = getEntityPair(ec);
-		final Serializable id = convertId(idString, getIdField(pair));
+		final Serializable id = convertId(idString, pair.idField.getType());
 		getDao(pair).delete(id);
 	}
 
@@ -100,17 +112,13 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		return (Class<T>) pair.entityClass;
 	}
 
-	private Field getIdField(EntityPair pair) {
-		return pair.idField;
-	}
-
 	@SuppressWarnings("unchecked")
 	private <T extends BaseEntity, ID extends Serializable> BaseDao<T, ID> getDao(EntityPair pair) {
 		return (BaseDao<T, ID>) pair.dao;
 	}
 
-	private Serializable convertId(String id, Field idField) {
-		return (Serializable) Reflections.convert(id, idField.getType());
+	private Serializable convertId(String id, Class<?> idClass) {
+		return (Serializable) Reflections.convert(id, idClass);
 	}
 
 	public static enum OperatorMode {
@@ -118,36 +126,39 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	}
 
 	private boolean hasSecureColumns(EntityPair pair) {
-		return !pair.secureProps.isEmpty();
+		return !pair.secureFields.isEmpty();
 	}
 
-	private <T extends BaseEntity> void check(String ec, List<T> entities, OperatorMode mode) {
+	private <T extends BaseEntity> void handleSecureColumns(EntityPair pair, List<T> entities, OperatorMode mode) {
 		for (T entity : entities) {
-			check(ec, entity, mode);
+			handleSecureColumns(pair, entity, mode);
 		}
 	}
 
-	private void check(String ec, BaseEntity entity, OperatorMode mode) {
-		final EntityPair pair = getEntityPair(ec);
-		final List<String> props = pair.secureProps;
+	private void handleSecureColumns(EntityPair pair, BaseEntity entity, OperatorMode mode) {
 		final Subject subject = SecurityUtils.getSubject();
-		for (String prop : props) {
+		BaseEntity dbEntity = null;
+		for (Field secureField : pair.secureFields) {
+			final String secureFieldName = secureField.getName();
 			switch (mode) {
 			case GET:
-				if (subject.isPermitted(prop + Businesses.PROP_S + Businesses.PROP_READ)) {
-					Reflections.invokeSet(entity, prop, null);
+				if (!subject.isPermitted(Businesses.getReadPermission(secureFieldName))) {
+					Reflections.invokeSet(entity, secureFieldName, null);
 				}
 				break;
 			case POST:
-				if (subject.isPermitted(prop + Businesses.PROP_S + Businesses.PROP_WRITE)) {
-					Reflections.invokeSet(entity, prop, null);
+				if (!subject.isPermitted(Businesses.getWritePermission(secureFieldName))) {
+					Reflections.invokeSet(entity, secureFieldName, null);
 				}
 				break;
 			case PUT:
-				if (subject.isPermitted(prop + Businesses.PROP_S + Businesses.PROP_WRITE)) {
-					final BaseEntity dbEntity = getDao(pair)
-							.findOne((Serializable) Reflections.invokeGet(entity, getIdField(pair).getName()));
-					Reflections.invokeSet(entity, prop, Reflections.invokeGet(dbEntity, prop));
+				if (!subject.isPermitted(Businesses.getWritePermission(secureFieldName))) {
+					// Only load entity once from DB for the first time
+					if (dbEntity == null) {
+						dbEntity = getDao(pair)
+								.findOne((Serializable) Reflections.invokeGet(entity, pair.idField.getName()));
+					}
+					Reflections.invokeSet(entity, secureFieldName, Reflections.invokeGet(dbEntity, secureFieldName));
 				}
 				break;
 			default:

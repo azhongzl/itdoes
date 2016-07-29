@@ -309,6 +309,20 @@ public class Reflections {
 		return null;
 	}
 
+	public static <A extends Annotation> List<Field> getFieldsWithAnnotation(Class<?> clazz, Class<A> annotationClass) {
+		final List<Field> result = Lists.newArrayList();
+		final Field[] fields = clazz.getDeclaredFields();
+		if (fields != null && fields.length > 0) {
+			for (Field field : fields) {
+				final A annotation = field.getAnnotation(annotationClass);
+				if (annotation != null) {
+					result.add(field);
+				}
+			}
+		}
+		return result;
+	}
+
 	public static Object convert(String value, Class<?> toClass) {
 		if (toClass.equals(Integer.class)) {
 			return Integer.valueOf(value);
