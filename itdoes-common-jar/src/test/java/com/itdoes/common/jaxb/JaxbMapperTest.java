@@ -1,6 +1,7 @@
 package com.itdoes.common.jaxb;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 
 import java.util.List;
 import java.util.Map;
@@ -36,8 +37,12 @@ public class JaxbMapperTest {
 		User user = new User();
 		user.setId(1L);
 		user.setName("jalen");
+		user.getRoles().add(new Role(1L, "admin"));
+		user.getRoles().add(new Role(2L, "user"));
 		user.getInterests().add("movie");
 		user.getInterests().add("sports");
+		user.getHouses().put("bj", "house1");
+		user.getHouses().put("gz", "house2");
 
 		String xml = JaxbMapper.toXml(user, "UTF-8");
 		assertXml(xml);
@@ -63,7 +68,10 @@ public class JaxbMapperTest {
 
 		User user = JaxbMapper.fromXml(xml, User.class);
 		assertThat(user.getId()).isEqualTo(1L);
-		assertThat(user.getInterests()).containsOnly("movie", "sports");
+		assertThat(user.getRoles()).hasSize(2);
+		assertThat(user.getRoles().get(0).getName()).isEqualTo("admin");
+		assertThat(user.getInterests()).hasSize(2).containsOnly("movie", "sports");
+		assertThat(user.getHouses()).hasSize(2).contains(entry("bj", "house1"));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -73,9 +81,16 @@ public class JaxbMapperTest {
 		Element user = doc.getRootElement();
 		assertThat(user.attribute("id").getValue()).isEqualTo("1");
 
+		Element adminRole = (Element) doc.selectSingleNode("//roles/role[@id=1]");
+		assertThat(adminRole.getParent().elements()).hasSize(2);
+		assertThat(adminRole.attribute("name").getValue()).isEqualTo("admin");
+
 		Element interests = (Element) doc.selectSingleNode("//interests");
 		assertThat(interests.elements()).hasSize(2);
 		assertThat(((Element) interests.elements().get(0)).getText()).isEqualTo("movie");
+
+		Element house1 = (Element) doc.selectSingleNode("//houses/house[@key='bj']");
+		assertThat(house1.getText()).isEqualTo("house1");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -95,9 +110,18 @@ public class JaxbMapperTest {
 
 		Element root = doc.addElement("user").addAttribute("id", "1");
 		root.addElement("name").setText("jalen");
+
+		Element roles = root.addElement("roles");
+		roles.addElement("role").addAttribute("id", "1").addAttribute("name", "admin");
+		roles.addElement("role").addAttribute("id", "2").addAttribute("name", "user");
+
 		Element interests = root.addElement("interests");
 		interests.addElement("interest").addText("movie");
 		interests.addElement("interest").addText("sports");
+
+		Element houses = root.addElement("houses");
+		houses.addElement("house").addAttribute("key", "bj").addText("house1");
+		houses.addElement("house").addAttribute("key", "gz").addText("house2");
 
 		return doc.asXML();
 	}
