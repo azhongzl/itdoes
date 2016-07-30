@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +30,7 @@ public class JsonMapper {
 	}
 
 	public <T> T fromJson(String jsonString, Class<T> clazz) {
-		if (jsonString == null) {
+		if (StringUtils.isBlank(jsonString)) {
 			return null;
 		}
 
@@ -40,7 +42,7 @@ public class JsonMapper {
 	}
 
 	public <T> T fromJson(String jsonString, JavaType javaType) {
-		if (jsonString == null) {
+		if (StringUtils.isBlank(jsonString)) {
 			return null;
 		}
 
