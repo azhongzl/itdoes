@@ -10,6 +10,10 @@ import java.util.Map;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.primitives.Doubles;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+
 /**
  * @author Jalen Zhong
  */
@@ -114,6 +118,18 @@ public class Collections3 {
 			}
 		}
 		return result;
+	}
+
+	public static List<Long> asList(long... array) {
+		return Longs.asList(array);
+	}
+
+	public static List<Integer> asList(int... array) {
+		return Ints.asList(array);
+	}
+
+	public static List<Double> asList(double... array) {
+		return Doubles.asList(array);
 	}
 
 	private Collections3() {
