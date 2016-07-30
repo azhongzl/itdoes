@@ -9,7 +9,7 @@ import org.dozer.DozerBeanMapper;
 /**
  * @author Jalen Zhong
  */
-public class BeanMapper {
+public class DozerMapper {
 	private static final DozerBeanMapper DOZER = new DozerBeanMapper();
 
 	public static <T> T map(Object source, Class<T> targetClass) {
@@ -28,6 +28,6 @@ public class BeanMapper {
 		DOZER.map(source, target);
 	}
 
-	private BeanMapper() {
+	private DozerMapper() {
 	}
 }

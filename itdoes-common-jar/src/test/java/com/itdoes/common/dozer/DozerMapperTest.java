@@ -10,7 +10,7 @@ import org.junit.Test;
 /**
  * @author Jalen Zhong
  */
-public class BeanMapperTest {
+public class DozerMapperTest {
 	@Test
 	public void map() {
 		ProductDto productDto = new ProductDto();
@@ -23,13 +23,13 @@ public class BeanMapperTest {
 
 		productDto.setParts(new PartDto[] { partDto });
 
-		Product product = BeanMapper.map(productDto, Product.class);
+		Product product = DozerMapper.map(productDto, Product.class);
 		assertThat(product.getProductName()).isEqualTo(productDto.getName());
 		assertThat(product.getPrice()).isEqualTo(Double.valueOf(productDto.getPrice()).doubleValue());
 		assertThat(product.getParts().get(0).getName()).isEqualTo(partDto.getName());
 		assertThat(product.getParts().get(0).getProduct().getProductName()).isEqualTo(productDto.getName());
 
-		ProductDto productDto2 = BeanMapper.map(product, ProductDto.class);
+		ProductDto productDto2 = DozerMapper.map(product, ProductDto.class);
 		assertThat(productDto2.getName()).isEqualTo(product.getProductName());
 		assertThat(productDto2.getPrice()).isEqualTo(String.valueOf(product.getPrice()));
 		assertThat(productDto2.getParts()[0].getName()).isEqualTo(product.getParts().get(0).getName());
@@ -52,7 +52,7 @@ public class BeanMapperTest {
 		product.setPrice(20D);
 		product.setWeight(new Double(20));
 
-		BeanMapper.copy(productDto, product);
+		DozerMapper.copy(productDto, product);
 		assertThat(product.getProductName()).isEqualTo(productDto.getName());
 		assertThat(product.getPrice()).isEqualTo(Double.valueOf(productDto.getPrice()).doubleValue());
 		assertThat(product.getWeight()).isEqualTo(20D);

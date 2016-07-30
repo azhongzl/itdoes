@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 
+import com.itdoes.common.cglib.CglibMapper;
+import com.itdoes.common.util.Collections3;
 import com.itdoes.common.util.Reflections;
 
 /**
@@ -50,6 +52,10 @@ public class Businesses {
 
 			// Secure Fields
 			final List<Field> secureFields = Reflections.getFieldsWithAnnotation(entityClass, SecureColumn.class);
+			// (Optional) Initialize for performance concern, can be removed if it is not readable
+			if (!Collections3.isEmpty(secureFields)) {
+				CglibMapper.getBeanCopier(entityClass);
+			}
 
 			pairs.put(key, new EntityPair(entityClass, idField, dao, secureFields));
 		}

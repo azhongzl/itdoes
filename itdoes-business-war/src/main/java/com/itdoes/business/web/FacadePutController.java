@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.itdoes.common.business.BaseEntity;
 import com.itdoes.common.business.Businesses.EntityPair;
 import com.itdoes.common.business.Result;
-import com.itdoes.common.dozer.BeanMapper;
+import com.itdoes.common.cglib.CglibMapper;
 import com.itdoes.common.web.MediaTypes;
 
 /**
@@ -38,7 +38,7 @@ public class FacadePutController extends FacadeBaseController {
 
 		final EntityPair pair = facadeService.getEntityPair(ec);
 		if (hasSecureColumns(pair)) {
-			final BaseEntity oldEntity = (BaseEntity) BeanMapper.map(entity, pair.entityClass);
+			final BaseEntity oldEntity = (BaseEntity) CglibMapper.copy(entity);
 			request.setAttribute("oldEntity", oldEntity);
 		}
 	}
