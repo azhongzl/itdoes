@@ -23,15 +23,15 @@ import com.itdoes.common.util.Exceptions;
  */
 public class Cryptos {
 	private static final String HMACSHA1 = "HmacSHA1";
-	private static final int DEFAULT_HMACSHA1_KEYSIZE = 160;
+	private static final int DEFAULT_HMACSHA1_KEYSIZE = 20 * 8;
 	private static final String HMACSHA256 = "HmacSHA256";
-	private static final int DEFAULT_HMACSHA256_KEYSIZE = 160;
+	private static final int DEFAULT_HMACSHA256_KEYSIZE = 32 * 8;
 	private static final String HMACMD5 = "HmacMD5";
-	private static final int DEFAULT_HMACMD5_KEYSIZE = 160;
+	private static final int DEFAULT_HMACMD5_KEYSIZE = 16 * 8;
 
 	private static final String AES = "AES";
 	private static final String AES_CBC = "AES/CBC/PKCS5Padding";
-	private static final int DEFAULT_AES_KEYSIZE = 128;
+	private static final int DEFAULT_AES_KEYSIZE = 16 * 8;
 	private static final int DEFAULT_IVSIZE = 16;
 
 	private static final SecureRandom RANDOM = new SecureRandom();
