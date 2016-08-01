@@ -5,11 +5,9 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.base.Charsets;
 import com.google.common.net.HttpHeaders;
 import com.itdoes.common.util.Codecs;
 
-import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.UserAgent;
 
 /**
@@ -83,17 +81,12 @@ public class Webs {
 		return UserAgent.parseUserAgentString(request.getHeader(HttpHeaders.USER_AGENT));
 	}
 
-	// TODO Need to check the algorithm
 	public static void setFileDownloadHeader(HttpServletRequest request, HttpServletResponse response,
 			String filename) {
 		String encodedFilename = filename.replaceAll(" ", "_");
-		final UserAgent userAgent = getUserAgent(request);
-		if (userAgent.getBrowser().equals(Browser.IE)) {
-			encodedFilename = Codecs.urlEncode(encodedFilename);
-		} else {
-			encodedFilename = new String(encodedFilename.getBytes(), Charsets.ISO_8859_1);
-		}
-		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedFilename + "\"");
+		encodedFilename = Codecs.urlEncode(encodedFilename);
+		response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+				"attachment; filename=\"" + encodedFilename + "\"; filename*=UTF-8''" + encodedFilename);
 	}
 
 	public static String httpBasicEncode(String username, String password) {
