@@ -26,14 +26,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public final ResponseEntity<?> handleException(ConstraintViolationException e, WebRequest request) {
 		final HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 		final Map<String, String> errors = Validators.propertyMessages(e);
-		final Result result = new Result(httpStatus.value(), errors, null);
+		final Result result = Result.fail(httpStatus.value(), errors);
 		return handleExceptionInternal(e, result, newJsonHttpHeaders(), httpStatus, request);
 	}
 
 	@ExceptionHandler(Exception.class)
 	public final ResponseEntity<?> handleException(RuntimeException e, WebRequest request) {
 		final HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-		final Result result = new Result(httpStatus.value(), e.getMessage(), null);
+		final Result result = Result.fail(httpStatus.value(), e.getMessage());
 		return handleExceptionInternal(e, result, newJsonHttpHeaders(), httpStatus, request);
 	}
 

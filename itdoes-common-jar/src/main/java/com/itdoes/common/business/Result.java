@@ -10,6 +10,10 @@ public class Result {
 		return new Result(HttpStatus.OK.value(), null, data);
 	}
 
+	public static Result fail(int status, Object message) {
+		return new Result(status, message, null);
+	}
+
 	private final int status;
 	private final Object message;
 	private final Object[] data;
