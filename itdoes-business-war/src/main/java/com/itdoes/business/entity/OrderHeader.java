@@ -21,6 +21,8 @@ import com.itdoes.common.business.BaseEntity;
 @Table(name = "orderheader")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class OrderHeader extends BaseEntity {
+	private static final long serialVersionUID = -1498629184403739970L;
+
 	@Id
 	@Column(name = "orderid")
 	@GeneratedValue(strategy = GenerationType.AUTO)

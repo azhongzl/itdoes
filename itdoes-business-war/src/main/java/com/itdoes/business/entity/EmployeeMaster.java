@@ -20,6 +20,8 @@ import com.itdoes.common.business.BaseEntity;
 @Table(name = "employeemaster")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class EmployeeMaster extends BaseEntity {
+	private static final long serialVersionUID = -8714695363626027841L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer employeeId;

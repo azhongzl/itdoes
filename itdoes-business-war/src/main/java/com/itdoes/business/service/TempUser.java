@@ -6,12 +6,14 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
-import com.itdoes.common.business.BaseEntity;
+import com.itdoes.common.business.BaseBean;
 
 /**
  * @author Jalen Zhong
  */
-public class TempUser extends BaseEntity {
+public class TempUser extends BaseBean {
+	private static final long serialVersionUID = -4308946657484267535L;
+
 	@NotBlank
 	private String username;
 	@JsonIgnore

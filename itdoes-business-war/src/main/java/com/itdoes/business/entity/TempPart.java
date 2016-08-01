@@ -22,6 +22,8 @@ import com.itdoes.common.business.SecureColumn;
 @Table(name = "ss_temp_part")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class TempPart extends BaseEntity {
+	private static final long serialVersionUID = 2033649964045071367L;
+
 	@Id
 	@Column(name = "partid")
 	@GeneratedValue(strategy = GenerationType.AUTO)

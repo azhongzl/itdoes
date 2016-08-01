@@ -20,6 +20,8 @@ import com.itdoes.common.business.SecureColumn;
 @Table(name = "ss_temp_ivncompany")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class TempInvCompany extends BaseEntity {
+	private static final long serialVersionUID = -6610094960802416902L;
+
 	@Id
 	@Column(name = "invcompanyid")
 	@GeneratedValue(strategy = GenerationType.AUTO)

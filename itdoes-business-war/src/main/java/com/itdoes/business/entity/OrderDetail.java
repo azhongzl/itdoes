@@ -21,6 +21,8 @@ import com.itdoes.common.business.BaseEntity;
 @Table(name = "orderdetail")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class OrderDetail extends BaseEntity {
+	private static final long serialVersionUID = -1402060459558822752L;
+
 	@Id
 	@Column(name = "orderdetailid")
 	@GeneratedValue(strategy = GenerationType.AUTO)

@@ -21,6 +21,8 @@ import com.itdoes.common.business.BaseEntity;
 @Table(name = "part")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Part extends BaseEntity {
+	private static final long serialVersionUID = 4012160670257552155L;
+
 	@Id
 	@Column(name = "skuno")
 	@GeneratedValue(strategy = GenerationType.AUTO)

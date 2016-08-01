@@ -21,6 +21,8 @@ import com.itdoes.common.business.BaseEntity;
 @Table(name = "invcompany")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class InvCompany extends BaseEntity {
+	private static final long serialVersionUID = 7675920774289107945L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer inventoryId;
