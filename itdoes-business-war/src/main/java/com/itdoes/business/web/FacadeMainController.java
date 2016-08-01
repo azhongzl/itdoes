@@ -24,32 +24,32 @@ import com.itdoes.common.web.MediaTypes;
 @RequestMapping(value = FacadeBaseController.FACADE_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class FacadeMainController extends FacadeBaseController {
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_SEARCH, method = RequestMethod.GET)
-	public String search(@PathVariable("ec") String ec, @RequestParam(value = "page_no", defaultValue = "1") int pageNo,
+	public Result search(@PathVariable("ec") String ec, @RequestParam(value = "page_no", defaultValue = "1") int pageNo,
 			@RequestParam(value = "page_size", defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
 			@RequestParam(value = "page_sort", required = false) String pageSort, ServletRequest request) {
 		final List<SearchFilter> filters = buildFilters(request);
 		final PageRequest pageRequest = buildPageRequest(pageNo, pageSize, pageSort);
 		final Page<? extends BaseEntity> page = facadeService.search(ec, filters, pageRequest);
 		final List<? extends BaseEntity> list = page.getContent();
-		return toJson(Result.success(list.toArray(new BaseEntity[list.size()])));
+		return Result.success(list.toArray(new BaseEntity[list.size()]));
 	}
 
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_COUNT, method = RequestMethod.GET)
-	public String count(@PathVariable("ec") String ec, ServletRequest request) {
+	public Result count(@PathVariable("ec") String ec, ServletRequest request) {
 		final List<SearchFilter> filters = buildFilters(request);
 		final long count = facadeService.count(ec, filters);
-		return toJson(Result.success(new Long[] { count }));
+		return Result.success(new Long[] { count });
 	}
 
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_GET + "/{id}", method = RequestMethod.GET)
-	public String get(@PathVariable("ec") String ec, @PathVariable("id") String id) {
+	public Result get(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		final BaseEntity entity = facadeService.get(ec, id);
-		return toJson(Result.success(new BaseEntity[] { entity }));
+		return Result.success(new BaseEntity[] { entity });
 	}
 
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_DELETE + "/{id}")
-	public String delete(@PathVariable("ec") String ec, @PathVariable("id") String id) {
+	public Result delete(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		facadeService.delete(ec, id);
-		return toJson(Result.success(null));
+		return Result.success(null);
 	}
 }

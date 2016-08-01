@@ -23,11 +23,11 @@ import com.itdoes.common.web.MediaTypes;
 @RequestMapping(value = FacadeBaseController.FACADE_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class FacadePutController extends FacadeBaseController {
 	@RequestMapping(value = "/{ec}/" + FacadeMainController.FACADE_URL_PUT + "/{id}", method = RequestMethod.POST)
-	public String put(@PathVariable("ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity,
+	public Result put(@PathVariable("ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity,
 			ServletRequest request) {
 		final BaseEntity oldEntity = (BaseEntity) request.getAttribute("oldEntity");
 		facadeService.put(ec, entity, oldEntity);
-		return toJson(Result.success(new BaseEntity[] { entity }));
+		return Result.success(new BaseEntity[] { entity });
 	}
 
 	@ModelAttribute

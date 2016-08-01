@@ -16,8 +16,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
 import com.google.common.collect.Lists;
-import com.itdoes.common.jackson.JsonMapper;
-import com.itdoes.common.jackson.JsonMapperBuilder;
 import com.itdoes.common.jpa.SearchFilter;
 import com.itdoes.common.jpa.SearchFilter.Operator;
 
@@ -39,17 +37,11 @@ import com.itdoes.common.jpa.SearchFilter.Operator;
  *         </pre>
  */
 public abstract class BaseController {
-	private static final JsonMapper JSON_MAPPER = JsonMapperBuilder.newBuilder().nonEmpty().build();
-
 	protected static final String DEFAULT_PAGE_SIZE = "100";
 
 	private static final String FILTER_PREFIX = "ff_";
 	private static final char FILTER_SEPARATOR = '_';
 	private static final char SORT_SEPARATOR = '_';
-
-	public static String toJson(Result result) {
-		return JSON_MAPPER.toJson(result);
-	}
 
 	protected static List<SearchFilter> buildFilters(ServletRequest request) {
 		final List<SearchFilter> filters = Lists.newArrayList();
