@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.itdoes.business.common.Constants;
 import com.itdoes.common.business.BaseDao;
 import com.itdoes.common.business.BaseEntity;
 import com.itdoes.common.business.BaseService;
@@ -32,7 +33,7 @@ import com.itdoes.common.util.Reflections;
  */
 @Service
 public class FacadeService extends BaseService implements ApplicationContextAware {
-	private static final String ENTITY_PACKAGE = "com.itdoes.business.entity";
+	private static final String ENTITY_BASE_PACKAGE = Constants.ENTITY_BASE_PACKAGE;
 
 	private Map<String, EntityPair> entityPairs;
 
@@ -40,7 +41,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 
 	@PostConstruct
 	public void init() {
-		entityPairs = Businesses.getEntityPairs(ENTITY_PACKAGE, FacadeService.class.getClassLoader(),
+		entityPairs = Businesses.getEntityPairs(ENTITY_BASE_PACKAGE, FacadeService.class.getClassLoader(),
 				applicationContext);
 	}
 
