@@ -300,8 +300,7 @@ public class Reflections {
 		final Field[] fields = clazz.getDeclaredFields();
 		if (fields != null && fields.length > 0) {
 			for (Field field : fields) {
-				final A annotation = field.getAnnotation(annotationClass);
-				if (annotation != null) {
+				if (field.isAnnotationPresent(annotationClass)) {
 					return field;
 				}
 			}
@@ -314,8 +313,7 @@ public class Reflections {
 		final Field[] fields = clazz.getDeclaredFields();
 		if (fields != null && fields.length > 0) {
 			for (Field field : fields) {
-				final A annotation = field.getAnnotation(annotationClass);
-				if (annotation != null) {
+				if (field.isAnnotationPresent(annotationClass)) {
 					result.add(field);
 				}
 			}
