@@ -26,7 +26,7 @@ public class ThreadsTest {
 		ExecutorService pool = Executors.newSingleThreadExecutor();
 		Runnable task = new Task(logger, 500, 0);
 		pool.execute(task);
-		Threads.shutdown(pool, 1000, TimeUnit.MILLISECONDS);
+		Threads.shutdown(pool, 1200, TimeUnit.MILLISECONDS);
 		assertThat(pool.isTerminated()).isTrue();
 		assertThat(appender.getFirst()).isNull();
 

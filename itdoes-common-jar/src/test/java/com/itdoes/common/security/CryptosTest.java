@@ -13,7 +13,7 @@ public class CryptosTest {
 		String data = "user";
 
 		byte[] key = Cryptos.generateHmacSha256Key();
-		assertThat(key).hasSize(20);
+		assertThat(key).hasSize(32);
 
 		byte[] result = Cryptos.hmacSha256(data.getBytes(), key);
 		assertThat(Cryptos.isHmacSha256Valid(result, data.getBytes(), key)).isTrue();
