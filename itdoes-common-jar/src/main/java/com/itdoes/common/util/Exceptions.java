@@ -9,15 +9,26 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class Exceptions {
 	public static RuntimeException unchecked(Throwable t) {
+		return unchecked(t, null);
+	}
+
+	public static RuntimeException unchecked(Throwable t, Class<? extends RuntimeException> expectedExceptionClass) {
 		if (t instanceof InvocationTargetException) {
-			return unchecked(((InvocationTargetException) t).getTargetException());
+			return unchecked(((InvocationTargetException) t).getTargetException(), expectedExceptionClass);
 		}
 
 		if (t instanceof RuntimeException) {
 			return (RuntimeException) t;
-		} else {
-			return new RuntimeException(t);
+		} else if (expectedExceptionClass != null) {
+			try {
+				return expectedExceptionClass.getConstructor(Throwable.class).newInstance(t);
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				// Continue
+			}
 		}
+
+		return new RuntimeException(t);
 	}
 
 	public static String getStackTraceString(Throwable t) {
