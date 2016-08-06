@@ -10,22 +10,22 @@ public class Result {
 		return new Result(HttpStatus.OK.value(), null, data);
 	}
 
-	public static Result fail(int status, Object message) {
-		return new Result(status, message, null);
+	public static Result fail(int code, Object message) {
+		return new Result(code, message, null);
 	}
 
-	private final int status;
+	private final int code;
 	private final Object message;
 	private final Object[] data;
 
-	public Result(int status, Object message, Object[] data) {
-		this.status = status;
+	private Result(int code, Object message, Object[] data) {
+		this.code = code;
 		this.message = message;
 		this.data = data;
 	}
 
-	public int getStatus() {
-		return status;
+	public int getCode() {
+		return code;
 	}
 
 	public Object getMessage() {
