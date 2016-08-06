@@ -293,6 +293,45 @@ public class Reflections {
 			}
 		};
 
+		class SuperClassFilter implements ClassFilter {
+			private final Class<?> superclass;
+
+			public SuperClassFilter(Class<?> superclass) {
+				this.superclass = superclass;
+			}
+
+			@Override
+			public boolean isOk(Class<?> clazz) {
+				return superclass.isAssignableFrom(clazz) && !superclass.equals(clazz);
+			}
+		}
+
+		class AnnotationClassFilter implements ClassFilter {
+			private final Class<? extends Annotation> annotationClass;
+
+			public AnnotationClassFilter(Class<? extends Annotation> annotationClass) {
+				this.annotationClass = annotationClass;
+			}
+
+			@Override
+			public boolean isOk(Class<?> clazz) {
+				return clazz.isAnnotationPresent(annotationClass);
+			}
+		}
+
+		class InterfaceClassFilter implements ClassFilter {
+			private final Class<?> interfaceClass;
+
+			public InterfaceClassFilter(Class<?> interfaceClass) {
+				this.interfaceClass = interfaceClass;
+			}
+
+			@Override
+			public boolean isOk(Class<?> clazz) {
+				return interfaceClass.isAssignableFrom(clazz) && !interfaceClass.equals(clazz);
+			}
+		}
+
 		boolean isOk(Class<?> clazz);
 	}
 

@@ -26,12 +26,8 @@ public class Businesses {
 
 	public static Map<String, EntityPair> getEntityPairs(String entityPackage, ClassLoader classLoader,
 			ApplicationContext context) {
-		final List<Class<?>> entityClasses = Reflections.getClasses(entityPackage, new Reflections.ClassFilter() {
-			@Override
-			public boolean isOk(Class<?> clazz) {
-				return BaseEntity.class.isAssignableFrom(clazz);
-			}
-		}, classLoader);
+		final List<Class<?>> entityClasses = Reflections.getClasses(entityPackage,
+				new Reflections.ClassFilter.SuperClassFilter(BaseEntity.class), classLoader);
 
 		final Map<String, EntityPair> pairs = new HashMap<String, EntityPair>(entityClasses.size());
 		for (Class<?> entityClass : entityClasses) {
