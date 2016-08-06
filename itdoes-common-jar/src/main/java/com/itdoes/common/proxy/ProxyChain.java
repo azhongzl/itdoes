@@ -13,8 +13,8 @@ public class ProxyChain {
 	private final Method method;
 	private final Object[] args;
 	private final MethodProxy methodProxy;
+	private final List<Proxy> proxyList;
 
-	private List<Proxy> proxyList;
 	private int proxyIndex = 0;
 
 	public ProxyChain(Object object, Method method, Object[] args, MethodProxy methodProxy, List<Proxy> proxyList) {
