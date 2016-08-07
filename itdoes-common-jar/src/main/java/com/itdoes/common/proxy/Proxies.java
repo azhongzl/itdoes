@@ -10,7 +10,7 @@ import org.springframework.cglib.proxy.Enhancer;
 public class Proxies {
 	@SuppressWarnings("unchecked")
 	public static <T> T createProxy(Class<?> targetClass, List<Proxy> proxyList) {
-		return (T) Enhancer.create(targetClass, new ProxyMethodInterceptor(proxyList));
+		return (T) Enhancer.create(targetClass, new ProxyMethodInterceptor(targetClass, proxyList));
 	}
 
 	private Proxies() {

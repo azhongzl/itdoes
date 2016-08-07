@@ -9,20 +9,31 @@ import org.springframework.cglib.proxy.MethodProxy;
  * @author Jalen Zhong
  */
 public class ProxyChain {
+	private final Class<?> targetClass;
+	private final List<Proxy> proxyList;
 	private final Object object;
 	private final Method method;
 	private final Object[] args;
 	private final MethodProxy methodProxy;
-	private final List<Proxy> proxyList;
 
 	private int proxyIndex = 0;
 
-	public ProxyChain(Object object, Method method, Object[] args, MethodProxy methodProxy, List<Proxy> proxyList) {
+	public ProxyChain(Class<?> targetClass, List<Proxy> proxyList, Object object, Method method, Object[] args,
+			MethodProxy methodProxy) {
+		this.targetClass = targetClass;
+		this.proxyList = proxyList;
 		this.object = object;
 		this.method = method;
 		this.args = args;
 		this.methodProxy = methodProxy;
-		this.proxyList = proxyList;
+	}
+
+	public Class<?> getTargetClass() {
+		return targetClass;
+	}
+
+	public List<Proxy> getProxyList() {
+		return proxyList;
 	}
 
 	public Object getObject() {
@@ -39,10 +50,6 @@ public class ProxyChain {
 
 	public MethodProxy getMethodProxy() {
 		return methodProxy;
-	}
-
-	public List<Proxy> getProxyList() {
-		return proxyList;
 	}
 
 	public Object doProxyChain() throws Throwable {
