@@ -1,5 +1,6 @@
 package com.itdoes.common.util;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
@@ -15,6 +16,14 @@ public class Urls {
 			return uri;
 		} catch (Throwable t) {
 			throw Exceptions.unchecked(t, IllegalArgumentException.class);
+		}
+	}
+
+	public static URL createUrl(String urlString) {
+		try {
+			return new URL(urlString);
+		} catch (MalformedURLException e) {
+			throw Exceptions.unchecked(e, IllegalArgumentException.class);
 		}
 	}
 

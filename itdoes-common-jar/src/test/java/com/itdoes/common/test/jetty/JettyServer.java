@@ -30,7 +30,7 @@ public class JettyServer {
 
 	private final Server server;
 
-	public JettyServer(int port, String contextPath, String[] taglibJarNames) {
+	public JettyServer(int port, String contextPath, String... taglibJarNames) {
 		this.port = port;
 		this.contextPath = contextPath;
 		this.taglibJarNames = taglibJarNames;

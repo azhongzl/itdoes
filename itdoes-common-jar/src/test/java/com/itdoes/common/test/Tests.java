@@ -17,7 +17,7 @@ import com.itdoes.common.util.Exceptions;
  * @author Jalen Zhong
  */
 public class Tests {
-	public static JettyServer createAndStartJettyServer(int port, String contextPath, String[] taglibJarNames) {
+	public static JettyServer createAndStartJettyServer(int port, String contextPath, String... taglibJarNames) {
 		final JettyServer jettyServer = new JettyServer(port, contextPath, taglibJarNames);
 		jettyServer.start();
 		return jettyServer;
@@ -37,7 +37,7 @@ public class Tests {
 		}
 	}
 
-	public static void executeSql(DataSource dataSource, String[] sqlPaths) {
+	public static void executeSql(DataSource dataSource, String... sqlPaths) {
 		SqlExecutors.executeSql(dataSource, sqlPaths);
 	}
 
