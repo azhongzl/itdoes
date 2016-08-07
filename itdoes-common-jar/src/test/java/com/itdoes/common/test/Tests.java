@@ -43,8 +43,7 @@ public class Tests {
 
 	public static Selenium2 createSelenium(String driverName, String baseUrl, int timeout) {
 		final WebDriver driver = WebDrivers.createDriver(driverName);
-		final Selenium2 s = new Selenium2(driver, baseUrl, timeout);
-		return s;
+		return new Selenium2(driver, baseUrl, timeout);
 	}
 
 	private Tests() {
