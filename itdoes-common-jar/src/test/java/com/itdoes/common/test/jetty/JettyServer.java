@@ -41,10 +41,6 @@ public class JettyServer {
 		init();
 	}
 
-	public JettyServer(int port, String contextPath) {
-		this(port, contextPath, null);
-	}
-
 	public void start() {
 		try {
 			LOGGER.info("Jetty Server starting...");
