@@ -17,7 +17,7 @@ import com.itdoes.common.util.Exceptions;
  * @author Jalen Zhong
  */
 public class Tests {
-	protected static JettyServer createJetty(int port, String contextPath, String[] taglibJarNames) {
+	public static JettyServer createAndStartJettyServer(int port, String contextPath, String[] taglibJarNames) {
 		final JettyServer jettyServer = new JettyServer(port, contextPath, taglibJarNames);
 		jettyServer.start();
 		return jettyServer;

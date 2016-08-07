@@ -1,5 +1,6 @@
 package com.itdoes.business;
 
+import com.itdoes.common.test.Tests;
 import com.itdoes.common.test.jetty.JettyServer;
 import com.itdoes.common.test.spring.Profiles;
 
@@ -15,14 +16,13 @@ public class JettyServerMain {
 		try {
 			Profiles.activeProfile(Profiles.DEVELOPMENT);
 
-			final JettyServer server = new JettyServer(PORT, CONTEXT_PATH, TLD_JAR_NAMES);
-			server.start();
+			final JettyServer jettyServer = Tests.createAndStartJettyServer(PORT, CONTEXT_PATH, TLD_JAR_NAMES);
 
 			System.out.println("[HINT] Hit Enter to reload server");
 			while (true) {
 				final char c = (char) System.in.read();
 				if (c == '\n') {
-					server.reload();
+					jettyServer.reload();
 				}
 			}
 		} catch (Throwable t) {
