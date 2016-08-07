@@ -33,11 +33,13 @@ public class Selenium2 {
 	private final String baseUrl;
 	private final int defaultTimeout;
 
-	public Selenium2(WebDriver driver, String baseUrl, int defaultTimeout) {
+	public Selenium2(WebDriver driver, String baseUrl, int inputDefaultTimeout) {
 		this.driver = driver;
 		this.baseUrl = baseUrl;
-		this.defaultTimeout = defaultTimeout;
-		driver.manage().timeouts().implicitlyWait(defaultTimeout, TimeUnit.SECONDS);
+		this.defaultTimeout = inputDefaultTimeout > 0 ? inputDefaultTimeout : DEFAULT_TIMEOUT;
+		driver.manage().timeouts().implicitlyWait(this.defaultTimeout, TimeUnit.SECONDS);
+
+		setStopAtShutdown();
 	}
 
 	public Selenium2(WebDriver driver, String baseUrl) {
@@ -46,15 +48,6 @@ public class Selenium2 {
 
 	public Selenium2(WebDriver driver, int defaultTimeout) {
 		this(driver, "", defaultTimeout);
-	}
-
-	public void setStopAtShutdown() {
-		Runtime.getRuntime().addShutdownHook(new Thread("Selenium Shutdown Hook") {
-			@Override
-			public void run() {
-				quit();
-			}
-		});
 	}
 
 	public void open(String url) {
@@ -213,5 +206,14 @@ public class Selenium2 {
 	public String getTable(By by, int rowIndex, int columnIndex) {
 		return findElement(by).findElement(By.xpath("//tr[" + (rowIndex + 1) + "]//td[" + (columnIndex + 1) + "]"))
 				.getText();
+	}
+
+	private void setStopAtShutdown() {
+		Runtime.getRuntime().addShutdownHook(new Thread("Selenium Shutdown Hook") {
+			@Override
+			public void run() {
+				quit();
+			}
+		});
 	}
 }

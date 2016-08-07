@@ -22,6 +22,10 @@ public class SqlExecutors {
 	private static final ResourceLoader RESOURCE_LOADER = new DefaultResourceLoader();
 
 	public static void executeSql(DataSource dataSource, String... sqlPaths) {
+		if (sqlPaths == null || sqlPaths.length == 0) {
+			return;
+		}
+
 		try {
 			for (String sqlPath : sqlPaths) {
 				final Resource resource = RESOURCE_LOADER.getResource(sqlPath);
