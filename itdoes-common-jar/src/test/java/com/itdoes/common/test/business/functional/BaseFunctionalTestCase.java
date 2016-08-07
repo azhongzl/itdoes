@@ -8,6 +8,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import com.itdoes.common.test.Tests;
 import com.itdoes.common.test.jetty.JettyServer;
+import com.itdoes.common.test.spring.Profiles;
 import com.itdoes.common.util.PropertiesLoader;
 import com.itdoes.common.util.Urls;
 
@@ -27,6 +28,8 @@ public abstract class BaseFunctionalTestCase {
 
 	@BeforeClass
 	protected static void initEnv() {
+		Profiles.activeProfile(Profiles.FUNCTIONAL_TEST);
+
 		initJettyServer();
 		initDataSource();
 		initDb();
