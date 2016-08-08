@@ -27,18 +27,18 @@ public class Urls {
 		}
 	}
 
-	public static String concat(String urlString1, String urlString2) {
-		if (urlString1.endsWith("/")) {
-			if (urlString2.startsWith("/")) {
-				return urlString1 + urlString2.substring(1);
+	public static String concat(String beforeUrlString, String afterUrlString) {
+		if (beforeUrlString.endsWith("/")) {
+			if (afterUrlString.startsWith("/")) {
+				return beforeUrlString + afterUrlString.substring(1);
 			} else {
-				return urlString1 + urlString2;
+				return beforeUrlString + afterUrlString;
 			}
 		} else {
-			if (urlString2.startsWith("/")) {
-				return urlString1 + urlString2;
+			if (afterUrlString.startsWith("/")) {
+				return beforeUrlString + afterUrlString;
 			} else {
-				return urlString1 + "/" + urlString2;
+				return beforeUrlString + "/" + afterUrlString;
 			}
 		}
 	}
