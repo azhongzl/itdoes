@@ -36,6 +36,7 @@
 		<dozer.version>5.5.1</dozer.version>
 		<javax-mail.version>1.4.7</javax-mail.version>
 		<javax-activation.version>1.1.1</javax-activation.version>
+		<httpclient.version>4.5.2</httpclient.version>
 		<freemarker.version>2.3.25-incubating</freemarker.version>
 		<useragent.version>1.20</useragent.version>
 		<junit.version>4.12</junit.version>
@@ -308,6 +309,18 @@
 				<groupId>javax.activation</groupId>
 				<artifactId>activation</artifactId>
 				<version>${javax-activation.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>fluent-hc</artifactId>
+				<version>${httpclient.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<dependency>

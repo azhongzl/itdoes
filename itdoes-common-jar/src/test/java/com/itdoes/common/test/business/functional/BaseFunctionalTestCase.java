@@ -1,14 +1,17 @@
 package com.itdoes.common.test.business.functional;
 
+import java.io.IOException;
 import java.net.URL;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.fluent.Request;
 import org.junit.BeforeClass;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import com.itdoes.common.test.Tests;
 import com.itdoes.common.test.jetty.JettyServer;
 import com.itdoes.common.test.spring.Profiles;
+import com.itdoes.common.util.Exceptions;
 import com.itdoes.common.util.PropertiesLoader;
 import com.itdoes.common.util.Urls;
 
@@ -59,5 +62,21 @@ public abstract class BaseFunctionalTestCase {
 		}
 
 		Tests.executeSql(dataSource, StringUtils.split(PL.getProperty("sql.file"), ","));
+	}
+
+	protected static String get(String urlString) {
+		try {
+			return Request.Get(Urls.toUri(Urls.concat(URL_BASE, urlString))).execute().returnContent().asString();
+		} catch (IOException e) {
+			throw Exceptions.unchecked(e, IllegalStateException.class);
+		}
+	}
+
+	protected static String post(String urlString) {
+		try {
+			return Request.Post(Urls.toUri(Urls.concat(URL_BASE, urlString))).execute().returnContent().asString();
+		} catch (IOException e) {
+			throw Exceptions.unchecked(e, IllegalStateException.class);
+		}
 	}
 }
