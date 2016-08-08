@@ -52,7 +52,7 @@ public class Selenium2 {
 	}
 
 	public void open(String url) {
-		final String realUrl = url.indexOf("://") == -1 ? Urls.concat(baseUrl, url) : url;
+		final String realUrl = Urls.concat(baseUrl, url);
 		driver.get(realUrl);
 	}
 

@@ -14,5 +14,6 @@ public class UrlsTest {
 		assertThat(Urls.concat("abc/", "def")).isEqualTo("abc/def");
 		assertThat(Urls.concat("abc", "/def")).isEqualTo("abc/def");
 		assertThat(Urls.concat("abc/", "/def")).isEqualTo("abc/def");
+		assertThat(Urls.concat("http://localhost/abc", "http://localhost/def")).isEqualTo("http://localhost/def");
 	}
 }
