@@ -11,7 +11,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.UnhandledAlertException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.security.Credentials;
@@ -218,7 +217,7 @@ public class Selenium2 {
 			if (alert != null) {
 				return alert;
 			}
-		} catch (UnhandledAlertException e) {
+		} catch (Throwable e) {
 		}
 
 		return EmptyAlert.getInstance();
