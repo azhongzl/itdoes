@@ -30,7 +30,7 @@ public abstract class BaseFunctionalTestCase {
 	protected static SimpleDriverDataSource dataSource;
 
 	@BeforeClass
-	protected static void initEnv() {
+	public static void initEnv() {
 		Profiles.activeProfile(Profiles.FUNCTIONAL_TEST);
 
 		initJettyServer();
