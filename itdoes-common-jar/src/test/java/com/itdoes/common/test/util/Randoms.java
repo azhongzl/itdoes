@@ -18,8 +18,16 @@ public class Randoms {
 		return Math.abs(randomLongAll());
 	}
 
+	public static int nextInt() {
+		return RANDOM.nextInt();
+	}
+
+	public static int nextInt(int bound) {
+		return RANDOM.nextInt(bound);
+	}
+
 	public static String randomName(String prefix, int numberOfBits) {
-		return new StringBuilder().append(prefix).append(RANDOM.nextInt((int) Math.pow(10, numberOfBits))).toString();
+		return new StringBuilder().append(prefix).append(nextInt((int) Math.pow(10, numberOfBits))).toString();
 	}
 
 	public static <T> T randomOne(List<T> list) {
