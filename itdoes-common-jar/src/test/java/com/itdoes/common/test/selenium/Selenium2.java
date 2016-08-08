@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.UnhandledAlertException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.security.Credentials;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -209,6 +212,18 @@ public class Selenium2 {
 				.getText();
 	}
 
+	public Alert getAlert() {
+		try {
+			final Alert alert = driver.switchTo().alert();
+			if (alert != null) {
+				return alert;
+			}
+		} catch (UnhandledAlertException e) {
+		}
+
+		return EmptyAlert.getInstance();
+	}
+
 	private void setStopAtShutdown() {
 		Runtime.getRuntime().addShutdownHook(new Thread("Selenium Shutdown Hook") {
 			@Override
@@ -216,5 +231,38 @@ public class Selenium2 {
 				quit();
 			}
 		});
+	}
+
+	private static class EmptyAlert implements Alert {
+		private static final EmptyAlert INSTANCE = new EmptyAlert();
+
+		public static EmptyAlert getInstance() {
+			return INSTANCE;
+		}
+
+		@Override
+		public void dismiss() {
+		}
+
+		@Override
+		public void accept() {
+		}
+
+		@Override
+		public String getText() {
+			return "";
+		}
+
+		@Override
+		public void sendKeys(String keysToSend) {
+		}
+
+		@Override
+		public void setCredentials(Credentials credentials) {
+		}
+
+		@Override
+		public void authenticateUsing(Credentials credentials) {
+		}
 	}
 }
