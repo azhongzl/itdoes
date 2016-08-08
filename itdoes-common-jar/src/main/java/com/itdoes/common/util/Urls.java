@@ -27,6 +27,22 @@ public class Urls {
 		}
 	}
 
+	public static String concat(String urlString1, String urlString2) {
+		if (urlString1.endsWith("/")) {
+			if (urlString2.startsWith("/")) {
+				return urlString1 + urlString2.substring(1);
+			} else {
+				return urlString1 + urlString2;
+			}
+		} else {
+			if (urlString2.startsWith("/")) {
+				return urlString1 + urlString2;
+			} else {
+				return urlString1 + "/" + urlString2;
+			}
+		}
+	}
+
 	private Urls() {
 	}
 }

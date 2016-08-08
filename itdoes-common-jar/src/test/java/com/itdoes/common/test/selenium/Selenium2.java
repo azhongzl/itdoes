@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itdoes.common.util.Exceptions;
+import com.itdoes.common.util.Urls;
 
 /**
  * @author Jalen Zhong
@@ -51,7 +52,7 @@ public class Selenium2 {
 	}
 
 	public void open(String url) {
-		final String realUrl = url.indexOf("://") == -1 ? baseUrl + (url.startsWith("/") ? "" : "/") + url : url;
+		final String realUrl = url.indexOf("://") == -1 ? Urls.concat(baseUrl, url) : url;
 		driver.get(realUrl);
 	}
 
