@@ -100,12 +100,14 @@ public class Excels {
 		}
 	}
 
-	public void setPassword(String password) {
+	public Excels setPassword(String password) {
 		this.password = password;
+		return this;
 	}
 
-	public void setReadOnly(boolean readOnly) {
+	public Excels setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
+		return this;
 	}
 
 	public Excels setIncludeSheetNames(boolean includeSheetNames) {
