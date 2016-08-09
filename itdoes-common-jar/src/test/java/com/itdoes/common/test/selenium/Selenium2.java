@@ -10,6 +10,7 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -21,6 +22,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicate;
 import com.itdoes.common.util.Exceptions;
 import com.itdoes.common.util.Urls;
 
@@ -114,20 +116,27 @@ public class Selenium2 {
 	}
 
 	public void click(By by) {
-		findElement(by).click();
+		new WebDriverWait(driver, defaultTimeout).ignoring(StaleElementReferenceException.class)
+				.until(new Predicate<WebDriver>() {
+					@Override
+					public boolean apply(WebDriver driver) {
+						findElement(by).click();
+						return true;
+					}
+				});
 	}
 
 	public void check(By by) {
 		final WebElement element = findElement(by);
 		if (!element.isSelected()) {
-			element.click();
+			click(by);
 		}
 	}
 
 	public void uncheck(By by) {
 		final WebElement element = findElement(by);
 		if (element.isSelected()) {
-			element.click();
+			click(by);
 		}
 	}
 
@@ -198,7 +207,7 @@ public class Selenium2 {
 	}
 
 	public void waitCondition(ExpectedCondition<?> condition, int timeout) {
-		(new WebDriverWait(driver, timeout)).until(condition);
+		new WebDriverWait(driver, timeout).until(condition);
 	}
 
 	public boolean isTextPresent(String text) {
