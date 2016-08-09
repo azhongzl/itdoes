@@ -3,10 +3,11 @@ package com.itdoes.common.test.business.functional;
 import java.io.IOException;
 import java.net.URL;
 
+import javax.sql.DataSource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.fluent.Request;
 import org.junit.BeforeClass;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import com.itdoes.common.test.Tests;
 import com.itdoes.common.test.jetty.JettyServer;
@@ -27,7 +28,7 @@ public abstract class BaseFunctionalTestCase {
 
 	// Optional
 	protected static JettyServer jettyServer;
-	protected static SimpleDriverDataSource dataSource;
+	protected static DataSource dataSource;
 
 	@BeforeClass
 	public static void initEnv() {
