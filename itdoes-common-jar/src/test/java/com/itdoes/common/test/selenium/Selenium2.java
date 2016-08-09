@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -113,6 +114,14 @@ public class Selenium2 {
 		final WebElement element = findElement(by);
 		element.clear();
 		element.sendKeys(text);
+	}
+
+	public void ctrlC(By by) {
+		type(by, Keys.CONTROL + "c");
+	}
+
+	public void ctrlV(By by) {
+		type(by, Keys.CONTROL + "v");
 	}
 
 	public void click(By by) {
@@ -232,15 +241,6 @@ public class Selenium2 {
 		return EmptyAlert.getInstance();
 	}
 
-	private void setStopAtShutdown() {
-		Runtime.getRuntime().addShutdownHook(new Thread("Selenium Shutdown Hook") {
-			@Override
-			public void run() {
-				quit();
-			}
-		});
-	}
-
 	private static class EmptyAlert implements Alert {
 		private static final EmptyAlert INSTANCE = new EmptyAlert();
 
@@ -272,5 +272,32 @@ public class Selenium2 {
 		@Override
 		public void authenticateUsing(Credentials credentials) {
 		}
+	}
+
+	public static interface NewWindowAction {
+		void actInNewWindow();
+	}
+
+	public void actInNewWindow(NewWindowAction action) {
+		final String parentHandler = driver.getWindowHandle();
+
+		for (String handler : driver.getWindowHandles()) {
+			driver.switchTo().window(handler);
+		}
+
+		action.actInNewWindow();
+
+		driver.close();
+
+		driver.switchTo().window(parentHandler);
+	}
+
+	private void setStopAtShutdown() {
+		Runtime.getRuntime().addShutdownHook(new Thread("Selenium Shutdown Hook") {
+			@Override
+			public void run() {
+				quit();
+			}
+		});
 	}
 }
