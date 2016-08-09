@@ -48,7 +48,7 @@ public abstract class BaseFunctionalTestCase {
 	}
 
 	protected static void initDataSource() {
-		if (dataSource != null || !PL.getBoolean("jdbc.on")) {
+		if (dataSource != null || (!PL.getBoolean("jdbc.on") && !PL.getBoolean("sql.on"))) {
 			return;
 		}
 
