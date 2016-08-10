@@ -15,7 +15,6 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.security.Credentials;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -125,14 +124,13 @@ public class Selenium2 {
 	}
 
 	public void click(By by) {
-		new WebDriverWait(driver, defaultTimeout).ignoring(StaleElementReferenceException.class)
-				.until(new Predicate<WebDriver>() {
-					@Override
-					public boolean apply(WebDriver driver) {
-						findElement(by).click();
-						return true;
-					}
-				});
+		waiter(defaultTimeout).ignoring(StaleElementReferenceException.class).until(new Predicate<WebDriver>() {
+			@Override
+			public boolean apply(WebDriver driver) {
+				findElement(by).click();
+				return true;
+			}
+		});
 	}
 
 	public void check(By by) {
@@ -180,7 +178,7 @@ public class Selenium2 {
 	}
 
 	public void waitTitleIs(String title, int timeout) {
-		waitCondition(ExpectedConditions.titleIs(title), timeout);
+		waitUntil(ExpectedConditions.titleIs(title), timeout);
 	}
 
 	public void waitTitleContains(String title) {
@@ -188,15 +186,15 @@ public class Selenium2 {
 	}
 
 	public void waitTitleContains(String title, int timeout) {
-		waitCondition(ExpectedConditions.titleContains(title), timeout);
+		waitUntil(ExpectedConditions.titleContains(title), timeout);
 	}
 
-	public void waitVisible(By by) {
-		waitVisible(by, defaultTimeout);
+	public WebElement waitVisible(By by) {
+		return waitVisible(by, defaultTimeout);
 	}
 
-	public void waitVisible(By by, int timeout) {
-		waitCondition(ExpectedConditions.visibilityOfElementLocated(by), timeout);
+	public WebElement waitVisible(By by, int timeout) {
+		return waitUntil(ExpectedConditions.visibilityOfElementLocated(by), timeout);
 	}
 
 	public void waitTextPresent(By by, String text) {
@@ -204,7 +202,7 @@ public class Selenium2 {
 	}
 
 	public void waitTextPresent(By by, String text, int timeout) {
-		waitCondition(ExpectedConditions.textToBePresentInElementLocated(by, text), timeout);
+		waitUntil(ExpectedConditions.textToBePresentInElementLocated(by, text), timeout);
 	}
 
 	public void waitValuePresent(By by, String value) {
@@ -212,11 +210,23 @@ public class Selenium2 {
 	}
 
 	public void waitValuePresent(By by, String value, int timeout) {
-		waitCondition(ExpectedConditions.textToBePresentInElementValue(by, value), timeout);
+		waitUntil(ExpectedConditions.textToBePresentInElementValue(by, value), timeout);
 	}
 
-	public void waitCondition(ExpectedCondition<?> condition, int timeout) {
-		new WebDriverWait(driver, timeout).until(condition);
+	public Alert getAlert() {
+		return getAlert(defaultTimeout);
+	}
+
+	public Alert getAlert(int timeout) {
+		return waitUntil(ExpectedConditions.alertIsPresent(), timeout);
+	}
+
+	public <T> T waitUntil(ExpectedCondition<T> condition, int timeout) {
+		return waiter(timeout).until(condition);
+	}
+
+	public WebDriverWait waiter(int timeout) {
+		return new WebDriverWait(driver, timeout);
 	}
 
 	public boolean isTextPresent(String text) {
@@ -224,54 +234,9 @@ public class Selenium2 {
 		return bodyText.contains(text);
 	}
 
-	public String getTable(By by, int rowIndex, int columnIndex) {
+	public String getCell(By by, int rowIndex, int columnIndex) {
 		return findElement(by).findElement(By.xpath("//tr[" + (rowIndex + 1) + "]//td[" + (columnIndex + 1) + "]"))
 				.getText();
-	}
-
-	public Alert getAlert() {
-		try {
-			final Alert alert = driver.switchTo().alert();
-			if (alert != null) {
-				return alert;
-			}
-		} catch (Throwable e) {
-		}
-
-		return EmptyAlert.getInstance();
-	}
-
-	private static class EmptyAlert implements Alert {
-		private static final EmptyAlert INSTANCE = new EmptyAlert();
-
-		public static EmptyAlert getInstance() {
-			return INSTANCE;
-		}
-
-		@Override
-		public void dismiss() {
-		}
-
-		@Override
-		public void accept() {
-		}
-
-		@Override
-		public String getText() {
-			return "";
-		}
-
-		@Override
-		public void sendKeys(String keysToSend) {
-		}
-
-		@Override
-		public void setCredentials(Credentials credentials) {
-		}
-
-		@Override
-		public void authenticateUsing(Credentials credentials) {
-		}
 	}
 
 	public static interface NewWindowAction {
@@ -279,17 +244,17 @@ public class Selenium2 {
 	}
 
 	public void actInNewWindow(NewWindowAction action) {
-		final String parentHandler = driver.getWindowHandle();
+		final String parentWindowHandler = driver.getWindowHandle();
 
-		for (String handler : driver.getWindowHandles()) {
-			driver.switchTo().window(handler);
+		for (String windowHandler : driver.getWindowHandles()) {
+			driver.switchTo().window(windowHandler);
 		}
 
 		action.actInNewWindow();
 
 		driver.close();
 
-		driver.switchTo().window(parentHandler);
+		driver.switchTo().window(parentWindowHandler);
 	}
 
 	private void setStopAtShutdown() {
