@@ -7,9 +7,9 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +28,8 @@ public class Excels {
 
 	private String password = null;
 	private boolean readOnly = true;
+
+	private MissingCellPolicy missingCellPolicy;
 
 	private boolean includeSheetNames;
 	private boolean includeSheetNamesSetted;
@@ -59,10 +61,14 @@ public class Excels {
 			throw Exceptions.unchecked(e, IllegalArgumentException.class);
 		}
 
+		if (missingCellPolicy != null) {
+			workbook.setMissingCellPolicy(missingCellPolicy);
+		}
+
 		if (workbook instanceof HSSFWorkbook) { // xls
 			final HSSFWorkbook hssfWorkbook = (HSSFWorkbook) workbook;
-			final ExcelExtractor extractor = new ExcelExtractor(hssfWorkbook);
 
+			final ExcelExtractor extractor = new ExcelExtractor(hssfWorkbook);
 			configExtractor(extractor);
 			if (includeBlankCellsSetted) {
 				extractor.setIncludeBlankCells(includeBlankCells);
@@ -79,8 +85,8 @@ public class Excels {
 			return text;
 		} else if (workbook instanceof XSSFWorkbook) { // xlsx
 			final XSSFWorkbook xssfWorkbook = (XSSFWorkbook) workbook;
-			final XSSFExcelExtractor extractor = new XSSFExcelExtractor(xssfWorkbook);
 
+			final HackXSSFExcelExtractor extractor = new HackXSSFExcelExtractor(xssfWorkbook);
 			configExtractor(extractor);
 			if (includeTextBoxesSetted) {
 				extractor.setIncludeTextBoxes(includeTextBoxes);
@@ -107,6 +113,11 @@ public class Excels {
 
 	public Excels setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
+		return this;
+	}
+
+	public Excels setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
+		this.missingCellPolicy = missingCellPolicy;
 		return this;
 	}
 
