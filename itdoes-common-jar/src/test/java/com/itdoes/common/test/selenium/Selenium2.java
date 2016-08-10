@@ -30,7 +30,7 @@ import com.itdoes.common.util.Urls;
  * @author Jalen Zhong
  */
 public class Selenium2 {
-	private static final int DEFAULT_TIMEOUT = 20;
+	private static final int DEFAULT_TIMEOUT = 5;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Selenium2.class);
 
