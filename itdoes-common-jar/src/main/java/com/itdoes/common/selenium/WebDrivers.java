@@ -1,4 +1,4 @@
-package com.itdoes.common.test.selenium;
+package com.itdoes.common.selenium;
 
 import java.net.MalformedURLException;
 import java.net.URL;

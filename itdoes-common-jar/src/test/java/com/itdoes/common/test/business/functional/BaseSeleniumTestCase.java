@@ -3,8 +3,8 @@ package com.itdoes.common.test.business.functional;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
 
+import com.itdoes.common.selenium.Selenium2;
 import com.itdoes.common.test.Tests;
-import com.itdoes.common.test.selenium.Selenium2;
 import com.itdoes.common.test.selenium.SeleniumScreenshotRule;
 
 /**

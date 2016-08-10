@@ -1,4 +1,4 @@
-package com.itdoes.common.test.sql;
+package com.itdoes.common.sql;
 
 import java.sql.SQLException;
 

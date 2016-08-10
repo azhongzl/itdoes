@@ -4,6 +4,8 @@ import org.apache.commons.lang3.Validate;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
+import com.itdoes.common.selenium.Selenium2;
+
 /**
  * @author Jalen Zhong
  */

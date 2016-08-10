@@ -1,4 +1,4 @@
-package com.itdoes.common.test.selenium;
+package com.itdoes.common.selenium;
 
 import java.io.File;
 import java.io.IOException;

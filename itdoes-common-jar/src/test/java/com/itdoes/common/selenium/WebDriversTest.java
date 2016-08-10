@@ -1,4 +1,4 @@
-package com.itdoes.common.test.selenium;
+package com.itdoes.common.selenium;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

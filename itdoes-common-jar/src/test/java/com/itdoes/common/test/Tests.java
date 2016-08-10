@@ -7,10 +7,10 @@ import javax.sql.DataSource;
 import org.openqa.selenium.WebDriver;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
+import com.itdoes.common.selenium.Selenium2;
+import com.itdoes.common.selenium.WebDrivers;
+import com.itdoes.common.sql.SqlExecutors;
 import com.itdoes.common.test.jetty.JettyServer;
-import com.itdoes.common.test.selenium.Selenium2;
-import com.itdoes.common.test.selenium.WebDrivers;
-import com.itdoes.common.test.sql.SqlExecutors;
 import com.itdoes.common.util.Exceptions;
 
 /**
