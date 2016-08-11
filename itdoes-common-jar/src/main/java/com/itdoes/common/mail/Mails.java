@@ -17,7 +17,7 @@ public class Mails {
 	}
 
 	public static MailMimeMessages createMimeMessage(MailSenders sender, boolean multipart) {
-		return MailMimeMessages.create(sender.createMimeMessage(), multipart, DEFAULT_ENCODING);
+		return createMimeMessage(sender, multipart, DEFAULT_ENCODING);
 	}
 
 	private Mails() {
