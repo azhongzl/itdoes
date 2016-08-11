@@ -34,7 +34,7 @@
 		<commons-beanutils.version>1.9.2</commons-beanutils.version>
 		<guava.version>19.0</guava.version>
 		<dozer.version>5.5.1</dozer.version>
-		<javax-mail.version>1.4.7</javax-mail.version>
+		<javax-mail.version>1.5.6</javax-mail.version>
 		<javax-activation.version>1.1.1</javax-activation.version>
 		<httpclient.version>4.5.2</httpclient.version>
 		<freemarker.version>2.3.25-incubating</freemarker.version>
@@ -303,8 +303,8 @@
 			</dependency>
 
 			<dependency>
-				<groupId>javax.mail</groupId>
-				<artifactId>mail</artifactId>
+				<groupId>com.sun.mail</groupId>
+				<artifactId>javax.mail</artifactId>
 				<version>${javax-mail.version}</version>
 			</dependency>
 			<dependency>
