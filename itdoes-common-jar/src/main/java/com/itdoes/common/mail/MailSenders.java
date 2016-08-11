@@ -35,6 +35,16 @@ public class MailSenders {
 		sender.send(mimeMessages);
 	}
 
+	public void send(MailMimeMessages mailMimeMessage) {
+		sender.send(mailMimeMessage.getMimeMessage());
+	}
+
+	public void send(MailMimeMessages... mailMimeMessages) {
+		for (MailMimeMessages mailMimeMessage : mailMimeMessages) {
+			send(mailMimeMessage);
+		}
+	}
+
 	public void testConnection() throws MessagingException {
 		sender.testConnection();
 	}
