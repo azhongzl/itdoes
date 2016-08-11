@@ -11,7 +11,7 @@ import java.util.zip.CRC32;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.hash.Hashing;
-import com.itdoes.common.util.Charsets;
+import com.itdoes.common.Constants;
 import com.itdoes.common.util.Exceptions;
 
 /**
@@ -41,7 +41,7 @@ public class Digests {
 	}
 
 	public static byte[] sha1(String data) {
-		return sha1(data, Charsets.UTF8);
+		return sha1(data, Constants.UTF8_CHARSET);
 	}
 
 	public static byte[] sha1(String data, Charset charset) {
@@ -49,7 +49,7 @@ public class Digests {
 	}
 
 	public static byte[] sha1(String data, byte[] salt) {
-		return sha1(data, Charsets.UTF8, salt);
+		return sha1(data, Constants.UTF8_CHARSET, salt);
 	}
 
 	public static byte[] sha1(String data, Charset charset, byte[] salt) {
@@ -57,7 +57,7 @@ public class Digests {
 	}
 
 	public static byte[] sha1(String input, byte[] salt, int iterations) {
-		return sha1(input, Charsets.UTF8, salt, iterations);
+		return sha1(input, Constants.UTF8_CHARSET, salt, iterations);
 	}
 
 	public static byte[] sha1(String input, Charset charset, byte[] salt, int iterations) {
@@ -77,7 +77,7 @@ public class Digests {
 	}
 
 	public static byte[] sha256(String data) {
-		return sha256(data, Charsets.UTF8);
+		return sha256(data, Constants.UTF8_CHARSET);
 	}
 
 	public static byte[] sha256(String data, Charset charset) {
@@ -85,7 +85,7 @@ public class Digests {
 	}
 
 	public static byte[] sha256(String data, byte[] salt) {
-		return sha256(data, Charsets.UTF8, salt);
+		return sha256(data, Constants.UTF8_CHARSET, salt);
 	}
 
 	public static byte[] sha256(String data, Charset charset, byte[] salt) {
@@ -93,7 +93,7 @@ public class Digests {
 	}
 
 	public static byte[] sha256(String input, byte[] salt, int iterations) {
-		return sha256(input, Charsets.UTF8, salt, iterations);
+		return sha256(input, Constants.UTF8_CHARSET, salt, iterations);
 	}
 
 	public static byte[] sha256(String input, Charset charset, byte[] salt, int iterations) {
@@ -113,7 +113,7 @@ public class Digests {
 	}
 
 	public static byte[] md5(String data) {
-		return md5(data, Charsets.UTF8);
+		return md5(data, Constants.UTF8_CHARSET);
 	}
 
 	public static byte[] md5(String data, Charset charset) {
@@ -121,7 +121,7 @@ public class Digests {
 	}
 
 	public static byte[] md5(String data, byte[] salt) {
-		return md5(data, Charsets.UTF8, salt);
+		return md5(data, Constants.UTF8_CHARSET, salt);
 	}
 
 	public static byte[] md5(String data, Charset charset, byte[] salt) {
@@ -129,7 +129,7 @@ public class Digests {
 	}
 
 	public static byte[] md5(String input, byte[] salt, int iterations) {
-		return md5(input, Charsets.UTF8, salt, iterations);
+		return md5(input, Constants.UTF8_CHARSET, salt, iterations);
 	}
 
 	public static byte[] md5(String input, Charset charset, byte[] salt, int iterations) {
@@ -204,7 +204,7 @@ public class Digests {
 	}
 
 	public static long crc32(String data) {
-		return crc32(data, Charsets.UTF8);
+		return crc32(data, Constants.UTF8_CHARSET);
 	}
 
 	public static long crc32(String data, Charset charset) {
@@ -216,7 +216,7 @@ public class Digests {
 	}
 
 	public static int murmur32(String data) {
-		return murmur32(data, Charsets.UTF8);
+		return murmur32(data, Constants.UTF8_CHARSET);
 	}
 
 	public static int murmur32(String data, Charset charset) {
@@ -228,7 +228,7 @@ public class Digests {
 	}
 
 	public static int murmur32(String data, int seed) {
-		return murmur32(data, seed, Charsets.UTF8);
+		return murmur32(data, seed, Constants.UTF8_CHARSET);
 	}
 
 	public static int murmur32(String data, int seed, Charset charset) {
