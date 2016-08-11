@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.net.HttpHeaders;
+import com.itdoes.common.Constants;
 import com.itdoes.common.util.Codecs;
 
 import eu.bitwalker.useragentutils.UserAgent;
@@ -85,8 +86,8 @@ public class Webs {
 			String filename) {
 		String encodedFilename = filename.replaceAll(" ", "_");
 		encodedFilename = Codecs.urlEncode(encodedFilename);
-		response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-				"attachment; filename=\"" + encodedFilename + "\"; filename*=UTF-8''" + encodedFilename);
+		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedFilename
+				+ "\"; filename*=" + Constants.UTF8 + "''" + encodedFilename);
 	}
 
 	public static String httpBasicEncode(String username, String password) {

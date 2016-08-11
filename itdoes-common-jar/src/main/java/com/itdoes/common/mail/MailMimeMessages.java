@@ -15,16 +15,21 @@ import com.itdoes.common.util.Exceptions;
  * @author Jalen Zhong
  */
 public class MailMimeMessages {
-	public static MailMimeMessages create(MimeMessage message) {
-		return new MailMimeMessages(message);
+	public static MailMimeMessages create(MimeMessage message, boolean multipart, String encoding) {
+		return new MailMimeMessages(message, multipart, encoding);
 	}
 
 	private final MimeMessage mimeMessage;
 	private final MimeMessageHelper helper;
 
-	private MailMimeMessages(MimeMessage mimeMessage) {
+	private MailMimeMessages(MimeMessage mimeMessage, boolean multipart, String encoding) {
 		this.mimeMessage = mimeMessage;
-		this.helper = new MimeMessageHelper(mimeMessage);
+
+		try {
+			this.helper = new MimeMessageHelper(mimeMessage, multipart, encoding);
+		} catch (MessagingException e) {
+			throw Exceptions.unchecked(e);
+		}
 	}
 
 	public MimeMessage getMimeMessage() {

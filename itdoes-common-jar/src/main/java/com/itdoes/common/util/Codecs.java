@@ -9,11 +9,13 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import com.itdoes.common.Constants;
+
 /**
  * @author Jalen Zhong
  */
 public class Codecs {
-	private static final String DEFAULT_URL_ENCODING = "UTF-8";
+	private static final String DEFAULT_URL_ENCODING = Constants.UTF8;
 	private static final char[] BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
 
 	public static String hexEncode(byte[] input) {

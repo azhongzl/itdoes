@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.itdoes.common.Constants;
 import com.itdoes.common.jaxb.JaxbMapperTest.HouseMapAdapter.HouseMap.HouseEntry;
 
 /**
@@ -44,7 +45,7 @@ public class JaxbMapperTest {
 		user.getHouses().put("bj", "house1");
 		user.getHouses().put("gz", "house2");
 
-		String xml = JaxbMapper.toXml(user, "UTF-8");
+		String xml = JaxbMapper.toXml(user, Constants.UTF8);
 		assertXml(xml);
 	}
 
@@ -58,7 +59,7 @@ public class JaxbMapperTest {
 		user2.setName("jie");
 		List<User> userList = Lists.newArrayList(user1, user2);
 
-		String xml = JaxbMapper.toXml(userList, "userList", User.class, "UTF-8");
+		String xml = JaxbMapper.toXml(userList, "userList", User.class, Constants.UTF8);
 		assertXmlWithListAsRoot(xml);
 	}
 
