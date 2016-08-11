@@ -3,10 +3,10 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd"
 	default-lazy-init="true">
 
-	<description>Email Configuration</description>
+	<description>Mail Configuration</description>
 
 	<bean id="freemarkerConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">
-		<property name="templateLoaderPath" value="classpath:/email" />
+		<property name="templateLoaderPath" value="classpath:/mail" />
 	</bean>
 
 	<beans profile="production">
