@@ -7,104 +7,41 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-
 /**
  * @author Jalen Zhong
  */
-public class MailSenders {
-	public static MailSenders create() {
-		return new MailSenders();
-	}
+public interface MailSenders {
+	MimeMessage createMimeMessage();
 
-	private final JavaMailSenderImpl sender;
+	void send(MimeMessage mimeMessage);
 
-	private MailSenders() {
-		sender = new JavaMailSenderImpl();
-	}
+	void send(MimeMessage... mimeMessages);
 
-	public MimeMessage createMimeMessage() {
-		return sender.createMimeMessage();
-	}
+	void send(MailMimeMessages mailMimeMessage);
 
-	public void send(MimeMessage mimeMessage) {
-		sender.send(mimeMessage);
-	}
+	void send(MailMimeMessages... mailMimeMessages);
 
-	public void send(MimeMessage... mimeMessages) {
-		sender.send(mimeMessages);
-	}
+	void testConnection() throws MessagingException;
 
-	public void send(MailMimeMessages mailMimeMessage) {
-		sender.send(mailMimeMessage.getMimeMessage());
-	}
+	boolean isConnectionOk();
 
-	public void send(MailMimeMessages... mailMimeMessages) {
-		for (MailMimeMessages mailMimeMessage : mailMimeMessages) {
-			send(mailMimeMessage);
-		}
-	}
+	MailSenders setJavaMailProperties(Properties javaMailProperties);
 
-	public void testConnection() throws MessagingException {
-		sender.testConnection();
-	}
+	MailSenders setJavaMailProperty(String key, String value);
 
-	public boolean isConnectionOk() {
-		try {
-			testConnection();
-			return true;
-		} catch (MessagingException e) {
-			return false;
-		}
-	}
+	MailSenders setSession(Session session);
 
-	public MailSenders setJavaMailProperties(Properties javaMailProperties) {
-		sender.setJavaMailProperties(javaMailProperties);
-		return this;
-	}
+	MailSenders setProtocol(String protocol);
 
-	public MailSenders setJavaMailProperty(String key, String value) {
-		sender.getJavaMailProperties().setProperty(key, value);
-		return this;
-	}
+	MailSenders setHost(String host);
 
-	public MailSenders setSession(Session session) {
-		sender.setSession(session);
-		return this;
-	}
+	MailSenders setPort(int port);
 
-	public MailSenders setProtocol(String protocol) {
-		sender.setProtocol(protocol);
-		return this;
-	}
+	MailSenders setUsername(String username);
 
-	public MailSenders setHost(String host) {
-		sender.setHost(host);
-		return this;
-	}
+	MailSenders setPassword(String password);
 
-	public MailSenders setPort(int port) {
-		sender.setPort(port);
-		return this;
-	}
+	MailSenders setDefaultEncoding(String defaultEncoding);
 
-	public MailSenders setUsername(String username) {
-		sender.setUsername(username);
-		return this;
-	}
-
-	public MailSenders setPassword(String password) {
-		sender.setPassword(password);
-		return this;
-	}
-
-	public MailSenders setDefaultEncoding(String defaultEncoding) {
-		sender.setDefaultEncoding(defaultEncoding);
-		return this;
-	}
-
-	public MailSenders setDefaultFileTypeMap(FileTypeMap defaultFileTypeMap) {
-		sender.setDefaultFileTypeMap(defaultFileTypeMap);
-		return this;
-	}
+	MailSenders setDefaultFileTypeMap(FileTypeMap defaultFileTypeMap);
 }

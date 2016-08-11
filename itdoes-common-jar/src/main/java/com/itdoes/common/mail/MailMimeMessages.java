@@ -4,215 +4,55 @@ import java.io.File;
 import java.util.Date;
 
 import javax.activation.FileTypeMap;
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-
-import org.springframework.mail.javamail.MimeMessageHelper;
-
-import com.itdoes.common.util.Exceptions;
 
 /**
  * @author Jalen Zhong
  */
-public class MailMimeMessages {
-	public static MailMimeMessages create(MimeMessage message, boolean multipart, String encoding) {
-		return new MailMimeMessages(message, multipart, encoding);
-	}
+public interface MailMimeMessages {
+	MimeMessage getMimeMessage();
 
-	private final MimeMessage mimeMessage;
-	private final MimeMessageHelper helper;
+	MailMimeMessages setSubject(String subject);
 
-	private MailMimeMessages(MimeMessage mimeMessage, boolean multipart, String encoding) {
-		this.mimeMessage = mimeMessage;
+	MailMimeMessages setText(String text, boolean isHtml);
 
-		try {
-			this.helper = new MimeMessageHelper(mimeMessage, multipart, encoding);
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages setText(String plainText, String htmlText);
 
-	public MimeMessage getMimeMessage() {
-		return mimeMessage;
-	}
+	MailMimeMessages setSentDate(Date sentDate);
 
-	public MailMimeMessages setSubject(String subject) {
-		try {
-			helper.setSubject(subject);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages setFrom(String from);
 
-	public MailMimeMessages setText(String text, boolean isHtml) {
-		try {
-			helper.setText(text, isHtml);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages addTo(String to);
 
-	public MailMimeMessages setText(String plainText, String htmlText) {
-		try {
-			helper.setText(plainText, htmlText);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages setTo(String to);
 
-	public MailMimeMessages setSentDate(Date sentDate) {
-		try {
-			helper.setSentDate(sentDate);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages setTo(String[] to);
 
-	public MailMimeMessages setFrom(String from) {
-		try {
-			helper.setFrom(from);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages addCc(String cc);
 
-	public MailMimeMessages addTo(String to) {
-		try {
-			helper.addTo(to);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages setCc(String cc);
 
-	public MailMimeMessages setTo(String to) {
-		try {
-			helper.setTo(to);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages setCc(String[] cc);
 
-	public MailMimeMessages setTo(String[] to) {
-		try {
-			helper.setTo(to);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages addBcc(String bcc);
 
-	public MailMimeMessages addCc(String cc) {
-		try {
-			helper.addCc(cc);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages setBcc(String bcc);
 
-	public MailMimeMessages setCc(String cc) {
-		try {
-			helper.setCc(cc);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages setBcc(String[] bcc);
 
-	public MailMimeMessages setCc(String[] cc) {
-		try {
-			helper.setCc(cc);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages setReplyTo(String replyTo);
 
-	public MailMimeMessages addBcc(String bcc) {
-		try {
-			helper.addBcc(bcc);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages addAttachment(String attachmentFilename, String fullFilename);
 
-	public MailMimeMessages setBcc(String bcc) {
-		try {
-			helper.setBcc(bcc);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages addAttachment(String attachmentFilename, File file);
 
-	public MailMimeMessages setBcc(String[] bcc) {
-		try {
-			helper.setBcc(bcc);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages addInline(String contentId, String fullFilename);
 
-	public MailMimeMessages setReplyTo(String replyTo) {
-		try {
-			helper.setReplyTo(replyTo);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages addInline(String contentId, File file);
 
-	public MailMimeMessages addAttachment(String attachmentFilename, String fullFilename) {
-		return addAttachment(attachmentFilename, new File(fullFilename));
-	}
+	MailMimeMessages setPriority(int priority);
 
-	public MailMimeMessages addAttachment(String attachmentFilename, File file) {
-		try {
-			helper.addAttachment(attachmentFilename, file);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
+	MailMimeMessages setFileTypeMap(FileTypeMap fileTypeMap);
 
-	public MailMimeMessages addInline(String contentId, String fullFilename) {
-		return addInline(contentId, new File(fullFilename));
-	}
-
-	public MailMimeMessages addInline(String contentId, File file) {
-		try {
-			helper.addInline(contentId, file);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
-
-	public MailMimeMessages setPriority(int priority) {
-		try {
-			helper.setPriority(priority);
-			return this;
-		} catch (MessagingException e) {
-			throw Exceptions.unchecked(e);
-		}
-	}
-
-	public MailMimeMessages setFileTypeMap(FileTypeMap fileTypeMap) {
-		helper.setFileTypeMap(fileTypeMap);
-		return this;
-	}
-
-	public MailMimeMessages setValidateAddresses(boolean validateAddresses) {
-		helper.setValidateAddresses(validateAddresses);
-		return this;
-	}
+	MailMimeMessages setValidateAddresses(boolean validateAddresses);
 }
