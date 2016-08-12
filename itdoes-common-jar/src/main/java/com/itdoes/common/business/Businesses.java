@@ -12,21 +12,24 @@ import org.springframework.context.ApplicationContext;
 
 import com.itdoes.common.cglib.CglibMapper;
 import com.itdoes.common.util.Collections3;
+import com.itdoes.common.util.PropertiesLoader;
 import com.itdoes.common.util.Reflections;
 
 /**
  * @author Jalen Zhong
  */
 public class Businesses {
+	private static final PropertiesLoader PL = new PropertiesLoader("classpath:/application.properties");
+	private static final String ENTITY_BASE_PACKAGE = PL.getProperty("entity.base.package");
+
 	private static final char TABLE_COLUMN_SEPARATOR = '.';
 	private static final char PERM_SEPARATOR = ':';
 	private static final String PERM_READ = "read";
 	private static final String PERM_WRITE = "write";
 	private static final String PERM_ANY = "*";
 
-	public static Map<String, EntityPair> getEntityPairs(String entityPackage, ClassLoader classLoader,
-			ApplicationContext context) {
-		final List<Class<?>> entityClasses = Reflections.getClasses(entityPackage,
+	public static Map<String, EntityPair> getEntityPairs(ClassLoader classLoader, ApplicationContext context) {
+		final List<Class<?>> entityClasses = Reflections.getClasses(ENTITY_BASE_PACKAGE,
 				new Reflections.ClassFilter.SuperClassFilter(BaseEntity.class), classLoader);
 
 		final Map<String, EntityPair> pairs = new HashMap<String, EntityPair>(entityClasses.size());
