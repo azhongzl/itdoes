@@ -17,8 +17,8 @@ public class Files {
 	public static List<File> listFiles(File dir, FileFilter filter) {
 		Validate.notNull(dir, "Dir is null");
 		Validate.notNull(filter, "Filter is null");
-		Validate.isTrue(dir.exists(), "Dir does not exist");
-		Validate.isTrue(dir.isDirectory(), "Dir is not a directory");
+		Validate.isTrue(dir.exists(), "Dir " + dir.getName() + " does not exist");
+		Validate.isTrue(dir.isDirectory(), "Dir " + dir.getName() + " is not a directory");
 
 		final File[] files = dir.listFiles(filter);
 		if (files == null || files.length == 0) {
