@@ -51,7 +51,7 @@
 	</bean>
 
 	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
-		<property name="securityManager" ref="securityManager" />
+		<property name="securityManager" ref="shiroSecurityManager" />
 	</bean>
 	<!-- end -->
 </beans>
