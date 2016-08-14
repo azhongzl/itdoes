@@ -5,21 +5,13 @@
 
 	<description>Shiro Configuration</description>
 
-	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
-		<property name="realm" ref="shiroDbRealm" />
-		<property name="cacheManager" ref="shiroEhcacheManager" />
-	</bean>
-
-	<bean id="shiroDbRealm" class="com.itdoes.business.service.ShiroDbRealm">
-		<property name="userService" ref="userService" />
-	</bean>
-
 	<bean id="shiroFilterChainDefinitionMap" class="com.itdoes.business.service.ShiroFilterChainDefinitionMap">
 		<property name="facadeService" ref="facadeService" />
 		<property name="staticDefinitions">
 			<value>
 				/login = authc
 				/logout = logout
+				/** = user
 			</value>
 		</property>
 	</bean>
@@ -29,6 +21,27 @@
 		<property name="loginUrl" value="/login" />
 		<property name="successUrl" value="/" />
 		<property name="filterChainDefinitionMap" ref="shiroFilterChainDefinitionMap" />
+	</bean>
+
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="shiroDbRealm" />
+		<property name="rememberMeManager" ref="rememberMeManager" />
+		<property name="cacheManager" ref="shiroEhcacheManager" />
+	</bean>
+
+	<bean id="shiroDbRealm" class="com.itdoes.business.service.ShiroDbRealm">
+		<property name="userService" ref="userService" />
+	</bean>
+
+	<bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+		<constructor-arg value="rememberMe" />
+		<property name="httpOnly" value="true" />
+		<property name="maxAge" value="31536000" />
+	</bean>
+
+	<bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+		<property name="cipherKey" value="#{T(org.apache.shiro.codec.Base64).decode('IduElDUpDDXE677ZkhhKnQ==')}" />
+		<property name="cookie" ref="rememberMeCookie" />
 	</bean>
 
 	<bean id="shiroEhcacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
