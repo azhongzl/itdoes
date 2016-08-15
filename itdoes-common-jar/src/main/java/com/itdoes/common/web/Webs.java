@@ -1,13 +1,17 @@
 package com.itdoes.common.web;
 
+import java.util.Enumeration;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Maps;
 import com.google.common.net.HttpHeaders;
 import com.itdoes.common.Constants;
 import com.itdoes.common.util.Codecs;
+import com.itdoes.common.util.Collections3;
 
 import eu.bitwalker.useragentutils.UserAgent;
 
@@ -93,6 +97,34 @@ public class Webs {
 	public static String httpBasicEncode(String username, String password) {
 		final String toBeEncoded = username + ":" + password;
 		return "Basic " + Codecs.base64Encode(toBeEncoded.getBytes());
+	}
+
+	public static Map<String, Object> getRequestParamMap(HttpServletRequest request) {
+		final Map<String, Object> paramMap = Maps.newLinkedHashMap();
+		final Enumeration<String> paramNames = request.getParameterNames();
+		while (paramNames.hasMoreElements()) {
+			final String paramName = paramNames.nextElement();
+			final String[] paramValues = request.getParameterValues(paramName);
+			if (!Collections3.isEmpty(paramValues)) {
+				if (paramValues.length == 1) {
+					paramMap.put(paramName, paramValues[0]);
+				} else {
+					final StringBuilder sb = new StringBuilder();
+					for (int i = 0; i < paramValues.length; i++) {
+						sb.append(paramValues[i]);
+						if (i != paramValues.length - 1) {
+							sb.append(",");
+						}
+					}
+					paramMap.put(paramName, sb.toString());
+				}
+			}
+		}
+		return paramMap;
+	}
+
+	public static void main(String[] args) {
+		System.out.println(String.valueOf((char) 29));
 	}
 
 	private Webs() {
