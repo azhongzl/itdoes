@@ -16,6 +16,11 @@ import org.slf4j.LoggerFactory;
 public class Clipboards {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Clipboards.class);
 
+	public static void copy(String content) {
+		final StringSelection stringSelection = new StringSelection(content);
+		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, stringSelection);
+	}
+
 	public static void copy(String content, int retryTimes) {
 		int retryNo = 0;
 		while (true) {
@@ -33,8 +38,12 @@ public class Clipboards {
 		}
 	}
 
-	public static void copy(String content) {
-		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(content), null);
+	public static String paste() {
+		try {
+			return (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+		} catch (HeadlessException | UnsupportedFlavorException | IOException e) {
+			throw Exceptions.unchecked(e);
+		}
 	}
 
 	public static String paste(int retryTimes) {
@@ -50,14 +59,6 @@ public class Clipboards {
 					LOGGER.warn("Paste from clipboard fail, retry times is: {}/{}", retryNo, retryTimes, e);
 				}
 			}
-		}
-	}
-
-	public static String paste() {
-		try {
-			return (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-		} catch (HeadlessException | UnsupportedFlavorException | IOException e) {
-			throw Exceptions.unchecked(e);
 		}
 	}
 
