@@ -5,13 +5,11 @@
 
 	<description>Shiro Configuration</description>
 
-	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
-		<property name="realm" ref="shiroDbRealm" />
-		<property name="cacheManager" ref="shiroEhcacheManager" />
-	</bean>
-
-	<bean id="shiroDbRealm" class="com.itdoes.business.service.ShiroDbRealm">
-		<property name="userService" ref="userService" />
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="shiroSecurityManager" />
+		<property name="loginUrl" value="/login" />
+		<property name="successUrl" value="/" />
+		<property name="filterChainDefinitionMap" ref="shiroFilterChainDefinitionMap" />
 	</bean>
 
 	<bean id="shiroFilterChainDefinitionMap" class="com.itdoes.business.service.ShiroFilterChainDefinitionMap">
@@ -20,15 +18,30 @@
 			<value>
 				/login = authc
 				/logout = logout
+				/** = user
 			</value>
 		</property>
 	</bean>
 
-	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
-		<property name="securityManager" ref="securityManager" />
-		<property name="loginUrl" value="/login" />
-		<property name="successUrl" value="/" />
-		<property name="filterChainDefinitionMap" ref="shiroFilterChainDefinitionMap" />
+	<bean id="shiroSecurityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="shiroDbRealm" />
+		<property name="rememberMeManager" ref="shiroRememberMeManager" />
+		<property name="cacheManager" ref="shiroEhcacheManager" />
+	</bean>
+
+	<bean id="shiroDbRealm" class="com.itdoes.business.service.ShiroDbRealm">
+		<property name="userService" ref="userService" />
+	</bean>
+
+	<bean id="shiroRememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+		<property name="cipherKey" value="#{T(org.apache.shiro.codec.Base64).decode('IduElDUpDDXE677ZkhhKnQ==')}" />
+		<property name="cookie" ref="shiroRememberMeCookie" />
+	</bean>
+
+	<bean id="shiroRememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+		<constructor-arg value="rememberMe" />
+		<property name="httpOnly" value="true" />
+		<property name="maxAge" value="31536000" />
 	</bean>
 
 	<bean id="shiroEhcacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
@@ -42,6 +55,6 @@
 		<property name="proxyTargetClass" value="true" />
 	</bean>
 	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
-		<property name="securityManager" ref="securityManager" />
+		<property name="securityManager" ref="shiroSecurityManager" />
 	</bean>
 </beans>
