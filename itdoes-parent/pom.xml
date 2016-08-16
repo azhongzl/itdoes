@@ -32,7 +32,7 @@
 		<commons-io.version>2.5</commons-io.version>
 		<commons-codec.version>1.10</commons-codec.version>
 		<commons-beanutils.version>1.9.2</commons-beanutils.version>
-		<commons-net>3.5</commons-net>
+		<commons-net.version>3.5</commons-net.version>
 		<guava.version>19.0</guava.version>
 		<dozer.version>5.5.1</dozer.version>
 		<javax-mail.version>1.5.6</javax-mail.version>
