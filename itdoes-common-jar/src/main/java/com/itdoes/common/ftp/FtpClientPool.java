@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPFileFilter;
 import org.apache.commons.net.ftp.FTPListParseEngine;
 import org.apache.commons.net.ftp.parser.FTPFileEntryParserFactory;
 import org.apache.commons.net.io.CopyStreamListener;
@@ -446,6 +447,15 @@ public class FtpClientPool<T extends FTPClient> extends ExecutorPool<T> {
 		});
 	}
 
+	public FTPFile[] listFiles(String pathname, FTPFileFilter filter) {
+		return execute(new PoolCaller<T, FTPFile[]>() {
+			@Override
+			public FTPFile[] call(T t) throws Exception {
+				return t.listFiles(pathname, filter);
+			}
+		});
+	}
+
 	public String listHelp() {
 		return execute(new PoolCaller<T, String>() {
 			@Override
@@ -541,6 +551,15 @@ public class FtpClientPool<T extends FTPClient> extends ExecutorPool<T> {
 			@Override
 			public FTPFile[] call(T t) throws Exception {
 				return t.mlistDir(pathname);
+			}
+		});
+	}
+
+	public FTPFile[] mlistDir(String pathname, FTPFileFilter filter) {
+		return execute(new PoolCaller<T, FTPFile[]>() {
+			@Override
+			public FTPFile[] call(T t) throws Exception {
+				return t.mlistDir(pathname, filter);
 			}
 		});
 	}
