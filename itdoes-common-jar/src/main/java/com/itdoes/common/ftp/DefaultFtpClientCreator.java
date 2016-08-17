@@ -42,6 +42,8 @@ public class DefaultFtpClientCreator<T extends FTPClient> implements IFtpClientC
 	private String workingDirectory;
 	protected Integer clientMode = FTPClient.ACTIVE_LOCAL_DATA_CONNECTION_MODE;
 	private Boolean useEpsvwithIpv4;
+	private Integer bufferSize;
+	private Integer dataTimeout;
 
 	public DefaultFtpClientCreator(IFtpClientCreator<T> instanceCreator) {
 		this.instanceCreator = instanceCreator;
@@ -52,15 +54,16 @@ public class DefaultFtpClientCreator<T extends FTPClient> implements IFtpClientC
 		final T ftp = instanceCreator.create();
 
 		try {
+			// Configuration
 			if (copyStreamListener != null) {
 				ftp.setCopyStreamListener(copyStreamListener);
 			}
 
-			if (controlKeepAliveTimeout != null) {
+			if (controlKeepAliveTimeout != null && controlKeepAliveTimeout >= 0) {
 				ftp.setControlKeepAliveTimeout(controlKeepAliveTimeout);
 			}
 
-			if (controlKeepAliveReplyTimeout >= 0) {
+			if (controlKeepAliveReplyTimeout != null & controlKeepAliveReplyTimeout >= 0) {
 				ftp.setControlKeepAliveReplyTimeout(controlKeepAliveReplyTimeout);
 			}
 
@@ -83,6 +86,7 @@ public class DefaultFtpClientCreator<T extends FTPClient> implements IFtpClientC
 				ftp.configure(config);
 			}
 
+			// Connect and login
 			if (port != null && port > 0) {
 				ftp.connect(host, port);
 			} else {
@@ -137,6 +141,14 @@ public class DefaultFtpClientCreator<T extends FTPClient> implements IFtpClientC
 
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("working directory is: " + ftp.printWorkingDirectory());
+			}
+
+			if (bufferSize != null) {
+				ftp.setBufferSize(bufferSize);
+			}
+
+			if (dataTimeout != null) {
+				ftp.setDataTimeout(dataTimeout);
 			}
 
 			return ftp;
