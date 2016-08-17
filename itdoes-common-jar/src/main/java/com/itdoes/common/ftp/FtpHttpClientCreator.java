@@ -16,7 +16,7 @@ public class FtpHttpClientCreator implements IFtpClientCreator<FTPHTTPClient> {
 	private String proxyUsername;
 	private String proxyPassword;
 
-	public FtpHttpClientCreator() {
+	private FtpHttpClientCreator() {
 	}
 
 	@Override

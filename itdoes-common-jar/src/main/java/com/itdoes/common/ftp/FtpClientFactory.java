@@ -19,83 +19,29 @@ public class FtpClientFactory<T extends FTPClient> implements PooledObjectFactor
 
 	@Override
 	public PooledObject<T> makeObject() throws Exception {
-		final T client = creator.create();
-
-		// client.configure(config);
-		//
-		// Validate.notNull(info.getHost(), "Host is null");
-		//
-		// if (info.getPort() != null) {
-		// client.connect(info.getHost(), info.getPort());
-		// } else {
-		// client.connect(info.getHost());
-		// }
-		//
-		// if (!FTPReply.isPositiveCompletion(client.getReplyCode())) {
-		// // throw new MessagingException("Connecting to server [" + host + ":" + port + "] failed, please check the
-		// // connection");
-		// }
-		//
-		// LOGGER.debug("");
-		//
-		// if (!client.login(info.getUsername(), info.getPassword())) {
-		// // throw new MessagingException("Login failed. Please check the username and password.");
-		// }
-		//
-		// LOGGER.debug("");
-		//
-		// switch (info.getMode()) {
-		// case FTPClient.ACTIVE_LOCAL_DATA_CONNECTION_MODE:
-		// client.enterLocalActiveMode();
-		// break;
-		// case FTPClient.PASSIVE_LOCAL_DATA_CONNECTION_MODE:
-		// client.enterLocalPassiveMode();
-		// break;
-		// default:
-		// break;
-		// }
-		//
-		// client.setFileType(info.getFileType());
-		//
-		// // if (!remoteWorkingDirectory.equals(client.printWorkingDirectory())
-		// // && !client.changeWorkingDirectory(remoteWorkingDirectory)) {
-		// // throw new MessagingException("Could not change directory to '" + remoteWorkingDirectory + "'. Please
-		// // check the path.");
-		// // }
-		//
-		// LOGGER.debug("");
-
-		return new DefaultPooledObject<T>(client);
+		final T ftp = creator.create();
+		return new DefaultPooledObject<T>(ftp);
 	}
 
 	@Override
 	public void destroyObject(PooledObject<T> p) throws Exception {
-		final T ftpClient = p.getObject();
-		if (ftpClient == null) {
+		final T ftp = p.getObject();
+		if (ftp == null) {
 			return;
 		}
 
-		if (ftpClient.isConnected()) {
-			try {
-				try {
-					ftpClient.logout();
-				} catch (Exception e) {
-				}
-				ftpClient.disconnect();
-			} catch (Exception e) {
-			}
-		}
+		FtpClients.close(ftp);
 	}
 
 	@Override
 	public boolean validateObject(PooledObject<T> p) {
-		final FTPClient ftpClient = p.getObject();
-		if (ftpClient == null) {
+		final FTPClient ftp = p.getObject();
+		if (ftp == null) {
 			return false;
 		}
 
 		try {
-			return ftpClient.sendNoOp();
+			return ftp.sendNoOp();
 		} catch (IOException e) {
 			return false;
 		}

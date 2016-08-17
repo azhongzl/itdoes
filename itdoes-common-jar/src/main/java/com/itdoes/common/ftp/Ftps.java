@@ -6,32 +6,27 @@ import org.apache.commons.net.ftp.FTPHTTPClient;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
-import com.itdoes.common.pool.ExecutorPool;
-import com.itdoes.common.pool.ExecutorPool.PoolCaller;
-
 /**
  * @author Jalen Zhong
  */
 public class Ftps<T extends FTPClient> {
-	private ExecutorPool<T> pool;
-
-	public Ftps(IFtpClientCreator<T> ftpClientCreator, GenericObjectPoolConfig poolConfig) {
-		pool = new ExecutorPool<T>(new FtpClientFactory<T>(ftpClientCreator), poolConfig);
+	public static FtpClientPool<FTPClient> getFtp(String host) {
+		return getFtp(DefaultFtpClientCreator.getInstance(FtpClientCreator.getInstance()), null);
 	}
 
-	public String update() {
-		return pool.execute(new PoolCaller<T, String>() {
-			@Override
-			public String call(T t) {
-				return "";
-			}
-		});
+	public static <T extends FTPClient> FtpClientPool<T> getFtp(IFtpClientCreator<T> ftpClientCreator,
+			GenericObjectPoolConfig poolConfig) {
+		return new FtpClientPool<T>(new FtpClientFactory<T>(ftpClientCreator), poolConfig);
 	}
 
+	private Ftps() {
+	}
+
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
-		Ftps<FTPClient> ftps = new Ftps<FTPClient>(FtpClientCreator.getInstance(), null);
-		Ftps<FTPSClient> ftps2 = new Ftps<FTPSClient>(FtpsClientCreator.getInstance(), null);
-		Ftps<FTPHTTPClient> ftps3 = new Ftps<FTPHTTPClient>(new IFtpClientCreator<FTPHTTPClient>() {
+		FtpClientPool<FTPClient> ftps = Ftps.getFtp(FtpClientCreator.getInstance(), null);
+		FtpClientPool<FTPSClient> ftps2 = Ftps.getFtp(FtpsClientCreator.getInstance(), null);
+		FtpClientPool<FTPHTTPClient> ftps3 = Ftps.getFtp(new IFtpClientCreator<FTPHTTPClient>() {
 			@Override
 			public FTPHTTPClient create() {
 				final FTPHTTPClient client = FtpHttpClientCreator.getInstance().setProxyHost("").create();
@@ -40,8 +35,8 @@ public class Ftps<T extends FTPClient> {
 				return client;
 			}
 		}, null);
-		String update = ftps.update();
-		String update2 = ftps2.update();
-		String update3 = ftps3.update();
+		boolean store = ftps.storeFile("", null);
+		boolean store2 = ftps2.storeFile("", null);
+		boolean store3 = ftps3.storeFile("", null);
 	}
 }

@@ -10,6 +10,14 @@ import com.itdoes.common.util.Exceptions;
  * @author Jalen Zhong
  */
 public class ExecutorPool<T> extends GenericObjectPool<T> {
+	public interface PoolCaller<T, V> {
+		V call(T t) throws Exception;
+	}
+
+	public interface PoolRunner<T> {
+		void run(T t) throws Exception;
+	}
+
 	public ExecutorPool(PooledObjectFactory<T> factory, GenericObjectPoolConfig config) {
 		super(factory, config);
 	}
@@ -48,13 +56,5 @@ public class ExecutorPool<T> extends GenericObjectPool<T> {
 
 	public void execute(PoolRunner<T> runner) {
 		execute(runner, getMaxWaitMillis());
-	}
-
-	public interface PoolCaller<T, V> {
-		V call(T t);
-	}
-
-	public interface PoolRunner<T> {
-		void run(T t);
 	}
 }
