@@ -35,8 +35,8 @@ public class Ftps<T extends FTPClient> {
 				return client;
 			}
 		}, null);
-		boolean store = ftps.storeFile("", null);
-		boolean store2 = ftps2.storeFile("", null);
-		boolean store3 = ftps3.storeFile("", null);
+		boolean store = ftps.storeFile("", "");
+		boolean store2 = ftps2.storeFile("", "");
+		boolean store3 = ftps3.storeFile("", "");
 	}
 }

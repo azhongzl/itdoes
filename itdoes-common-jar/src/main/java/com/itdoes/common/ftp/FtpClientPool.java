@@ -1,9 +1,13 @@
 package com.itdoes.common.ftp;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
@@ -15,6 +19,7 @@ import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import com.itdoes.common.pool.ExecutorPool;
+import com.itdoes.common.util.Exceptions;
 
 /**
  * @author Jalen Zhong
@@ -663,6 +668,18 @@ public class FtpClientPool<T extends FTPClient> extends ExecutorPool<T> {
 		});
 	}
 
+	public boolean retrieveFile(String remote, String local) {
+		OutputStream localOutput = null;
+		try {
+			localOutput = new FileOutputStream(local);
+			return retrieveFile(remote, localOutput);
+		} catch (FileNotFoundException e) {
+			throw Exceptions.unchecked(e);
+		} finally {
+			IOUtils.closeQuietly(localOutput);
+		}
+	}
+
 	public InputStream retrieveFileStream(String remote) {
 		return execute(new PoolCaller<T, InputStream>() {
 			@Override
@@ -913,6 +930,18 @@ public class FtpClientPool<T extends FTPClient> extends ExecutorPool<T> {
 				return t.storeFile(remote, localInput);
 			}
 		});
+	}
+
+	public boolean storeFile(String remote, String local) {
+		InputStream localInput = null;
+		try {
+			localInput = new FileInputStream(local);
+			return storeFile(remote, localInput);
+		} catch (FileNotFoundException e) {
+			throw Exceptions.unchecked(e);
+		} finally {
+			IOUtils.closeQuietly(localInput);
+		}
 	}
 
 	public OutputStream storeFileStream(String remote) {
