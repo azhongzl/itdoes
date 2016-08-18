@@ -14,9 +14,9 @@ import com.itdoes.common.util.Exceptions;
 /**
  * @author Jalen Zhong
  */
-public class FtpsClientCreator implements IFtpClientCreator<FTPSClient> {
-	public static FtpsClientCreator getInstance() {
-		return new FtpsClientCreator();
+public class FtpsClientBuilder implements IFtpClientBuilder<FTPSClient> {
+	public static FtpsClientBuilder getInstance() {
+		return new FtpsClientBuilder();
 	}
 
 	private String protocol;
@@ -24,11 +24,11 @@ public class FtpsClientCreator implements IFtpClientCreator<FTPSClient> {
 	private SSLContext context;
 	private TrustManager trustManager;
 
-	private FtpsClientCreator() {
+	private FtpsClientBuilder() {
 	}
 
 	@Override
-	public FTPSClient create() {
+	public FTPSClient build() {
 		final FTPSClient ftp;
 
 		if (protocol != null) {
@@ -56,35 +56,35 @@ public class FtpsClientCreator implements IFtpClientCreator<FTPSClient> {
 		return ftp;
 	}
 
-	public FtpsClientCreator setProtocol(String protocol) {
+	public FtpsClientBuilder setProtocol(String protocol) {
 		this.protocol = protocol;
 		return this;
 	}
 
-	public FtpsClientCreator setIsImplicit(Boolean isImplicit) {
+	public FtpsClientBuilder setIsImplicit(Boolean isImplicit) {
 		this.isImplicit = isImplicit;
 		return this;
 	}
 
-	public FtpsClientCreator setContext(SSLContext context) {
+	public FtpsClientBuilder setContext(SSLContext context) {
 		this.context = context;
 		return this;
 	}
 
-	public FtpsClientCreator setTrustManager(TrustManager trustManager) {
+	public FtpsClientBuilder setTrustManager(TrustManager trustManager) {
 		this.trustManager = trustManager;
 		return this;
 	}
 
-	public FtpsClientCreator setAllTrustManager() {
+	public FtpsClientBuilder setAllTrustManager() {
 		return setTrustManager(TrustManagerUtils.getAcceptAllTrustManager());
 	}
 
-	public FtpsClientCreator setValidTrustManager() {
+	public FtpsClientBuilder setValidTrustManager() {
 		return setTrustManager(TrustManagerUtils.getValidateServerCertificateTrustManager());
 	}
 
-	public FtpsClientCreator setDefaultTrustManager(KeyStore keyStore) {
+	public FtpsClientBuilder setDefaultTrustManager(KeyStore keyStore) {
 		try {
 			return setTrustManager(TrustManagerUtils.getDefaultTrustManager(keyStore));
 		} catch (GeneralSecurityException e) {

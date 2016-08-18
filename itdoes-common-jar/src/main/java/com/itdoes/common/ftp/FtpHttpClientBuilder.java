@@ -6,9 +6,9 @@ import org.apache.commons.net.ftp.FTPHTTPClient;
 /**
  * @author Jalen Zhong
  */
-public class FtpHttpClientCreator implements IFtpClientCreator<FTPHTTPClient> {
-	public static FtpHttpClientCreator getInstance() {
-		return new FtpHttpClientCreator();
+public class FtpHttpClientBuilder implements IFtpClientBuilder<FTPHTTPClient> {
+	public static FtpHttpClientBuilder getInstance() {
+		return new FtpHttpClientBuilder();
 	}
 
 	private String proxyHost;
@@ -16,11 +16,11 @@ public class FtpHttpClientCreator implements IFtpClientCreator<FTPHTTPClient> {
 	private String proxyUsername;
 	private String proxyPassword;
 
-	private FtpHttpClientCreator() {
+	private FtpHttpClientBuilder() {
 	}
 
 	@Override
-	public FTPHTTPClient create() {
+	public FTPHTTPClient build() {
 		Validate.notNull(proxyHost, "ProxyHost is null");
 		Validate.isTrue(proxyPort > 0, "ProxyPort [" + proxyPort + "] is not positive");
 
@@ -31,22 +31,22 @@ public class FtpHttpClientCreator implements IFtpClientCreator<FTPHTTPClient> {
 		}
 	}
 
-	public FtpHttpClientCreator setProxyHost(String proxyHost) {
+	public FtpHttpClientBuilder setProxyHost(String proxyHost) {
 		this.proxyHost = proxyHost;
 		return this;
 	}
 
-	public FtpHttpClientCreator setProxyPort(int proxyPort) {
+	public FtpHttpClientBuilder setProxyPort(int proxyPort) {
 		this.proxyPort = proxyPort;
 		return this;
 	}
 
-	public FtpHttpClientCreator setProxyUsername(String proxyUsername) {
+	public FtpHttpClientBuilder setProxyUsername(String proxyUsername) {
 		this.proxyUsername = proxyUsername;
 		return this;
 	}
 
-	public FtpHttpClientCreator setProxyPassword(String proxyPassword) {
+	public FtpHttpClientBuilder setProxyPassword(String proxyPassword) {
 		this.proxyPassword = proxyPassword;
 		return this;
 	}

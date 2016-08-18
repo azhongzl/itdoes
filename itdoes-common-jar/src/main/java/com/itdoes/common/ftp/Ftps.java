@@ -9,13 +9,13 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 public class Ftps<T extends FTPClient> {
 	public static FtpClientPool<FTPClient> createFtpClientPool(String host, int port, String username,
 			String password) {
-		return createFtpClientPool(DefaultFtpClientCreator.getInstance(FtpClientCreator.getInstance()).setHost(host)
+		return createFtpClientPool(DefaultFtpClientBuilder.getInstance(FtpClientBuilder.getInstance()).setHost(host)
 				.setPort(port).setUsername(username).setPassword(password), createDefaultPoolConfig());
 	}
 
-	public static <T extends FTPClient> FtpClientPool<T> createFtpClientPool(IFtpClientCreator<T> ftpClientCreator,
+	public static <T extends FTPClient> FtpClientPool<T> createFtpClientPool(IFtpClientBuilder<T> ftpClientBuilder,
 			GenericObjectPoolConfig poolConfig) {
-		return new FtpClientPool<T>(new FtpClientFactory<T>(ftpClientCreator), poolConfig);
+		return new FtpClientPool<T>(new FtpClientFactory<T>(ftpClientBuilder), poolConfig);
 	}
 
 	public static GenericObjectPoolConfig createDefaultPoolConfig() {

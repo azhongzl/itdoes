@@ -11,15 +11,15 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
  * @author Jalen Zhong
  */
 public class FtpClientFactory<T extends FTPClient> implements PooledObjectFactory<T> {
-	private final IFtpClientCreator<T> creator;
+	private final IFtpClientBuilder<T> builder;
 
-	public FtpClientFactory(IFtpClientCreator<T> creator) {
-		this.creator = creator;
+	public FtpClientFactory(IFtpClientBuilder<T> builder) {
+		this.builder = builder;
 	}
 
 	@Override
 	public PooledObject<T> makeObject() throws Exception {
-		final T ftp = creator.create();
+		final T ftp = builder.build();
 		return new DefaultPooledObject<T>(ftp);
 	}
 
