@@ -14,7 +14,7 @@ import com.itdoes.common.util.Exceptions;
 /**
  * @author Jalen Zhong
  */
-public class FtpsClientBuilder implements IFtpClientBuilder<FTPSClient> {
+public class FtpsClientBuilder extends AbstractFtpClientBuilder<FTPSClient> {
 	public static FtpsClientBuilder getInstance() {
 		return new FtpsClientBuilder();
 	}
@@ -22,38 +22,10 @@ public class FtpsClientBuilder implements IFtpClientBuilder<FTPSClient> {
 	private String protocol;
 	private Boolean isImplicit;
 	private SSLContext context;
+
 	private TrustManager trustManager;
 
 	private FtpsClientBuilder() {
-	}
-
-	@Override
-	public FTPSClient build() {
-		final FTPSClient ftp;
-
-		if (protocol != null) {
-			if (isImplicit != null) {
-				ftp = new FTPSClient(protocol, isImplicit);
-			} else {
-				ftp = new FTPSClient(protocol);
-			}
-		} else if (context != null) {
-			if (isImplicit != null) {
-				ftp = new FTPSClient(isImplicit, context);
-			} else {
-				ftp = new FTPSClient(context);
-			}
-		} else if (isImplicit != null) {
-			ftp = new FTPSClient(isImplicit);
-		} else {
-			ftp = new FTPSClient();
-		}
-
-		if (trustManager != null) {
-			ftp.setTrustManager(trustManager);
-		}
-
-		return ftp;
 	}
 
 	public FtpsClientBuilder setProtocol(String protocol) {
@@ -89,6 +61,36 @@ public class FtpsClientBuilder implements IFtpClientBuilder<FTPSClient> {
 			return setTrustManager(TrustManagerUtils.getDefaultTrustManager(keyStore));
 		} catch (GeneralSecurityException e) {
 			throw Exceptions.unchecked(e);
+		}
+	}
+
+	@Override
+	protected FTPSClient buildInternal(FTPSClient ftp) {
+		if (trustManager != null) {
+			ftp.setTrustManager(trustManager);
+		}
+
+		return super.buildInternal(ftp);
+	}
+
+	@Override
+	protected FTPSClient newInstance() {
+		if (protocol != null) {
+			if (isImplicit != null) {
+				return new FTPSClient(protocol, isImplicit);
+			} else {
+				return new FTPSClient(protocol);
+			}
+		} else if (context != null) {
+			if (isImplicit != null) {
+				return new FTPSClient(isImplicit, context);
+			} else {
+				return new FTPSClient(context);
+			}
+		} else if (isImplicit != null) {
+			return new FTPSClient(isImplicit);
+		} else {
+			return new FTPSClient();
 		}
 	}
 }

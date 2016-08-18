@@ -18,14 +18,8 @@ import com.itdoes.common.util.Exceptions;
 /**
  * @author Jalen Zhong
  */
-public class DefaultFtpClientBuilder<T extends FTPClient> implements IFtpClientBuilder<T> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultFtpClientBuilder.class);
-
-	public static <T extends FTPClient> DefaultFtpClientBuilder<T> getInstance(IFtpClientBuilder<T> instanceCreator) {
-		return new DefaultFtpClientBuilder<T>(instanceCreator);
-	}
-
-	private IFtpClientBuilder<T> instanceBuilder;
+public abstract class AbstractFtpClientBuilder<T extends FTPClient> implements IFtpClientBuilder<T> {
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFtpClientBuilder.class);
 
 	private CopyStreamListener copyStreamListener;
 	private Long controlKeepAliveTimeout;
@@ -48,14 +42,122 @@ public class DefaultFtpClientBuilder<T extends FTPClient> implements IFtpClientB
 	private Integer dataTimeout;
 	private Integer bufferSize;
 
-	public DefaultFtpClientBuilder(IFtpClientBuilder<T> instanceBuilder) {
-		this.instanceBuilder = instanceBuilder;
+	@Override
+	public final T build() {
+		return buildInternal(newInstance());
 	}
 
-	@Override
-	public T build() {
-		final T ftp = instanceBuilder.build();
+	public AbstractFtpClientBuilder<T> setCopyStreamListener(CopyStreamListener copyStreamListener) {
+		this.copyStreamListener = copyStreamListener;
+		return this;
+	}
 
+	public AbstractFtpClientBuilder<T> setControlKeepAliveTimeout(Long controlKeepAliveTimeout) {
+		this.controlKeepAliveTimeout = controlKeepAliveTimeout;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setControlKeepAliveReplyTimeout(Integer controlKeepAliveReplyTimeout) {
+		this.controlKeepAliveReplyTimeout = controlKeepAliveReplyTimeout;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setConnectTimeout(Integer connectTimeout) {
+		this.connectTimeout = connectTimeout;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setDefaultTimeout(Integer defaultTimeout) {
+		this.defaultTimeout = defaultTimeout;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setSoTimeout(Integer soTimeout) {
+		this.soTimeout = soTimeout;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setControlEncoding(String controlEncoding) {
+		this.controlEncoding = controlEncoding;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setListHiddenFiles(Boolean listHiddenFiles) {
+		ListHiddenFiles = listHiddenFiles;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setProtocolCommandListeners(
+			List<ProtocolCommandListener> protocolCommandListeners) {
+		this.protocolCommandListeners = protocolCommandListeners;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> addProtocolCommandListener(ProtocolCommandListener protocolCommandListener) {
+		if (protocolCommandListeners == null) {
+			protocolCommandListeners = Lists.newArrayList();
+		}
+
+		protocolCommandListeners.add(protocolCommandListener);
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setConfig(FTPClientConfig config) {
+		this.config = config;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setHost(String host) {
+		this.host = host;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setPort(Integer port) {
+		this.port = port;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setUsername(String username) {
+		this.username = username;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setPassword(String password) {
+		this.password = password;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setFileType(Integer fileType) {
+		this.fileType = fileType;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setWorkingDirectory(String workingDirectory) {
+		this.workingDirectory = workingDirectory;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setClientMode(Integer clientMode) {
+		this.clientMode = clientMode;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setUseEpsvwithIpv4(Boolean useEpsvwithIpv4) {
+		this.useEpsvwithIpv4 = useEpsvwithIpv4;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setDataTimeout(Integer dataTimeout) {
+		this.dataTimeout = dataTimeout;
+		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setBufferSize(Integer bufferSize) {
+		this.bufferSize = bufferSize;
+		return this;
+	}
+
+	protected T buildInternal(T ftp) {
 		try {
 			// Configuration
 			if (copyStreamListener != null) {
@@ -176,113 +278,5 @@ public class DefaultFtpClientBuilder<T extends FTPClient> implements IFtpClientB
 		}
 	}
 
-	public DefaultFtpClientBuilder<T> setCopyStreamListener(CopyStreamListener copyStreamListener) {
-		this.copyStreamListener = copyStreamListener;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setControlKeepAliveTimeout(Long controlKeepAliveTimeout) {
-		this.controlKeepAliveTimeout = controlKeepAliveTimeout;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setControlKeepAliveReplyTimeout(Integer controlKeepAliveReplyTimeout) {
-		this.controlKeepAliveReplyTimeout = controlKeepAliveReplyTimeout;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setConnectTimeout(Integer connectTimeout) {
-		this.connectTimeout = connectTimeout;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setDefaultTimeout(Integer defaultTimeout) {
-		this.defaultTimeout = defaultTimeout;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setSoTimeout(Integer soTimeout) {
-		this.soTimeout = soTimeout;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setControlEncoding(String controlEncoding) {
-		this.controlEncoding = controlEncoding;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setListHiddenFiles(Boolean listHiddenFiles) {
-		ListHiddenFiles = listHiddenFiles;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setProtocolCommandListeners(
-			List<ProtocolCommandListener> protocolCommandListeners) {
-		this.protocolCommandListeners = protocolCommandListeners;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> addProtocolCommandListener(ProtocolCommandListener protocolCommandListener) {
-		if (protocolCommandListeners == null) {
-			protocolCommandListeners = Lists.newArrayList();
-		}
-
-		protocolCommandListeners.add(protocolCommandListener);
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setConfig(FTPClientConfig config) {
-		this.config = config;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setHost(String host) {
-		this.host = host;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setPort(Integer port) {
-		this.port = port;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setUsername(String username) {
-		this.username = username;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setPassword(String password) {
-		this.password = password;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setFileType(Integer fileType) {
-		this.fileType = fileType;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setWorkingDirectory(String workingDirectory) {
-		this.workingDirectory = workingDirectory;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setClientMode(Integer clientMode) {
-		this.clientMode = clientMode;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setUseEpsvwithIpv4(Boolean useEpsvwithIpv4) {
-		this.useEpsvwithIpv4 = useEpsvwithIpv4;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setDataTimeout(Integer dataTimeout) {
-		this.dataTimeout = dataTimeout;
-		return this;
-	}
-
-	public DefaultFtpClientBuilder<T> setBufferSize(Integer bufferSize) {
-		this.bufferSize = bufferSize;
-		return this;
-	}
+	protected abstract T newInstance();
 }
