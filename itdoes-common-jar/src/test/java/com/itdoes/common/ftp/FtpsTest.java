@@ -7,8 +7,6 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.itdoes.common.Constants;
@@ -33,7 +31,7 @@ public class FtpsTest {
 	private static final String LOCAL_FILENAME_PATTERN = CASE_SIMPLE_NAME + "_%03d.txt";
 	private static final int POOL_MAX_TOTAL = 3;
 
-	@Before
+	// @Before
 	public void init() throws IOException {
 		GenericObjectPoolConfig poolConfig = Ftps.createFtpClientPoolConfig();
 		poolConfig.setMaxTotal(POOL_MAX_TOTAL);
@@ -48,7 +46,7 @@ public class FtpsTest {
 				Constants.UTF8_CHARSET);
 	}
 
-	@Test
+	// @Test
 	public void multiThreads() throws InterruptedException {
 		GenericObjectPoolConfig poolConfig = Ftps.createFtpClientPoolConfig();
 		poolConfig.setMaxTotal(POOL_MAX_TOTAL);
