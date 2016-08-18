@@ -10,6 +10,7 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.junit.experimental.categories.Category;
 
 import com.itdoes.common.Constants;
+import com.itdoes.common.pool.ExecutorPool.PoolRunner;
 import com.itdoes.common.test.category.Unstable;
 import com.itdoes.common.util.Exceptions;
 
@@ -33,13 +34,13 @@ public class FtpsTest {
 
 	// @Before
 	public void init() throws IOException {
-		GenericObjectPoolConfig poolConfig = Ftps.createFtpClientPoolConfig();
-		poolConfig.setMaxTotal(POOL_MAX_TOTAL);
-		FtpClientPool<FTPClient> pool = Ftps.createFtpClientPool(FtpClientBuilder.getInstance().setHost(HOST)
-				.setUsername(USERNAME).setPassword(PASSWORD).setClientMode(FTPClient.PASSIVE_LOCAL_DATA_CONNECTION_MODE)
-				.setConfig(Ftps.createFtpClientConfig()), poolConfig);
-		pool.makeDirectory(WORKING_DIRECTORY);
-		pool.close();
+		// GenericObjectPoolConfig poolConfig = Ftps.createFtpClientPoolConfig();
+		// poolConfig.setMaxTotal(1);
+		// FtpClientPool<FTPClient> pool = Ftps.createFtpClientPool(FtpClientBuilder.getInstance().setHost(HOST)
+		// .setUsername(USERNAME).setPassword(PASSWORD).setClientMode(FTPClient.PASSIVE_LOCAL_DATA_CONNECTION_MODE)
+		// .setConfig(Ftps.createFtpClientConfig()), poolConfig);
+		// pool.makeDirectory(WORKING_DIRECTORY);
+		// pool.close();
 
 		System.out.println("Local dir is: " + LOCAL_DIR);
 		FileUtils.writeStringToFile(new File(LOCAL_DIR + LOCAL_FILENAME), "Jalen line1\nJalen line2\nJalen line3",
@@ -51,11 +52,10 @@ public class FtpsTest {
 		GenericObjectPoolConfig poolConfig = Ftps.createFtpClientPoolConfig();
 		poolConfig.setMaxTotal(POOL_MAX_TOTAL);
 		FtpClientPool<FTPClient> pool = Ftps.createFtpClientPool(FtpClientBuilder.getInstance().setHost(HOST)
-				.setUsername(USERNAME).setPassword(PASSWORD).setWorkingDirectory(WORKING_DIRECTORY)
-				.setClientMode(FTPClient.PASSIVE_LOCAL_DATA_CONNECTION_MODE).setConfig(Ftps.createFtpClientConfig()),
-				poolConfig);
+				.setUsername(USERNAME).setPassword(PASSWORD).setClientMode(FTPClient.PASSIVE_LOCAL_DATA_CONNECTION_MODE)
+				.setConfig(Ftps.createFtpClientConfig()), poolConfig);
 
-		int threadCount = 100;
+		int threadCount = 1;
 		CountDownLatch startLock = new CountDownLatch(threadCount);
 		CountDownLatch endLock = new CountDownLatch(threadCount);
 
@@ -71,12 +71,27 @@ public class FtpsTest {
 						throw Exceptions.unchecked(e);
 					}
 
-					String remoteFilename = String.format(LOCAL_FILENAME_PATTERN, no);
-					System.out.println("Store " + remoteFilename + " ...");
-					boolean success = pool.storeFile(remoteFilename, LOCAL_DIR + LOCAL_FILENAME);
-					System.out.println("Store " + remoteFilename + " success: " + success);
-					success = pool.retrieveFile(remoteFilename, LOCAL_DIR + remoteFilename);
-					System.out.println("Retrieve" + remoteFilename + " success: " + success);
+					pool.execute(new PoolRunner<FTPClient>() {
+						@Override
+						public void run(FTPClient t) throws Exception {
+							boolean success;
+							success = t.makeDirectory(WORKING_DIRECTORY);
+							System.out.println("makeDirectory(\"" + WORKING_DIRECTORY + "\") success: " + success);
+
+							success = t.changeWorkingDirectory(WORKING_DIRECTORY);
+							System.out.println(
+									"changeWorkingDirectory(\"" + WORKING_DIRECTORY + "\") success: " + success);
+
+							String remoteFilename = String.format(LOCAL_FILENAME_PATTERN, no);
+							success = pool.storeFile(remoteFilename, LOCAL_DIR + LOCAL_FILENAME);
+							System.out.println("storeFile(\"" + remoteFilename + "\", \"" + LOCAL_DIR + LOCAL_FILENAME
+									+ "\") success: " + success);
+
+							success = pool.retrieveFile(remoteFilename, LOCAL_DIR + remoteFilename);
+							System.out.println("retrieveFile(\"" + remoteFilename + "\", \"" + LOCAL_DIR
+									+ remoteFilename + "\") success: " + success);
+						}
+					});
 
 					endLock.countDown();
 				}
@@ -85,5 +100,7 @@ public class FtpsTest {
 		}
 
 		endLock.await();
+
+		pool.close();
 	}
 }
