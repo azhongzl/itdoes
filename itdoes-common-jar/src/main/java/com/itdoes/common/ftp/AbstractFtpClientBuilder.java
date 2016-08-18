@@ -168,7 +168,7 @@ public abstract class AbstractFtpClientBuilder<T extends FTPClient> implements I
 				ftp.setControlKeepAliveTimeout(controlKeepAliveTimeout);
 			}
 
-			if (controlKeepAliveReplyTimeout != null & controlKeepAliveReplyTimeout >= 0) {
+			if (controlKeepAliveReplyTimeout != null && controlKeepAliveReplyTimeout >= 0) {
 				ftp.setControlKeepAliveReplyTimeout(controlKeepAliveReplyTimeout);
 			}
 
