@@ -1,6 +1,7 @@
 package com.itdoes.common.mail;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import javax.activation.FileTypeMap;
@@ -83,6 +84,16 @@ public class DefaultMailMimeMessages implements MailMimeMessages {
 			helper.setFrom(from);
 			return this;
 		} catch (MessagingException e) {
+			throw Exceptions.unchecked(e);
+		}
+	}
+
+	@Override
+	public MailMimeMessages setFrom(String from, String person) {
+		try {
+			helper.setFrom(from, person);
+			return this;
+		} catch (MessagingException | UnsupportedEncodingException e) {
 			throw Exceptions.unchecked(e);
 		}
 	}

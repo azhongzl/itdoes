@@ -46,6 +46,11 @@ public class NopMailMimeMessages implements MailMimeMessages {
 	}
 
 	@Override
+	public MailMimeMessages setFrom(String from, String person) {
+		return this;
+	}
+
+	@Override
 	public MailMimeMessages addTo(String to) {
 		return this;
 	}

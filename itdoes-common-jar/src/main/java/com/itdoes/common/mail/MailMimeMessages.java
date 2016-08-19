@@ -22,6 +22,8 @@ public interface MailMimeMessages {
 
 	MailMimeMessages setFrom(String from);
 
+	MailMimeMessages setFrom(String from, String person);
+
 	MailMimeMessages addTo(String to);
 
 	MailMimeMessages setTo(String to);
