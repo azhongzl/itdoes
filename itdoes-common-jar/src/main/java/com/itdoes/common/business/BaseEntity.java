@@ -2,6 +2,8 @@ package com.itdoes.common.business;
 
 import javax.persistence.MappedSuperclass;
 
+import com.itdoes.common.BaseBean;
+
 /**
  * @author Jalen Zhong
  */

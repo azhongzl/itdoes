@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
-import com.itdoes.common.business.BaseBean;
+import com.itdoes.common.BaseBean;
 
 /**
  * @author Jalen Zhong

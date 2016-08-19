@@ -1,4 +1,4 @@
-package com.itdoes.common.business;
+package com.itdoes.common;
 
 import java.io.Serializable;
 
