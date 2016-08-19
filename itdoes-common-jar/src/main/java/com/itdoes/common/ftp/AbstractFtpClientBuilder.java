@@ -166,6 +166,9 @@ public abstract class AbstractFtpClientBuilder<T extends FTPClient> implements I
 
 	public AbstractFtpClientBuilder<T> setConnectionModeActiveRemote(InetAddress remoteActiveHost,
 			int remoteActivePort) {
+		Validate.notNull(remoteActiveHost, "RemoteActiveHost is null");
+		Validate.isTrue(remoteActivePort > 0, "RemoteActivePort is not greater than 0");
+
 		this.remoteActiveHost = remoteActiveHost;
 		this.remoteActivePort = remoteActivePort;
 		return setConnectionMode(FTPClient.PASSIVE_REMOTE_DATA_CONNECTION_MODE);
