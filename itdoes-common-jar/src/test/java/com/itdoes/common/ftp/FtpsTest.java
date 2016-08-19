@@ -43,9 +43,10 @@ public class FtpsTest {
 	public void multiThreads() throws InterruptedException {
 		GenericObjectPoolConfig poolConfig = Ftps.createFtpClientPoolConfig();
 		poolConfig.setMaxTotal(POOL_MAX_TOTAL);
-		FtpClientPool<FTPClient> pool = Ftps.createFtpClientPool(FtpClientBuilder.getInstance().setHost(HOST)
-				.setUsername(USERNAME).setPassword(PASSWORD).setClientMode(FTPClient.PASSIVE_LOCAL_DATA_CONNECTION_MODE)
-				.setConfig(Ftps.createFtpClientConfig()), poolConfig);
+		FtpClientPool<FTPClient> pool = Ftps.createFtpClientPool(
+				FtpClientBuilder.getInstance().setHost(HOST).setUsername(USERNAME).setPassword(PASSWORD)
+						.setConnectionModePassiveLocal().setConfig(Ftps.createFtpClientConfig()),
+				poolConfig);
 
 		int threadCount = 100;
 		CountDownLatch startLock = new CountDownLatch(threadCount);

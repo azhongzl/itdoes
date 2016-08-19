@@ -1,5 +1,6 @@
 package com.itdoes.common.ftp;
 
+import java.net.InetAddress;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
@@ -37,7 +38,9 @@ public abstract class AbstractFtpClientBuilder<T extends FTPClient> implements I
 	private String password;
 	private Integer fileType;
 	private String workingDirectory;
-	private Integer clientMode;
+	private Integer connectionMode;
+	private InetAddress remoteActiveHost;
+	private int remoteActivePort;
 	private Boolean useEpsvwithIpv4;
 	private Integer dataTimeout;
 	private Integer bufferSize;
@@ -153,8 +156,27 @@ public abstract class AbstractFtpClientBuilder<T extends FTPClient> implements I
 		return this;
 	}
 
-	public AbstractFtpClientBuilder<T> setClientMode(Integer clientMode) {
-		this.clientMode = clientMode;
+	public AbstractFtpClientBuilder<T> setConnectionModeActiveLocal() {
+		return setConnectionMode(FTPClient.ACTIVE_LOCAL_DATA_CONNECTION_MODE);
+	}
+
+	public AbstractFtpClientBuilder<T> setConnectionModePassiveLocal() {
+		return setConnectionMode(FTPClient.PASSIVE_LOCAL_DATA_CONNECTION_MODE);
+	}
+
+	public AbstractFtpClientBuilder<T> setConnectionModeActiveRemote(InetAddress remoteActiveHost,
+			int remoteActivePort) {
+		this.remoteActiveHost = remoteActiveHost;
+		this.remoteActivePort = remoteActivePort;
+		return setConnectionMode(FTPClient.PASSIVE_REMOTE_DATA_CONNECTION_MODE);
+	}
+
+	public AbstractFtpClientBuilder<T> setConnectionModePassiveRemote() {
+		return setConnectionMode(FTPClient.PASSIVE_REMOTE_DATA_CONNECTION_MODE);
+	}
+
+	private AbstractFtpClientBuilder<T> setConnectionMode(Integer connectionMode) {
+		this.connectionMode = connectionMode;
 		return this;
 	}
 
@@ -249,13 +271,19 @@ public abstract class AbstractFtpClientBuilder<T extends FTPClient> implements I
 				ftp.setFileType(this.fileType);
 			}
 
-			if (clientMode != null) {
-				switch (clientMode) {
+			if (connectionMode != null) {
+				switch (connectionMode) {
 				case FTPClient.ACTIVE_LOCAL_DATA_CONNECTION_MODE:
 					ftp.enterLocalActiveMode();
 					break;
 				case FTPClient.PASSIVE_LOCAL_DATA_CONNECTION_MODE:
 					ftp.enterLocalPassiveMode();
+					break;
+				case FTPClient.ACTIVE_REMOTE_DATA_CONNECTION_MODE:
+					ftp.enterRemoteActiveMode(remoteActiveHost, remoteActivePort);
+					break;
+				case FTPClient.PASSIVE_REMOTE_DATA_CONNECTION_MODE:
+					ftp.enterRemotePassiveMode();
 					break;
 				default:
 					break;
