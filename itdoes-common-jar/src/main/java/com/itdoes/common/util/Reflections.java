@@ -2,7 +2,6 @@ package com.itdoes.common.util;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -388,11 +387,11 @@ public class Reflections {
 		}
 	}
 
-	public static <T> T newInstance(Constructor<T> constructor) {
+	public static <T> T newInstance(Class<T> clazz, Class<?>[] paramClasses, Object[] args) {
 		try {
-			return constructor.newInstance();
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
+			return clazz.getConstructor(paramClasses).newInstance(args);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
 			throw Exceptions.unchecked(e, IllegalArgumentException.class);
 		}
 	}
