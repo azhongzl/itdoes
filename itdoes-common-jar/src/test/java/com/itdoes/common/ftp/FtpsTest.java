@@ -64,17 +64,11 @@ public class FtpsTest {
 						throw Exceptions.unchecked(e);
 					}
 
-					// Use class
 					pool.execute(new PoolRunner<FTPClient>() {
 						@Override
 						public void run(FTPClient t) throws Exception {
 							FtpsTest.this.run(t, no);
 						}
-					});
-
-					// Use function
-					pool.execute((t) -> {
-						FtpsTest.this.run(t, no);
 					});
 
 					endLock.countDown();
