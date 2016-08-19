@@ -10,6 +10,8 @@ import com.itdoes.common.util.Exceptions;
  * @author Jalen Zhong
  */
 public class ExecutorPool<T> extends GenericObjectPool<T> {
+	private boolean stopAtShutdown;
+
 	public interface PoolCaller<T, V> {
 		V call(T t) throws Exception;
 	}
@@ -56,5 +58,20 @@ public class ExecutorPool<T> extends GenericObjectPool<T> {
 
 	public void execute(PoolRunner<T> runner) {
 		execute(runner, getMaxWaitMillis());
+	}
+
+	public void setStopAtShutdown(boolean stop) {
+		if (stop) {
+			if (!stopAtShutdown) {
+				if (!isClosed()) {
+					ShutdownThread.getInstance().register(this);
+				}
+			}
+		} else {
+			if (stopAtShutdown) {
+				ShutdownThread.getInstance().unregister(this);
+			}
+		}
+		stopAtShutdown = stop;
 	}
 }
