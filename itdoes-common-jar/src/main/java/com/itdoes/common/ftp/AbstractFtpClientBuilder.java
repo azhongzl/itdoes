@@ -132,6 +132,22 @@ public abstract class AbstractFtpClientBuilder<T extends FTPClient> implements I
 		return this;
 	}
 
+	public AbstractFtpClientBuilder<T> setFileTypeAscii() {
+		return setFileType(FTPClient.ASCII_FILE_TYPE);
+	}
+
+	public AbstractFtpClientBuilder<T> setFileTypeEbcdic() {
+		return setFileType(FTPClient.EBCDIC_FILE_TYPE);
+	}
+
+	public AbstractFtpClientBuilder<T> setFileTypeBinary() {
+		return setFileType(FTPClient.BINARY_FILE_TYPE);
+	}
+
+	public AbstractFtpClientBuilder<T> setFileTypeLocal() {
+		return setFileType(FTPClient.LOCAL_FILE_TYPE);
+	}
+
 	public AbstractFtpClientBuilder<T> setWorkingDirectory(String workingDirectory) {
 		this.workingDirectory = workingDirectory;
 		return this;
