@@ -22,7 +22,7 @@ public interface MailMimeMessages {
 
 	MailMimeMessages setFrom(String from);
 
-	MailMimeMessages setFrom(String from, String person);
+	MailMimeMessages setFrom(String from, String personal);
 
 	MailMimeMessages addTo(String to);
 
@@ -43,6 +43,8 @@ public interface MailMimeMessages {
 	MailMimeMessages setBcc(String[] bcc);
 
 	MailMimeMessages setReplyTo(String replyTo);
+
+	MailMimeMessages setReplyTo(String replyTo, String personal);
 
 	MailMimeMessages addAttachment(String attachmentFilename, String fullFilename);
 

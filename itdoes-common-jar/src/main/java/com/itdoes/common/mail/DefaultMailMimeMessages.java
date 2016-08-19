@@ -89,9 +89,9 @@ public class DefaultMailMimeMessages implements MailMimeMessages {
 	}
 
 	@Override
-	public MailMimeMessages setFrom(String from, String person) {
+	public MailMimeMessages setFrom(String from, String personal) {
 		try {
-			helper.setFrom(from, person);
+			helper.setFrom(from, personal);
 			return this;
 		} catch (MessagingException | UnsupportedEncodingException e) {
 			throw Exceptions.unchecked(e);
@@ -194,6 +194,16 @@ public class DefaultMailMimeMessages implements MailMimeMessages {
 			helper.setReplyTo(replyTo);
 			return this;
 		} catch (MessagingException e) {
+			throw Exceptions.unchecked(e);
+		}
+	}
+
+	@Override
+	public MailMimeMessages setReplyTo(String replyTo, String personal) {
+		try {
+			helper.setReplyTo(replyTo, personal);
+			return this;
+		} catch (MessagingException | UnsupportedEncodingException e) {
 			throw Exceptions.unchecked(e);
 		}
 	}
