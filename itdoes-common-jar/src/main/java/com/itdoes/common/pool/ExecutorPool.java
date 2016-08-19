@@ -60,9 +60,21 @@ public class ExecutorPool<T> extends GenericObjectPool<T> {
 		execute(runner, getMaxWaitMillis());
 	}
 
+	/**
+	 * Set stop server at shutdown behaviour.
+	 * 
+	 * @param stop
+	 *            If true, this server instance will be explicitly stopped when the JVM is shutdown. Otherwise the JVM
+	 *            is stopped with the server running.
+	 * @see Runtime#addShutdownHook(Thread)
+	 * @see ShutdownThread
+	 */
 	public void setStopAtShutdown(boolean stop) {
+		// if we now want to stop
 		if (stop) {
+			// and we weren't stopping before
 			if (!stopAtShutdown) {
+				// only register to stop if we're already started
 				if (!isClosed()) {
 					ShutdownThread.getInstance().register(this);
 				}

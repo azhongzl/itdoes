@@ -9,6 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * ShutdownThread is a shutdown hook thread implemented as singleton that maintains a list of BaseGenericObjectPool
+ * instances that are registered with it and provides ability to stop these BaseGenericObjectPools upon shutdown of the
+ * Java Virtual Machine
+ * 
  * @author Jalen Zhong
  */
 public class ShutdownThread extends Thread {
