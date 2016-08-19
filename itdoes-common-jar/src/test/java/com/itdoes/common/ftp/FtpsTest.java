@@ -71,26 +71,17 @@ public class FtpsTest {
 						throw Exceptions.unchecked(e);
 					}
 
+					// Use class
 					pool.execute(new PoolRunner<FTPClient>() {
 						@Override
 						public void run(FTPClient t) throws Exception {
-							boolean success;
-							success = t.makeDirectory(WORKING_DIRECTORY);
-							System.out.println("makeDirectory(\"" + WORKING_DIRECTORY + "\") success: " + success);
-
-							success = t.changeWorkingDirectory(WORKING_DIRECTORY);
-							System.out.println(
-									"changeWorkingDirectory(\"" + WORKING_DIRECTORY + "\") success: " + success);
-
-							String remoteFilename = String.format(LOCAL_FILENAME_PATTERN, no);
-							success = pool.storeFile(remoteFilename, LOCAL_DIR + LOCAL_FILENAME);
-							System.out.println("storeFile(\"" + remoteFilename + "\", \"" + LOCAL_DIR + LOCAL_FILENAME
-									+ "\") success: " + success);
-
-							success = pool.retrieveFile(remoteFilename, LOCAL_DIR + remoteFilename);
-							System.out.println("retrieveFile(\"" + remoteFilename + "\", \"" + LOCAL_DIR
-									+ remoteFilename + "\") success: " + success);
+							FtpsTest.this.run(t, no);
 						}
+					});
+
+					// Use function
+					pool.execute((t) -> {
+						FtpsTest.this.run(t, no);
 					});
 
 					endLock.countDown();
@@ -102,5 +93,23 @@ public class FtpsTest {
 		endLock.await();
 
 		pool.close();
+	}
+
+	private void run(FTPClient t, int no) throws Exception {
+		boolean success;
+		success = t.makeDirectory(WORKING_DIRECTORY);
+		System.out.println("makeDirectory(\"" + WORKING_DIRECTORY + "\") success: " + success);
+
+		success = t.changeWorkingDirectory(WORKING_DIRECTORY);
+		System.out.println("changeWorkingDirectory(\"" + WORKING_DIRECTORY + "\") success: " + success);
+
+		String remoteFilename = String.format(LOCAL_FILENAME_PATTERN, no);
+		success = FtpClients.storeFile(t, remoteFilename, LOCAL_DIR + LOCAL_FILENAME);
+		System.out.println(
+				"storeFile(\"" + remoteFilename + "\", \"" + LOCAL_DIR + LOCAL_FILENAME + "\") success: " + success);
+
+		success = FtpClients.retrieveFile(t, remoteFilename, LOCAL_DIR + remoteFilename);
+		System.out.println(
+				"retrieveFile(\"" + remoteFilename + "\", \"" + LOCAL_DIR + remoteFilename + "\") success: " + success);
 	}
 }
