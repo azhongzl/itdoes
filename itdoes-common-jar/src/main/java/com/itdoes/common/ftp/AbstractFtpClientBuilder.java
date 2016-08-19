@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import com.itdoes.common.Constants;
 import com.itdoes.common.util.Collections3;
 import com.itdoes.common.util.Exceptions;
 
@@ -83,6 +84,10 @@ public abstract class AbstractFtpClientBuilder<T extends FTPClient> implements I
 	public AbstractFtpClientBuilder<T> setControlEncoding(String controlEncoding) {
 		this.controlEncoding = controlEncoding;
 		return this;
+	}
+
+	public AbstractFtpClientBuilder<T> setControlEncodingUtf8() {
+		return setControlEncoding(Constants.UTF8);
 	}
 
 	public AbstractFtpClientBuilder<T> setListHiddenFiles(Boolean listHiddenFiles) {
