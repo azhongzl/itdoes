@@ -8,14 +8,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itdoes.common.test.category.Unstable;
 import com.itdoes.common.test.logback.LogbackListAppender;
 
 /**
  * @author Jalen Zhong
  */
+@Category(Unstable.class)
 public class ThreadsTest {
 	@Test
 	public void shutdown() throws InterruptedException {
