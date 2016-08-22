@@ -6,12 +6,14 @@ import org.springframework.http.HttpStatus;
  * @author Jalen Zhong
  */
 public class Result {
+	private static final int CODE_SUCCESS = HttpStatus.OK.value();
+
 	public static Result success() {
-		return new Result(HttpStatus.OK.value(), null, null);
+		return new Result(CODE_SUCCESS, null, null);
 	}
 
 	public static Result success(Object[] data) {
-		return new Result(HttpStatus.OK.value(), null, data);
+		return new Result(CODE_SUCCESS, null, data);
 	}
 
 	public static Result fail(int code, Object message) {
@@ -29,7 +31,7 @@ public class Result {
 	}
 
 	public boolean isSuccess() {
-		return code == HttpStatus.OK.value();
+		return code == CODE_SUCCESS;
 	}
 
 	public int getCode() {
