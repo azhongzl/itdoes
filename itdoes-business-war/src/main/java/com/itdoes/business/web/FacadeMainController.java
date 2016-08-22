@@ -50,6 +50,6 @@ public class FacadeMainController extends FacadeBaseController {
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_DELETE + "/{id}")
 	public Result delete(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		facadeService.delete(ec, id);
-		return Result.success(null);
+		return Result.success();
 	}
 }
