@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -14,6 +15,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -33,6 +35,55 @@ public class Selenium2 {
 	private static final int DEFAULT_TIMEOUT = 5;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Selenium2.class);
+
+	public static ExpectedCondition<Boolean> textToBePresentInElementLocatedNotBlank(final By locator) {
+		return new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					String elementText = findElement(locator, driver).getText();
+					return StringUtils.isNotBlank(elementText);
+				} catch (StaleElementReferenceException e) {
+					return null;
+				}
+			}
+
+			@Override
+			public String toString() {
+				return String.format("text to be present in element found by %s", locator);
+			}
+		};
+	}
+
+	public static ExpectedCondition<Boolean> textToBePresentInElementValueNotBlank(final By locator) {
+		return new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					String elementText = findElement(locator, driver).getAttribute("value");
+					return StringUtils.isNotBlank(elementText);
+				} catch (StaleElementReferenceException e) {
+					return null;
+				}
+			}
+
+			@Override
+			public String toString() {
+				return String.format("text to be the value of element located by %s", locator);
+			}
+		};
+	}
+
+	private static WebElement findElement(By by, WebDriver driver) {
+		try {
+			return driver.findElement(by);
+		} catch (NoSuchElementException e) {
+			throw e;
+		} catch (WebDriverException e) {
+			LOGGER.warn(String.format("WebDriverException thrown by findElement(%s)", by), e);
+			throw e;
+		}
+	}
 
 	private final WebDriver driver;
 	private final String baseUrl;
@@ -205,12 +256,28 @@ public class Selenium2 {
 		waitUntil(ExpectedConditions.textToBePresentInElementLocated(by, text), timeout);
 	}
 
+	public void waitTextNotBlank(By by) {
+		waitTextNotBlank(by, defaultTimeout);
+	}
+
+	public void waitTextNotBlank(By by, int timeout) {
+		waitUntil(textToBePresentInElementLocatedNotBlank(by), timeout);
+	}
+
 	public void waitValuePresent(By by, String value) {
 		waitValuePresent(by, value, defaultTimeout);
 	}
 
 	public void waitValuePresent(By by, String value, int timeout) {
 		waitUntil(ExpectedConditions.textToBePresentInElementValue(by, value), timeout);
+	}
+
+	public void waitValueNotBlank(By by) {
+		waitValueNotBlank(by, defaultTimeout);
+	}
+
+	public void waitValueNotBlank(By by, int timeout) {
+		waitUntil(textToBePresentInElementValueNotBlank(by), timeout);
 	}
 
 	public Alert getAlert() {
