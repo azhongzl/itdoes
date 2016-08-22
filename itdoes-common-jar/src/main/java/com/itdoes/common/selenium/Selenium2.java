@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
+import com.itdoes.common.shutdownhook.ShutdownThread;
+import com.itdoes.common.shutdownhook.ShutdownThread.ShutdownCallback;
 import com.itdoes.common.util.Exceptions;
 import com.itdoes.common.util.Urls;
 
@@ -35,6 +37,19 @@ public class Selenium2 {
 	private static final int DEFAULT_TIMEOUT = 5;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Selenium2.class);
+
+	private static class Selenium2ShutdownCallback implements ShutdownCallback {
+		private final Selenium2 s;
+
+		public Selenium2ShutdownCallback(Selenium2 s) {
+			this.s = s;
+		}
+
+		@Override
+		public void shutdown() {
+			s.quit();
+		}
+	}
 
 	public static ExpectedCondition<Boolean> textToBePresentInElementLocatedNotBlank(final By locator) {
 		return new ExpectedCondition<Boolean>() {
@@ -89,13 +104,15 @@ public class Selenium2 {
 	private final String baseUrl;
 	private final int defaultTimeout;
 
+	private boolean stopAtShutdown;
+
 	public Selenium2(WebDriver driver, String baseUrl, int inputDefaultTimeout) {
 		this.driver = driver;
 		this.baseUrl = baseUrl;
 		this.defaultTimeout = inputDefaultTimeout > 0 ? inputDefaultTimeout : DEFAULT_TIMEOUT;
 		driver.manage().timeouts().implicitlyWait(this.defaultTimeout, TimeUnit.SECONDS);
 
-		setStopAtShutdown();
+		setStopAtShutdown(true);
 	}
 
 	public Selenium2(WebDriver driver, String baseUrl) {
@@ -334,12 +351,18 @@ public class Selenium2 {
 		actInNewWindow(NewWindowAction.NOP);
 	}
 
-	private void setStopAtShutdown() {
-		Runtime.getRuntime().addShutdownHook(new Thread("Selenium Shutdown Hook") {
-			@Override
-			public void run() {
-				quit();
+	private void setStopAtShutdown(boolean stop) {
+		// if we now want to stop
+		if (stop) {
+			// and we weren't stopping before
+			if (!stopAtShutdown) {
+				ShutdownThread.getInstance().register(this, new Selenium2ShutdownCallback(this));
 			}
-		});
+		} else {
+			if (stopAtShutdown) {
+				ShutdownThread.getInstance().unregister(this);
+			}
+		}
+		stopAtShutdown = stop;
 	}
 }
