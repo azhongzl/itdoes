@@ -307,6 +307,12 @@ public class Selenium2 {
 	}
 
 	public static interface NewWindowAction {
+		NewWindowAction NOP = new NewWindowAction() {
+			@Override
+			public void actInNewWindow() {
+			}
+		};
+
 		void actInNewWindow();
 	}
 
@@ -322,6 +328,10 @@ public class Selenium2 {
 		driver.close();
 
 		driver.switchTo().window(parentWindowHandler);
+	}
+
+	public void closeNewWindow() {
+		actInNewWindow(NewWindowAction.NOP);
 	}
 
 	private void setStopAtShutdown() {
