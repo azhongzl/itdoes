@@ -1,3 +1,6 @@
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,7 +8,7 @@
 <title>Hi Jalen, this is a temp html</title>
 </head>
 <body>
-	<form action="/biz/facade/TempPart/post" method="post">
+	<form action="${ctx}/facade/TempPart/post" method="post">
 		<table>
 			<tr>
 				<td>TempPart POST</td>
@@ -39,14 +42,14 @@
 			</tr>
 			<tr>
 				<td><input type="submit" value="Submit Part"
-					onclick="this.form.action='/biz/facade/TempPart/put' + '/' + document.getElementById('partIdPut').value"></td>
+					onclick="this.form.action='${ctx}/facade/TempPart/put' + '/' + document.getElementById('partIdPut').value"></td>
 			</tr>
 		</table>
 	</form>
 
 	<br />
 
-	<form action="/biz/facade/TempInvCompany/post" method="post">
+	<form action="${ctx}/facade/TempInvCompany/post" method="post">
 		<table>
 			<tr>
 				<td>TempInvCompany POST</td>
@@ -81,10 +84,10 @@
 			</tr>
 			<tr>
 				<td><input type="submit" value="Submit InvCompany"
-					onclick="this.form.action='/biz/facade/TempInvCompany/put' + '/' + document.getElementById('invCompanyIdPut').value"></td>
+					onclick="this.form.action='${ctx}/facade/TempInvCompany/put' + '/' + document.getElementById('invCompanyIdPut').value"></td>
 			</tr>
 		</table>
 	</form>
-	<a href="/biz/">Back</a>
+	<a href="${ctx}/">Back</a>
 </body>
 </html>
