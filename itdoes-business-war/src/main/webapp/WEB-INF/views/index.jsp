@@ -15,6 +15,7 @@
 	<a href="${ctx}/facade/TempInvCompany/search">普通用户能看</a>
 	<a href="${ctx}/facade/TempPart/search">只有管理员能看</a>
 	<a href="${ctx}/edit">新增/修改</a>
+	<a href="${ctx}/upload">上传</a>
 	<a href="${ctx}/logout">登出</a>
 </body>
 </html>
