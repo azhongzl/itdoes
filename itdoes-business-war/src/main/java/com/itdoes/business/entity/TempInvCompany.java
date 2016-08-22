@@ -17,7 +17,7 @@ import com.itdoes.common.business.SecureColumn;
  * @author Jalen Zhong
  */
 @Entity
-@Table(name = "ss_temp_ivncompany")
+@Table(name = "ss_temp_invcompany")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class TempInvCompany extends BaseEntity {
 	private static final long serialVersionUID = -6610094960802416902L;
