@@ -4,13 +4,28 @@ import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
+import com.itdoes.common.shutdownhook.ShutdownThread;
+import com.itdoes.common.shutdownhook.ShutdownThread.ShutdownCallback;
 import com.itdoes.common.util.Exceptions;
 
 /**
  * @author Jalen Zhong
  */
 public class ExecutorPool<T> extends GenericObjectPool<T> {
-	private boolean stopAtShutdown;
+	private static class PoolShutdownCallback<T> implements ShutdownCallback {
+		private final ExecutorPool<T> pool;
+
+		public PoolShutdownCallback(ExecutorPool<T> pool) {
+			this.pool = pool;
+		}
+
+		@Override
+		public void shutdown() {
+			if (!pool.isClosed()) {
+				pool.close();
+			}
+		}
+	}
 
 	public interface PoolCaller<T, V> {
 		V call(T t) throws Exception;
@@ -19,6 +34,8 @@ public class ExecutorPool<T> extends GenericObjectPool<T> {
 	public interface PoolRunner<T> {
 		void run(T t) throws Exception;
 	}
+
+	private boolean stopAtShutdown;
 
 	public ExecutorPool(PooledObjectFactory<T> factory, GenericObjectPoolConfig config) {
 		super(factory, config);
@@ -76,7 +93,7 @@ public class ExecutorPool<T> extends GenericObjectPool<T> {
 			if (!stopAtShutdown) {
 				// only register to stop if we're already started
 				if (!isClosed()) {
-					ShutdownThread.getInstance().register(this);
+					ShutdownThread.getInstance().register(this, new PoolShutdownCallback<T>(this));
 				}
 			}
 		} else {
