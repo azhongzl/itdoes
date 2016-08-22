@@ -2,6 +2,7 @@ package com.itdoes.business.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.itdoes.common.business.BaseController;
 import com.itdoes.common.business.Result;
+import com.itdoes.common.util.Collections3;
 import com.itdoes.common.web.Webs;
 
 /**
@@ -28,13 +30,15 @@ public class UploadController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
-	public Result upload(@RequestParam("name") String name, @RequestParam("file") MultipartFile file)
+	public Result upload(@RequestParam("name") String name, @RequestParam("file") List<MultipartFile> files)
 			throws IOException {
-		if (!file.isEmpty()) {
-			final byte[] bytes = file.getBytes();
-			final String originalFilename = file.getOriginalFilename();
-			FileUtils.writeByteArrayToFile(new File(Webs.getRealPath(context, "/"), originalFilename), bytes);
-			return Result.success(new MultipartFile[] { file });
+		if (!Collections3.isEmpty(files)) {
+			for (MultipartFile file : files) {
+				final byte[] bytes = file.getBytes();
+				final String originalFilename = file.getOriginalFilename();
+				FileUtils.writeByteArrayToFile(new File(Webs.getRealPath(context, "/"), originalFilename), bytes);
+			}
+			return Result.success(files.toArray(new MultipartFile[files.size()]));
 		}
 
 		throw new IllegalArgumentException("file not uploaded");

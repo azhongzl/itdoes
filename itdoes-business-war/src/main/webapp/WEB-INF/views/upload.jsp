@@ -12,7 +12,8 @@
 	<form method="post" action="${ctx}/upload"
 		enctype="multipart/form-data">
 		Name: <input type="text" name="name" /> <br /> File: <input
-			type="file" name="file" /> <br /> <input type="submit" />
+			type="file" name="file" multiple="multiple" /> <br /> <input
+			type="submit" />
 	</form>
 </body>
 </html>
