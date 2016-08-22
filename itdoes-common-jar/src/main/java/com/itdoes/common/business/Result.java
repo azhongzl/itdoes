@@ -2,9 +2,12 @@ package com.itdoes.common.business;
 
 import org.springframework.http.HttpStatus;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 /**
  * @author Jalen Zhong
  */
+@JsonPropertyOrder({ "success", "code", "message", "data" })
 public class Result {
 	private static final int CODE_SUCCESS = HttpStatus.OK.value();
 
