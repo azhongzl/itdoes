@@ -5,10 +5,12 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -95,6 +97,9 @@ public abstract class BaseController {
 
 		return new PageRequest(pageNo - 1, pageSize, sort);
 	}
+
+	@Autowired
+	protected ServletContext context;
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
