@@ -4,6 +4,7 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -123,8 +124,8 @@ public class Webs {
 		return paramMap;
 	}
 
-	public static void main(String[] args) {
-		System.out.println(String.valueOf((char) 29));
+	public static String getRealPath(ServletContext context, String relativePath) {
+		return context.getRealPath(relativePath);
 	}
 
 	private Webs() {
