@@ -1,10 +1,7 @@
 package com.itdoes.business.web;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.itdoes.common.business.BaseController;
 import com.itdoes.common.business.Result;
 import com.itdoes.common.util.Collections3;
-import com.itdoes.common.web.Webs;
+import com.itdoes.common.web.MultipartFiles;
 
 /**
  * @author Jalen Zhong
@@ -30,14 +27,9 @@ public class UploadController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
-	public Result upload(@RequestParam("name") String name, @RequestParam("file") List<MultipartFile> files)
-			throws IOException {
+	public Result upload(@RequestParam("path") String path, @RequestParam("file") List<MultipartFile> files) {
 		if (!Collections3.isEmpty(files)) {
-			for (MultipartFile file : files) {
-				final byte[] bytes = file.getBytes();
-				final String originalFilename = file.getOriginalFilename();
-				FileUtils.writeByteArrayToFile(new File(Webs.getRealPath(context, "/"), originalFilename), bytes);
-			}
+			MultipartFiles.save(context, path, files);
 			return Result.success(files.toArray(new MultipartFile[files.size()]));
 		}
 

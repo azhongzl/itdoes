@@ -8,10 +8,10 @@
 <title>Upload</title>
 </head>
 <body>
-	<h1>Please upload a file</h1>
+	<h1>Please upload file(s)</h1>
 	<form method="post" action="${ctx}/upload"
 		enctype="multipart/form-data">
-		Name: <input type="text" name="name" /> <br /> File: <input
+		Path: <input type="text" name="path" /> <br /> File: <input
 			type="file" name="file" multiple="multiple" /> <br /> <input
 			type="submit" />
 	</form>
