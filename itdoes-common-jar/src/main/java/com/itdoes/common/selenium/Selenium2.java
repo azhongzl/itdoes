@@ -298,28 +298,24 @@ public class Selenium2 {
 		waitUntil(textToBePresentInElementValueNotBlank(by), timeout);
 	}
 
+	public Alert checkAlert() {
+		return checkAlert(defaultTimeout);
+	}
+
+	public Alert checkAlert(int timeout) {
+		try {
+			return getAlert(timeout);
+		} catch (TimeoutException e) {
+			return null;
+		}
+	}
+
 	public Alert getAlert() {
-		return getAlert(true);
+		return getAlert(defaultTimeout);
 	}
 
 	public Alert getAlert(int timeout) {
-		return getAlert(true, timeout);
-	}
-
-	public Alert getAlert(boolean throwException) {
-		return getAlert(throwException, defaultTimeout);
-	}
-
-	public Alert getAlert(boolean throwException, int timeout) {
-		try {
-			return waitUntil(ExpectedConditions.alertIsPresent(), timeout);
-		} catch (TimeoutException e) {
-			if (throwException) {
-				throw e;
-			} else {
-				return null;
-			}
-		}
+		return waitUntil(ExpectedConditions.alertIsPresent(), timeout);
 	}
 
 	public <T> T waitUntil(ExpectedCondition<T> condition, int timeout) {
