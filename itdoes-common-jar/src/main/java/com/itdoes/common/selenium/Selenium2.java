@@ -14,6 +14,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -298,11 +299,27 @@ public class Selenium2 {
 	}
 
 	public Alert getAlert() {
-		return getAlert(defaultTimeout);
+		return getAlert(true);
 	}
 
 	public Alert getAlert(int timeout) {
-		return waitUntil(ExpectedConditions.alertIsPresent(), timeout);
+		return getAlert(true, timeout);
+	}
+
+	public Alert getAlert(boolean throwException) {
+		return getAlert(throwException, defaultTimeout);
+	}
+
+	public Alert getAlert(boolean throwException, int timeout) {
+		try {
+			return waitUntil(ExpectedConditions.alertIsPresent(), timeout);
+		} catch (TimeoutException e) {
+			if (throwException) {
+				throw e;
+			} else {
+				return null;
+			}
+		}
 	}
 
 	public <T> T waitUntil(ExpectedCondition<T> condition, int timeout) {
