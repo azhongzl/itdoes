@@ -1,85 +1,52 @@
 package com.itdoes.common.util;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.util.List;
+import java.util.Collection;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.Validate;
-
-import com.google.common.collect.Lists;
 
 /**
  * @author Jalen Zhong
  */
 public class Files {
-	private static final List<File> EMPTY_FILES = Lists.newArrayList();
+	public static Collection<File> listFiles(String dir, boolean recursive) {
+		return listFiles(new File(dir), recursive);
+	}
 
-	public static List<File> listFiles(File dir, FileFilter filter) {
+	public static Collection<File> listFiles(File dir, boolean recursive) {
+		return listFiles(dir, TrueFileFilter.INSTANCE, recursive);
+	}
+
+	public static Collection<File> listFiles(String dir, IOFileFilter fileFilter, boolean recursive) {
+		return listFiles(new File(dir), fileFilter, recursive);
+	}
+
+	public static Collection<File> listFiles(File dir, IOFileFilter fileFilter, boolean recursive) {
+		return listFiles(dir, fileFilter, recursive ? TrueFileFilter.INSTANCE : FalseFileFilter.INSTANCE);
+	}
+
+	public static Collection<File> listFiles(File dir, IOFileFilter fileFilter, IOFileFilter dirFilter) {
 		Validate.notNull(dir, "Dir is null");
-		Validate.notNull(filter, "Filter is null");
+		Validate.notNull(fileFilter, "File Filter is null");
+		Validate.notNull(fileFilter, "Dir Filter is null");
 		Validate.isTrue(dir.exists(), "Dir " + dir + " does not exist");
 		Validate.isTrue(dir.isDirectory(), "Dir " + dir + " is not a directory");
 
-		final File[] files = dir.listFiles(filter);
-		if (files == null || files.length == 0) {
-			return EMPTY_FILES;
-		}
-
-		return Lists.newArrayList(files);
+		return FileUtils.listFiles(dir, fileFilter, dirFilter);
 	}
 
-	public static List<File> listFiles(File dir) {
-		return listFiles(dir, AllFileFilter.getInstance());
-	}
+	public static Collection<File> listFilesAndDirs(File dir, IOFileFilter fileFilter, IOFileFilter dirFilter) {
+		Validate.notNull(dir, "Dir is null");
+		Validate.notNull(fileFilter, "File Filter is null");
+		Validate.notNull(fileFilter, "Dir Filter is null");
+		Validate.isTrue(dir.exists(), "Dir " + dir + " does not exist");
+		Validate.isTrue(dir.isDirectory(), "Dir " + dir + " is not a directory");
 
-	public static List<File> listFiles(String dir, FileFilter filter) {
-		return listFiles(new File(dir), filter);
-	}
-
-	public static List<File> listFiles(String dir) {
-		return listFiles(new File(dir));
-	}
-
-	public static class AllFileFilter implements FileFilter {
-		private static final AllFileFilter INSTANCE = new AllFileFilter();
-
-		public static AllFileFilter getInstance() {
-			return INSTANCE;
-		}
-
-		private AllFileFilter() {
-		}
-
-		@Override
-		public boolean accept(File pathname) {
-			return true;
-		}
-	}
-
-	public static class PrefixFileFilter implements FileFilter {
-		private final String prefix;
-
-		public PrefixFileFilter(String prefix) {
-			this.prefix = prefix;
-		}
-
-		@Override
-		public boolean accept(File pathname) {
-			return pathname.getName().startsWith(prefix);
-		}
-	}
-
-	public static class PostfixFileFilter implements FileFilter {
-		private final String postfix;
-
-		public PostfixFileFilter(String postfix) {
-			this.postfix = postfix;
-		}
-
-		@Override
-		public boolean accept(File pathname) {
-			return pathname.getName().endsWith(postfix);
-		}
+		return FileUtils.listFilesAndDirs(dir, fileFilter, dirFilter);
 	}
 
 	private Files() {
