@@ -52,7 +52,7 @@ public class Selenium2 {
 		}
 	}
 
-	public static ExpectedCondition<Boolean> textToBePresentInElementLocatedNotBlank(final By locator) {
+	private static ExpectedCondition<Boolean> textToBePresentInElementLocatedNotBlank(final By locator) {
 		return new ExpectedCondition<Boolean>() {
 			@Override
 			public Boolean apply(WebDriver driver) {
@@ -71,7 +71,7 @@ public class Selenium2 {
 		};
 	}
 
-	public static ExpectedCondition<Boolean> textToBePresentInElementValueNotBlank(final By locator) {
+	private static ExpectedCondition<Boolean> textToBePresentInElementValueNotBlank(final By locator) {
 		return new ExpectedCondition<Boolean>() {
 			@Override
 			public Boolean apply(WebDriver driver) {
@@ -318,14 +318,6 @@ public class Selenium2 {
 		return waitUntil(ExpectedConditions.alertIsPresent(), timeout);
 	}
 
-	public <T> T waitUntil(ExpectedCondition<T> condition, int timeout) {
-		return waiter(timeout).until(condition);
-	}
-
-	public WebDriverWait waiter(int timeout) {
-		return new WebDriverWait(driver, timeout);
-	}
-
 	public boolean isTextPresent(String text) {
 		final String bodyText = findElement(By.tagName("body")).getText();
 		return bodyText.contains(text);
@@ -362,6 +354,14 @@ public class Selenium2 {
 
 	public void closeNewWindow() {
 		actInNewWindow(NewWindowAction.NOP);
+	}
+
+	private WebDriverWait waiter(int timeout) {
+		return new WebDriverWait(driver, timeout);
+	}
+
+	private <T> T waitUntil(ExpectedCondition<T> condition, int timeout) {
+		return waiter(timeout).until(condition);
 	}
 
 	private void setStopAtShutdown(boolean stop) {

@@ -49,6 +49,21 @@ public class Files {
 		return FileUtils.listFilesAndDirs(dir, fileFilter, dirFilter);
 	}
 
+	public static void move(String srcDir, String destDir) {
+		final Collection<File> srcFiles = listFiles(srcDir, true);
+		if (Collections3.isEmpty(srcFiles)) {
+			return;
+		}
+
+		for (File srcFile : srcFiles) {
+
+		}
+	}
+
+	public static void copy(String srcDir, String destDir) {
+
+	}
+
 	private Files() {
 	}
 }
