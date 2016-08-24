@@ -145,7 +145,7 @@ public class Selenium2 {
 	}
 
 	public WebElement findElement(By by) {
-		return driver.findElement(by);
+		return findElement(by, driver);
 	}
 
 	public List<WebElement> findElements(By by) {
