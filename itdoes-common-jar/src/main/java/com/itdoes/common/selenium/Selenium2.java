@@ -166,6 +166,15 @@ public class Selenium2 {
 	}
 
 	public void type(By by, String text) {
+		actStaleElement(new Action() {
+			@Override
+			public void act() {
+				typeInternal(by, text);
+			}
+		});
+	}
+
+	private void typeInternal(By by, String text) {
 		final WebElement element = findElement(by);
 		element.clear();
 		element.sendKeys(text);
@@ -180,13 +189,16 @@ public class Selenium2 {
 	}
 
 	public void click(By by) {
-		waiter(defaultTimeout).ignoring(StaleElementReferenceException.class).until(new Predicate<WebDriver>() {
+		actStaleElement(new Action() {
 			@Override
-			public boolean apply(WebDriver driver) {
-				findElement(by).click();
-				return true;
+			public void act() {
+				clickInternal(by);
 			}
 		});
+	}
+
+	private void clickInternal(By by) {
+		findElement(by).click();
 	}
 
 	public void check(By by) {
@@ -349,6 +361,21 @@ public class Selenium2 {
 
 	private <T> T waitUntil(ExpectedCondition<T> condition, int timeout) {
 		return waiter(timeout).until(condition);
+	}
+
+	private void actStaleElement(Action action) {
+		waiter(defaultTimeout).ignoring(StaleElementReferenceException.class).until(new Predicate<WebDriver>() {
+			@Override
+			public boolean apply(WebDriver driver) {
+				action.act();
+
+				return true;
+			}
+		});
+	}
+
+	private static interface Action {
+		void act();
 	}
 
 	private void setStopAtShutdown(boolean stop) {
