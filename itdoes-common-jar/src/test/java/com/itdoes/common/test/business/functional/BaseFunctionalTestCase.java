@@ -8,6 +8,8 @@ import javax.sql.DataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.fluent.Request;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.itdoes.common.test.Tests;
 import com.itdoes.common.test.jetty.JettyServer;
@@ -80,4 +82,6 @@ public abstract class BaseFunctionalTestCase {
 			throw Exceptions.unchecked(e, IllegalStateException.class);
 		}
 	}
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 }
