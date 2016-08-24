@@ -1,6 +1,7 @@
 package com.itdoes.common.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
@@ -13,12 +14,28 @@ import org.apache.commons.lang3.Validate;
  * @author Jalen Zhong
  */
 public class Files {
+	public static Collection<File> listFiles(String dir) {
+		return listFiles(new File(dir));
+	}
+
+	public static Collection<File> listFiles(File dir) {
+		return listFiles(dir, true);
+	}
+
 	public static Collection<File> listFiles(String dir, boolean recursive) {
 		return listFiles(new File(dir), recursive);
 	}
 
 	public static Collection<File> listFiles(File dir, boolean recursive) {
 		return listFiles(dir, TrueFileFilter.INSTANCE, recursive);
+	}
+
+	public static Collection<File> listFiles(String dir, IOFileFilter fileFilter) {
+		return listFiles(new File(dir), fileFilter);
+	}
+
+	public static Collection<File> listFiles(File dir, IOFileFilter fileFilter) {
+		return listFiles(dir, fileFilter, true);
 	}
 
 	public static Collection<File> listFiles(String dir, IOFileFilter fileFilter, boolean recursive) {
@@ -49,19 +66,114 @@ public class Files {
 		return FileUtils.listFilesAndDirs(dir, fileFilter, dirFilter);
 	}
 
-	public static void move(String srcDir, String destDir) {
-		final Collection<File> srcFiles = listFiles(srcDir, true);
+	public static void copyFileFromDirToDir(String srcDir, String destDir) {
+		copyFileFromDirToDir(new File(srcDir), new File(destDir));
+	}
+
+	public static void copyFileFromDirToDir(File srcDir, File destDir) {
+		copyFileFromDirToDir(srcDir, TrueFileFilter.INSTANCE, destDir);
+	}
+
+	public static void copyFileFromDirToDir(String srcDir, IOFileFilter fileFilter, String destDir) {
+		copyFileFromDirToDir(new File(srcDir), fileFilter, new File(destDir));
+	}
+
+	public static void copyFileFromDirToDir(File srcDir, IOFileFilter fileFilter, File destDir) {
+		copyFileFromDirToDir(srcDir, fileFilter, true, destDir);
+	}
+
+	public static void copyFileFromDirToDir(String srcDir, IOFileFilter fileFilter, boolean recursive, String destDir) {
+		copyFileFromDirToDir(new File(srcDir), fileFilter, recursive, new File(destDir));
+	}
+
+	public static void copyFileFromDirToDir(File srcDir, IOFileFilter fileFilter, boolean recursive, File destDir) {
+		copyFileFromDirToDir(srcDir, fileFilter, recursive ? TrueFileFilter.INSTANCE : FalseFileFilter.INSTANCE,
+				destDir);
+	}
+
+	public static void copyFileFromDirToDir(String srcDir, IOFileFilter fileFilter, IOFileFilter dirFilter,
+			String destDir) {
+		copyFileFromDirToDir(new File(srcDir), fileFilter, dirFilter, new File(destDir));
+	}
+
+	public static void copyFileFromDirToDir(File srcDir, IOFileFilter fileFilter, IOFileFilter dirFilter,
+			File destDir) {
+		actFileFromDirToDir(srcDir, fileFilter, dirFilter, destDir, FileAction.COPY_FILE_ACTION);
+	}
+
+	public static void moveFileFromDirToDir(String srcDir, String destDir) {
+		moveFileFromDirToDir(new File(srcDir), new File(destDir));
+	}
+
+	public static void moveFileFromDirToDir(File srcDir, File destDir) {
+		moveFileFromDirToDir(srcDir, TrueFileFilter.INSTANCE, destDir);
+	}
+
+	public static void moveFileFromDirToDir(String srcDir, IOFileFilter fileFilter, String destDir) {
+		moveFileFromDirToDir(new File(srcDir), fileFilter, new File(destDir));
+	}
+
+	public static void moveFileFromDirToDir(File srcDir, IOFileFilter fileFilter, File destDir) {
+		moveFileFromDirToDir(srcDir, fileFilter, true, destDir);
+	}
+
+	public static void moveFileFromDirToDir(String srcDir, IOFileFilter fileFilter, boolean recursive, String destDir) {
+		moveFileFromDirToDir(new File(srcDir), fileFilter, recursive, new File(destDir));
+	}
+
+	public static void moveFileFromDirToDir(File srcDir, IOFileFilter fileFilter, boolean recursive, File destDir) {
+		moveFileFromDirToDir(srcDir, fileFilter, recursive ? TrueFileFilter.INSTANCE : FalseFileFilter.INSTANCE,
+				destDir);
+	}
+
+	public static void moveFileFromDirToDir(String srcDir, IOFileFilter fileFilter, IOFileFilter dirFilter,
+			String destDir) {
+		moveFileFromDirToDir(new File(srcDir), fileFilter, dirFilter, new File(destDir));
+	}
+
+	public static void moveFileFromDirToDir(File srcDir, IOFileFilter fileFilter, IOFileFilter dirFilter,
+			File destDir) {
+		actFileFromDirToDir(srcDir, fileFilter, dirFilter, destDir, FileAction.MOVE_FILE_ACTION);
+	}
+
+	private static void actFileFromDirToDir(File srcDir, IOFileFilter fileFilter, IOFileFilter dirFilter, File destDir,
+			FileAction action) {
+		final Collection<File> srcFiles = listFiles(srcDir, fileFilter, dirFilter);
 		if (Collections3.isEmpty(srcFiles)) {
 			return;
 		}
 
-		for (File srcFile : srcFiles) {
+		try {
+			final String srcDirCanonicalPath = srcDir.getCanonicalPath();
+			for (File srcFile : srcFiles) {
+				final String srcFileCanonicalPath = srcFile.getCanonicalPath();
+				final String relativePath = srcFileCanonicalPath
+						.substring(srcFileCanonicalPath.indexOf(srcDirCanonicalPath) + srcDirCanonicalPath.length());
+				final File destFile = new File(destDir, relativePath);
 
+				action.act(srcFile, destFile);
+			}
+		} catch (IOException e) {
+			throw Exceptions.unchecked(e);
 		}
 	}
 
-	public static void copy(String srcDir, String destDir) {
+	private static interface FileAction {
+		FileAction COPY_FILE_ACTION = new FileAction() {
+			@Override
+			public void act(File srcFile, File destFile) throws IOException {
+				FileUtils.copyFile(srcFile, destFile);
+			}
+		};
 
+		FileAction MOVE_FILE_ACTION = new FileAction() {
+			@Override
+			public void act(File srcFile, File destFile) throws IOException {
+				FileUtils.moveFile(srcFile, destFile);
+			}
+		};
+
+		void act(File srcFile, File destFile) throws IOException;
 	}
 
 	private Files() {
