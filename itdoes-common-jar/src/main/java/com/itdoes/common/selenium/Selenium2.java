@@ -39,19 +39,6 @@ public class Selenium2 {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Selenium2.class);
 
-	private static class Selenium2ShutdownCallback implements ShutdownCallback {
-		private final Selenium2 s;
-
-		public Selenium2ShutdownCallback(Selenium2 s) {
-			this.s = s;
-		}
-
-		@Override
-		public void shutdown() {
-			s.quit();
-		}
-	}
-
 	private static ExpectedCondition<Boolean> textToBePresentInElementLocatedNotBlank(final By locator) {
 		return new ExpectedCondition<Boolean>() {
 			@Override
@@ -369,7 +356,7 @@ public class Selenium2 {
 		if (stop) {
 			// and we weren't stopping before
 			if (!stopAtShutdown) {
-				ShutdownThread.getInstance().register(this, new Selenium2ShutdownCallback(this));
+				ShutdownThread.getInstance().register(this, new Selenium2ShutdownCallback());
 			}
 		} else {
 			if (stopAtShutdown) {
@@ -377,5 +364,12 @@ public class Selenium2 {
 			}
 		}
 		stopAtShutdown = stop;
+	}
+
+	private class Selenium2ShutdownCallback implements ShutdownCallback {
+		@Override
+		public void shutdown() {
+			quit();
+		}
 	}
 }
