@@ -356,7 +356,12 @@ public class Selenium2 {
 		if (stop) {
 			// and we weren't stopping before
 			if (!stopAtShutdown) {
-				ShutdownThread.getInstance().register(this, new Selenium2ShutdownCallback());
+				ShutdownThread.getInstance().register(this, new ShutdownCallback() {
+					@Override
+					public void shutdown() {
+						quit();
+					}
+				});
 			}
 		} else {
 			if (stopAtShutdown) {
@@ -364,12 +369,5 @@ public class Selenium2 {
 			}
 		}
 		stopAtShutdown = stop;
-	}
-
-	private class Selenium2ShutdownCallback implements ShutdownCallback {
-		@Override
-		public void shutdown() {
-			quit();
-		}
 	}
 }
