@@ -14,6 +14,18 @@ import org.apache.commons.lang3.Validate;
  * @author Jalen Zhong
  */
 public class Files {
+	public String toUnixPath(String path) {
+		Validate.notNull(path, "Path is null");
+
+		return path.replace("\\", "/");
+	}
+
+	public String toWindowsPath(String path) {
+		Validate.notNull(path, "Path is null");
+
+		return path.replace("/", "\\");
+	}
+
 	public static Collection<File> listFiles(String dir) {
 		return listFiles(new File(dir));
 	}
