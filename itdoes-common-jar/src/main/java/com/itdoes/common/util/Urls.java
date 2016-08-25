@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -36,6 +37,10 @@ public class Urls {
 		Validate.notNull(afterUrlString, "afterUrlString is null");
 
 		if (!isRelative(afterUrlString)) {
+			return afterUrlString;
+		}
+
+		if (StringUtils.isBlank(beforeUrlString)) {
 			return afterUrlString;
 		}
 
