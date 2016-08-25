@@ -16,6 +16,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.itdoes.common.util.Codecs;
 import com.itdoes.common.util.Exceptions;
 
 /**
@@ -33,6 +34,9 @@ public class Cryptos {
 	private static final String AES_CBC = "AES/CBC/PKCS5Padding";
 	private static final int DEFAULT_AES_KEYSIZE = 16 * 8;
 	private static final int DEFAULT_IVSIZE = 16;
+
+	private static final String DEFAULT_AES_KEY_HEX = "8632e36e2755802e32989baa896882f1";
+	public static final byte[] DEFAULT_AES_KEY = Codecs.hexDecode(DEFAULT_AES_KEY_HEX);
 
 	private static final SecureRandom RANDOM = new SecureRandom();
 
