@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
 import com.itdoes.common.util.Collections3;
@@ -90,6 +91,14 @@ public class FtpClients {
 		} finally {
 			IOUtils.closeQuietly(localInput);
 		}
+	}
+
+	public static void setFileTypeAscii(FTPClient client) throws IOException {
+		client.setFileType(FTP.ASCII_FILE_TYPE);
+	}
+
+	public static void setFileTypeBinary(FTPClient client) throws IOException {
+		client.setFileType(FTP.BINARY_FILE_TYPE);
 	}
 
 	public static void close(FTPClient client) {
