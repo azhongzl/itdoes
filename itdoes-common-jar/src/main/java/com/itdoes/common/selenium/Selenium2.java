@@ -144,6 +144,14 @@ public class Selenium2 {
 		return driver;
 	}
 
+	public WebElement checkElement(By by) {
+		try {
+			return findElement(by, driver);
+		} catch (NoSuchElementException e) {
+			return null;
+		}
+	}
+
 	public WebElement findElement(By by) {
 		return findElement(by, driver);
 	}
@@ -180,12 +188,38 @@ public class Selenium2 {
 		element.sendKeys(text);
 	}
 
-	public void ctrlC(By by) {
-		type(by, Keys.CONTROL + "c");
+	public void typeCtrlC(By by) {
+		typeKeys(by, Keys.CONTROL + "c");
 	}
 
-	public void ctrlV(By by) {
-		type(by, Keys.CONTROL + "v");
+	public void typeCtrlV(By by) {
+		typeKeys(by, Keys.CONTROL + "v");
+	}
+
+	public void typeCtrlA(By by) {
+		typeKeys(by, Keys.CONTROL + "a");
+	}
+
+	public void typeEnter(By by) {
+		typeKeys(by, Keys.ENTER);
+	}
+
+	public void typeReturn(By by) {
+		typeKeys(by, Keys.RETURN);
+	}
+
+	public void typeKeys(By by, CharSequence... keys) {
+		actStaleElement(new Action() {
+			@Override
+			public void act() {
+				sendKeysInternal(by, keys);
+			}
+		});
+	}
+
+	private void sendKeysInternal(By by, CharSequence... keys) {
+		final WebElement element = findElement(by);
+		element.sendKeys(keys);
 	}
 
 	public void click(By by) {
