@@ -13,4 +13,8 @@ public class FtpClientPool<T extends FTPClient> extends ExecutorPool<T> {
 	public FtpClientPool(PooledObjectFactory<T> factory, GenericObjectPoolConfig config) {
 		super(factory, config);
 	}
+
+	public FtpClientFactory<T> getFactory() {
+		return (FtpClientFactory<T>) super.getFactory();
+	}
 }

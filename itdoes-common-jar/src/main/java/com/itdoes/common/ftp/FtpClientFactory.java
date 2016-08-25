@@ -17,6 +17,10 @@ public class FtpClientFactory<T extends FTPClient> implements PooledObjectFactor
 		this.builder = builder;
 	}
 
+	public IFtpClientBuilder<T> getBuilder() {
+		return builder;
+	}
+
 	@Override
 	public PooledObject<T> makeObject() throws Exception {
 		final T ftp = builder.build();

@@ -203,6 +203,94 @@ public abstract class AbstractFtpClientBuilder<T extends FTPClient> implements I
 		return this;
 	}
 
+	public CopyStreamListener getCopyStreamListener() {
+		return copyStreamListener;
+	}
+
+	public Long getControlKeepAliveTimeout() {
+		return controlKeepAliveTimeout;
+	}
+
+	public Integer getControlKeepAliveReplyTimeout() {
+		return controlKeepAliveReplyTimeout;
+	}
+
+	public Integer getConnectTimeout() {
+		return connectTimeout;
+	}
+
+	public Integer getDefaultTimeout() {
+		return defaultTimeout;
+	}
+
+	public Integer getSoTimeout() {
+		return soTimeout;
+	}
+
+	public String getControlEncoding() {
+		return controlEncoding;
+	}
+
+	public Boolean getListHiddenFiles() {
+		return ListHiddenFiles;
+	}
+
+	public List<ProtocolCommandListener> getProtocolCommandListeners() {
+		return protocolCommandListeners;
+	}
+
+	public FTPClientConfig getConfig() {
+		return config;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public Integer getPort() {
+		return port;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public Integer getFileType() {
+		return fileType;
+	}
+
+	public String getWorkingDirectory() {
+		return workingDirectory;
+	}
+
+	public Integer getConnectionMode() {
+		return connectionMode;
+	}
+
+	public InetAddress getRemoteActiveHost() {
+		return remoteActiveHost;
+	}
+
+	public int getRemoteActivePort() {
+		return remoteActivePort;
+	}
+
+	public Boolean getUseEpsvwithIpv4() {
+		return useEpsvwithIpv4;
+	}
+
+	public Integer getDataTimeout() {
+		return dataTimeout;
+	}
+
+	public Integer getBufferSize() {
+		return bufferSize;
+	}
+
 	protected T buildInternal(T ftp) {
 		try {
 			// Configuration
