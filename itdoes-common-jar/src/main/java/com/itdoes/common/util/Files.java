@@ -26,6 +26,21 @@ public class Files {
 		return path.replace("/", "\\");
 	}
 
+	public static String getFileExtension(String filename, boolean includeDot) {
+		Validate.notBlank(filename, "Filename is blank");
+
+		final int index = filename.lastIndexOf(".");
+		if (index == -1) {
+			return "";
+		}
+
+		if (includeDot) {
+			return filename.substring(index);
+		} else {
+			return filename.substring(index + 1);
+		}
+	}
+
 	public static Collection<File> listFiles(String dir) {
 		return listFiles(new File(dir));
 	}
