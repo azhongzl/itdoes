@@ -20,7 +20,7 @@ import com.itdoes.common.util.Exceptions;
 /**
  * @author Jalen Zhong
  */
-public abstract class AbstractFtpClientBuilder<T extends FTPClient> implements IFtpClientBuilder<T> {
+public abstract class AbstractFtpClientBuilder<T extends FTPClient> implements ISettingFtpClientBuilder<T> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFtpClientBuilder.class);
 
 	private CopyStreamListener copyStreamListener;
@@ -203,90 +203,112 @@ public abstract class AbstractFtpClientBuilder<T extends FTPClient> implements I
 		return this;
 	}
 
+	@Override
 	public CopyStreamListener getCopyStreamListener() {
 		return copyStreamListener;
 	}
 
+	@Override
 	public Long getControlKeepAliveTimeout() {
 		return controlKeepAliveTimeout;
 	}
 
+	@Override
 	public Integer getControlKeepAliveReplyTimeout() {
 		return controlKeepAliveReplyTimeout;
 	}
 
+	@Override
 	public Integer getConnectTimeout() {
 		return connectTimeout;
 	}
 
+	@Override
 	public Integer getDefaultTimeout() {
 		return defaultTimeout;
 	}
 
+	@Override
 	public Integer getSoTimeout() {
 		return soTimeout;
 	}
 
+	@Override
 	public String getControlEncoding() {
 		return controlEncoding;
 	}
 
+	@Override
 	public Boolean getListHiddenFiles() {
 		return ListHiddenFiles;
 	}
 
+	@Override
 	public List<ProtocolCommandListener> getProtocolCommandListeners() {
 		return protocolCommandListeners;
 	}
 
+	@Override
 	public FTPClientConfig getConfig() {
 		return config;
 	}
 
+	@Override
 	public String getHost() {
 		return host;
 	}
 
+	@Override
 	public Integer getPort() {
 		return port;
 	}
 
+	@Override
 	public String getUsername() {
 		return username;
 	}
 
+	@Override
 	public String getPassword() {
 		return password;
 	}
 
+	@Override
 	public Integer getFileType() {
 		return fileType;
 	}
 
+	@Override
 	public String getWorkingDirectory() {
 		return workingDirectory;
 	}
 
+	@Override
 	public Integer getConnectionMode() {
 		return connectionMode;
 	}
 
+	@Override
 	public InetAddress getRemoteActiveHost() {
 		return remoteActiveHost;
 	}
 
+	@Override
 	public int getRemoteActivePort() {
 		return remoteActivePort;
 	}
 
+	@Override
 	public Boolean getUseEpsvwithIpv4() {
 		return useEpsvwithIpv4;
 	}
 
+	@Override
 	public Integer getDataTimeout() {
 		return dataTimeout;
 	}
 
+	@Override
 	public Integer getBufferSize() {
 		return bufferSize;
 	}
