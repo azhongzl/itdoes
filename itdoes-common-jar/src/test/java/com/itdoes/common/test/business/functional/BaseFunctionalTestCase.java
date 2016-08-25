@@ -67,7 +67,7 @@ public abstract class BaseFunctionalTestCase {
 		Tests.executeSql(dataSource, StringUtils.split(PL.getProperty("sql.file"), ","));
 	}
 
-	protected static String get(String urlString) {
+	protected static String getContent(String urlString) {
 		try {
 			return Request.Get(Urls.toUri(Urls.concat(URL_BASE, urlString))).execute().returnContent().asString();
 		} catch (IOException e) {
@@ -75,7 +75,7 @@ public abstract class BaseFunctionalTestCase {
 		}
 	}
 
-	protected static String post(String urlString) {
+	protected static String postContent(String urlString) {
 		try {
 			return Request.Post(Urls.toUri(Urls.concat(URL_BASE, urlString))).execute().returnContent().asString();
 		} catch (IOException e) {
