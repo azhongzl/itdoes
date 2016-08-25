@@ -30,7 +30,7 @@ public class WebDrivers {
 		} else if (BrowserType.chrome.name().equals(driverName)) {
 			return new ChromeDriver();
 		} else if (driverName.startsWith(BrowserType.remote.name())) {
-			final String[] params = StringUtils.split("driverName", ":");
+			final String[] params = StringUtils.split(driverName, ":");
 			Validate.isTrue(params.length == 4,
 					"Remote driver is wrong, acceptible format is \"remote:localhost:4444:firefox\", but the actual is \""
 							+ driverName + "\"");
