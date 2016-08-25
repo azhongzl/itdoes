@@ -73,6 +73,10 @@ public class Files {
 		return listFiles(dir, fileFilter, recursive ? TrueFileFilter.INSTANCE : FalseFileFilter.INSTANCE);
 	}
 
+	public static Collection<File> listFiles(String dir, IOFileFilter fileFilter, IOFileFilter dirFilter) {
+		return listFiles(new File(dir), fileFilter, dirFilter);
+	}
+
 	public static Collection<File> listFiles(File dir, IOFileFilter fileFilter, IOFileFilter dirFilter) {
 		Validate.notNull(dir, "Dir is null");
 		Validate.notNull(fileFilter, "File Filter is null");
