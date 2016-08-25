@@ -159,8 +159,7 @@ public class Files {
 			final String srcDirCanonicalPath = srcDir.getCanonicalPath();
 			for (File srcFile : srcFiles) {
 				final String srcFileCanonicalPath = srcFile.getCanonicalPath();
-				final String relativePath = srcFileCanonicalPath
-						.substring(srcFileCanonicalPath.indexOf(srcDirCanonicalPath) + srcDirCanonicalPath.length());
+				final String relativePath = srcFileCanonicalPath.substring(srcDirCanonicalPath.length());
 				final File destFile = new File(destDir, relativePath);
 
 				action.act(srcFile, destFile);
