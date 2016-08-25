@@ -3,6 +3,7 @@ package com.itdoes.common.selenium;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -29,7 +30,7 @@ public class WebDrivers {
 		} else if (BrowserType.chrome.name().equals(driverName)) {
 			return new ChromeDriver();
 		} else if (driverName.startsWith(BrowserType.remote.name())) {
-			final String[] params = driverName.split(":");
+			final String[] params = StringUtils.split("driverName", ":");
 			Validate.isTrue(params.length == 4,
 					"Remote driver is wrong, acceptible format is \"remote:localhost:4444:firefox\", but the actual is \""
 							+ driverName + "\"");
