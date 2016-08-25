@@ -8,44 +8,53 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.net.ftp.FTPClient;
 
 import com.itdoes.common.util.Collections3;
 import com.itdoes.common.util.Exceptions;
 import com.itdoes.common.util.Files;
+import com.itdoes.common.util.Urls;
 
 /**
  * @author Jalen Zhong
  */
 public class FtpClients {
-	public static boolean makeDirectory(FTPClient client, String baseDir, String relativeDirs) throws IOException {
-		return makeDirectory(client, baseDir, relativeDirs, true);
+	public static boolean makeDirectory(FTPClient client, String dir) throws IOException {
+		return makeDirectory(client, dir, true);
 	}
 
-	public static boolean makeDirectory(FTPClient client, String baseDir, String relativeDirs, boolean createIfNotExist)
-			throws IOException {
+	/**
+	 * 
+	 * @param client
+	 * @param dir
+	 *            make directory always from root instead of working directory because working directory often changes
+	 *            and is prone to error
+	 * @param recursive
+	 *            true means create all not exist sub directories, false means only create the first not exist directory
+	 * @return
+	 * @throws IOException
+	 */
+	public static boolean makeDirectory(FTPClient client, String dir, boolean recursive) throws IOException {
 		Validate.notNull(client, "FTPClient is null");
-		Validate.notNull(baseDir, "BaseDir is null");
-		Validate.notNull(relativeDirs, "RelativeDirs is null");
+		Validate.notNull(dir, "Dir is null");
 
-		final String relativeDirsStr = Files.toUnixPath(relativeDirs);
+		final String unixDir = Files.toUnixPath(dir);
 
-		if (!createIfNotExist) {
-			return client.makeDirectory(relativeDirsStr);
+		if (!recursive) {
+			return client.makeDirectory(unixDir);
 		}
 
-		final String[] myRemoteRelativeDirs = relativeDirsStr.split("/");
-		if (Collections3.isEmpty(myRemoteRelativeDirs)) {
+		final String[] relativeDirs = StringUtils.split(unixDir, "/");
+		if (Collections3.isEmpty(relativeDirs)) {
 			return true;
 		}
 
-		String dir = Files.toUnixPath(baseDir);
-		System.out.println("----------------------------working dir-------------------------" + dir);
-		for (String myRemoteRelativeDir : myRemoteRelativeDirs) {
-			dir += "/" + myRemoteRelativeDir;
-			System.out.println("-----------------------------------------------------" + relativeDirs + "===" + dir);
-			client.makeDirectory(dir);
+		String dirToMake = "/";
+		for (String relativeDir : relativeDirs) {
+			dirToMake = Urls.concat(dirToMake, relativeDir);
+			client.makeDirectory(dirToMake);
 		}
 
 		return true;
