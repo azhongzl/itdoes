@@ -183,7 +183,7 @@ public abstract class AbstractFtpClientBuilder<T extends FTPClient> implements I
 		return setConnectionMode(FTPClient.PASSIVE_REMOTE_DATA_CONNECTION_MODE);
 	}
 
-	private AbstractFtpClientBuilder<T> setConnectionMode(Integer connectionMode) {
+	public AbstractFtpClientBuilder<T> setConnectionMode(Integer connectionMode) {
 		this.connectionMode = connectionMode;
 		return this;
 	}
