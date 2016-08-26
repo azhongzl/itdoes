@@ -23,7 +23,7 @@ import com.itdoes.common.util.PropertiesLoader;
 /**
  * @author Jalen Zhong
  */
-public class PropertiesMailHelper {
+public class PropertiesMailHelper implements MailHelper {
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	private final PropertiesLoader pl;
@@ -34,10 +34,12 @@ public class PropertiesMailHelper {
 		this.sender = createSender();
 	}
 
+	@Override
 	public MailSenders getSender() {
 		return sender;
 	}
 
+	@Override
 	public MailMimeMessages createMimeMessage(boolean multipart, boolean success) {
 		if (!pl.getBoolean("mail.on")) {
 			return NopMailMimeMessages.INSTANCE;
