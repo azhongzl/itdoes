@@ -11,6 +11,5 @@
 		<module>itdoes-parent</module>
 		<module>itdoes-common-jar</module>
 		<module>itdoes-common-war</module>
-		<module>itdoes-business-war</module>
 	</modules>
 </project>
