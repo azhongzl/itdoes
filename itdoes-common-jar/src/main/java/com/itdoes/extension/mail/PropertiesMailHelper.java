@@ -34,6 +34,10 @@ public class PropertiesMailHelper {
 		this.sender = createSender();
 	}
 
+	public MailSenders getSender() {
+		return sender;
+	}
+
 	public MailMimeMessages createMimeMessage(boolean multipart, boolean success) {
 		if (!pl.getBoolean("mail.on")) {
 			return NopMailMimeMessages.INSTANCE;
@@ -97,12 +101,8 @@ public class PropertiesMailHelper {
 		final String templateString = pl.getProperty("mail.subject");
 		final Map<String, String> model = Maps.newHashMap();
 		model.put("result", success ? "success" : "fail");
-		model.put("date", toString(new Date()));
+		model.put("date", DATE_FORMAT.format(new Date()));
 		return FreeMarkers.render(templateString, model);
-	}
-
-	private String toString(Date date) {
-		return DATE_FORMAT.format(date);
 	}
 
 	private MailSenders createSender() {
