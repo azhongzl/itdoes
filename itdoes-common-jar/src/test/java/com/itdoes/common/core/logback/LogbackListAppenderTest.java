@@ -1,10 +1,12 @@
-package com.itdoes.common.core.test.logback;
+package com.itdoes.common.core.logback;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.itdoes.common.core.logback.LogbackListAppender;
 
 /**
  * @author Jalen Zhong

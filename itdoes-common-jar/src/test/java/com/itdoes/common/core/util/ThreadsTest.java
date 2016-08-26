@@ -12,8 +12,8 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itdoes.common.core.logback.LogbackListAppender;
 import com.itdoes.common.core.test.category.Unstable;
-import com.itdoes.common.core.test.logback.LogbackListAppender;
 
 /**
  * @author Jalen Zhong

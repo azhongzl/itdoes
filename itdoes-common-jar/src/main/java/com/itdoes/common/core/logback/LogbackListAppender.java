@@ -1,4 +1,4 @@
-package com.itdoes.common.core.test.logback;
+package com.itdoes.common.core.logback;
 
 import java.util.List;
 
