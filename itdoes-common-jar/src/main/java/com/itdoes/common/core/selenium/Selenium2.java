@@ -94,6 +94,10 @@ public class Selenium2 {
 
 	private boolean stopAtShutdown;
 
+	public Selenium2(String driverName, String baseUrl, int inputDefaultTimeout) {
+		this(WebDrivers.createDriver(driverName), baseUrl, inputDefaultTimeout);
+	}
+
 	public Selenium2(WebDriver driver, String baseUrl, int inputDefaultTimeout) {
 		this.driver = driver;
 		this.baseUrl = baseUrl;
@@ -101,14 +105,6 @@ public class Selenium2 {
 		driver.manage().timeouts().implicitlyWait(this.defaultTimeout, TimeUnit.SECONDS);
 
 		setStopAtShutdown(true);
-	}
-
-	public Selenium2(WebDriver driver, String baseUrl) {
-		this(driver, baseUrl, DEFAULT_TIMEOUT);
-	}
-
-	public Selenium2(WebDriver driver, int defaultTimeout) {
-		this(driver, "", defaultTimeout);
 	}
 
 	public void open(String url) {

@@ -4,11 +4,8 @@ import java.sql.Driver;
 
 import javax.sql.DataSource;
 
-import org.openqa.selenium.WebDriver;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import com.itdoes.common.core.selenium.Selenium2;
-import com.itdoes.common.core.selenium.WebDrivers;
 import com.itdoes.common.core.sql.SqlExecutors;
 import com.itdoes.common.core.test.jetty.JettyServer;
 import com.itdoes.common.core.util.Exceptions;
@@ -39,11 +36,6 @@ public class Tests {
 
 	public static void executeSql(DataSource dataSource, String... sqlPaths) {
 		SqlExecutors.executeSql(dataSource, sqlPaths);
-	}
-
-	public static Selenium2 createSelenium(String driverName, String baseUrl, int timeout) {
-		final WebDriver driver = WebDrivers.createDriver(driverName);
-		return new Selenium2(driver, baseUrl, timeout);
 	}
 
 	private Tests() {
