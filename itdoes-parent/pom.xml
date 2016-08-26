@@ -713,7 +713,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<groups>com.itdoes.common.test.category.Smoke</groups>
+							<groups>com.itdoes.common.core.test.category.Smoke</groups>
 						</configuration>
 					</plugin>
 				</plugins>

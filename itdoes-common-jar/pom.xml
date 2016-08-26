@@ -275,11 +275,11 @@
 						</goals>
 						<configuration>
 							<includes>
-								<include>com/itdoes/common/test/**/*.class</include>
+								<include>com/itdoes/common/core/test/**/*.class</include>
 								<include>jetty/*.xml</include>
 							</includes>
 							<excludes>
-								<exclude>com/itdoes/common/test/**/*Test.class</exclude>
+								<exclude>com/itdoes/common/core/test/**/*Test.class</exclude>
 							</excludes>
 						</configuration>
 					</execution>
