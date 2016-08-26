@@ -1,1 +1,0 @@
-Stock Image source http://pixabay.com
