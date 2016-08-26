@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
@@ -16,13 +17,22 @@ import ch.qos.logback.core.UnsynchronizedAppenderBase;
 public class LogbackListAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 	private final List<ILoggingEvent> logs = Lists.newArrayList();
 
+	private final Level level;
+
 	public LogbackListAppender() {
+		this(null);
+	}
+
+	public LogbackListAppender(Level level) {
+		this.level = level;
 		start();
 	}
 
 	@Override
 	protected void append(ILoggingEvent e) {
-		logs.add(e);
+		if (level == null || e.getLevel().isGreaterOrEqual(level)) {
+			logs.add(e);
+		}
 	}
 
 	public ILoggingEvent getFirst() {
