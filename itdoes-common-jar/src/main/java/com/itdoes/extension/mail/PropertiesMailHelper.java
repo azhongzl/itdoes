@@ -1,4 +1,4 @@
-package com.itdoes.common.mail;
+package com.itdoes.extension.mail;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -11,6 +11,11 @@ import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.Maps;
 import com.itdoes.common.freemarker.FreeMarkers;
+import com.itdoes.common.mail.MailMimeMessages;
+import com.itdoes.common.mail.MailSenders;
+import com.itdoes.common.mail.Mails;
+import com.itdoes.common.mail.NopMailMimeMessages;
+import com.itdoes.common.mail.NopMailSenders;
 import com.itdoes.common.security.Cryptos;
 import com.itdoes.common.util.Collections3;
 import com.itdoes.common.util.PropertiesLoader;
