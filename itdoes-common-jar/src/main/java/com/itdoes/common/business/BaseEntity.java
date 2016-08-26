@@ -1,4 +1,4 @@
-package com.itdoes.common.core.business;
+package com.itdoes.common.business;
 
 import javax.persistence.MappedSuperclass;
 
