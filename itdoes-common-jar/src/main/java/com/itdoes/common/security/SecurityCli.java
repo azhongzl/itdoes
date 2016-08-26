@@ -20,10 +20,11 @@ public class SecurityCli {
 		OPTIONS.addOption("ad", "aes-decrypt", true, "Decrypt using AES");
 		OPTIONS.addOption("ak", "aes-key", false, "Generate AES key");
 	}
+	private static final HelpFormatter FORMATTER = new HelpFormatter();
+	private static final CommandLineParser PARSER = new DefaultParser();
 
 	public static void main(String[] args) throws ParseException {
-		final CommandLineParser parser = new DefaultParser();
-		final CommandLine cli = parser.parse(OPTIONS, args);
+		final CommandLine cli = PARSER.parse(OPTIONS, args);
 
 		if (cli.hasOption("h")) {
 			showHelp();
@@ -43,7 +44,6 @@ public class SecurityCli {
 	}
 
 	private static void showHelp() {
-		final HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp("security", OPTIONS);
+		FORMATTER.printHelp(SecurityCli.class.getSimpleName(), OPTIONS);
 	}
 }
