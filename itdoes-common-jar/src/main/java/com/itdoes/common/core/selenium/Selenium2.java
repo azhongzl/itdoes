@@ -103,6 +103,7 @@ public class Selenium2 {
 		this.baseUrl = baseUrl;
 		this.defaultTimeout = inputDefaultTimeout > 0 ? inputDefaultTimeout : DEFAULT_TIMEOUT;
 		driver.manage().timeouts().implicitlyWait(this.defaultTimeout, TimeUnit.SECONDS);
+		driver.manage().window().maximize();
 
 		setStopAtShutdown(true);
 	}
