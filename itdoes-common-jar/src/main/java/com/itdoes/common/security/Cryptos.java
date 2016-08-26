@@ -35,8 +35,7 @@ public class Cryptos {
 	private static final int DEFAULT_AES_KEYSIZE = 16 * 8;
 	private static final int DEFAULT_IVSIZE = 16;
 
-	private static final String DEFAULT_AES_KEY_HEX = "8632e36e2755802e32989baa896882f1";
-	public static final byte[] DEFAULT_AES_KEY = Codecs.hexDecode(DEFAULT_AES_KEY_HEX);
+	private static final byte[] DEFAULT_AES_KEY = Codecs.hexDecode("8632e36e2755802e32989baa896882f1");
 
 	private static final SecureRandom RANDOM = new SecureRandom();
 
@@ -101,6 +100,14 @@ public class Cryptos {
 		} catch (NoSuchAlgorithmException e) {
 			throw Exceptions.unchecked(e);
 		}
+	}
+
+	public static String aesEncryptDefault(String plainPassword) {
+		return Codecs.hexEncode(Cryptos.aesEncrypt(plainPassword.getBytes(), DEFAULT_AES_KEY));
+	}
+
+	public static String aesDecryptDefault(String encryptedPassword) {
+		return Cryptos.aesDecrypt(Codecs.hexDecode(encryptedPassword), DEFAULT_AES_KEY);
 	}
 
 	public static byte[] aesEncrypt(byte[] data, byte[] key) {

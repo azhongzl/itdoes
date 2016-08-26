@@ -31,13 +31,9 @@ public class SecurityCli {
 		} else if (cli.hasOption("ak")) {
 			System.out.println(Codecs.hexEncode(Cryptos.generateAesKey()));
 		} else if (cli.hasOption("ae")) {
-			final String result = Codecs
-					.hexEncode(Cryptos.aesEncrypt(cli.getOptionValue("ae").getBytes(), Cryptos.DEFAULT_AES_KEY));
-			System.out.println(result);
+			System.out.println(Cryptos.aesEncryptDefault(cli.getOptionValue("ae")));
 		} else if (cli.hasOption("ad")) {
-			final String result = Cryptos.aesDecrypt(Codecs.hexDecode(cli.getOptionValue("ad")),
-					Cryptos.DEFAULT_AES_KEY);
-			System.out.println(result);
+			System.out.println(Cryptos.aesDecryptDefault(cli.getOptionValue("ad")));
 		} else {
 			showHelp();
 		}
