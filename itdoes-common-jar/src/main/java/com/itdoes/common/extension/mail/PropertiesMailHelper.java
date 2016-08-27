@@ -19,6 +19,7 @@ import com.itdoes.common.core.mail.NopMailMimeMessages;
 import com.itdoes.common.core.mail.NopMailSenders;
 import com.itdoes.common.core.security.Cryptos;
 import com.itdoes.common.core.util.Collections3;
+import com.itdoes.common.core.util.Exceptions;
 import com.itdoes.common.core.util.PropertiesLoader;
 
 /**
@@ -126,6 +127,16 @@ public class PropertiesMailHelper implements MailHelper {
 			mimeMessage.addAttachment(attachment.getName(), attachment);
 		}
 		send(mimeMessage);
+	}
+
+	@Override
+	public void sendException(Throwable t) {
+		sendText(false, Exceptions.getStackTraceString(t));
+	}
+
+	@Override
+	public void sendException(Throwable t, File... attachments) {
+		sendText(false, Exceptions.getStackTraceString(t), attachments);
 	}
 
 	private String[] getAddresses(String key, String defaultKey) {

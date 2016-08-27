@@ -22,4 +22,8 @@ public interface MailHelper {
 	void sendText(boolean success, String text);
 
 	void sendText(boolean success, String text, File... attachments);
+
+	void sendException(Throwable t);
+
+	void sendException(Throwable t, File... attachments);
 }
