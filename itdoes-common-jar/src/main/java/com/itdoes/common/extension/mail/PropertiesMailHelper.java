@@ -1,5 +1,6 @@
 package com.itdoes.common.extension.mail;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -80,6 +81,51 @@ public class PropertiesMailHelper implements MailHelper {
 		}
 
 		return mimeMessage;
+	}
+
+	@Override
+	public void send(MailMimeMessages mimeMessage) {
+		sender.send(mimeMessage);
+	}
+
+	@Override
+	public void sendHtml(boolean success, String html) {
+		final MailMimeMessages mimeMessage = createMimeMessage(false, success).setText(html, true);
+		send(mimeMessage);
+	}
+
+	@Override
+	public void sendHtml(boolean success, String html, File... attachments) {
+		if (Collections3.isEmpty(attachments)) {
+			sendHtml(success, html);
+			return;
+		}
+
+		final MailMimeMessages mimeMessage = createMimeMessage(true, success).setText(html, true);
+		for (File attachment : attachments) {
+			mimeMessage.addAttachment(attachment.getName(), attachment);
+		}
+		send(mimeMessage);
+	}
+
+	@Override
+	public void sendText(boolean success, String text) {
+		final MailMimeMessages mimeMessage = createMimeMessage(false, success).setText(text, false);
+		send(mimeMessage);
+	}
+
+	@Override
+	public void sendText(boolean success, String text, File... attachments) {
+		if (Collections3.isEmpty(attachments)) {
+			sendText(success, text);
+			return;
+		}
+
+		final MailMimeMessages mimeMessage = createMimeMessage(true, success).setText(text, false);
+		for (File attachment : attachments) {
+			mimeMessage.addAttachment(attachment.getName(), attachment);
+		}
+		send(mimeMessage);
 	}
 
 	private String[] getAddresses(String key, String defaultKey) {
