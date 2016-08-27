@@ -43,13 +43,25 @@ public class FreeMarkers {
 
 	public static Configuration buildConfiguration(String directory) {
 		try {
-			final Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+			final Configuration config = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 			Resource resource = RESOURCE_LOADER.getResource(directory);
-			cfg.setDirectoryForTemplateLoading(resource.getFile());
-			return cfg;
+			config.setDirectoryForTemplateLoading(resource.getFile());
+			return config;
 		} catch (IOException e) {
 			throw Exceptions.unchecked(e);
 		}
+	}
+
+	public static Template getTemplate(Configuration config, String name) {
+		try {
+			return config.getTemplate(name);
+		} catch (IOException e) {
+			throw Exceptions.unchecked(e);
+		}
+	}
+
+	public static Template getTemplate(String directory, String name) {
+		return getTemplate(buildConfiguration(directory), name);
 	}
 
 	private FreeMarkers() {

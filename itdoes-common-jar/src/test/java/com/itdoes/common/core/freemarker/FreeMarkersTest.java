@@ -12,7 +12,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import freemarker.core.ParseException;
-import freemarker.template.Configuration;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateNotFoundException;
@@ -46,8 +45,7 @@ public class FreeMarkersTest {
 			throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException {
 		Map<String, String> model = Maps.newHashMap();
 		model.put("username", "Jalen");
-		Configuration cfg = FreeMarkers.buildConfiguration("classpath:/");
-		Template template = cfg.getTemplate("testTemplate.ftl");
+		Template template = FreeMarkers.getTemplate("classpath:/", "testTemplate.ftl");
 		String result = FreeMarkers.render(template, model);
 		assertThat(result).isEqualTo("Hello Jalen");
 	}
