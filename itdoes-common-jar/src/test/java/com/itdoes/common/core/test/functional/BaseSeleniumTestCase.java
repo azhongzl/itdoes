@@ -1,4 +1,4 @@
-package com.itdoes.common.core.test.business.functional;
+package com.itdoes.common.core.test.functional;
 
 import org.junit.Rule;
 import org.junit.rules.TestRule;
