@@ -2,7 +2,6 @@ package com.itdoes.common.core.freemarker;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -11,10 +10,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import freemarker.core.ParseException;
-import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
-import freemarker.template.TemplateNotFoundException;
 
 /**
  * @author Jalen Zhong
@@ -41,8 +37,7 @@ public class FreeMarkersTest {
 	}
 
 	@Test
-	public void renderFile()
-			throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException {
+	public void renderFile() {
 		Map<String, String> model = Maps.newHashMap();
 		model.put("username", "Jalen");
 		Template template = FreeMarkers.getTemplate("classpath:/", "testTemplate.ftl");
