@@ -3,7 +3,6 @@ package com.itdoes.common.core.security;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
@@ -18,6 +17,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.itdoes.common.core.util.Codecs;
 import com.itdoes.common.core.util.Exceptions;
+import com.itdoes.common.core.util.Randoms;
 
 /**
  * @author Jalen Zhong
@@ -36,8 +36,6 @@ public class Cryptos {
 	private static final int DEFAULT_IVSIZE = 16;
 
 	private static final byte[] DEFAULT_AES_KEY = Codecs.hexDecode("8632e36e2755802e32989baa896882f1");
-
-	private static final SecureRandom RANDOM = new SecureRandom();
 
 	public static byte[] hmacSha1(byte[] data, byte[] key) {
 		return hmac(HMACSHA1, data, key);
@@ -171,9 +169,7 @@ public class Cryptos {
 	}
 
 	public static byte[] generateIv(int ivSize) {
-		final byte[] bytes = new byte[ivSize];
-		RANDOM.nextBytes(bytes);
-		return bytes;
+		return Randoms.SECURE.nextBytes(ivSize);
 	}
 
 	private Cryptos() {

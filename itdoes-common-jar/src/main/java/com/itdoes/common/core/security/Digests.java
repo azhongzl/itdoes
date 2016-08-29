@@ -5,14 +5,12 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.zip.CRC32;
-
-import org.apache.commons.lang3.Validate;
 
 import com.google.common.hash.Hashing;
 import com.itdoes.common.core.Constants;
 import com.itdoes.common.core.util.Exceptions;
+import com.itdoes.common.core.util.Randoms;
 
 /**
  * @author Jalen Zhong
@@ -25,8 +23,6 @@ public class Digests {
 	private static final int DEFAULT_SALT_SIZE = 8;
 
 	private static final int BUFFER_LENGTH = 8 * 1024;
-
-	private static final SecureRandom RANDOM = new SecureRandom();
 
 	public static byte[] sha1(byte[] data) {
 		return sha1(data, null);
@@ -190,11 +186,7 @@ public class Digests {
 	}
 
 	public static byte[] generateSalt(int size) {
-		Validate.isTrue(size > 0, "Salt size must be a positive integer", size);
-
-		final byte[] bytes = new byte[size];
-		RANDOM.nextBytes(bytes);
-		return bytes;
+		return Randoms.SECURE.nextBytes(size);
 	}
 
 	public static long crc32(byte[] data) {
