@@ -169,7 +169,7 @@ public class Cryptos {
 	}
 
 	public static byte[] generateIv(int ivSize) {
-		return Randoms.SECURE.nextBytes(ivSize);
+		return Randoms.nextBytes(Randoms.SECURE_RANDOM, ivSize);
 	}
 
 	private Cryptos() {

@@ -186,7 +186,7 @@ public class Digests {
 	}
 
 	public static byte[] generateSalt(int size) {
-		return Randoms.SECURE.nextBytes(size);
+		return Randoms.nextBytes(Randoms.SECURE_RANDOM, size);
 	}
 
 	public static long crc32(byte[] data) {

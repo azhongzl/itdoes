@@ -1,6 +1,8 @@
 package com.itdoes.common.core.util;
 
 import java.security.SecureRandom;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.Validate;
@@ -9,131 +11,62 @@ import org.apache.commons.lang3.Validate;
  * @author Jalen Zhong
  */
 public class Randoms {
-	public static SecureRandoms SECURE = new SecureRandoms();
-	public static SimpleRandoms SIMPLE = new SimpleRandoms();
+	public static final SecureRandom SECURE_RANDOM = new SecureRandom();
+	public static final Random SIMPLE_RANDOM = new Random();
 
-	private static interface IRandoms {
-		public long nextLong();
-
-		public long nextLongAbs();
-
-		public int nextInt();
-
-		public int nextInt(int bound);
-
-		public byte[] nextBytes(int length);
-
-		public String nextBase62(int length);
-	}
-
-	public static class SecureRandoms implements IRandoms {
-		// Holder class to defer initialization until needed.
-		private static class Holder {
-			private static final SecureRandom RANDOM = new SecureRandom();
-		}
-
-		private SecureRandoms() {
-		}
-
-		@Override
-		public long nextLong() {
-			return Randoms.nextLong(Holder.RANDOM);
-		}
-
-		@Override
-		public long nextLongAbs() {
-			return Randoms.nextLongAbs(Holder.RANDOM);
-		}
-
-		@Override
-		public int nextInt() {
-			return Randoms.nextInt(Holder.RANDOM);
-		}
-
-		@Override
-		public int nextInt(int bound) {
-			return Randoms.nextInt(Holder.RANDOM, bound);
-		}
-
-		@Override
-		public byte[] nextBytes(int length) {
-			return Randoms.nextBytes(Holder.RANDOM, length);
-		}
-
-		@Override
-		public String nextBase62(int length) {
-			return Randoms.nextBase62(Holder.RANDOM, length);
-		}
-	}
-
-	public static class SimpleRandoms implements IRandoms {
-		// Holder class to defer initialization until needed.
-		private static class Holder {
-			private static final Random RANDOM = new Random();
-		}
-
-		private SimpleRandoms() {
-		}
-
-		@Override
-		public long nextLong() {
-			return Randoms.nextLong(Holder.RANDOM);
-		}
-
-		@Override
-		public long nextLongAbs() {
-			return Randoms.nextLongAbs(Holder.RANDOM);
-		}
-
-		@Override
-		public int nextInt() {
-			return Randoms.nextInt(Holder.RANDOM);
-		}
-
-		@Override
-		public int nextInt(int bound) {
-			return Randoms.nextInt(Holder.RANDOM, bound);
-		}
-
-		@Override
-		public byte[] nextBytes(int length) {
-			return Randoms.nextBytes(Holder.RANDOM, length);
-		}
-
-		@Override
-		public String nextBase62(int length) {
-			return Randoms.nextBase62(Holder.RANDOM, length);
-		}
-	}
-
-	private static long nextLong(Random random) {
+	public static long nextLong(Random random) {
 		return random.nextLong();
 	}
 
-	private static long nextLongAbs(Random random) {
+	public static long nextLongAbs(Random random) {
 		return Math.abs(nextLong(random));
 	}
 
-	private static int nextInt(Random random) {
+	public static int nextInt(Random random) {
 		return random.nextInt();
 	}
 
-	private static int nextInt(Random random, int bound) {
+	public static int nextInt(Random random, int bound) {
 		return random.nextInt(bound);
 	}
 
-	private static byte[] nextBytes(Random random, int length) {
-		Validate.isTrue(length > 0, "Random length must be a positive integer", length);
+	public static byte[] nextBytes(Random random, int length) {
+		Validate.isTrue(length > 0, "Length must be a positive integer", length);
 
 		final byte[] bytes = new byte[length];
 		random.nextBytes(bytes);
 		return bytes;
 	}
 
-	private static String nextBase62(Random random, int length) {
-		final byte[] randomBytes = new byte[length];
-		random.nextBytes(randomBytes);
-		return Codecs.base62Encode(randomBytes);
+	public static String nextBase62(Random random, int length) {
+		return Codecs.base62Encode(nextBytes(random, length));
+	}
+
+	public static String nextString(Random random, String prefix, int length) {
+		Validate.isTrue(length > 0, "Length must be a positive integer", length);
+
+		return new StringBuilder().append(prefix).append(nextInt(random, (int) Math.pow(10, length))).toString();
+	}
+
+	public static <T> T randomOne(List<T> list) {
+		Collections.shuffle(list);
+		return list.get(0);
+	}
+
+	public static <T> List<T> randomAny(List<T> list, int size) {
+		if (size < 1) {
+			size = 1;
+		}
+		if (size > list.size()) {
+			size = list.size();
+		}
+
+		Collections.shuffle(list);
+		return list.subList(0, size);
+	}
+
+	public static <T> List<T> randomAny(Random random, List<T> list) {
+		return randomAny(list, nextInt(random, list.size()));
 	}
 
 	private Randoms() {
