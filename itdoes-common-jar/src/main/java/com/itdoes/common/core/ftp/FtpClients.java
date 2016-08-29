@@ -93,12 +93,12 @@ public class FtpClients {
 		}
 	}
 
-	public static void setFileTypeAscii(FTPClient client) throws IOException {
-		client.setFileType(FTP.ASCII_FILE_TYPE);
+	public static boolean setFileTypeAscii(FTPClient client) throws IOException {
+		return client.setFileType(FTP.ASCII_FILE_TYPE);
 	}
 
-	public static void setFileTypeBinary(FTPClient client) throws IOException {
-		client.setFileType(FTP.BINARY_FILE_TYPE);
+	public static boolean setFileTypeBinary(FTPClient client) throws IOException {
+		return client.setFileType(FTP.BINARY_FILE_TYPE);
 	}
 
 	public static void close(FTPClient client) {
