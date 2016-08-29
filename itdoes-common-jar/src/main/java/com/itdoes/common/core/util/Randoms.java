@@ -42,7 +42,7 @@ public class Randoms {
 		return Codecs.base62Encode(nextBytes(random, length));
 	}
 
-	public static String nextString(Random random, String prefix, int length) {
+	public static String nextPrefix(Random random, String prefix, int length) {
 		Validate.isTrue(length > 0, "Length must be a positive integer", length);
 
 		return new StringBuilder().append(prefix).append(nextInt(random, (int) Math.pow(10, length))).toString();
