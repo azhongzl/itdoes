@@ -11,8 +11,8 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itdoes.common.core.sql.SqlExecutors;
-import com.itdoes.common.core.test.Tests;
+import com.itdoes.common.core.jdbc.SimpleDriverDataSources;
+import com.itdoes.common.core.jdbc.SqlExecutors;
 import com.itdoes.common.core.test.jetty.JettyServer;
 import com.itdoes.common.core.test.spring.Profiles;
 import com.itdoes.common.core.util.Exceptions;
@@ -56,7 +56,7 @@ public abstract class BaseFunctionalTestCase {
 			return;
 		}
 
-		dataSource = Tests.createDataSource(PL.getProperty("jdbc.driver"), PL.getProperty("jdbc.url"),
+		dataSource = SimpleDriverDataSources.createDataSource(PL.getProperty("jdbc.driver"), PL.getProperty("jdbc.url"),
 				PL.getProperty("jdbc.username"), PL.getProperty("jdbc.password"));
 	}
 

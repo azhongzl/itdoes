@@ -1,4 +1,4 @@
-package com.itdoes.common.core.sql;
+package com.itdoes.common.core.jdbc;
 
 import java.sql.SQLException;
 

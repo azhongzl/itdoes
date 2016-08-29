@@ -1,4 +1,4 @@
-package com.itdoes.common.core.test;
+package com.itdoes.common.core.jdbc;
 
 import java.sql.Driver;
 
@@ -9,7 +9,7 @@ import com.itdoes.common.core.util.Exceptions;
 /**
  * @author Jalen Zhong
  */
-public class Tests {
+public class SimpleDriverDataSources {
 	@SuppressWarnings("unchecked")
 	public static SimpleDriverDataSource createDataSource(String driver, String url, String username, String password) {
 		try {
@@ -29,6 +29,6 @@ public class Tests {
 		return dataSource;
 	}
 
-	private Tests() {
+	private SimpleDriverDataSources() {
 	}
 }
