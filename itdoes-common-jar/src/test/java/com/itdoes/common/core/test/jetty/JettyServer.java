@@ -23,6 +23,12 @@ public class JettyServer {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JettyServer.class);
 
+	public static JettyServer createAndStart(int port, String contextPath, String... taglibJarNames) {
+		final JettyServer jettyServer = new JettyServer(port, contextPath, taglibJarNames);
+		jettyServer.start();
+		return jettyServer;
+	}
+
 	private final int port;
 	private final String contextPath;
 	private final String[] taglibJarNames;

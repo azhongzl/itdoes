@@ -4,19 +4,12 @@ import java.sql.Driver;
 
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import com.itdoes.common.core.test.jetty.JettyServer;
 import com.itdoes.common.core.util.Exceptions;
 
 /**
  * @author Jalen Zhong
  */
 public class Tests {
-	public static JettyServer createAndStartJettyServer(int port, String contextPath, String... taglibJarNames) {
-		final JettyServer jettyServer = new JettyServer(port, contextPath, taglibJarNames);
-		jettyServer.start();
-		return jettyServer;
-	}
-
 	@SuppressWarnings("unchecked")
 	public static SimpleDriverDataSource createDataSource(String driver, String url, String username, String password) {
 		try {

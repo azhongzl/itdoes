@@ -47,7 +47,7 @@ public abstract class BaseFunctionalTestCase {
 			return;
 		}
 
-		jettyServer = Tests.createAndStartJettyServer(URL_BASE_URL.getPort(), PL.getProperty("jetty.context"),
+		jettyServer = JettyServer.createAndStart(URL_BASE_URL.getPort(), PL.getProperty("jetty.context"),
 				StringUtils.split(PL.getProperty("jetty.taglib"), ","));
 	}
 
