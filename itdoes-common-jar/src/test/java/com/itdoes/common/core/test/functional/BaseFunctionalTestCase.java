@@ -11,6 +11,7 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itdoes.common.core.sql.SqlExecutors;
 import com.itdoes.common.core.test.Tests;
 import com.itdoes.common.core.test.jetty.JettyServer;
 import com.itdoes.common.core.test.spring.Profiles;
@@ -64,7 +65,7 @@ public abstract class BaseFunctionalTestCase {
 			return;
 		}
 
-		Tests.executeSql(dataSource, StringUtils.split(PL.getProperty("sql.file"), ","));
+		SqlExecutors.executeSql(dataSource, StringUtils.split(PL.getProperty("sql.file"), ","));
 	}
 
 	protected static String getContent(String urlString) {

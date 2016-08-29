@@ -2,11 +2,8 @@ package com.itdoes.common.core.test;
 
 import java.sql.Driver;
 
-import javax.sql.DataSource;
-
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import com.itdoes.common.core.sql.SqlExecutors;
 import com.itdoes.common.core.test.jetty.JettyServer;
 import com.itdoes.common.core.util.Exceptions;
 
@@ -23,19 +20,20 @@ public class Tests {
 	@SuppressWarnings("unchecked")
 	public static SimpleDriverDataSource createDataSource(String driver, String url, String username, String password) {
 		try {
-			final SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-			dataSource.setDriverClass((Class<? extends Driver>) Class.forName(driver));
-			dataSource.setUrl(url);
-			dataSource.setUsername(username);
-			dataSource.setPassword(password);
-			return dataSource;
+			return createDataSource((Class<? extends Driver>) Class.forName(driver), url, username, password);
 		} catch (ClassNotFoundException e) {
 			throw Exceptions.unchecked(e, IllegalArgumentException.class);
 		}
 	}
 
-	public static void executeSql(DataSource dataSource, String... sqlPaths) {
-		SqlExecutors.executeSql(dataSource, sqlPaths);
+	public static SimpleDriverDataSource createDataSource(Class<? extends Driver> driverClass, String url,
+			String username, String password) {
+		final SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+		dataSource.setDriverClass(driverClass);
+		dataSource.setUrl(url);
+		dataSource.setUsername(username);
+		dataSource.setPassword(password);
+		return dataSource;
 	}
 
 	private Tests() {
