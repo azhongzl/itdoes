@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * @author Jalen Zhong
  */
-public class ThreadLocalMap {
+public class ThreadLocalMaps {
 	private static final ThreadLocal<Map<Object, Object>> THREAD_LOCAL_MAP = new ThreadLocal<Map<Object, Object>>() {
 		@Override
 		protected Map<Object, Object> initialValue() {
@@ -26,6 +26,6 @@ public class ThreadLocalMap {
 		THREAD_LOCAL_MAP.get().clear();
 	}
 
-	private ThreadLocalMap() {
+	private ThreadLocalMaps() {
 	}
 }
