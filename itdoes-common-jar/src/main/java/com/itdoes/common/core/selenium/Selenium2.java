@@ -375,11 +375,13 @@ public class Selenium2 {
 			driver.switchTo().window(windowHandler);
 		}
 
-		action.actInNewWindow();
+		try {
+			action.actInNewWindow();
+		} finally {
+			driver.close();
 
-		driver.close();
-
-		driver.switchTo().window(parentWindowHandler);
+			driver.switchTo().window(parentWindowHandler);
+		}
 	}
 
 	public void closeNewWindow() {
