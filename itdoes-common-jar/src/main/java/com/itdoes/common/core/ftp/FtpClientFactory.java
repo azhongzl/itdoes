@@ -6,11 +6,15 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Jalen Zhong
  */
 public class FtpClientFactory<T extends FTPClient> implements PooledObjectFactory<T> {
+	private static final Logger LOGGER = LoggerFactory.getLogger(FtpClientFactory.class);
+
 	private final IFtpClientBuilder<T> builder;
 
 	public FtpClientFactory(IFtpClientBuilder<T> builder) {
@@ -24,6 +28,7 @@ public class FtpClientFactory<T extends FTPClient> implements PooledObjectFactor
 	@Override
 	public PooledObject<T> makeObject() throws Exception {
 		final T ftp = builder.build();
+		LOGGER.info("makeObject()");
 		return new DefaultPooledObject<T>(ftp);
 	}
 
@@ -34,6 +39,7 @@ public class FtpClientFactory<T extends FTPClient> implements PooledObjectFactor
 			return;
 		}
 
+		LOGGER.info("destroyObject()");
 		FtpClients.close(ftp);
 	}
 
@@ -44,11 +50,18 @@ public class FtpClientFactory<T extends FTPClient> implements PooledObjectFactor
 			return false;
 		}
 
+		boolean valid;
 		try {
-			return ftp.sendNoOp();
+			valid = ftp.sendNoOp();
 		} catch (IOException e) {
-			return false;
+			valid = false;
 		}
+		if (valid) {
+			LOGGER.debug("validateObject() = true");
+		} else {
+			LOGGER.warn("validateObject() = false");
+		}
+		return valid;
 	}
 
 	@Override
