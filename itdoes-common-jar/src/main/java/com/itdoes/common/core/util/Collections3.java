@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -122,6 +123,15 @@ public class Collections3 {
 			}
 		}
 		return result;
+	}
+
+	public static Map<String, String> toMap(Properties properties) {
+		final Map<String, String> map = new HashMap<String, String>(properties.size());
+		for (Object key : properties.keySet()) {
+			final String keyStr = (String) key;
+			map.put(keyStr, properties.getProperty(keyStr));
+		}
+		return map;
 	}
 
 	public static List<Long> asList(long... array) {
