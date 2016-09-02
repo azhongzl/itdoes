@@ -369,22 +369,24 @@ public class Selenium2 {
 	}
 
 	public void actInNewWindow(NewWindowAction action) {
-		final String parentWindowHandle = driver.getWindowHandle();
-
-		for (String windowHandle : driver.getWindowHandles()) {
-			if (windowHandle.equals(parentWindowHandle)) {
-				continue;
-			}
-
-			driver.switchTo().window(windowHandle);
-		}
+		final String mainWindow = driver.getWindowHandle();
 
 		try {
-			action.actInNewWindow();
-		} finally {
-			driver.close();
+			for (String newWindow : driver.getWindowHandles()) {
+				if (newWindow.equals(mainWindow)) {
+					continue;
+				}
 
-			driver.switchTo().window(parentWindowHandle);
+				driver.switchTo().window(newWindow);
+
+				try {
+					action.actInNewWindow();
+				} finally {
+					driver.close();
+				}
+			}
+		} finally {
+			driver.switchTo().window(mainWindow);
 		}
 	}
 
