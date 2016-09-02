@@ -9,22 +9,22 @@ public class Column extends BaseBean {
 	private static final long serialVersionUID = -1255240887631207414L;
 
 	public static class ColumnType extends BaseBean {
-		private static final long serialVersionUID = -534686835301174976L;
+		private static final long serialVersionUID = -4758927426048235769L;
 
-		private final int type;
-		private final String typeName;
+		private final int id;
+		private final String name;
 
-		public ColumnType(int type, String typeName) {
-			this.type = type;
-			this.typeName = typeName;
+		public ColumnType(int id, String name) {
+			this.id = id;
+			this.name = name;
 		}
 
-		public int getType() {
-			return type;
+		public int getId() {
+			return id;
 		}
 
-		public String getTypeName() {
-			return typeName;
+		public String getName() {
+			return name;
 		}
 	}
 

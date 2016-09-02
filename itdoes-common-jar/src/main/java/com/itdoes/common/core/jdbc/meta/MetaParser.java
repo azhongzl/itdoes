@@ -62,10 +62,10 @@ public class MetaParser {
 					try {
 						while (columnRs.next()) {
 							final String columnName = columnRs.getString("COLUMN_NAME");
-							final int columnType = columnRs.getInt("DATA_TYPE");
+							final int columnTypeId = columnRs.getInt("DATA_TYPE");
 							final String columnTypeName = columnRs.getString("TYPE_NAME");
 							final boolean nullable = columnRs.getBoolean("NULLABLE");
-							final Column column = new Column(columnName, new ColumnType(columnType, columnTypeName),
+							final Column column = new Column(columnName, new ColumnType(columnTypeId, columnTypeName),
 									nullable);
 							table.getColumnList().add(column);
 							columnMap.put(column.getName(), column);
