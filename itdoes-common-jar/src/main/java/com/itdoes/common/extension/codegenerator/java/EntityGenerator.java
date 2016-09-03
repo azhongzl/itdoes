@@ -2,7 +2,6 @@ package com.itdoes.common.extension.codegenerator.java;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +13,7 @@ import com.google.common.collect.Maps;
 import com.itdoes.common.business.Businesses;
 import com.itdoes.common.core.Constants;
 import com.itdoes.common.core.freemarker.FreeMarkers;
+import com.itdoes.common.core.jdbc.SqlTypes;
 import com.itdoes.common.core.jdbc.meta.Column;
 import com.itdoes.common.core.jdbc.meta.MetaParser;
 import com.itdoes.common.core.jdbc.meta.Table;
@@ -31,14 +31,6 @@ public class EntityGenerator {
 	private static final String DEFAULT_ID_GENERATED_VALUE = "@GeneratedValue(strategy = GenerationType.AUTO)";
 	private static final String TEMPLATE_DIR = "classpath:/"
 			+ EntityGenerator.class.getPackage().getName().replace(".", "/");
-	private static final Map<Integer, String> TYPE_MAPPING = Maps.newHashMap();
-	static {
-		TYPE_MAPPING.put(Types.INTEGER, "Integer");
-		TYPE_MAPPING.put(Types.BIGINT, "Long");
-		TYPE_MAPPING.put(Types.DATE, "Date");
-		TYPE_MAPPING.put(Types.TIME, "Date");
-		TYPE_MAPPING.put(Types.TIMESTAMP, "Date");
-	}
 
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
 			String outputDir, String basePackageName, Map<String, String> tableMapping,
@@ -140,8 +132,14 @@ public class EntityGenerator {
 	}
 
 	private static String mapFieldType(int sqlType) {
-		if (TYPE_MAPPING.containsKey(sqlType)) {
-			return TYPE_MAPPING.get(sqlType);
+		final Class<?> typeClass = SqlTypes.fromSqlType(sqlType);
+		if (typeClass != null) {
+			final String typeClassName = typeClass.getName();
+			if (typeClassName.startsWith("java.lang")) {
+				return typeClass.getSimpleName();
+			} else {
+				return typeClassName;
+			}
 		}
 
 		return "String";
