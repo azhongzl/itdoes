@@ -26,10 +26,10 @@ import freemarker.template.Template;
 /**
  * @author Jalen Zhong
  */
-public class EntityGenerators {
+public class EntityGenerator {
 	private static final String DEFAULT_ID_GENERATED_VALUE = "@GeneratedValue(strategy = GenerationType.AUTO)";
 	private static final String TEMPLATE_DIR = "classpath:/"
-			+ EntityGenerators.class.getPackage().getName().replace(".", "/");
+			+ EntityGenerator.class.getPackage().getName().replace(".", "/");
 	private static final Map<Integer, String> TYPE_MAPPING = Maps.newHashMap();
 	static {
 		TYPE_MAPPING.put(Types.INTEGER, "Integer");
@@ -156,6 +156,6 @@ public class EntityGenerators {
 		throw new IllegalArgumentException("There is no primary key in table: " + tableName);
 	}
 
-	private EntityGenerators() {
+	private EntityGenerator() {
 	}
 }
