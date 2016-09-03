@@ -25,7 +25,7 @@ public class ${className} extends BaseEntity {
 <#list fieldList as field>
   <#if field.pk>
 	@Id
-	${generatedValue}
+	${idGeneratedValue}
   </#if>
 	private ${field.type} ${field.name};
 </#list>

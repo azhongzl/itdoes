@@ -6,5 +6,5 @@ import ${entityPackageName}.${entityClassName};
 /**
  * @author Jalen Zhong
  */
-public interface ${entityClassName}Dao extends BaseDao<${entityClassName}, ${entityIdTypeName}> {
+public interface ${className} extends BaseDao<${entityClassName}, ${entityIdType}> {
 }

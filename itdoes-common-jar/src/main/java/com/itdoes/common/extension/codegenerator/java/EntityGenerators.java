@@ -26,56 +26,69 @@ import freemarker.template.Template;
 /**
  * @author Jalen Zhong
  */
-public class JavaGenerators {
-	private static final String DEFAULT_GENERATED_VALUE = "@GeneratedValue(strategy = GenerationType.AUTO)";
-
+public class EntityGenerators {
+	private static final String DEFAULT_ID_GENERATED_VALUE = "@GeneratedValue(strategy = GenerationType.AUTO)";
+	private static final String TEMPLATE_DIR = "classpath:/"
+			+ EntityGenerators.class.getPackage().getName().replace(".", "/");
 	private static final Map<Integer, String> TYPE_MAPPING = Maps.newHashMap();
 	static {
-		TYPE_MAPPING.put(Types.INTEGER, "int");
-		TYPE_MAPPING.put(Types.BIGINT, "long");
+		TYPE_MAPPING.put(Types.INTEGER, "Integer");
+		TYPE_MAPPING.put(Types.BIGINT, "Long");
 		TYPE_MAPPING.put(Types.DATE, "Date");
 		TYPE_MAPPING.put(Types.TIME, "Date");
 		TYPE_MAPPING.put(Types.TIMESTAMP, "Date");
 	}
 
-	public static void generateEntitiesAndDaos(String jdbcDriver, String jdbcUrl, String jdbcUsername,
-			String jdbcPassword, String outputDir, String basePackageName, Map<String, String> tableMapping,
-			Map<String, String> columnMapping, String generatedValue) {
-		final MetaParser parser = new MetaParser(jdbcDriver, jdbcUrl, jdbcUsername, jdbcPassword);
-		final List<Table> tableList = parser.parseTables();
-
-		final String templateDir = "classpath:/" + JavaGenerators.class.getPackage().getName().replace(".", "/");
-		final Template entityTemplate = FreeMarkers.getTemplate(templateDir, "JavaEntity.ftl");
-		final Template daoTemplate = FreeMarkers.getTemplate(templateDir, "JavaDao.ftl");
+	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
+			String outputDir, String basePackageName, Map<String, String> tableMapping,
+			Map<String, String> columnMapping, String idGeneratedValue) {
+		final String formattedOutputDir = Files.toUnixPath(outputDir);
 
 		final String entityPackageName = basePackageName + ".entity";
-		final String daoPackageName = basePackageName + ".repository";
+		final String entityDir = Urls.concat(formattedOutputDir, entityPackageName.replace(".", "/"));
+		final Template entityTemplate = FreeMarkers.getTemplate(TEMPLATE_DIR, "Entity.ftl");
 
-		final String entityDir = Urls.concat(Files.toUnixPath(outputDir), entityPackageName.replace(".", "/"));
-		final String daoDir = Urls.concat(Files.toUnixPath(outputDir), daoPackageName.replace(".", "/"));
+		final String repositoryPackageName = basePackageName + ".repository";
+		final String repositoryDir = Urls.concat(formattedOutputDir, repositoryPackageName.replace(".", "/"));
+		final Template repositoryTemplate = FreeMarkers.getTemplate(TEMPLATE_DIR, "Repository.ftl");
 
+		final MetaParser parser = new MetaParser(jdbcDriver, jdbcUrl, jdbcUsername, jdbcPassword);
+		final List<Table> tableList = parser.parseTables();
 		for (Table table : tableList) {
 			final String tableName = table.getName();
-			final String className = mapClassName(tableName, tableMapping);
-			final List<JavaField> fieldList = mapFieldList(tableName, table.getColumnList(), columnMapping);
 
-			final Map<String, Object> model = Maps.newHashMap();
-			model.put("packageName", entityPackageName);
-			model.put("tableName", tableName);
-			model.put("className", className);
-			model.put("fieldList", fieldList);
-			model.put("generatedValue", StringUtils.isBlank(generatedValue) ? DEFAULT_GENERATED_VALUE : generatedValue);
-			final String result = FreeMarkers.render(entityTemplate, model);
+			final String entityClassName = mapEntityClassName(tableName, tableMapping);
+			final List<Field> entityFieldList = mapEntityFieldList(tableName, table.getColumnList(), columnMapping);
+			final Map<String, Object> entityModel = Maps.newHashMap();
+			entityModel.put("packageName", entityPackageName);
+			entityModel.put("tableName", tableName);
+			entityModel.put("className", entityClassName);
+			entityModel.put("fieldList", entityFieldList);
+			entityModel.put("idGeneratedValue",
+					StringUtils.isBlank(idGeneratedValue) ? DEFAULT_ID_GENERATED_VALUE : idGeneratedValue);
+			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
+
+			final String repositoryClassName = entityClassName + "Dao";
+			final Map<String, Object> repositoryModel = Maps.newHashMap();
+			repositoryModel.put("packageName", repositoryPackageName);
+			repositoryModel.put("entityPackageName", entityPackageName);
+			repositoryModel.put("entityClassName", entityClassName);
+			repositoryModel.put("className", repositoryClassName);
+			repositoryModel.put("entityIdType", mapIdType(tableName, table.getColumnList()));
+			final String repositoryString = FreeMarkers.render(repositoryTemplate, repositoryModel);
 
 			try {
-				FileUtils.writeStringToFile(new File(entityDir, className + ".java"), result, Constants.UTF8_CHARSET);
+				FileUtils.writeStringToFile(new File(entityDir, entityClassName + ".java"), entityString,
+						Constants.UTF8_CHARSET);
+				FileUtils.writeStringToFile(new File(repositoryDir, repositoryClassName + ".java"), repositoryString,
+						Constants.UTF8_CHARSET);
 			} catch (IOException e) {
 				throw Exceptions.unchecked(e);
 			}
 		}
 	}
 
-	private static String mapClassName(String tableName, Map<String, String> tableMapping) {
+	private static String mapEntityClassName(String tableName, Map<String, String> tableMapping) {
 		if (!Collections3.isEmpty(tableMapping)) {
 			if (tableMapping.containsKey(tableName)) {
 				return tableMapping.get(tableName);
@@ -85,9 +98,9 @@ public class JavaGenerators {
 		return StringUtils.capitalize(tableName);
 	}
 
-	private static List<JavaField> mapFieldList(String tableName, List<Column> columnList,
+	private static List<Field> mapEntityFieldList(String tableName, List<Column> columnList,
 			Map<String, String> columnMapping) {
-		final List<JavaField> fieldList = Lists.newArrayList();
+		final List<Field> fieldList = Lists.newArrayList();
 		for (Column column : columnList) {
 			String fieldName = column.getName();
 			if (!Collections3.isEmpty(columnMapping)) {
@@ -97,20 +110,30 @@ public class JavaGenerators {
 				}
 			}
 
-			final JavaField field = new JavaField(fieldName, mapType(column.getType().getId()), column.isPk());
+			final Field field = new Field(fieldName, mapFieldType(column.getType().getId()), column.isPk());
 			fieldList.add(field);
 		}
 		return fieldList;
 	}
 
-	private static String mapType(int typeId) {
-		if (TYPE_MAPPING.containsKey(typeId)) {
-			return TYPE_MAPPING.get(typeId);
+	private static String mapFieldType(int sqlType) {
+		if (TYPE_MAPPING.containsKey(sqlType)) {
+			return TYPE_MAPPING.get(sqlType);
 		}
 
 		return "String";
 	}
 
-	private JavaGenerators() {
+	private static String mapIdType(String tableName, List<Column> columnList) {
+		for (Column column : columnList) {
+			if (column.isPk()) {
+				return mapFieldType(column.getType().getId());
+			}
+		}
+
+		throw new IllegalArgumentException("There is no primary key in table: " + tableName);
+	}
+
+	private EntityGenerators() {
 	}
 }
