@@ -17,6 +17,8 @@ import com.itdoes.common.business.SecureColumn;
 </#if>
 
 /**
+ * This code is auto-generated.
+ * 
  * @author Jalen Zhong
  */
 @Entity
