@@ -41,7 +41,7 @@ public class EntityGenerators {
 
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
 			String outputDir, String basePackageName, Map<String, String> tableMapping,
-			Map<String, String> columnMapping, String idGeneratedValue) {
+			Map<String, String> columnMapping, List<String> secureColumnList, String idGeneratedValue) {
 		final String formattedOutputDir = Files.toUnixPath(outputDir);
 
 		final String entityPackageName = basePackageName + ".entity";
@@ -58,12 +58,14 @@ public class EntityGenerators {
 			final String tableName = table.getName();
 
 			final String entityClassName = mapEntityClassName(tableName, tableMapping);
-			final List<Field> entityFieldList = mapEntityFieldList(tableName, table.getColumnList(), columnMapping);
+			final FieldListResult entityFieldListResult = mapEntityFieldList(tableName, table.getColumnList(),
+					columnMapping, secureColumnList);
 			final Map<String, Object> entityModel = Maps.newHashMap();
 			entityModel.put("packageName", entityPackageName);
+			entityModel.put("secure", entityFieldListResult.secure);
 			entityModel.put("tableName", tableName);
 			entityModel.put("className", entityClassName);
-			entityModel.put("fieldList", entityFieldList);
+			entityModel.put("fieldList", entityFieldListResult.fieldList);
 			entityModel.put("idGeneratedValue",
 					StringUtils.isBlank(idGeneratedValue) ? DEFAULT_ID_GENERATED_VALUE : idGeneratedValue);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
@@ -98,22 +100,42 @@ public class EntityGenerators {
 		return StringUtils.capitalize(tableName);
 	}
 
-	private static List<Field> mapEntityFieldList(String tableName, List<Column> columnList,
-			Map<String, String> columnMapping) {
+	private static class FieldListResult {
+		private List<Field> fieldList;
+		private boolean secure;
+	}
+
+	private static FieldListResult mapEntityFieldList(String tableName, List<Column> columnList,
+			Map<String, String> columnMapping, List<String> secureColumnList) {
 		final List<Field> fieldList = Lists.newArrayList();
+		boolean secure = false;
 		for (Column column : columnList) {
 			String fieldName = column.getName();
+			final String key = tableName + "." + column.getName();
+
 			if (!Collections3.isEmpty(columnMapping)) {
-				final String key = tableName + "." + column.getName();
 				if (columnMapping.containsKey(key)) {
 					fieldName = columnMapping.get(key);
 				}
 			}
 
-			final Field field = new Field(fieldName, mapFieldType(column.getType().getId()), column.isPk());
+			boolean secureColumn = false;
+			if (!Collections3.isEmpty(secureColumnList)) {
+				if (secureColumnList.contains(key)) {
+					secureColumn = true;
+					secure = true;
+				}
+			}
+
+			final Field field = new Field(fieldName, mapFieldType(column.getType().getId()), column.isPk(),
+					secureColumn);
 			fieldList.add(field);
 		}
-		return fieldList;
+
+		final FieldListResult fieldListResult = new FieldListResult();
+		fieldListResult.fieldList = fieldList;
+		fieldListResult.secure = secure;
+		return fieldListResult;
 	}
 
 	private static String mapFieldType(int sqlType) {

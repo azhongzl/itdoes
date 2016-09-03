@@ -10,12 +10,14 @@ public class Field {
 	private final String upperName;
 	private final String type;
 	private final boolean pk;
+	private final boolean secureColumn;
 
-	public Field(String name, String type, boolean pk) {
+	public Field(String name, String type, boolean pk, boolean secureColumn) {
 		this.name = name;
 		this.upperName = StringUtils.capitalize(name);
 		this.type = type;
 		this.pk = pk;
+		this.secureColumn = secureColumn;
 	}
 
 	public String getName() {
@@ -32,5 +34,9 @@ public class Field {
 
 	public String getUpperName() {
 		return upperName;
+	}
+
+	public boolean isSecureColumn() {
+		return secureColumn;
 	}
 }

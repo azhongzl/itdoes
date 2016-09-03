@@ -12,6 +12,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.itdoes.common.business.BaseEntity;
+<#if secure>
+import com.itdoes.common.business.SecureColumn;
+</#if>
 
 /**
  * @author Jalen Zhong
@@ -26,6 +29,9 @@ public class ${className} extends BaseEntity {
   <#if field.pk>
 	@Id
 	${idGeneratedValue}
+  </#if>
+  <#if field.secureColumn>
+	@SecureColumn
   </#if>
 	private ${field.type} ${field.name};
 </#list>
