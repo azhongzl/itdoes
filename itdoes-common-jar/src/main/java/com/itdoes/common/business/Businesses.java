@@ -43,7 +43,7 @@ public class Businesses {
 			}
 
 			// Dao
-			final String daoBeanName = StringUtils.uncapitalize(key) + "Dao";
+			final String daoBeanName = getDaoBeanName(key);
 			final BaseDao<?, ?> dao = (BaseDao<?, ?>) context.getBean(daoBeanName);
 			if (dao == null) {
 				throw new IllegalArgumentException("Cannot find bean for name: " + daoBeanName);
@@ -59,6 +59,18 @@ public class Businesses {
 			pairs.put(key, new EntityPair(entityClass, idField, dao, secureFields));
 		}
 		return pairs;
+	}
+
+	public static String getBeanName(String className) {
+		return StringUtils.uncapitalize(className);
+	}
+
+	public static String getDaoBeanName(String entityClassName) {
+		return getBeanName(getDaoClassName(entityClassName));
+	}
+
+	public static String getDaoClassName(String entityClassName) {
+		return entityClassName + "Dao";
 	}
 
 	public static class EntityPair {

@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.itdoes.common.business.Businesses;
 import com.itdoes.common.core.Constants;
 import com.itdoes.common.core.freemarker.FreeMarkers;
 import com.itdoes.common.core.jdbc.meta.Column;
@@ -70,7 +71,7 @@ public class EntityGenerator {
 					StringUtils.isBlank(idGeneratedValue) ? DEFAULT_ID_GENERATED_VALUE : idGeneratedValue);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
 
-			final String repositoryClassName = entityClassName + "Dao";
+			final String repositoryClassName = Businesses.getDaoClassName(entityClassName);
 			final Map<String, Object> repositoryModel = Maps.newHashMap();
 			repositoryModel.put("packageName", repositoryPackageName);
 			repositoryModel.put("entityPackageName", entityPackageName);
