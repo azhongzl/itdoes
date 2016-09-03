@@ -62,7 +62,7 @@ public class EntityGenerators {
 					columnMapping, secureColumnList);
 			final Map<String, Object> entityModel = Maps.newHashMap();
 			entityModel.put("packageName", entityPackageName);
-			entityModel.put("secure", entityFieldListResult.secure);
+			entityModel.put("containSecureColumn", entityFieldListResult.containSecureColumn);
 			entityModel.put("tableName", tableName);
 			entityModel.put("className", entityClassName);
 			entityModel.put("fieldList", entityFieldListResult.fieldList);
@@ -102,13 +102,13 @@ public class EntityGenerators {
 
 	private static class FieldListResult {
 		private List<Field> fieldList;
-		private boolean secure;
+		private boolean containSecureColumn;
 	}
 
 	private static FieldListResult mapEntityFieldList(String tableName, List<Column> columnList,
 			Map<String, String> columnMapping, List<String> secureColumnList) {
 		final List<Field> fieldList = Lists.newArrayList();
-		boolean secure = false;
+		boolean containSecureColumn = false;
 		for (Column column : columnList) {
 			String fieldName = column.getName();
 			final String key = tableName + "." + column.getName();
@@ -123,7 +123,7 @@ public class EntityGenerators {
 			if (!Collections3.isEmpty(secureColumnList)) {
 				if (secureColumnList.contains(key)) {
 					secureColumn = true;
-					secure = true;
+					containSecureColumn = true;
 				}
 			}
 
@@ -134,7 +134,7 @@ public class EntityGenerators {
 
 		final FieldListResult fieldListResult = new FieldListResult();
 		fieldListResult.fieldList = fieldList;
-		fieldListResult.secure = secure;
+		fieldListResult.containSecureColumn = containSecureColumn;
 		return fieldListResult;
 	}
 

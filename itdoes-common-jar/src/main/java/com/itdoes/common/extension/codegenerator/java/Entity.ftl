@@ -12,7 +12,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.itdoes.common.business.BaseEntity;
-<#if secure>
+<#if containSecureColumn>
 import com.itdoes.common.business.SecureColumn;
 </#if>
 
