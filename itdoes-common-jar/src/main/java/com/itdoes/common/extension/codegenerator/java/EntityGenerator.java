@@ -49,9 +49,9 @@ public class EntityGenerator {
 		final String entityDir = Urls.concat(formattedOutputDir, entityPackageName.replace(".", "/"));
 		final Template entityTemplate = FreeMarkers.getTemplate(TEMPLATE_DIR, "Entity.ftl");
 
-		final String repositoryPackageName = basePackageName + ".repository";
-		final String repositoryDir = Urls.concat(formattedOutputDir, repositoryPackageName.replace(".", "/"));
-		final Template repositoryTemplate = FreeMarkers.getTemplate(TEMPLATE_DIR, "Repository.ftl");
+		final String daoPackageName = basePackageName + ".dao";
+		final String daoDir = Urls.concat(formattedOutputDir, daoPackageName.replace(".", "/"));
+		final Template daoTemplate = FreeMarkers.getTemplate(TEMPLATE_DIR, "Dao.ftl");
 
 		final MetaParser parser = new MetaParser(jdbcDriver, jdbcUrl, jdbcUsername, jdbcPassword);
 		final List<Table> tableList = parser.parseTables();
@@ -71,19 +71,19 @@ public class EntityGenerator {
 					StringUtils.isBlank(idGeneratedValue) ? DEFAULT_ID_GENERATED_VALUE : idGeneratedValue);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
 
-			final String repositoryClassName = Businesses.getDaoClassName(entityClassName);
-			final Map<String, Object> repositoryModel = Maps.newHashMap();
-			repositoryModel.put("packageName", repositoryPackageName);
-			repositoryModel.put("entityPackageName", entityPackageName);
-			repositoryModel.put("entityClassName", entityClassName);
-			repositoryModel.put("className", repositoryClassName);
-			repositoryModel.put("entityIdType", mapIdType(tableName, table.getColumnList()));
-			final String repositoryString = FreeMarkers.render(repositoryTemplate, repositoryModel);
+			final String daoClassName = Businesses.getDaoClassName(entityClassName);
+			final Map<String, Object> daoModel = Maps.newHashMap();
+			daoModel.put("packageName", daoPackageName);
+			daoModel.put("entityPackageName", entityPackageName);
+			daoModel.put("entityClassName", entityClassName);
+			daoModel.put("className", daoClassName);
+			daoModel.put("entityIdType", mapIdType(tableName, table.getColumnList()));
+			final String daoString = FreeMarkers.render(daoTemplate, daoModel);
 
 			try {
 				FileUtils.writeStringToFile(new File(entityDir, entityClassName + ".java"), entityString,
 						Constants.UTF8_CHARSET);
-				FileUtils.writeStringToFile(new File(repositoryDir, repositoryClassName + ".java"), repositoryString,
+				FileUtils.writeStringToFile(new File(daoDir, daoClassName + ".java"), daoString,
 						Constants.UTF8_CHARSET);
 			} catch (IOException e) {
 				throw Exceptions.unchecked(e);
