@@ -44,7 +44,7 @@ public class MetaParser {
 
 				final DatabaseMetaData meta = connection.getMetaData();
 
-				final ResultSet tableRs = meta.getTables(null, null, null, null);
+				final ResultSet tableRs = meta.getTables(null, null, null, new String[] { "TABLE" });
 				try {
 					while (tableRs.next()) {
 						final String tableName = tableRs.getString("TABLE_NAME");
