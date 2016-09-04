@@ -142,7 +142,7 @@ public class EntityGenerator {
 	}
 
 	private static String mapFieldType(int sqlType) {
-		final Class<?> typeClass = SqlTypes.fromSqlType(sqlType);
+		final Class<?> typeClass = SqlTypes.toJavaType(sqlType);
 		if (typeClass != null) {
 			final String typeClassName = typeClass.getName();
 			if (typeClassName.startsWith("java.lang")) {

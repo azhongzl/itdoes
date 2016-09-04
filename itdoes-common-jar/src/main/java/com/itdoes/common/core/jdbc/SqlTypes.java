@@ -46,7 +46,7 @@ public class SqlTypes {
 		SQL_TYPE_MAP.put(Types.REF, Ref.class);
 	}
 
-	public static Class<?> fromSqlType(Integer sqlType) {
+	public static Class<?> toJavaType(Integer sqlType) {
 		return SQL_TYPE_MAP.get(sqlType);
 	}
 
