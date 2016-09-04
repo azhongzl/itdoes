@@ -396,6 +396,24 @@ public class Reflections {
 		}
 	}
 
+	public static String packageToPath(String packageName) {
+		Validate.notBlank(packageName, "Package is blank");
+
+		return packageName.replace('.', '/');
+	}
+
+	public static String packageToPath(Class<?> clazz) {
+		Validate.notNull(clazz, "Class is null");
+
+		return packageToPath(clazz.getPackage().getName());
+	}
+
+	public static String pathToPackage(String path) {
+		Validate.notBlank(path, "Path is blank");
+
+		return path.replace('/', '.');
+	}
+
 	private Reflections() {
 	}
 }

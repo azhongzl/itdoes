@@ -20,6 +20,7 @@ import com.itdoes.common.core.jdbc.meta.Table;
 import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Exceptions;
 import com.itdoes.common.core.util.Files;
+import com.itdoes.common.core.util.Reflections;
 import com.itdoes.common.core.util.Strings;
 import com.itdoes.common.core.util.Urls;
 
@@ -30,8 +31,7 @@ import freemarker.template.Template;
  */
 public class EntityGenerator {
 	private static final String DEFAULT_ID_GENERATED_VALUE = "@GeneratedValue(strategy = GenerationType.AUTO)";
-	private static final String TEMPLATE_DIR = "classpath:/"
-			+ EntityGenerator.class.getPackage().getName().replace(".", "/");
+	private static final String TEMPLATE_DIR = "classpath:/" + Reflections.packageToPath(EntityGenerator.class);
 
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
 			String outputDir, String basePackageName, Map<String, String> tableMapping,
@@ -81,7 +81,7 @@ public class EntityGenerator {
 	}
 
 	private static String getPackageDir(String outputDir, String packageName) {
-		return Urls.concat(Files.toUnixPath(outputDir), packageName.replace(".", "/"));
+		return Urls.concat(Files.toUnixPath(outputDir), Reflections.packageToPath(packageName));
 	}
 
 	private static Template getTemplate(String templateName) {
