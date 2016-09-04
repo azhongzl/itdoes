@@ -20,6 +20,7 @@ import com.itdoes.common.core.jdbc.meta.Table;
 import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Exceptions;
 import com.itdoes.common.core.util.Files;
+import com.itdoes.common.core.util.Strings;
 import com.itdoes.common.core.util.Urls;
 
 import freemarker.template.Template;
@@ -90,7 +91,7 @@ public class EntityGenerator {
 			}
 		}
 
-		return StringUtils.capitalize(tableName);
+		return Strings.underscoreToPascal(tableName);
 	}
 
 	private static class EntityFieldListResult {
@@ -103,18 +104,11 @@ public class EntityGenerator {
 		final List<ColumnField> entityFieldList = Lists.newArrayList();
 		boolean containSecureColumn = false;
 		for (Column column : columnList) {
-			String fieldName = column.getName();
-			final String key = tableName + "." + column.getName();
-
-			if (!Collections3.isEmpty(columnMapping)) {
-				if (columnMapping.containsKey(key)) {
-					fieldName = columnMapping.get(key);
-				}
-			}
+			final String fieldName = mapFieldName(tableName, column.getName(), columnMapping);
 
 			boolean secureColumn = false;
 			if (!Collections3.isEmpty(secureColumnList)) {
-				if (secureColumnList.contains(key)) {
+				if (secureColumnList.contains(getColumnKey(tableName, column.getName()))) {
 					secureColumn = true;
 					containSecureColumn = true;
 				}
@@ -129,6 +123,21 @@ public class EntityGenerator {
 		entityFieldListResult.entityFieldList = entityFieldList;
 		entityFieldListResult.containSecureColumn = containSecureColumn;
 		return entityFieldListResult;
+	}
+
+	private static String mapFieldName(String tableName, String columnName, Map<String, String> columnMapping) {
+		if (!Collections3.isEmpty(columnMapping)) {
+			final String key = getColumnKey(tableName, columnName);
+			if (columnMapping.containsKey(key)) {
+				return columnMapping.get(key);
+			}
+		}
+
+		return Strings.underscoreToCamel(columnName);
+	}
+
+	private static String getColumnKey(String tableName, String columnName) {
+		return tableName + "." + columnName;
 	}
 
 	private static String mapFieldType(int sqlType) {
