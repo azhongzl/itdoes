@@ -263,7 +263,7 @@ public class Reflections {
 			throw new IllegalArgumentException("Error in getURI from Resource", e);
 		}
 
-		final String dotUri = uri.replace(PATH_SEPARATOR, PACKAGE_SEPARATOR);
+		final String dotUri = pathToPackage(uri);
 		final int index = dotUri.indexOf(basePackage);
 		if (index == -1) {
 			throw new IllegalArgumentException(
@@ -281,8 +281,7 @@ public class Reflections {
 	}
 
 	private static String getPackageSearchPath(String basePackage) {
-		return CLASSPATH_ALL_URL_PREFIX + basePackage.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR) + PATH_SEPARATOR
-				+ ALL_CLASS_PATTERN;
+		return CLASSPATH_ALL_URL_PREFIX + packageToPath(basePackage) + PATH_SEPARATOR + ALL_CLASS_PATTERN;
 	}
 
 	public static interface ClassFilter {
@@ -399,7 +398,7 @@ public class Reflections {
 	public static String packageToPath(String packageName) {
 		Validate.notBlank(packageName, "Package is blank");
 
-		return packageName.replace('.', '/');
+		return packageName.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR);
 	}
 
 	public static String packageToPath(Class<?> clazz) {
@@ -411,7 +410,7 @@ public class Reflections {
 	public static String pathToPackage(String path) {
 		Validate.notBlank(path, "Path is blank");
 
-		return path.replace('/', '.');
+		return path.replace(PATH_SEPARATOR, PACKAGE_SEPARATOR);
 	}
 
 	private Reflections() {
