@@ -36,21 +36,23 @@ public class EntityGenerator {
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
 			String outputDir, String basePackageName, Map<String, String> tableMapping,
 			Map<String, String> columnMapping, List<String> secureColumnList, String idGeneratedValue) {
-		final String formattedOutputDir = Files.toUnixPath(outputDir);
-
 		final String entityPackageName = basePackageName + ".entity";
-		final String entityDir = Urls.concat(formattedOutputDir, entityPackageName.replace(".", "/"));
-		final Template entityTemplate = FreeMarkers.getTemplate(TEMPLATE_DIR, "Entity.ftl");
+		final String entityDir = getPackageDir(outputDir, entityPackageName);
+		final Template entityTemplate = getTemplate("Entity.ftl");
 
 		final String daoPackageName = basePackageName + ".dao";
-		final String daoDir = Urls.concat(formattedOutputDir, daoPackageName.replace(".", "/"));
-		final Template daoTemplate = FreeMarkers.getTemplate(TEMPLATE_DIR, "Dao.ftl");
+		final String daoDir = getPackageDir(outputDir, daoPackageName);
+		final Template daoTemplate = getTemplate("Dao.ftl");
+
+		final String realIdGeneratedValue = StringUtils.isBlank(idGeneratedValue) ? DEFAULT_ID_GENERATED_VALUE
+				: idGeneratedValue;
 
 		final MetaParser parser = new MetaParser(jdbcDriver, jdbcUrl, jdbcUsername, jdbcPassword);
 		final List<Table> tableList = parser.parseTables();
 		for (Table table : tableList) {
 			final String tableName = table.getName();
 
+			// Generate Entity
 			final String entityClassName = mapEntityClassName(tableName, tableMapping);
 			final EntityFieldListResult entityFieldListResult = mapEntityFieldList(tableName, table.getColumnList(),
 					columnMapping, secureColumnList);
@@ -59,12 +61,13 @@ public class EntityGenerator {
 			entityModel.put("containSecureColumn", entityFieldListResult.containSecureColumn);
 			entityModel.put("tableName", tableName);
 			entityModel.put("className", entityClassName);
-			entityModel.put("serialVersionUID", String.valueOf(entityClassName.hashCode()));
+			entityModel.put("serialVersionUID", getSerialVersionUIDStr(entityClassName));
 			entityModel.put("fieldList", entityFieldListResult.entityFieldList);
-			entityModel.put("idGeneratedValue",
-					StringUtils.isBlank(idGeneratedValue) ? DEFAULT_ID_GENERATED_VALUE : idGeneratedValue);
+			entityModel.put("idGeneratedValue", realIdGeneratedValue);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
+			writeJavaFile(entityDir, entityClassName, entityString);
 
+			// Generate Dao
 			final String daoClassName = Businesses.getDaoClassName(entityClassName);
 			final Map<String, Object> daoModel = Maps.newHashMap();
 			daoModel.put("packageName", daoPackageName);
@@ -73,16 +76,32 @@ public class EntityGenerator {
 			daoModel.put("className", daoClassName);
 			daoModel.put("entityIdType", mapIdType(tableName, table.getColumnList()));
 			final String daoString = FreeMarkers.render(daoTemplate, daoModel);
-
-			try {
-				FileUtils.writeStringToFile(new File(entityDir, entityClassName + ".java"), entityString,
-						Constants.UTF8_CHARSET);
-				FileUtils.writeStringToFile(new File(daoDir, daoClassName + ".java"), daoString,
-						Constants.UTF8_CHARSET);
-			} catch (IOException e) {
-				throw Exceptions.unchecked(e);
-			}
+			writeJavaFile(daoDir, daoClassName, daoString);
 		}
+	}
+
+	private static String getPackageDir(String outputDir, String packageName) {
+		return Urls.concat(Files.toUnixPath(outputDir), packageName.replace(".", "/"));
+	}
+
+	private static Template getTemplate(String templateName) {
+		return FreeMarkers.getTemplate(TEMPLATE_DIR, templateName);
+	}
+
+	private static String getSerialVersionUIDStr(String className) {
+		return String.valueOf(className.hashCode());
+	}
+
+	private static void writeJavaFile(String dir, String className, String content) {
+		try {
+			FileUtils.writeStringToFile(new File(dir, getJavaFilename(className)), content, Constants.UTF8_CHARSET);
+		} catch (IOException e) {
+			throw Exceptions.unchecked(e);
+		}
+	}
+
+	private static String getJavaFilename(String className) {
+		return className + ".java";
 	}
 
 	private static String mapEntityClassName(String tableName, Map<String, String> tableMapping) {
@@ -105,8 +124,6 @@ public class EntityGenerator {
 		final List<ColumnField> entityFieldList = Lists.newArrayList();
 		boolean containSecureColumn = false;
 		for (Column column : columnList) {
-			final String fieldName = mapFieldName(tableName, column.getName(), columnMapping);
-
 			boolean secureColumn = false;
 			if (!Collections3.isEmpty(secureColumnList)) {
 				if (secureColumnList.contains(getColumnKey(tableName, column.getName()))) {
@@ -115,9 +132,9 @@ public class EntityGenerator {
 				}
 			}
 
-			final ColumnField field = new ColumnField(fieldName, mapFieldType(column.getType().getId()), column,
-					secureColumn);
-			entityFieldList.add(field);
+			final ColumnField entityField = new ColumnField(mapFieldName(tableName, column.getName(), columnMapping),
+					mapFieldType(column.getType().getId()), column, secureColumn);
+			entityFieldList.add(entityField);
 		}
 
 		final EntityFieldListResult entityFieldListResult = new EntityFieldListResult();
@@ -156,13 +173,24 @@ public class EntityGenerator {
 	}
 
 	private static String mapIdType(String tableName, List<Column> columnList) {
+		int pkSum = 0;
+		String pkType = null;
 		for (Column column : columnList) {
 			if (column.isPk()) {
-				return mapFieldType(column.getType().getId());
+				pkSum++;
+				pkType = mapFieldType(column.getType().getId());
 			}
 		}
 
-		throw new IllegalArgumentException("There is no primary key in table: " + tableName);
+		if (pkSum == 0) {
+			throw new IllegalArgumentException("There is no primary key in table [" + tableName + "]");
+		}
+		if (pkSum > 1) {
+			throw new IllegalArgumentException("There are [" + pkSum + "] primary keys in table [" + tableName
+					+ "]. Every table should contain only 1 primary key");
+		}
+
+		return pkType;
 	}
 
 	private EntityGenerator() {
