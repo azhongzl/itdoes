@@ -37,8 +37,8 @@ public class ${className} extends BaseEntity {
 	@Column(name = "${field.column.name}")
 	private ${field.type} ${field.name};
 </#list>
-
 <#list fieldList as field>
+
 	public ${field.type} get${field.upperName}() {
 		return ${field.name};
 	}
