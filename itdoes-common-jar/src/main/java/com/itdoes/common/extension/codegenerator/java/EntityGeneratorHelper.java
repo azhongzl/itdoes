@@ -15,17 +15,16 @@ import com.itdoes.common.core.util.PropertiesLoader;
  */
 public class EntityGeneratorHelper {
 	private static final String OUTPUT_DIR = "/codegenerator/java";
-	private static final String PROPERTY_FILE_PREFIX = "classpath:/extension/codegenerator/java/";
-	private static final String TABLE_MAPPING_PROPERTY_FILE = PROPERTY_FILE_PREFIX + "table.mapping.properties";
-	private static final String COLUMN_MAPPING_PROPERTY_FILE = PROPERTY_FILE_PREFIX + "column.mapping.properties";
-	private static final String COLUMN_SECURE_MAPPING_PROPERTY_FILE = PROPERTY_FILE_PREFIX
-			+ "column.secure.mapping.properties";
+	private static final String CONFIG_DIR = "classpath:/codegenerator/java/";
+	private static final String TABLE_MAPPING_FILE = CONFIG_DIR + "table.mapping.properties";
+	private static final String COLUMN_MAPPING_FILE = CONFIG_DIR + "column.mapping.properties";
+	private static final String COLUMN_SECURE_MAPPING_FILE = CONFIG_DIR + "column.secure.mapping.properties";
 
 	public static void generateEntities(String basePackageName, String idGeneratedValue) {
 		final PropertiesLoader pl = new PropertiesLoader("classpath:/application.properties",
 				"classpath:/application.local.properties");
-		final Map<String, String> tableMapping = toMap(TABLE_MAPPING_PROPERTY_FILE);
-		final Map<String, String> columnMapping = toMap(COLUMN_MAPPING_PROPERTY_FILE);
+		final Map<String, String> tableMapping = toMap(TABLE_MAPPING_FILE);
+		final Map<String, String> columnMapping = toMap(COLUMN_MAPPING_FILE);
 		final List<String> secureColumnList = getSecureColumnList();
 
 		EntityGenerator.generateEntities(pl.getProperty("jdbc.driver"), pl.getProperty("jdbc.url"),
@@ -35,7 +34,7 @@ public class EntityGeneratorHelper {
 
 	private static List<String> getSecureColumnList() {
 		final List<String> secureColumnList = Lists.newArrayList();
-		final Map<String, String> secureColumnMapping = toMap(COLUMN_SECURE_MAPPING_PROPERTY_FILE);
+		final Map<String, String> secureColumnMapping = toMap(COLUMN_SECURE_MAPPING_FILE);
 		for (Entry<String, String> entry : secureColumnMapping.entrySet()) {
 			final String tableName = entry.getKey();
 			final String columnNamesStr = entry.getValue();
