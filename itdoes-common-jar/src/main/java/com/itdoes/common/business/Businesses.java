@@ -10,6 +10,9 @@ import javax.persistence.Id;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 
+import com.itdoes.common.business.dao.BaseDao;
+import com.itdoes.common.business.entity.BaseEntity;
+import com.itdoes.common.business.entity.SecureColumn;
 import com.itdoes.common.core.cglib.CglibMapper;
 import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.PropertiesLoader;

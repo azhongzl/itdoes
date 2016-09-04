@@ -10,9 +10,9 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.itdoes.common.business.BaseEntity;
+import com.itdoes.common.business.entity.BaseEntity;
 <#if containSecureColumn>
-import com.itdoes.common.business.SecureColumn;
+import com.itdoes.common.business.entity.SecureColumn;
 </#if>
 
 /**

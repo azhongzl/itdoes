@@ -1,6 +1,6 @@
 package ${packageName};
 
-import com.itdoes.common.business.BaseDao;
+import com.itdoes.common.business.dao.BaseDao;
 import ${entityPackageName}.${entityClassName};
 
 /**
