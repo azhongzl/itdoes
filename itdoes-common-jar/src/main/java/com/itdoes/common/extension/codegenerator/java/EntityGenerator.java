@@ -51,14 +51,14 @@ public class EntityGenerator {
 			final String tableName = table.getName();
 
 			final String entityClassName = mapEntityClassName(tableName, tableMapping);
-			final FieldListResult entityFieldListResult = mapEntityFieldList(tableName, table.getColumnList(),
+			final EntityFieldListResult entityFieldListResult = mapEntityFieldList(tableName, table.getColumnList(),
 					columnMapping, secureColumnList);
 			final Map<String, Object> entityModel = Maps.newHashMap();
 			entityModel.put("packageName", entityPackageName);
 			entityModel.put("containSecureColumn", entityFieldListResult.containSecureColumn);
 			entityModel.put("tableName", tableName);
 			entityModel.put("className", entityClassName);
-			entityModel.put("fieldList", entityFieldListResult.fieldList);
+			entityModel.put("fieldList", entityFieldListResult.entityFieldList);
 			entityModel.put("idGeneratedValue",
 					StringUtils.isBlank(idGeneratedValue) ? DEFAULT_ID_GENERATED_VALUE : idGeneratedValue);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
@@ -93,14 +93,14 @@ public class EntityGenerator {
 		return StringUtils.capitalize(tableName);
 	}
 
-	private static class FieldListResult {
-		private List<Field> fieldList;
+	private static class EntityFieldListResult {
+		private List<ColumnField> entityFieldList;
 		private boolean containSecureColumn;
 	}
 
-	private static FieldListResult mapEntityFieldList(String tableName, List<Column> columnList,
+	private static EntityFieldListResult mapEntityFieldList(String tableName, List<Column> columnList,
 			Map<String, String> columnMapping, List<String> secureColumnList) {
-		final List<Field> fieldList = Lists.newArrayList();
+		final List<ColumnField> entityFieldList = Lists.newArrayList();
 		boolean containSecureColumn = false;
 		for (Column column : columnList) {
 			String fieldName = column.getName();
@@ -120,15 +120,15 @@ public class EntityGenerator {
 				}
 			}
 
-			final Field field = new Field(fieldName, mapFieldType(column.getType().getId()), column.isPk(),
+			final ColumnField field = new ColumnField(fieldName, mapFieldType(column.getType().getId()), column,
 					secureColumn);
-			fieldList.add(field);
+			entityFieldList.add(field);
 		}
 
-		final FieldListResult fieldListResult = new FieldListResult();
-		fieldListResult.fieldList = fieldList;
-		fieldListResult.containSecureColumn = containSecureColumn;
-		return fieldListResult;
+		final EntityFieldListResult entityFieldListResult = new EntityFieldListResult();
+		entityFieldListResult.entityFieldList = entityFieldList;
+		entityFieldListResult.containSecureColumn = containSecureColumn;
+		return entityFieldListResult;
 	}
 
 	private static String mapFieldType(int sqlType) {
