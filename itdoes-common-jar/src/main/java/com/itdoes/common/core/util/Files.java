@@ -14,16 +14,19 @@ import org.apache.commons.lang3.Validate;
  * @author Jalen Zhong
  */
 public class Files {
+	private static final char UNIX_PATH_SEPARATOR = '/';
+	private static final char WINDOWS_PATH_SEPARATOR = '\\';
+
 	public static String toUnixPath(String path) {
 		Validate.notNull(path, "Path is null");
 
-		return path.replace("\\", "/");
+		return path.replace(WINDOWS_PATH_SEPARATOR, UNIX_PATH_SEPARATOR);
 	}
 
 	public static String toWindowsPath(String path) {
 		Validate.notNull(path, "Path is null");
 
-		return path.replace("/", "\\");
+		return path.replace(UNIX_PATH_SEPARATOR, WINDOWS_PATH_SEPARATOR);
 	}
 
 	public static String getFileExtension(String filename, boolean includeDot) {
