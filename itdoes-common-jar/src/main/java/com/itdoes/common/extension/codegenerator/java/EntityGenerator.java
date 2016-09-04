@@ -59,6 +59,7 @@ public class EntityGenerator {
 			entityModel.put("containSecureColumn", entityFieldListResult.containSecureColumn);
 			entityModel.put("tableName", tableName);
 			entityModel.put("className", entityClassName);
+			entityModel.put("serialVersionUID", String.valueOf(entityClassName.hashCode()));
 			entityModel.put("fieldList", entityFieldListResult.entityFieldList);
 			entityModel.put("idGeneratedValue",
 					StringUtils.isBlank(idGeneratedValue) ? DEFAULT_ID_GENERATED_VALUE : idGeneratedValue);

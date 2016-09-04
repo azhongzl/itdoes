@@ -24,7 +24,7 @@ import com.itdoes.common.business.SecureColumn;
 @Table(name = "${tableName}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ${className} extends BaseEntity {
-	private static final long serialVersionUID = -8714695363626027841L;
+	private static final long serialVersionUID = ${serialVersionUID}L;
 
 <#list fieldList as field>
   <#if field.column.pk>
