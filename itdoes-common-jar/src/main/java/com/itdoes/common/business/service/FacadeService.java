@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.itdoes.common.business.Businesses;
 import com.itdoes.common.business.Businesses.EntityPair;
-import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.core.jpa.SearchFilter;
 import com.itdoes.common.core.jpa.Specifications;
@@ -31,25 +30,36 @@ import com.itdoes.common.core.util.Reflections;
  */
 @Service
 public class FacadeService extends BaseService implements ApplicationContextAware {
+	private ApplicationContext applicationContext;
+
+	private String entityPackage;
+
 	private Map<String, EntityPair> entityPairs;
 
-	private ApplicationContext applicationContext;
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
+	}
+
+	public void setEntityPackage(String entityPackage) {
+		this.entityPackage = entityPackage;
+	}
 
 	@PostConstruct
 	public void init() {
-		entityPairs = Businesses.getEntityPairs(FacadeService.class.getClassLoader(), applicationContext);
+		entityPairs = Businesses.getEntityPairs(entityPackage, applicationContext);
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T extends BaseEntity> Page<T> search(String ec, List<SearchFilter> filters, PageRequest pageRequest) {
 		final EntityPair pair = getEntityPair(ec);
-		final Page<T> page = (Page<T>) getDao(pair).findAll(Specifications.build(getEntityClass(pair), filters),
+		final Page<T> page = (Page<T>) pair.getDao().findAll(Specifications.build(pair.getEntityClass(), filters),
 				pageRequest);
 
 		if (pair.hasSecureFields()) {
 			final List<T> list = page.getContent();
 			for (BaseEntity entity : list) {
-				handleSecureColumns(pair, OperationMode.GET, entity, null);
+				handleSecureFields(pair, OperationMode.GET, entity, null);
 			}
 		}
 
@@ -58,11 +68,11 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 
 	public BaseEntity get(String ec, String idString) {
 		final EntityPair pair = getEntityPair(ec);
-		final Serializable id = convertId(idString, pair.idField.getType());
-		final BaseEntity entity = getDao(pair).findOne(id);
+		final Serializable id = convertId(idString, pair.getIdField().getType());
+		final BaseEntity entity = pair.getDao().findOne(id);
 
 		if (pair.hasSecureFields()) {
-			handleSecureColumns(pair, OperationMode.GET, entity, null);
+			handleSecureFields(pair, OperationMode.GET, entity, null);
 		}
 
 		return entity;
@@ -70,7 +80,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 
 	public long count(String ec, List<SearchFilter> filters) {
 		final EntityPair pair = getEntityPair(ec);
-		return getDao(pair).count(Specifications.build(getEntityClass(pair), filters));
+		return pair.getDao().count(Specifications.build(pair.getEntityClass(), filters));
 	}
 
 	@Transactional(readOnly = false)
@@ -78,10 +88,10 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		final EntityPair pair = getEntityPair(ec);
 
 		if (pair.hasSecureFields()) {
-			handleSecureColumns(pair, OperationMode.POST, entity, null);
+			handleSecureFields(pair, OperationMode.POST, entity, null);
 		}
 
-		getDao(pair).save(entity);
+		pair.getDao().save(entity);
 	}
 
 	@Transactional(readOnly = false)
@@ -89,17 +99,17 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		final EntityPair pair = getEntityPair(ec);
 
 		if (pair.hasSecureFields()) {
-			handleSecureColumns(pair, OperationMode.PUT, entity, oldEntity);
+			handleSecureFields(pair, OperationMode.PUT, entity, oldEntity);
 		}
 
-		getDao(pair).save(entity);
+		pair.getDao().save(entity);
 	}
 
 	@Transactional(readOnly = false)
 	public void delete(String ec, String idString) {
 		final EntityPair pair = getEntityPair(ec);
-		final Serializable id = convertId(idString, pair.idField.getType());
-		getDao(pair).delete(id);
+		final Serializable id = convertId(idString, pair.getIdField().getType());
+		pair.getDao().delete(id);
 	}
 
 	public EntityPair getEntityPair(String ec) {
@@ -114,16 +124,6 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		return entityPairs.keySet();
 	}
 
-	@SuppressWarnings("unchecked")
-	private <T extends BaseEntity> Class<T> getEntityClass(EntityPair pair) {
-		return (Class<T>) pair.entityClass;
-	}
-
-	@SuppressWarnings("unchecked")
-	private <T extends BaseEntity, ID extends Serializable> BaseDao<T, ID> getDao(EntityPair pair) {
-		return (BaseDao<T, ID>) pair.dao;
-	}
-
 	private Serializable convertId(String id, Class<?> idClass) {
 		return (Serializable) Reflections.convert(id, idClass);
 	}
@@ -132,25 +132,25 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		GET, POST, PUT
 	}
 
-	private void handleSecureColumns(EntityPair pair, OperationMode mode, BaseEntity entity, BaseEntity oldEntity) {
+	private void handleSecureFields(EntityPair pair, OperationMode mode, BaseEntity entity, BaseEntity oldEntity) {
 		final Subject subject = SecurityUtils.getSubject();
 
-		final String tableName = pair.entityClass.getSimpleName();
-		for (Field secureField : pair.secureFields) {
+		final String entityName = pair.getEntityClass().getSimpleName();
+		for (Field secureField : pair.getSecureFields()) {
 			final String secureFieldName = secureField.getName();
 			switch (mode) {
 			case GET:
-				if (!subject.isPermitted(Businesses.getReadPermission(tableName, secureFieldName))) {
+				if (!subject.isPermitted(Businesses.getReadPermission(entityName, secureFieldName))) {
 					Reflections.invokeSet(entity, secureFieldName, null);
 				}
 				break;
 			case POST:
-				if (!subject.isPermitted(Businesses.getWritePermission(tableName, secureFieldName))) {
+				if (!subject.isPermitted(Businesses.getWritePermission(entityName, secureFieldName))) {
 					Reflections.invokeSet(entity, secureFieldName, null);
 				}
 				break;
 			case PUT:
-				if (!subject.isPermitted(Businesses.getWritePermission(tableName, secureFieldName))) {
+				if (!subject.isPermitted(Businesses.getWritePermission(entityName, secureFieldName))) {
 					Reflections.invokeSet(entity, secureFieldName, Reflections.invokeGet(oldEntity, secureFieldName));
 				}
 				break;
@@ -159,10 +159,5 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 						"OperationMode \"" + mode + "\" is not supported by handleSecureColumns()");
 			}
 		}
-	}
-
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
 	}
 }

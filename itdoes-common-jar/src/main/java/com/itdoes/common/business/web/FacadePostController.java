@@ -32,7 +32,7 @@ public class FacadePostController extends FacadeBaseController {
 	public void getEntity(@PathVariable(value = "ec") String ec, Model model) {
 		final EntityPair pair = facadeService.getEntityPair(ec);
 		try {
-			final Object entity = pair.entityClass.newInstance();
+			final Object entity = pair.getEntityClass().newInstance();
 			model.addAttribute("entity", entity);
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw Exceptions.unchecked(e);

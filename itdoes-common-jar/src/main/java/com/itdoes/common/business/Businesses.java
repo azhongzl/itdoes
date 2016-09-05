@@ -1,5 +1,6 @@
 package com.itdoes.common.business;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
@@ -7,36 +8,33 @@ import java.util.Map;
 
 import javax.persistence.Id;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.business.entity.SecureColumn;
 import com.itdoes.common.core.cglib.CglibMapper;
+import com.itdoes.common.core.spring.Springs;
 import com.itdoes.common.core.util.Collections3;
-import com.itdoes.common.core.util.PropertiesLoader;
 import com.itdoes.common.core.util.Reflections;
 
 /**
  * @author Jalen Zhong
  */
 public class Businesses {
-	private static final PropertiesLoader PL = new PropertiesLoader("classpath:/application.properties");
-	private static final String ENTITY_BASE_PACKAGE = PL.getProperty("entity.base.package");
-
-	private static final char TABLE_COLUMN_SEPARATOR = '.';
+	private static final char ENTITY_FIELD_SEPARATOR = '.';
 	private static final char PERM_SEPARATOR = ':';
 	private static final String PERM_READ = "read";
 	private static final String PERM_WRITE = "write";
 	private static final String PERM_ANY = "*";
 
-	public static Map<String, EntityPair> getEntityPairs(ClassLoader classLoader, ApplicationContext context) {
-		final List<Class<?>> entityClasses = Reflections.getClasses(ENTITY_BASE_PACKAGE,
-				new Reflections.ClassFilter.SuperClassFilter(BaseEntity.class), classLoader);
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Map<String, EntityPair> getEntityPairs(String entityPackage, ApplicationContext context) {
+		final List<Class<? extends BaseEntity>> entityClasses = (List) Reflections.getClasses(entityPackage,
+				new Reflections.ClassFilter.SuperClassFilter(BaseEntity.class), Businesses.class.getClassLoader());
 
 		final Map<String, EntityPair> pairs = new HashMap<String, EntityPair>(entityClasses.size());
-		for (Class<?> entityClass : entityClasses) {
+		for (Class<? extends BaseEntity> entityClass : entityClasses) {
 			final String key = entityClass.getSimpleName();
 
 			// Id Field
@@ -46,10 +44,11 @@ public class Businesses {
 			}
 
 			// Dao
-			final String daoBeanName = getDaoBeanName(key);
-			final BaseDao<?, ?> dao = (BaseDao<?, ?>) context.getBean(daoBeanName);
+			final String daoBeanId = getDaoBeanId(key);
+			final BaseDao<? extends BaseEntity, ? extends Serializable> dao = (BaseDao<? extends BaseEntity, ? extends Serializable>) context
+					.getBean(daoBeanId);
 			if (dao == null) {
-				throw new IllegalArgumentException("Cannot find bean for name: " + daoBeanName);
+				throw new IllegalArgumentException("Cannot find bean for id: " + daoBeanId);
 			}
 
 			// Secure Fields
@@ -64,12 +63,8 @@ public class Businesses {
 		return pairs;
 	}
 
-	public static String getBeanName(String className) {
-		return StringUtils.uncapitalize(className);
-	}
-
-	public static String getDaoBeanName(String entityClassName) {
-		return getBeanName(getDaoClassName(entityClassName));
+	private static String getDaoBeanId(String entityClassName) {
+		return Springs.getBeanId(getDaoClassName(entityClassName));
 	}
 
 	public static String getDaoClassName(String entityClassName) {
@@ -77,16 +72,35 @@ public class Businesses {
 	}
 
 	public static class EntityPair {
-		public final Class<?> entityClass;
-		public final Field idField;
-		public final BaseDao<?, ?> dao;
-		public final List<Field> secureFields;
+		private final Class<? extends BaseEntity> entityClass;
+		private final Field idField;
+		private final BaseDao<? extends BaseEntity, ? extends Serializable> dao;
+		private final List<Field> secureFields;
 
-		public EntityPair(Class<?> entityClass, Field idField, BaseDao<?, ?> dao, List<Field> secureFields) {
+		public EntityPair(Class<? extends BaseEntity> entityClass, Field idField,
+				BaseDao<? extends BaseEntity, ? extends Serializable> dao, List<Field> secureFields) {
 			this.entityClass = entityClass;
 			this.idField = idField;
 			this.dao = dao;
 			this.secureFields = secureFields;
+		}
+
+		@SuppressWarnings("unchecked")
+		public <T extends BaseEntity> Class<T> getEntityClass() {
+			return (Class<T>) entityClass;
+		}
+
+		public Field getIdField() {
+			return idField;
+		}
+
+		@SuppressWarnings("unchecked")
+		public <T extends BaseEntity, ID extends Serializable> BaseDao<T, ID> getDao() {
+			return (BaseDao<T, ID>) dao;
+		}
+
+		public List<Field> getSecureFields() {
+			return secureFields;
 		}
 
 		public boolean hasSecureFields() {
@@ -94,20 +108,20 @@ public class Businesses {
 		}
 	}
 
-	public static String getAllPermission(String tableName, String fieldName) {
-		return getPermission(tableName, fieldName, PERM_ANY);
+	public static String getAllPermission(String entityName, String fieldName) {
+		return getPermission(entityName, fieldName, PERM_ANY);
 	}
 
-	public static String getReadPermission(String tableName, String fieldName) {
-		return getPermission(tableName, fieldName, PERM_READ);
+	public static String getReadPermission(String entityName, String fieldName) {
+		return getPermission(entityName, fieldName, PERM_READ);
 	}
 
-	public static String getWritePermission(String tableName, String fieldName) {
-		return getPermission(tableName, fieldName, PERM_WRITE);
+	public static String getWritePermission(String entityName, String fieldName) {
+		return getPermission(entityName, fieldName, PERM_WRITE);
 	}
 
-	private static String getPermission(String tableName, String fieldName, String mode) {
-		return tableName + TABLE_COLUMN_SEPARATOR + fieldName + PERM_SEPARATOR + mode;
+	private static String getPermission(String entityName, String fieldName, String mode) {
+		return entityName + ENTITY_FIELD_SEPARATOR + fieldName + PERM_SEPARATOR + mode;
 	}
 
 	private Businesses() {

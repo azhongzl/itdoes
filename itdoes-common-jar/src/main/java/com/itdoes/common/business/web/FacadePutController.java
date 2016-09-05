@@ -38,7 +38,7 @@ public class FacadePutController extends FacadeBaseController {
 		model.addAttribute("entity", entity);
 
 		final EntityPair pair = facadeService.getEntityPair(ec);
-		if (hasSecureColumns(pair)) {
+		if (pair.hasSecureFields()) {
 			final BaseEntity oldEntity = (BaseEntity) CglibMapper.copy(entity);
 			request.setAttribute("oldEntity", oldEntity);
 		}

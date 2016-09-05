@@ -2,7 +2,6 @@ package com.itdoes.common.business.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.itdoes.common.business.Businesses.EntityPair;
 import com.itdoes.common.business.service.FacadeService;
 
 /**
@@ -73,8 +72,4 @@ public abstract class FacadeBaseController extends BaseController {
 
 	@Autowired
 	protected FacadeService facadeService;
-
-	protected boolean hasSecureColumns(EntityPair pair) {
-		return !pair.secureFields.isEmpty();
-	}
 }
