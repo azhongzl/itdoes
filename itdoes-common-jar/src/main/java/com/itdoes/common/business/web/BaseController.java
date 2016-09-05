@@ -67,6 +67,10 @@ public abstract class BaseController {
 					operator = Operator.EQ;
 				} else {
 					final String[] names = StringUtils.split(unprefixParamName, FILTER_SEPARATOR);
+					Validate.isTrue(names.length == 2,
+							"Filter name should be in format <Field>[%sOperator], but now it is %s", FILTER_SEPARATOR,
+							unprefixParamName);
+
 					field = names[0];
 					operator = Operator.valueOf(names[1]);
 				}
@@ -80,12 +84,13 @@ public abstract class BaseController {
 
 	protected static PageRequest buildPageRequest(int pageNo, int pageSize, String pageSort) {
 		Sort sort = null;
-		if (pageSort != null) {
+		if (StringUtils.isNotBlank(pageSort)) {
 			final String[] sortParams = StringUtils.split(pageSort, SORT_SEPARATOR);
-			Validate.isTrue(sortParams.length == 2, "Page.sort shout be in format \"<COLUMN>" + SORT_SEPARATOR
-					+ "A\" or \"<COLUMN>" + SORT_SEPARATOR + "D\", now it is \"" + pageSort + "\"");
+			Validate.isTrue(sortParams.length == 2,
+					"Page.sort shout be in format <Field>%sA or <Field>%sD, now it is %s", SORT_SEPARATOR,
+					SORT_SEPARATOR, pageSort);
 
-			final String column = sortParams[0];
+			final String field = sortParams[0];
 			final String directionString = sortParams[1];
 			final Direction direction;
 			if ("a".equalsIgnoreCase(directionString)) {
@@ -93,7 +98,7 @@ public abstract class BaseController {
 			} else {
 				direction = Direction.DESC;
 			}
-			sort = new Sort(direction, column);
+			sort = new Sort(direction, field);
 		}
 
 		return new PageRequest(pageNo - 1, pageSize, sort);
