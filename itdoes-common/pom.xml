@@ -8,7 +8,7 @@
 		<version>1.0</version>
 		<relativePath>../itdoes-parent/</relativePath>
 	</parent>
-	<artifactId>itdoes-common-jar</artifactId>
+	<artifactId>itdoes-common</artifactId>
 
 	<dependencies>
 		<dependency>

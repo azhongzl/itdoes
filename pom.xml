@@ -9,7 +9,6 @@
 
 	<modules>
 		<module>itdoes-parent</module>
-		<module>itdoes-common-jar</module>
-		<module>itdoes-common-war</module>
+		<module>itdoes-common</module>
 	</modules>
 </project>
