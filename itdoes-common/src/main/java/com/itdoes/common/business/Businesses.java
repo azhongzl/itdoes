@@ -22,12 +22,6 @@ import com.itdoes.common.core.util.Reflections;
  * @author Jalen Zhong
  */
 public class Businesses {
-	private static final char ENTITY_FIELD_SEPARATOR = '.';
-	private static final char PERM_SEPARATOR = ':';
-	private static final String PERM_READ = "read";
-	private static final String PERM_WRITE = "write";
-	private static final String PERM_ANY = "*";
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Map<String, EntityPair> getEntityPairs(String entityPackage, ApplicationContext context) {
 		final List<Class<? extends BaseEntity>> entityClasses = (List) Reflections.getClasses(entityPackage,
@@ -106,22 +100,6 @@ public class Businesses {
 		public boolean hasSecureFields() {
 			return !Collections3.isEmpty(secureFields);
 		}
-	}
-
-	public static String getAllPermission(String entityName, String fieldName) {
-		return getPermission(entityName, fieldName, PERM_ANY);
-	}
-
-	public static String getReadPermission(String entityName, String fieldName) {
-		return getPermission(entityName, fieldName, PERM_READ);
-	}
-
-	public static String getWritePermission(String entityName, String fieldName) {
-		return getPermission(entityName, fieldName, PERM_WRITE);
-	}
-
-	private static String getPermission(String entityName, String fieldName, String mode) {
-		return entityName + ENTITY_FIELD_SEPARATOR + fieldName + PERM_SEPARATOR + mode;
 	}
 
 	private Businesses() {

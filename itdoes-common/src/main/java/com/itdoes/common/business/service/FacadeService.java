@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.itdoes.common.business.Businesses;
 import com.itdoes.common.business.Businesses.EntityPair;
+import com.itdoes.common.business.Permissions;
 import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.core.jpa.SearchFilter;
 import com.itdoes.common.core.jpa.Specifications;
@@ -140,17 +141,17 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 			final String secureFieldName = secureField.getName();
 			switch (mode) {
 			case GET:
-				if (!subject.isPermitted(Businesses.getReadPermission(entityName, secureFieldName))) {
+				if (!subject.isPermitted(Permissions.getFieldReadPermission(entityName, secureFieldName))) {
 					Reflections.invokeSet(entity, secureFieldName, null);
 				}
 				break;
 			case POST:
-				if (!subject.isPermitted(Businesses.getWritePermission(entityName, secureFieldName))) {
+				if (!subject.isPermitted(Permissions.getFieldWritePermission(entityName, secureFieldName))) {
 					Reflections.invokeSet(entity, secureFieldName, null);
 				}
 				break;
 			case PUT:
-				if (!subject.isPermitted(Businesses.getWritePermission(entityName, secureFieldName))) {
+				if (!subject.isPermitted(Permissions.getFieldWritePermission(entityName, secureFieldName))) {
 					Reflections.invokeSet(entity, secureFieldName, Reflections.invokeGet(oldEntity, secureFieldName));
 				}
 				break;
