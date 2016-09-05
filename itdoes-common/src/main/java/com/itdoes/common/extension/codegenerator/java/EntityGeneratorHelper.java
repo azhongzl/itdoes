@@ -18,7 +18,7 @@ public class EntityGeneratorHelper {
 	private static final String CONFIG_DIR = "classpath:/codegenerator/java/";
 	private static final String TABLE_MAPPING_FILE = CONFIG_DIR + "table.mapping.properties";
 	private static final String COLUMN_MAPPING_FILE = CONFIG_DIR + "column.mapping.properties";
-	private static final String COLUMN_SECURE_MAPPING_FILE = CONFIG_DIR + "column.secure.mapping.properties";
+	private static final String COLUMN_SECURE_FILE = CONFIG_DIR + "column.secure.properties";
 
 	public static void generateEntities(String basePackageName, String idGeneratedValue) {
 		final PropertiesLoader pl = new PropertiesLoader("classpath:/application.properties",
@@ -34,8 +34,8 @@ public class EntityGeneratorHelper {
 
 	private static List<String> getSecureColumnList() {
 		final List<String> secureColumnList = Lists.newArrayList();
-		final Map<String, String> secureColumnMapping = toMap(COLUMN_SECURE_MAPPING_FILE);
-		for (Entry<String, String> entry : secureColumnMapping.entrySet()) {
+		final Map<String, String> secureColumnMap = toMap(COLUMN_SECURE_FILE);
+		for (Entry<String, String> entry : secureColumnMap.entrySet()) {
 			final String tableName = entry.getKey();
 			final String columnNamesStr = entry.getValue();
 			if (StringUtils.isNotBlank(columnNamesStr)) {
