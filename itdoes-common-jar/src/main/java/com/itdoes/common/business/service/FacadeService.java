@@ -57,8 +57,8 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 				pageRequest);
 
 		if (pair.hasSecureFields()) {
-			final List<T> list = page.getContent();
-			for (BaseEntity entity : list) {
+			final List<T> entityList = page.getContent();
+			for (BaseEntity entity : entityList) {
 				handleSecureFields(pair, OperationMode.GET, entity, null);
 			}
 		}
@@ -156,7 +156,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 				break;
 			default:
 				throw new IllegalArgumentException(
-						"OperationMode \"" + mode + "\" is not supported by handleSecureColumns()");
+						"OperationMode \"" + mode + "\" is not supported by handleSecureFields()");
 			}
 		}
 	}
