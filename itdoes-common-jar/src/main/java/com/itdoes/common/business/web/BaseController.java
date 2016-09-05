@@ -40,13 +40,26 @@ import com.itdoes.common.core.jpa.SearchFilter.Operator;
  * 
  */
 public abstract class BaseController {
-	protected static final String DEFAULT_PAGE_SIZE = "100";
+	private static final int DEFAULT_MAX_PAGE_SIZE = 100;
 
 	private static final String FILTER_PREFIX = "ff_";
 	private static final char FILTER_SEPARATOR = '_';
 	private static final char SORT_SEPARATOR = '_';
 
-	protected static List<SearchFilter> buildFilters(ServletRequest request) {
+	@Autowired
+	protected ServletContext context;
+
+	private int maxPageSize = DEFAULT_MAX_PAGE_SIZE;
+
+	public void setMaxPageSize(int maxPageSize) {
+		if (maxPageSize < 1) {
+			return;
+		}
+
+		this.maxPageSize = maxPageSize;
+	}
+
+	protected List<SearchFilter> buildFilters(ServletRequest request) {
 		final List<SearchFilter> filters = Lists.newArrayList();
 
 		final Enumeration<String> paramNames = request.getParameterNames();
@@ -82,7 +95,15 @@ public abstract class BaseController {
 		return filters;
 	}
 
-	protected static PageRequest buildPageRequest(int pageNo, int pageSize, String pageSort) {
+	protected PageRequest buildPageRequest(int pageNo, int pageSize, String pageSort) {
+		if (pageNo < 1) {
+			pageNo = 1;
+		}
+
+		if (pageSize < 1 || pageSize > maxPageSize) {
+			pageSize = maxPageSize;
+		}
+
 		Sort sort = null;
 		if (StringUtils.isNotBlank(pageSort)) {
 			final String[] sortParams = StringUtils.split(pageSort, SORT_SEPARATOR);
@@ -103,9 +124,6 @@ public abstract class BaseController {
 
 		return new PageRequest(pageNo - 1, pageSize, sort);
 	}
-
-	@Autowired
-	protected ServletContext context;
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {

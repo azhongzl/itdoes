@@ -26,13 +26,12 @@ import com.itdoes.common.core.web.MediaTypes;
 public class FacadeMainController extends FacadeBaseController {
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_SEARCH, method = RequestMethod.GET)
 	public Result search(@PathVariable("ec") String ec, @RequestParam(value = "page_no", defaultValue = "1") int pageNo,
-			@RequestParam(value = "page_size", defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
+			@RequestParam(value = "page_size", defaultValue = "-1") int pageSize,
 			@RequestParam(value = "page_sort", required = false) String pageSort, ServletRequest request) {
 		final List<SearchFilter> filters = buildFilters(request);
 		final PageRequest pageRequest = buildPageRequest(pageNo, pageSize, pageSort);
 		final Page<? extends BaseEntity> page = facadeService.search(ec, filters, pageRequest);
-		final List<? extends BaseEntity> list = page.getContent();
-		return HttpResults.success(list);
+		return HttpResults.success(page);
 	}
 
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_COUNT, method = RequestMethod.GET)
