@@ -46,7 +46,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		final Page<T> page = (Page<T>) getDao(pair).findAll(Specifications.build(getEntityClass(pair), filters),
 				pageRequest);
 
-		if (hasSecureColumns(pair)) {
+		if (pair.hasSecureFields()) {
 			final List<T> list = page.getContent();
 			for (BaseEntity entity : list) {
 				handleSecureColumns(pair, OperationMode.GET, entity, null);
@@ -61,7 +61,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		final Serializable id = convertId(idString, pair.idField.getType());
 		final BaseEntity entity = getDao(pair).findOne(id);
 
-		if (hasSecureColumns(pair)) {
+		if (pair.hasSecureFields()) {
 			handleSecureColumns(pair, OperationMode.GET, entity, null);
 		}
 
@@ -77,7 +77,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	public <T extends BaseEntity> void post(String ec, T entity) {
 		final EntityPair pair = getEntityPair(ec);
 
-		if (hasSecureColumns(pair)) {
+		if (pair.hasSecureFields()) {
 			handleSecureColumns(pair, OperationMode.POST, entity, null);
 		}
 
@@ -88,7 +88,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	public <T extends BaseEntity> void put(String ec, T entity, T oldEntity) {
 		final EntityPair pair = getEntityPair(ec);
 
-		if (hasSecureColumns(pair)) {
+		if (pair.hasSecureFields()) {
 			handleSecureColumns(pair, OperationMode.PUT, entity, oldEntity);
 		}
 
@@ -130,10 +130,6 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 
 	private enum OperationMode {
 		GET, POST, PUT
-	}
-
-	private boolean hasSecureColumns(EntityPair pair) {
-		return !pair.secureFields.isEmpty();
 	}
 
 	private void handleSecureColumns(EntityPair pair, OperationMode mode, BaseEntity entity, BaseEntity oldEntity) {

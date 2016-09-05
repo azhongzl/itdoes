@@ -88,6 +88,10 @@ public class Businesses {
 			this.dao = dao;
 			this.secureFields = secureFields;
 		}
+
+		public boolean hasSecureFields() {
+			return !Collections3.isEmpty(secureFields);
+		}
 	}
 
 	public static String getAllPermission(String tableName, String fieldName) {
