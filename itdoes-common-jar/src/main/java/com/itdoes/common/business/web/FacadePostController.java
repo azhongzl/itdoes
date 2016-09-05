@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.itdoes.common.business.Businesses.EntityPair;
 import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.core.Result;
-import com.itdoes.common.core.util.Exceptions;
+import com.itdoes.common.core.util.Reflections;
 import com.itdoes.common.core.web.HttpResults;
 import com.itdoes.common.core.web.MediaTypes;
 
@@ -31,11 +31,7 @@ public class FacadePostController extends FacadeBaseController {
 	@ModelAttribute
 	public void getEntity(@PathVariable(value = "ec") String ec, Model model) {
 		final EntityPair pair = facadeService.getEntityPair(ec);
-		try {
-			final Object entity = pair.getEntityClass().newInstance();
-			model.addAttribute("entity", entity);
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw Exceptions.unchecked(e);
-		}
+		final Object entity = Reflections.newInstance(pair.getEntityClass());
+		model.addAttribute("entity", entity);
 	}
 }
