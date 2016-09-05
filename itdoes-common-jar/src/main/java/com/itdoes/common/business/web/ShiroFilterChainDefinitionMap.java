@@ -1,10 +1,10 @@
 package com.itdoes.common.business.web;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Maps;
 import com.itdoes.common.business.service.FacadeService;
 import com.itdoes.common.core.shiro.AbstractShiroFilterChainDefinitionMap;
 
@@ -20,8 +20,8 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 
 	@Override
 	protected Map<String, String> getDynamicDefinitions() {
-		final Map<String, String> dynamicDefinitions = Maps.newHashMap();
 		final Set<String> entityClassSimpleNames = facadeService.getEntityClassSimpleNames();
+		final Map<String, String> dynamicDefinitions = new HashMap<String, String>(entityClassSimpleNames.size() * 6);
 		for (String entityClassSimpleName : entityClassSimpleNames) {
 			addDynamicDefinition(dynamicDefinitions, entityClassSimpleName, FacadeBaseController.FACADE_URL_SEARCH);
 			addDynamicDefinition(dynamicDefinitions, entityClassSimpleName, FacadeBaseController.FACADE_URL_COUNT);
