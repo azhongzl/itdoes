@@ -23,6 +23,7 @@ import com.itdoes.common.core.util.Files;
 import com.itdoes.common.core.util.Reflections;
 import com.itdoes.common.core.util.Strings;
 import com.itdoes.common.core.util.Urls;
+import com.itdoes.common.extension.codegenerator.entity.EntityConfig.EntityField;
 
 import freemarker.template.Template;
 
@@ -56,25 +57,20 @@ public class EntityGenerator {
 			final String entityClassName = mapEntityClassName(tableName, tableMapping);
 			final EntityFieldListResult entityFieldListResult = mapEntityFieldList(tableName, table.getColumnList(),
 					columnMapping, secureColumnList);
+			final EntityConfig entityConfig = new EntityConfig(entityPackageName, entityFieldListResult.hasSecureColumn,
+					tableName, entityClassName, getSerialVersionUIDStr(entityClassName),
+					entityFieldListResult.entityFieldList, realIdGeneratedValue);
 			final Map<String, Object> entityModel = Maps.newHashMap();
-			entityModel.put("packageName", entityPackageName);
-			entityModel.put("containSecureColumn", entityFieldListResult.containSecureColumn);
-			entityModel.put("tableName", tableName);
-			entityModel.put("className", entityClassName);
-			entityModel.put("serialVersionUID", getSerialVersionUIDStr(entityClassName));
-			entityModel.put("fieldList", entityFieldListResult.entityFieldList);
-			entityModel.put("idGeneratedValue", realIdGeneratedValue);
+			entityModel.put("config", entityConfig);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
 			writeJavaFile(entityDir, entityClassName, entityString);
 
 			// Generate Dao
 			final String daoClassName = Businesses.getDaoClassName(entityClassName);
+			final DaoConfig daoConfig = new DaoConfig(daoPackageName, entityPackageName, entityClassName, daoClassName,
+					mapIdType(tableName, table.getColumnList()));
 			final Map<String, Object> daoModel = Maps.newHashMap();
-			daoModel.put("packageName", daoPackageName);
-			daoModel.put("entityPackageName", entityPackageName);
-			daoModel.put("entityClassName", entityClassName);
-			daoModel.put("className", daoClassName);
-			daoModel.put("entityIdType", mapIdType(tableName, table.getColumnList()));
+			daoModel.put("config", daoConfig);
 			final String daoString = FreeMarkers.render(daoTemplate, daoModel);
 			writeJavaFile(daoDir, daoClassName, daoString);
 		}
@@ -116,19 +112,19 @@ public class EntityGenerator {
 
 	private static class EntityFieldListResult {
 		private List<EntityField> entityFieldList;
-		private boolean containSecureColumn;
+		private boolean hasSecureColumn;
 	}
 
 	private static EntityFieldListResult mapEntityFieldList(String tableName, List<Column> columnList,
 			Map<String, String> columnMapping, List<String> secureColumnList) {
 		final List<EntityField> entityFieldList = Lists.newArrayList();
-		boolean containSecureColumn = false;
+		boolean hasSecureColumn = false;
 		for (Column column : columnList) {
 			boolean secureColumn = false;
 			if (!Collections3.isEmpty(secureColumnList)) {
 				if (secureColumnList.contains(getColumnKey(tableName, column.getName()))) {
 					secureColumn = true;
-					containSecureColumn = true;
+					hasSecureColumn = true;
 				}
 			}
 
@@ -139,7 +135,7 @@ public class EntityGenerator {
 
 		final EntityFieldListResult entityFieldListResult = new EntityFieldListResult();
 		entityFieldListResult.entityFieldList = entityFieldList;
-		entityFieldListResult.containSecureColumn = containSecureColumn;
+		entityFieldListResult.hasSecureColumn = hasSecureColumn;
 		return entityFieldListResult;
 	}
 

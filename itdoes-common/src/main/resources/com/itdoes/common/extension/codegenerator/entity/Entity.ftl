@@ -1,4 +1,4 @@
-package ${packageName};
+package ${config.packageName};
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +11,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.itdoes.common.business.entity.BaseEntity;
-<#if containSecureColumn>
+<#if config.hasSecureColumn>
 import com.itdoes.common.business.entity.SecureColumn;
 </#if>
 
@@ -21,15 +21,15 @@ import com.itdoes.common.business.entity.SecureColumn;
  * @author Jalen Zhong
  */
 @Entity
-@Table(name = "${tableName}")
+@Table(name = "${config.tableName}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class ${className} extends BaseEntity {
-	private static final long serialVersionUID = ${serialVersionUID}L;
+public class ${config.className} extends BaseEntity {
+	private static final long serialVersionUID = ${config.serialVersionUID}L;
 
-<#list fieldList as field>
+<#list config.fieldList as field>
   <#if field.column.pk>
 	@Id
-	${idGeneratedValue}
+	${config.idGeneratedValue}
   </#if>
   <#if field.secureColumn>
 	@SecureColumn
@@ -37,7 +37,7 @@ public class ${className} extends BaseEntity {
 	@Column(name = "${field.column.name}")
 	private ${field.type} ${field.name};
 </#list>
-<#list fieldList as field>
+<#list config.fieldList as field>
 
 	public ${field.type} get${field.upperName}() {
 		return ${field.name};

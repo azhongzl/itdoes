@@ -1,4 +1,4 @@
-package com.itdoes.common.extension.codegenerator.entity;
+package com.itdoes.common.extension.codegenerator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
