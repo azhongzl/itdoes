@@ -31,8 +31,8 @@ public class FacadeService extends BaseService {
 	}
 
 	@Transactional(readOnly = false)
-	public <T, ID extends Serializable> void save(EntityPair<T, ID> pair, T entity) {
-		pair.getDao().save(entity);
+	public <T, ID extends Serializable> T save(EntityPair<T, ID> pair, T entity) {
+		return pair.getDao().save(entity);
 	}
 
 	@Transactional(readOnly = false)
