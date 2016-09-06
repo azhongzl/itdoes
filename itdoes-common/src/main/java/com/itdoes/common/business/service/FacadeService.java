@@ -18,8 +18,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.itdoes.common.business.Businesses;
-import com.itdoes.common.business.Businesses.EntityPair;
+import com.itdoes.common.business.Envs;
+import com.itdoes.common.business.Envs.EntityPair;
 import com.itdoes.common.business.Permissions;
 import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.core.jpa.SearchFilter;
@@ -48,7 +48,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 
 	@PostConstruct
 	public void init() {
-		entityPairs = Businesses.getEntityPairs(entityPackage, applicationContext);
+		entityPairs = Envs.getEntityPairs(entityPackage, applicationContext);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.itdoes.common.business.Businesses.EntityPair;
+import com.itdoes.common.business.Envs.EntityPair;
 import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.core.Result;
 import com.itdoes.common.core.cglib.CglibMapper;
