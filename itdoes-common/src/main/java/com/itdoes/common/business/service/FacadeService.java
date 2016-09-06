@@ -1,15 +1,12 @@
 package com.itdoes.common.business.service;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -57,12 +54,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		final Page<T> page = (Page<T>) pair.getDao().findAll(Specifications.build(pair.getEntityClass(), filters),
 				pageRequest);
 
-		if (pair.hasSecureFields()) {
-			final List<T> entityList = page.getContent();
-			for (BaseEntity entity : entityList) {
-				handleSecureFields(pair, OperationMode.GET, entity, null);
-			}
-		}
+		Permissions.handleGetSecureFields(pair, page.getContent());
 
 		return page;
 	}
@@ -72,9 +64,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		final Serializable id = convertId(idString, pair.getIdField().getType());
 		final BaseEntity entity = pair.getDao().findOne(id);
 
-		if (pair.hasSecureFields()) {
-			handleSecureFields(pair, OperationMode.GET, entity, null);
-		}
+		Permissions.handleGetSecureFields(pair, entity);
 
 		return entity;
 	}
@@ -88,9 +78,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	public <T extends BaseEntity> void post(String ec, T entity) {
 		final EntityPair pair = getEntityPair(ec);
 
-		if (pair.hasSecureFields()) {
-			handleSecureFields(pair, OperationMode.POST, entity, null);
-		}
+		Permissions.handlePostSecureFields(pair, entity);
 
 		pair.getDao().save(entity);
 	}
@@ -99,9 +87,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	public <T extends BaseEntity> void put(String ec, T entity, T oldEntity) {
 		final EntityPair pair = getEntityPair(ec);
 
-		if (pair.hasSecureFields()) {
-			handleSecureFields(pair, OperationMode.PUT, entity, oldEntity);
-		}
+		Permissions.handlePutSecureFields(pair, entity, oldEntity);
 
 		pair.getDao().save(entity);
 	}
@@ -127,38 +113,5 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 
 	private Serializable convertId(String id, Class<?> idClass) {
 		return (Serializable) Reflections.convert(id, idClass);
-	}
-
-	private enum OperationMode {
-		GET, POST, PUT
-	}
-
-	private void handleSecureFields(EntityPair pair, OperationMode mode, BaseEntity entity, BaseEntity oldEntity) {
-		final Subject subject = SecurityUtils.getSubject();
-
-		final String entityName = pair.getEntityClass().getSimpleName();
-		for (Field secureField : pair.getSecureFields()) {
-			final String secureFieldName = secureField.getName();
-			switch (mode) {
-			case GET:
-				if (!subject.isPermitted(Permissions.getFieldReadPermission(entityName, secureFieldName))) {
-					Reflections.invokeSet(entity, secureFieldName, null);
-				}
-				break;
-			case POST:
-				if (!subject.isPermitted(Permissions.getFieldWritePermission(entityName, secureFieldName))) {
-					Reflections.invokeSet(entity, secureFieldName, null);
-				}
-				break;
-			case PUT:
-				if (!subject.isPermitted(Permissions.getFieldWritePermission(entityName, secureFieldName))) {
-					Reflections.invokeSet(entity, secureFieldName, Reflections.invokeGet(oldEntity, secureFieldName));
-				}
-				break;
-			default:
-				throw new IllegalArgumentException(
-						"OperationMode \"" + mode + "\" is not supported by handleSecureFields()");
-			}
-		}
 	}
 }
