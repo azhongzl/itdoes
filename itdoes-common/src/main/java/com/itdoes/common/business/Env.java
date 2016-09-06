@@ -5,10 +5,15 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.Id;
 
+import org.apache.commons.lang3.Validate;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
@@ -21,9 +26,39 @@ import com.itdoes.common.core.util.Reflections;
 /**
  * @author Jalen Zhong
  */
-public class Env {
+public class Env implements ApplicationContextAware {
+	private ApplicationContext context;
+
+	private String entityPackage;
+
+	private Map<String, EntityPair> entityPairMap;
+
+	@Override
+	public void setApplicationContext(ApplicationContext context) throws BeansException {
+		this.context = context;
+	}
+
+	public void setEntityPackage(String entityPackage) {
+		this.entityPackage = entityPackage;
+	}
+
+	@PostConstruct
+	public void init() {
+		entityPairMap = Env.buildEntityPairMap(entityPackage, context);
+	}
+
+	public EntityPair getEntityPair(String entityClassSimpleName) {
+		final EntityPair pair = entityPairMap.get(entityClassSimpleName);
+		Validate.notNull(pair, "Cannot find EntityPair [%s] in FacadeService", entityClassSimpleName);
+		return pair;
+	}
+
+	public Set<String> getEntityClassSimpleNames() {
+		return entityPairMap.keySet();
+	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Map<String, EntityPair> getEntityPairs(String entityPackage, ApplicationContext context) {
+	private static Map<String, EntityPair> buildEntityPairMap(String entityPackage, ApplicationContext context) {
 		final List<Class<? extends BaseEntity>> entityClasses = (List) Reflections.getClasses(entityPackage,
 				new Reflections.ClassFilter.SuperClassFilter(BaseEntity.class), Env.class.getClassLoader());
 
@@ -63,8 +98,5 @@ public class Env {
 
 	public static String getDaoClassName(String entityClassName) {
 		return entityClassName + "Dao";
-	}
-
-	private Env() {
 	}
 }

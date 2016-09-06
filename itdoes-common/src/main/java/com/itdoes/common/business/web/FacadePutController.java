@@ -26,7 +26,7 @@ public class FacadePutController extends FacadeBaseController {
 	@RequestMapping(value = "/{ec}/" + FacadeMainController.FACADE_URL_PUT + "/{id}", method = RequestMethod.POST)
 	public Result put(@PathVariable("ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity,
 			ServletRequest request) {
-		final EntityPair pair = facadeService.getEntityPair(ec);
+		final EntityPair pair = env.getEntityPair(ec);
 		final BaseEntity oldEntity = (BaseEntity) request.getAttribute("oldEntity");
 		facadeService.put(pair, entity, oldEntity);
 		return HttpResults.success(entity);
@@ -35,7 +35,7 @@ public class FacadePutController extends FacadeBaseController {
 	@ModelAttribute
 	public void getEntity(@PathVariable("ec") String ec, @PathVariable("id") String id, Model model,
 			ServletRequest request) {
-		final EntityPair pair = facadeService.getEntityPair(ec);
+		final EntityPair pair = env.getEntityPair(ec);
 
 		final BaseEntity entity = facadeService.get(pair, id);
 		model.addAttribute("entity", entity);

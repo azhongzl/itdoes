@@ -24,14 +24,14 @@ import com.itdoes.common.core.web.MediaTypes;
 public class FacadePostController extends FacadeBaseController {
 	@RequestMapping(value = "/{ec}/" + FacadeMainController.FACADE_URL_POST, method = RequestMethod.POST)
 	public Result post(@PathVariable(value = "ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity) {
-		final EntityPair pair = facadeService.getEntityPair(ec);
+		final EntityPair pair = env.getEntityPair(ec);
 		facadeService.post(pair, entity);
 		return HttpResults.success(entity);
 	}
 
 	@ModelAttribute
 	public void getEntity(@PathVariable(value = "ec") String ec, Model model) {
-		final EntityPair pair = facadeService.getEntityPair(ec);
+		final EntityPair pair = env.getEntityPair(ec);
 		final Object entity = Reflections.newInstance(pair.getEntityClass());
 		model.addAttribute("entity", entity);
 	}

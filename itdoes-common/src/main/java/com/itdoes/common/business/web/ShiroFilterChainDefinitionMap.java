@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.itdoes.common.business.Env;
 import com.itdoes.common.business.Permissions;
-import com.itdoes.common.business.service.FacadeService;
 import com.itdoes.common.core.shiro.AbstractShiroFilterChainDefinitionMap;
 
 /**
@@ -16,11 +16,11 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 	private static final String PERMS_PATTERN = "perms[\"{0}\"]";
 	private static final String URL_ANY = "/**";
 
-	private FacadeService facadeService;
+	private Env env;
 
 	@Override
 	protected Map<String, String> getDynamicDefinitions() {
-		final Set<String> entityNames = facadeService.getEntityClassSimpleNames();
+		final Set<String> entityNames = env.getEntityClassSimpleNames();
 		final Map<String, String> dynamicDefinitions = new HashMap<String, String>(entityNames.size() * 6);
 		for (String entityName : entityNames) {
 			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_SEARCH);
@@ -38,7 +38,7 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 				MessageFormat.format(PERMS_PATTERN, Permissions.getEntityPermission(entityName, command)));
 	}
 
-	public void setFacadeService(FacadeService facadeService) {
-		this.facadeService = facadeService;
+	public void setEnv(Env env) {
+		this.env = env;
 	}
 }

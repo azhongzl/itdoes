@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itdoes.common.business.EntityPair;
+import com.itdoes.common.business.Env;
 import com.itdoes.common.business.service.FacadeService;
 
 /**
@@ -72,6 +73,9 @@ public abstract class FacadeBaseController extends BaseController {
 	public static final String FACADE_URL_DELETE = "delete";
 	public static final String FACADE_URL_POST = "post";
 	public static final String FACADE_URL_PUT = "put";
+
+	@Autowired
+	protected Env env;
 
 	@Autowired
 	protected FacadeService facadeService;
