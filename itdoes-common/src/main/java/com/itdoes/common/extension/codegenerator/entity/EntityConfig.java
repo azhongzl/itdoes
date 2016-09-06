@@ -11,35 +11,35 @@ import com.itdoes.common.extension.codegenerator.Field;
 public class EntityConfig {
 	public static class EntityField extends Field {
 		private final Column column;
-		private final boolean secureColumn;
+		private final boolean secure;
 
-		public EntityField(String name, String type, Column column, boolean secureColumn) {
+		public EntityField(String name, String type, Column column, boolean secure) {
 			super(name, type);
 			this.column = column;
-			this.secureColumn = secureColumn;
+			this.secure = secure;
 		}
 
 		public Column getColumn() {
 			return column;
 		}
 
-		public boolean isSecureColumn() {
-			return secureColumn;
+		public boolean isSecure() {
+			return secure;
 		}
 	}
 
 	private final String packageName;
-	private final boolean hasSecureColumn;
+	private final boolean hasSecure;
 	private final String tableName;
 	private final String className;
 	private final String serialVersionUID;
 	private final List<EntityField> fieldList;
 	private final String idGeneratedValue;
 
-	public EntityConfig(String packageName, boolean hasSecureColumn, String tableName, String className,
+	public EntityConfig(String packageName, boolean hasSecure, String tableName, String className,
 			String serialVersionUID, List<EntityField> fieldList, String idGeneratedValue) {
 		this.packageName = packageName;
-		this.hasSecureColumn = hasSecureColumn;
+		this.hasSecure = hasSecure;
 		this.tableName = tableName;
 		this.className = className;
 		this.serialVersionUID = serialVersionUID;
@@ -51,8 +51,8 @@ public class EntityConfig {
 		return packageName;
 	}
 
-	public boolean isHasSecureColumn() {
-		return hasSecureColumn;
+	public boolean isHasSecure() {
+		return hasSecure;
 	}
 
 	public String getTableName() {

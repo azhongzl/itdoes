@@ -63,7 +63,7 @@ public class EntityGenerator {
 			final String entityClassName = mapEntityClassName(tableName, tableMapping);
 			final EntityFieldListResult entityFieldListResult = mapEntityFieldList(tableName, table.getColumnList(),
 					columnMapping, secureColumnList);
-			final EntityConfig entityConfig = new EntityConfig(entityPackageName, entityFieldListResult.hasSecureColumn,
+			final EntityConfig entityConfig = new EntityConfig(entityPackageName, entityFieldListResult.hasSecure,
 					tableName, entityClassName, getSerialVersionUIDStr(entityClassName),
 					entityFieldListResult.entityFieldList, realIdGeneratedValue);
 			final Map<String, Object> entityModel = Maps.newHashMap();
@@ -133,30 +133,30 @@ public class EntityGenerator {
 
 	private static class EntityFieldListResult {
 		private List<EntityField> entityFieldList;
-		private boolean hasSecureColumn;
+		private boolean hasSecure;
 	}
 
 	private static EntityFieldListResult mapEntityFieldList(String tableName, List<Column> columnList,
 			Map<String, String> columnMapping, List<String> secureColumnList) {
 		final List<EntityField> entityFieldList = Lists.newArrayList();
-		boolean hasSecureColumn = false;
+		boolean hasSecure = false;
 		for (Column column : columnList) {
-			boolean secureColumn = false;
+			boolean secure = false;
 			if (!Collections3.isEmpty(secureColumnList)) {
 				if (secureColumnList.contains(getColumnKey(tableName, column.getName()))) {
-					secureColumn = true;
-					hasSecureColumn = true;
+					secure = true;
+					hasSecure = true;
 				}
 			}
 
 			final EntityField entityField = new EntityField(mapFieldName(tableName, column.getName(), columnMapping),
-					mapFieldType(column.getType().getId()), column, secureColumn);
+					mapFieldType(column.getType().getId()), column, secure);
 			entityFieldList.add(entityField);
 		}
 
 		final EntityFieldListResult entityFieldListResult = new EntityFieldListResult();
 		entityFieldListResult.entityFieldList = entityFieldList;
-		entityFieldListResult.hasSecureColumn = hasSecureColumn;
+		entityFieldListResult.hasSecure = hasSecure;
 		return entityFieldListResult;
 	}
 

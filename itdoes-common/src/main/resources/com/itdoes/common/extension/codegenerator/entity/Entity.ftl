@@ -11,7 +11,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.itdoes.common.business.entity.BaseEntity;
-<#if config.hasSecureColumn>
+<#if config.hasSecure>
 import com.itdoes.common.business.entity.SecureColumn;
 </#if>
 
@@ -31,7 +31,7 @@ public class ${config.className} extends BaseEntity {
 	@Id
 	${config.idGeneratedValue}
   </#if>
-  <#if field.secureColumn>
+  <#if field.secure>
 	@SecureColumn
   </#if>
 	@Column(name = "${field.column.name}")
