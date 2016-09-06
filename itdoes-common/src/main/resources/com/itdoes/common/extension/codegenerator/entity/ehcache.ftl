@@ -9,8 +9,8 @@
 		overflowToDisk="true" maxEntriesLocalDisk="100000" />
 
 	<!-- Specific cache setting -->
-<#list ehcacheList as ehcache>
-	<cache name="${ehcache.name}" maxEntriesLocalHeap="${ehcache.maxEntriesLocalHeap}" eternal="${ehcache.eternal}" overflowToDisk="${ehcache.overflowToDisk}"
-		maxEntriesLocalDisk="${ehcache.maxEntriesLocalDisk}" />
+<#list config.itemList as item>
+	<cache name="${item.name}" maxEntriesLocalHeap="${item.maxEntriesLocalHeap}" eternal="${item.eternal}" overflowToDisk="${item.overflowToDisk}"
+		maxEntriesLocalDisk="${item.maxEntriesLocalDisk}" />
 </#list>
 </ehcache>

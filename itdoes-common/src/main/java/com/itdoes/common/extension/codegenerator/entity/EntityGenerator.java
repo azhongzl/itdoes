@@ -23,6 +23,7 @@ import com.itdoes.common.core.util.Files;
 import com.itdoes.common.core.util.Reflections;
 import com.itdoes.common.core.util.Strings;
 import com.itdoes.common.core.util.Urls;
+import com.itdoes.common.extension.codegenerator.entity.EhcacheConfig.EhcacheItem;
 import com.itdoes.common.extension.codegenerator.entity.EntityConfig.EntityField;
 
 import freemarker.template.Template;
@@ -47,6 +48,8 @@ public class EntityGenerator {
 
 		final String realIdGeneratedValue = StringUtils.isBlank(idGeneratedValue) ? DEFAULT_ID_GENERATED_VALUE
 				: idGeneratedValue;
+
+		final EhcacheConfig ehcacheConfig = new EhcacheConfig();
 
 		final MetaParser parser = new MetaParser(jdbcDriver, jdbcUrl, jdbcUsername, jdbcPassword);
 		final List<Table> tableList = parser.parseTables();
@@ -73,7 +76,18 @@ public class EntityGenerator {
 			daoModel.put("config", daoConfig);
 			final String daoString = FreeMarkers.render(daoTemplate, daoModel);
 			writeJavaFile(daoDir, daoClassName, daoString);
+
+			final EhcacheItem ehcacheItem = new EhcacheItem(entityPackageName + "." + entityClassName, "10000", "false",
+					"true", "100000");
+			ehcacheConfig.addItem(ehcacheItem);
 		}
+
+		final String ehcacheDir = Files.toUnixPath(outputDir);
+		final Template ehcacheTemplate = getTemplate("ehcache.ftl");
+		final Map<String, Object> ehcacheModel = Maps.newHashMap();
+		ehcacheModel.put("config", ehcacheConfig);
+		final String ehcacheString = FreeMarkers.render(ehcacheTemplate, ehcacheModel);
+		writeFile(ehcacheDir, "ehcache.xml", ehcacheString);
 	}
 
 	private static String getPackageDir(String outputDir, String packageName) {
@@ -89,15 +103,19 @@ public class EntityGenerator {
 	}
 
 	private static void writeJavaFile(String dir, String className, String content) {
-		try {
-			FileUtils.writeStringToFile(new File(dir, getJavaFilename(className)), content, Constants.UTF8_CHARSET);
-		} catch (IOException e) {
-			throw Exceptions.unchecked(e);
-		}
+		writeFile(dir, getJavaFilename(className), content);
 	}
 
 	private static String getJavaFilename(String className) {
 		return className + ".java";
+	}
+
+	private static void writeFile(String dir, String filename, String content) {
+		try {
+			FileUtils.writeStringToFile(new File(dir, filename), content, Constants.UTF8_CHARSET);
+		} catch (IOException e) {
+			throw Exceptions.unchecked(e);
+		}
 	}
 
 	private static String mapEntityClassName(String tableName, Map<String, String> tableMapping) {
