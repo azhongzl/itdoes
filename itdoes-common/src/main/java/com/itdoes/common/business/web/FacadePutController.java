@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.itdoes.common.business.EntityPair;
+import com.itdoes.common.business.Permissions;
 import com.itdoes.common.core.Result;
 import com.itdoes.common.core.cglib.CglibMapper;
 import com.itdoes.common.core.web.HttpResults;
@@ -30,7 +31,10 @@ public class FacadePutController extends FacadeBaseController {
 			@Valid @ModelAttribute("entity") T entity, ServletRequest request) {
 		final EntityPair<T, ID> pair = env.getEntityPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
-		facadeService.put(pair, entity, oldEntity);
+
+		Permissions.handlePutSecureFields(pair, entity, oldEntity);
+
+		facadeService.save(pair, entity);
 		return HttpResults.success(entity);
 	}
 

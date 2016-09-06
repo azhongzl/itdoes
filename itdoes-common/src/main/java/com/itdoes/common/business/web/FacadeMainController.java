@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.itdoes.common.business.EntityPair;
+import com.itdoes.common.business.Permissions;
 import com.itdoes.common.core.Result;
 import com.itdoes.common.core.web.HttpResults;
 import com.itdoes.common.core.web.MediaTypes;
@@ -30,6 +31,9 @@ public class FacadeMainController extends FacadeBaseController {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
 		final Page<T> page = facadeService.search(pair, buildSpecification(pair.getEntityClass(), request),
 				buildPageRequest(pageNo, pageSize, pageSort));
+
+		Permissions.handleGetSecureFields(pair, page.getContent());
+
 		return HttpResults.success(page);
 	}
 
@@ -44,6 +48,9 @@ public class FacadeMainController extends FacadeBaseController {
 	public <T, ID extends Serializable> Result get(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
 		final T entity = facadeService.get(pair, convertId(pair, id));
+
+		Permissions.handleGetSecureFields(pair, entity);
+
 		return HttpResults.success(entity);
 	}
 

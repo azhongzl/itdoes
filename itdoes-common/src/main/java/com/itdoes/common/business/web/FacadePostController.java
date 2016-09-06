@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.itdoes.common.business.EntityPair;
+import com.itdoes.common.business.Permissions;
 import com.itdoes.common.core.Result;
 import com.itdoes.common.core.util.Reflections;
 import com.itdoes.common.core.web.HttpResults;
@@ -27,7 +28,10 @@ public class FacadePostController extends FacadeBaseController {
 	public <T, ID extends Serializable> Result post(@PathVariable(value = "ec") String ec,
 			@Valid @ModelAttribute("entity") T entity) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
-		facadeService.post(pair, entity);
+
+		Permissions.handlePostSecureFields(pair, entity);
+
+		facadeService.save(pair, entity);
 		return HttpResults.success(entity);
 	}
 
