@@ -1,26 +1,26 @@
 package com.itdoes.common.business.service;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.itdoes.common.business.Envs;
 import com.itdoes.common.business.Envs.EntityPair;
 import com.itdoes.common.business.Permissions;
+import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
-import com.itdoes.common.core.jpa.SearchFilter;
-import com.itdoes.common.core.jpa.Specifications;
 import com.itdoes.common.core.util.Reflections;
 
 /**
@@ -48,11 +48,10 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		entityPairs = Envs.getEntityPairs(entityPackage, applicationContext);
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T extends BaseEntity> Page<T> search(String ec, List<SearchFilter> filters, PageRequest pageRequest) {
+	public <T extends BaseEntity> Page<T> search(String ec, Specification<T> specification, PageRequest pageRequest) {
 		final EntityPair pair = getEntityPair(ec);
-		final Page<T> page = (Page<T>) pair.getDao().findAll(Specifications.build(pair.getEntityClass(), filters),
-				pageRequest);
+		final BaseDao<T, ? extends Serializable> dao = pair.getDao();
+		final Page<T> page = dao.findAll(specification, pageRequest);
 
 		Permissions.handleGetSecureFields(pair, page.getContent());
 
@@ -69,9 +68,10 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		return entity;
 	}
 
-	public long count(String ec, List<SearchFilter> filters) {
+	public <T extends BaseEntity> long count(String ec, Specification<T> specification) {
 		final EntityPair pair = getEntityPair(ec);
-		return pair.getDao().count(Specifications.build(pair.getEntityClass(), filters));
+		final BaseDao<T, ? extends Serializable> dao = pair.getDao();
+		return dao.count(specification);
 	}
 
 	@Transactional(readOnly = false)
@@ -101,9 +101,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 
 	public EntityPair getEntityPair(String ec) {
 		final EntityPair pair = entityPairs.get(ec);
-		if (pair == null) {
-			throw new IllegalArgumentException("Cannot find EntityPair for \"" + ec + "\" in FacadeService");
-		}
+		Validate.notNull(pair, "Cannot find EntityPair [%s] in FacadeService", ec);
 		return pair;
 	}
 

@@ -14,12 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
 import com.google.common.collect.Lists;
 import com.itdoes.common.core.jpa.SearchFilter;
 import com.itdoes.common.core.jpa.SearchFilter.Operator;
+import com.itdoes.common.core.jpa.Specifications;
 
 /**
  * <pre>
@@ -59,7 +61,11 @@ public abstract class BaseController {
 		this.maxPageSize = maxPageSize;
 	}
 
-	protected List<SearchFilter> buildFilters(ServletRequest request) {
+	protected <T> Specification<T> buildSpecification(Class<T> clazz, ServletRequest request) {
+		return Specifications.build(clazz, buildFilters(request));
+	}
+
+	private List<SearchFilter> buildFilters(ServletRequest request) {
 		final List<SearchFilter> filters = Lists.newArrayList();
 
 		final Enumeration<String> paramNames = request.getParameterNames();
