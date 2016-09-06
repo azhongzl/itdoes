@@ -1,7 +1,10 @@
 package com.itdoes.common.business.web;
 
+import java.io.Serializable;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.itdoes.common.business.Envs.EntityPair;
 import com.itdoes.common.business.service.FacadeService;
 
 /**
@@ -72,4 +75,8 @@ public abstract class FacadeBaseController extends BaseController {
 
 	@Autowired
 	protected FacadeService facadeService;
+
+	public Serializable convertId(EntityPair pair, String id) {
+		return convertId(id, pair.getIdField().getType());
+	}
 }

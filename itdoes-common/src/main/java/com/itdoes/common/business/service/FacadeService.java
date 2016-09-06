@@ -21,7 +21,6 @@ import com.itdoes.common.business.Envs.EntityPair;
 import com.itdoes.common.business.Permissions;
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
-import com.itdoes.common.core.util.Reflections;
 
 /**
  * @author Jalen Zhong
@@ -58,9 +57,8 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		return page;
 	}
 
-	public BaseEntity get(String ec, String idString) {
+	public BaseEntity get(String ec, Serializable id) {
 		final EntityPair pair = getEntityPair(ec);
-		final Serializable id = convertId(idString, pair.getIdField().getType());
 		final BaseEntity entity = pair.getDao().findOne(id);
 
 		Permissions.handleGetSecureFields(pair, entity);
@@ -93,9 +91,8 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 	}
 
 	@Transactional(readOnly = false)
-	public void delete(String ec, String idString) {
+	public void delete(String ec, Serializable id) {
 		final EntityPair pair = getEntityPair(ec);
-		final Serializable id = convertId(idString, pair.getIdField().getType());
 		pair.getDao().delete(id);
 	}
 
@@ -107,9 +104,5 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 
 	public Set<String> getEntityClassSimpleNames() {
 		return entityPairs.keySet();
-	}
-
-	private Serializable convertId(String id, Class<?> idClass) {
-		return (Serializable) Reflections.convert(id, idClass);
 	}
 }

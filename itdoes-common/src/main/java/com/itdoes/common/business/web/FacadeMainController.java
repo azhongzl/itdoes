@@ -40,13 +40,15 @@ public class FacadeMainController extends FacadeBaseController {
 
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_GET + "/{id}", method = RequestMethod.GET)
 	public Result get(@PathVariable("ec") String ec, @PathVariable("id") String id) {
-		final BaseEntity entity = facadeService.get(ec, id);
+		final EntityPair pair = facadeService.getEntityPair(ec);
+		final BaseEntity entity = facadeService.get(ec, convertId(pair, id));
 		return HttpResults.success(entity);
 	}
 
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_DELETE + "/{id}")
 	public Result delete(@PathVariable("ec") String ec, @PathVariable("id") String id) {
-		facadeService.delete(ec, id);
+		final EntityPair pair = facadeService.getEntityPair(ec);
+		facadeService.delete(ec, convertId(pair, id));
 		return HttpResults.success();
 	}
 }

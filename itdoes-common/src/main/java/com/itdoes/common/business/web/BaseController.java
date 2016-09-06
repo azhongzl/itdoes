@@ -1,6 +1,7 @@
 package com.itdoes.common.business.web;
 
 import java.beans.PropertyEditorSupport;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -22,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.itdoes.common.core.jpa.SearchFilter;
 import com.itdoes.common.core.jpa.SearchFilter.Operator;
 import com.itdoes.common.core.jpa.Specifications;
+import com.itdoes.common.core.util.Reflections;
 
 /**
  * <pre>
@@ -129,6 +131,10 @@ public abstract class BaseController {
 		}
 
 		return new PageRequest(pageNo - 1, pageSize, sort);
+	}
+
+	public Serializable convertId(String id, Class<?> idClass) {
+		return (Serializable) Reflections.convert(id, idClass);
 	}
 
 	@InitBinder
