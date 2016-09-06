@@ -29,9 +29,9 @@ public class FacadePutController extends FacadeBaseController {
 	@RequestMapping(value = "/{ec}/" + FacadeMainController.FACADE_URL_PUT + "/{id}", method = RequestMethod.POST)
 	public <T, ID extends Serializable> Result put(@PathVariable("ec") String ec,
 			@Valid @ModelAttribute("entity") T entity, ServletRequest request) {
-		final EntityPair<T, ID> pair = env.getEntityPair(ec);
-		final T oldEntity = (T) request.getAttribute("oldEntity");
+		final EntityPair<T, ID> pair = getEntityPair(ec);
 
+		final T oldEntity = (T) request.getAttribute("oldEntity");
 		Permissions.handlePutSecureFields(pair, entity, oldEntity);
 
 		facadeService.save(pair, entity);
@@ -42,7 +42,7 @@ public class FacadePutController extends FacadeBaseController {
 	@ModelAttribute
 	public <T, ID extends Serializable> void getEntity(@PathVariable("ec") String ec, @PathVariable("id") String id,
 			Model model, ServletRequest request) {
-		final EntityPair<T, ID> pair = env.getEntityPair(ec);
+		final EntityPair<T, ID> pair = getEntityPair(ec);
 
 		final T entity = facadeService.get(pair, convertId(pair, id));
 		model.addAttribute("entity", entity);
