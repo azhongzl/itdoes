@@ -1,12 +1,12 @@
 package com.itdoes.common.business;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
-import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.core.util.Reflections;
 
 /**
@@ -46,8 +46,7 @@ public class Permissions {
 	private static interface SecureFieldHandler {
 		SecureFieldHandler GET = new SecureFieldHandler() {
 			@Override
-			public void handle(Subject subject, String entityName, String secureFieldName, BaseEntity entity,
-					BaseEntity oldEntity) {
+			public <T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity) {
 				if (!subject.isPermitted(Permissions.getFieldReadPermission(entityName, secureFieldName))) {
 					Reflections.invokeSet(entity, secureFieldName, null);
 				}
@@ -55,8 +54,7 @@ public class Permissions {
 		};
 		SecureFieldHandler POST = new SecureFieldHandler() {
 			@Override
-			public void handle(Subject subject, String entityName, String secureFieldName, BaseEntity entity,
-					BaseEntity oldEntity) {
+			public <T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity) {
 				if (!subject.isPermitted(Permissions.getFieldWritePermission(entityName, secureFieldName))) {
 					Reflections.invokeSet(entity, secureFieldName, null);
 				}
@@ -64,42 +62,41 @@ public class Permissions {
 		};
 		SecureFieldHandler PUT = new SecureFieldHandler() {
 			@Override
-			public void handle(Subject subject, String entityName, String secureFieldName, BaseEntity entity,
-					BaseEntity oldEntity) {
+			public <T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity) {
 				if (!subject.isPermitted(Permissions.getFieldWritePermission(entityName, secureFieldName))) {
 					Reflections.invokeSet(entity, secureFieldName, Reflections.invokeGet(oldEntity, secureFieldName));
 				}
 			}
 		};
 
-		void handle(Subject subject, String entityName, String secureFieldName, BaseEntity entity,
-				BaseEntity oldEntity);
+		<T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity);
 	}
 
-	public static void handleGetSecureFields(EntityPair pair, List<? extends BaseEntity> entityList) {
+	public static <T, ID extends Serializable> void handleGetSecureFields(EntityPair<T, ID> pair, List<T> entityList) {
 		if (!pair.hasSecureFields()) {
 			return;
 		}
 
-		for (BaseEntity entity : entityList) {
+		for (T entity : entityList) {
 			handleGetSecureFields(pair, entity);
 		}
 	}
 
-	public static void handleGetSecureFields(EntityPair pair, BaseEntity entity) {
+	public static <T, ID extends Serializable> void handleGetSecureFields(EntityPair<T, ID> pair, T entity) {
 		handleSecureFields(pair, SecureFieldHandler.GET, entity, null);
 	}
 
-	public static void handlePostSecureFields(EntityPair pair, BaseEntity entity) {
+	public static <T, ID extends Serializable> void handlePostSecureFields(EntityPair<T, ID> pair, T entity) {
 		handleSecureFields(pair, SecureFieldHandler.POST, entity, null);
 	}
 
-	public static void handlePutSecureFields(EntityPair pair, BaseEntity entity, BaseEntity oldEntity) {
+	public static <T, ID extends Serializable> void handlePutSecureFields(EntityPair<T, ID> pair, T entity,
+			T oldEntity) {
 		handleSecureFields(pair, SecureFieldHandler.PUT, entity, oldEntity);
 	}
 
-	private static void handleSecureFields(EntityPair pair, SecureFieldHandler handler, BaseEntity entity,
-			BaseEntity oldEntity) {
+	private static <T, ID extends Serializable> void handleSecureFields(EntityPair<T, ID> pair,
+			SecureFieldHandler handler, T entity, T oldEntity) {
 		if (!pair.hasSecureFields()) {
 			return;
 		}

@@ -1,5 +1,7 @@
 package com.itdoes.common.business.web;
 
+import java.io.Serializable;
+
 import javax.servlet.ServletRequest;
 import javax.validation.Valid;
 
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.itdoes.common.business.EntityPair;
-import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.core.Result;
 import com.itdoes.common.core.cglib.CglibMapper;
 import com.itdoes.common.core.web.HttpResults;
@@ -23,25 +24,27 @@ import com.itdoes.common.core.web.MediaTypes;
 @RestController
 @RequestMapping(value = FacadeBaseController.FACADE_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class FacadePutController extends FacadeBaseController {
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/{ec}/" + FacadeMainController.FACADE_URL_PUT + "/{id}", method = RequestMethod.POST)
-	public Result put(@PathVariable("ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity,
-			ServletRequest request) {
-		final EntityPair pair = env.getEntityPair(ec);
-		final BaseEntity oldEntity = (BaseEntity) request.getAttribute("oldEntity");
+	public <T, ID extends Serializable> Result put(@PathVariable("ec") String ec,
+			@Valid @ModelAttribute("entity") T entity, ServletRequest request) {
+		final EntityPair<T, ID> pair = env.getEntityPair(ec);
+		final T oldEntity = (T) request.getAttribute("oldEntity");
 		facadeService.put(pair, entity, oldEntity);
 		return HttpResults.success(entity);
 	}
 
+	@SuppressWarnings("unchecked")
 	@ModelAttribute
-	public void getEntity(@PathVariable("ec") String ec, @PathVariable("id") String id, Model model,
-			ServletRequest request) {
-		final EntityPair pair = env.getEntityPair(ec);
+	public <T, ID extends Serializable> void getEntity(@PathVariable("ec") String ec, @PathVariable("id") String id,
+			Model model, ServletRequest request) {
+		final EntityPair<T, ID> pair = env.getEntityPair(ec);
 
-		final BaseEntity entity = facadeService.get(pair, id);
+		final T entity = facadeService.get(pair, convertId(pair, id));
 		model.addAttribute("entity", entity);
 
 		if (pair.hasSecureFields()) {
-			final BaseEntity oldEntity = (BaseEntity) CglibMapper.copy(entity);
+			final T oldEntity = (T) CglibMapper.copy(entity);
 			request.setAttribute("oldEntity", oldEntity);
 		}
 	}

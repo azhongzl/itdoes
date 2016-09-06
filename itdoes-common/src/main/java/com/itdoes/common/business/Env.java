@@ -2,7 +2,6 @@ package com.itdoes.common.business;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +14,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.google.common.collect.Maps;
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.business.entity.SecureColumn;
@@ -27,11 +27,15 @@ import com.itdoes.common.core.util.Reflections;
  * @author Jalen Zhong
  */
 public class Env implements ApplicationContextAware {
+	public static String getDaoClassName(String entityClassName) {
+		return entityClassName + "Dao";
+	}
+
 	private ApplicationContext context;
 
 	private String entityPackage;
 
-	private Map<String, EntityPair> entityPairMap;
+	private final Map<String, EntityPair<?, ? extends Serializable>> entityPairMap = Maps.newHashMap();
 
 	@Override
 	public void setApplicationContext(ApplicationContext context) throws BeansException {
@@ -44,12 +48,13 @@ public class Env implements ApplicationContextAware {
 
 	@PostConstruct
 	public void init() {
-		entityPairMap = Env.buildEntityPairMap(entityPackage, context);
+		initEntityPairMap();
 	}
 
-	public EntityPair getEntityPair(String entityClassSimpleName) {
-		final EntityPair pair = entityPairMap.get(entityClassSimpleName);
-		Validate.notNull(pair, "Cannot find EntityPair [%s] in FacadeService", entityClassSimpleName);
+	@SuppressWarnings("unchecked")
+	public <T, ID extends Serializable> EntityPair<T, ID> getEntityPair(String entityClassSimpleName) {
+		final EntityPair<T, ID> pair = (EntityPair<T, ID>) entityPairMap.get(entityClassSimpleName);
+		Validate.notNull(pair, "Cannot find EntityPair for class [%s]", entityClassSimpleName);
 		return pair;
 	}
 
@@ -57,46 +62,35 @@ public class Env implements ApplicationContextAware {
 		return entityPairMap.keySet();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static Map<String, EntityPair> buildEntityPairMap(String entityPackage, ApplicationContext context) {
-		final List<Class<? extends BaseEntity>> entityClasses = (List) Reflections.getClasses(entityPackage,
+	private void initEntityPairMap() {
+		final List<Class<?>> entityClasses = Reflections.getClasses(entityPackage,
 				new Reflections.ClassFilter.SuperClassFilter(BaseEntity.class), Env.class.getClassLoader());
 
-		final Map<String, EntityPair> pairs = new HashMap<String, EntityPair>(entityClasses.size());
-		for (Class<? extends BaseEntity> entityClass : entityClasses) {
-			final String key = entityClass.getSimpleName();
-
-			// Id Field
-			final Field idField = Reflections.getFieldWithAnnotation(entityClass, Id.class);
-			if (idField == null) {
-				throw new IllegalArgumentException("Cannot find @Id annotation for class: " + key);
-			}
-
-			// Dao
-			final String daoBeanId = getDaoBeanId(key);
-			final BaseDao<? extends BaseEntity, ? extends Serializable> dao = (BaseDao<? extends BaseEntity, ? extends Serializable>) context
-					.getBean(daoBeanId);
-			if (dao == null) {
-				throw new IllegalArgumentException("Cannot find bean for id: " + daoBeanId);
-			}
-
-			// Secure Fields
-			final List<Field> secureFields = Reflections.getFieldsWithAnnotation(entityClass, SecureColumn.class);
-			// (Optional) Initialize for performance concern, can be removed if it is not readable
-			if (!Collections3.isEmpty(secureFields)) {
-				CglibMapper.getBeanCopier(entityClass);
-			}
-
-			pairs.put(key, new EntityPair(entityClass, idField, dao, secureFields));
+		for (Class<?> entityClass : entityClasses) {
+			initEntityPair(entityClass);
 		}
-		return pairs;
 	}
 
-	private static String getDaoBeanId(String entityClassName) {
-		return Springs.getBeanId(getDaoClassName(entityClassName));
-	}
+	@SuppressWarnings("unchecked")
+	private <T, ID extends Serializable> void initEntityPair(Class<T> entityClass) {
+		final String key = entityClass.getSimpleName();
 
-	public static String getDaoClassName(String entityClassName) {
-		return entityClassName + "Dao";
+		// Id Field
+		final Field idField = Reflections.getFieldWithAnnotation(entityClass, Id.class);
+		Validate.notNull(idField, "Cannot find @Id annotation for class [%s]", key);
+
+		// Dao
+		final String daoBeanId = Springs.getBeanId(getDaoClassName(key));
+		final BaseDao<T, ID> dao = (BaseDao<T, ID>) context.getBean(daoBeanId);
+		Validate.notNull(dao, "Cannot find bean for id [%s]", daoBeanId);
+
+		// Secure Fields
+		final List<Field> secureFields = Reflections.getFieldsWithAnnotation(entityClass, SecureColumn.class);
+		// (Optional) Initialize for performance concern, can be removed if it is not readable
+		if (!Collections3.isEmpty(secureFields)) {
+			CglibMapper.getBeanCopier(entityClass);
+		}
+
+		entityPairMap.put(key, new EntityPair<T, ID>(entityClass, idField, dao, secureFields));
 	}
 }

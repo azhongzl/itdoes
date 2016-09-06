@@ -80,7 +80,12 @@ public abstract class FacadeBaseController extends BaseController {
 	@Autowired
 	protected FacadeService facadeService;
 
-	public Serializable convertId(EntityPair pair, String id) {
-		return convertId(id, pair.getIdField().getType());
+	public <T, ID extends Serializable> EntityPair<T, ID> getEntityPair(String ec) {
+		return env.getEntityPair(ec);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T, ID extends Serializable> ID convertId(EntityPair<T, ID> pair, String id) {
+		return (ID) convertId(id, pair.getIdField().getType());
 	}
 }
