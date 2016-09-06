@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.itdoes.common.business.Env;
 import com.itdoes.common.business.Permissions;
 import com.itdoes.common.core.shiro.AbstractShiroFilterChainDefinitionMap;
@@ -16,6 +18,7 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 	private static final String PERMS_PATTERN = "perms[\"{0}\"]";
 	private static final String URL_ANY = "/**";
 
+	@Autowired
 	private Env env;
 
 	@Override
@@ -36,9 +39,5 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 	private void addDynamicDefinition(Map<String, String> dynamicDefinitions, String entityName, String command) {
 		dynamicDefinitions.put(FacadeBaseController.FACADE_URL_PREFIX + "/" + entityName + "/" + command + URL_ANY,
 				MessageFormat.format(PERMS_PATTERN, Permissions.getEntityPermission(entityName, command)));
-	}
-
-	public void setEnv(Env env) {
-		this.env = env;
 	}
 }
