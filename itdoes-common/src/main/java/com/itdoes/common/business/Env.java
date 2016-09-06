@@ -21,11 +21,11 @@ import com.itdoes.common.core.util.Reflections;
 /**
  * @author Jalen Zhong
  */
-public class Envs {
+public class Env {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Map<String, EntityPair> getEntityPairs(String entityPackage, ApplicationContext context) {
 		final List<Class<? extends BaseEntity>> entityClasses = (List) Reflections.getClasses(entityPackage,
-				new Reflections.ClassFilter.SuperClassFilter(BaseEntity.class), Envs.class.getClassLoader());
+				new Reflections.ClassFilter.SuperClassFilter(BaseEntity.class), Env.class.getClassLoader());
 
 		final Map<String, EntityPair> pairs = new HashMap<String, EntityPair>(entityClasses.size());
 		for (Class<? extends BaseEntity> entityClass : entityClasses) {
@@ -65,6 +65,6 @@ public class Envs {
 		return entityClassName + "Dao";
 	}
 
-	private Envs() {
+	private Env() {
 	}
 }

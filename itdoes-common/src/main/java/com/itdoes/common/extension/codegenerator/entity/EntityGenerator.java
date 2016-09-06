@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.itdoes.common.business.Envs;
+import com.itdoes.common.business.Env;
 import com.itdoes.common.core.Constants;
 import com.itdoes.common.core.freemarker.FreeMarkers;
 import com.itdoes.common.core.jdbc.SqlTypes;
@@ -72,7 +72,7 @@ public class EntityGenerator {
 			writeJavaFile(entityDir, entityClassName, entityString);
 
 			// Generate Dao
-			final String daoClassName = Envs.getDaoClassName(entityClassName);
+			final String daoClassName = Env.getDaoClassName(entityClassName);
 			final DaoConfig daoConfig = new DaoConfig(daoPackageName, entityPackageName, entityClassName, daoClassName,
 					mapIdType(tableName, table.getColumnList()));
 			final Map<String, Object> daoModel = Maps.newHashMap();
