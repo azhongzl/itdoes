@@ -1,4 +1,4 @@
-package com.itdoes.common.extension.codegenerator.java;
+package com.itdoes.common.extension.codegenerator.entity;
 
 import java.util.List;
 import java.util.Map;
@@ -14,8 +14,8 @@ import com.itdoes.common.core.util.PropertiesLoader;
  * @author Jalen Zhong
  */
 public class EntityGeneratorHelper {
-	private static final String OUTPUT_DIR = "/codegenerator/java";
-	private static final String CONFIG_DIR = "classpath:/codegenerator/java/";
+	private static final String OUTPUT_DIR = "/tmp/codegenerator/entity";
+	private static final String CONFIG_DIR = "classpath:/codegenerator/entity/";
 	private static final String TABLE_MAPPING_FILE = CONFIG_DIR + "table.mapping.properties";
 	private static final String COLUMN_MAPPING_FILE = CONFIG_DIR + "column.mapping.properties";
 	private static final String COLUMN_SECURE_FILE = CONFIG_DIR + "column.secure.properties";

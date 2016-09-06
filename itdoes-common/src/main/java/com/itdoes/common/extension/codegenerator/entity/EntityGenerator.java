@@ -1,4 +1,4 @@
-package com.itdoes.common.extension.codegenerator.java;
+package com.itdoes.common.extension.codegenerator.entity;
 
 import java.io.File;
 import java.io.IOException;
@@ -115,13 +115,13 @@ public class EntityGenerator {
 	}
 
 	private static class EntityFieldListResult {
-		private List<ColumnField> entityFieldList;
+		private List<EntityField> entityFieldList;
 		private boolean containSecureColumn;
 	}
 
 	private static EntityFieldListResult mapEntityFieldList(String tableName, List<Column> columnList,
 			Map<String, String> columnMapping, List<String> secureColumnList) {
-		final List<ColumnField> entityFieldList = Lists.newArrayList();
+		final List<EntityField> entityFieldList = Lists.newArrayList();
 		boolean containSecureColumn = false;
 		for (Column column : columnList) {
 			boolean secureColumn = false;
@@ -132,7 +132,7 @@ public class EntityGenerator {
 				}
 			}
 
-			final ColumnField entityField = new ColumnField(mapFieldName(tableName, column.getName(), columnMapping),
+			final EntityField entityField = new EntityField(mapFieldName(tableName, column.getName(), columnMapping),
 					mapFieldType(column.getType().getId()), column, secureColumn);
 			entityFieldList.add(entityField);
 		}
