@@ -26,7 +26,7 @@ public class FacadeMainController extends FacadeBaseController {
 			@RequestParam(value = "page_size", defaultValue = "-1") int pageSize,
 			@RequestParam(value = "page_sort", required = false) String pageSort, ServletRequest request) {
 		final EntityPair pair = facadeService.getEntityPair(ec);
-		final Page<? extends BaseEntity> page = facadeService.search(ec,
+		final Page<? extends BaseEntity> page = facadeService.search(pair,
 				buildSpecification(pair.getEntityClass(), request), buildPageRequest(pageNo, pageSize, pageSort));
 		return HttpResults.success(page);
 	}
@@ -34,21 +34,21 @@ public class FacadeMainController extends FacadeBaseController {
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_COUNT, method = RequestMethod.GET)
 	public Result count(@PathVariable("ec") String ec, ServletRequest request) {
 		final EntityPair pair = facadeService.getEntityPair(ec);
-		final long count = facadeService.count(ec, buildSpecification(pair.getEntityClass(), request));
+		final long count = facadeService.count(pair, buildSpecification(pair.getEntityClass(), request));
 		return HttpResults.success(count);
 	}
 
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_GET + "/{id}", method = RequestMethod.GET)
 	public Result get(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		final EntityPair pair = facadeService.getEntityPair(ec);
-		final BaseEntity entity = facadeService.get(ec, convertId(pair, id));
+		final BaseEntity entity = facadeService.get(pair, convertId(pair, id));
 		return HttpResults.success(entity);
 	}
 
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_DELETE + "/{id}")
 	public Result delete(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		final EntityPair pair = facadeService.getEntityPair(ec);
-		facadeService.delete(ec, convertId(pair, id));
+		facadeService.delete(pair, convertId(pair, id));
 		return HttpResults.success();
 	}
 }

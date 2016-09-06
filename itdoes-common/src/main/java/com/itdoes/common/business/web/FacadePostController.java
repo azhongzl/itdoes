@@ -24,7 +24,8 @@ import com.itdoes.common.core.web.MediaTypes;
 public class FacadePostController extends FacadeBaseController {
 	@RequestMapping(value = "/{ec}/" + FacadeMainController.FACADE_URL_POST, method = RequestMethod.POST)
 	public Result post(@PathVariable(value = "ec") String ec, @Valid @ModelAttribute("entity") BaseEntity entity) {
-		facadeService.post(ec, entity);
+		final EntityPair pair = facadeService.getEntityPair(ec);
+		facadeService.post(pair, entity);
 		return HttpResults.success(entity);
 	}
 

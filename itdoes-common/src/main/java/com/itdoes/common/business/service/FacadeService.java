@@ -47,8 +47,8 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		entityPairs = Envs.getEntityPairs(entityPackage, applicationContext);
 	}
 
-	public <T extends BaseEntity> Page<T> search(String ec, Specification<T> specification, PageRequest pageRequest) {
-		final EntityPair pair = getEntityPair(ec);
+	public <T extends BaseEntity> Page<T> search(EntityPair pair, Specification<T> specification,
+			PageRequest pageRequest) {
 		final BaseDao<T, ? extends Serializable> dao = pair.getDao();
 		final Page<T> page = dao.findAll(specification, pageRequest);
 
@@ -57,8 +57,7 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		return page;
 	}
 
-	public BaseEntity get(String ec, Serializable id) {
-		final EntityPair pair = getEntityPair(ec);
+	public BaseEntity get(EntityPair pair, Serializable id) {
 		final BaseEntity entity = pair.getDao().findOne(id);
 
 		Permissions.handleGetSecureFields(pair, entity);
@@ -66,33 +65,27 @@ public class FacadeService extends BaseService implements ApplicationContextAwar
 		return entity;
 	}
 
-	public <T extends BaseEntity> long count(String ec, Specification<T> specification) {
-		final EntityPair pair = getEntityPair(ec);
+	public <T extends BaseEntity> long count(EntityPair pair, Specification<T> specification) {
 		final BaseDao<T, ? extends Serializable> dao = pair.getDao();
 		return dao.count(specification);
 	}
 
 	@Transactional(readOnly = false)
-	public <T extends BaseEntity> void post(String ec, T entity) {
-		final EntityPair pair = getEntityPair(ec);
-
+	public <T extends BaseEntity> void post(EntityPair pair, T entity) {
 		Permissions.handlePostSecureFields(pair, entity);
 
 		pair.getDao().save(entity);
 	}
 
 	@Transactional(readOnly = false)
-	public <T extends BaseEntity> void put(String ec, T entity, T oldEntity) {
-		final EntityPair pair = getEntityPair(ec);
-
+	public <T extends BaseEntity> void put(EntityPair pair, T entity, T oldEntity) {
 		Permissions.handlePutSecureFields(pair, entity, oldEntity);
 
 		pair.getDao().save(entity);
 	}
 
 	@Transactional(readOnly = false)
-	public void delete(String ec, Serializable id) {
-		final EntityPair pair = getEntityPair(ec);
+	public void delete(EntityPair pair, Serializable id) {
 		pair.getDao().delete(id);
 	}
 
