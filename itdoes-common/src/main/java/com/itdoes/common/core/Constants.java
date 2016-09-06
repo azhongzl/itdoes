@@ -16,4 +16,6 @@ public interface Constants {
 			"float", "for", "if", "implements", "import", "instanceof", "int", "interface", "long", "native", "new",
 			"package", "private", "protected", "public", "return", "strictfp", "short", "static", "super", "switch",
 			"synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile", "while");
+
+	String LINE_SEPARATOR = System.getProperty("line.separator");
 }

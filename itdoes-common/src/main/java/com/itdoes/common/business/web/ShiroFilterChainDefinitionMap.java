@@ -1,7 +1,7 @@
 package com.itdoes.common.business.web;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,7 +21,7 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 	@Override
 	protected Map<String, String> getDynamicDefinitions() {
 		final Set<String> entityNames = env.getEntityClassSimpleNames();
-		final Map<String, String> dynamicDefinitions = new HashMap<String, String>(entityNames.size() * 6);
+		final Map<String, String> dynamicDefinitions = new LinkedHashMap<String, String>(entityNames.size() * 6);
 		for (String entityName : entityNames) {
 			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_SEARCH);
 			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_COUNT);
