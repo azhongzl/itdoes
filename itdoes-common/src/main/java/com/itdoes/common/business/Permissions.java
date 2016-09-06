@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
-import com.itdoes.common.business.Envs.EntityPair;
 import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.core.util.Reflections;
 

@@ -16,8 +16,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.business.Envs;
-import com.itdoes.common.business.Envs.EntityPair;
 import com.itdoes.common.business.Permissions;
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;

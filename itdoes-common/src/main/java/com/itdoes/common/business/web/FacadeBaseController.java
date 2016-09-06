@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.itdoes.common.business.Envs.EntityPair;
+import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.business.service.FacadeService;
 
 /**
