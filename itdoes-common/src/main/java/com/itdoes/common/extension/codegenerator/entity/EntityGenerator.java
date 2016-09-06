@@ -26,6 +26,7 @@ import com.itdoes.common.core.util.Urls;
 import com.itdoes.common.extension.codegenerator.entity.EhcacheConfig.EhcacheItem;
 import com.itdoes.common.extension.codegenerator.entity.EntityConfig.EntityField;
 
+import freemarker.template.Configuration;
 import freemarker.template.Template;
 
 /**
@@ -38,13 +39,15 @@ public class EntityGenerator {
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
 			String outputDir, String basePackageName, Map<String, String> tableMapping,
 			Map<String, String> columnMapping, List<String> secureColumnList, String idGeneratedValue) {
+		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
+
 		final String entityPackageName = basePackageName + ".entity";
 		final String entityDir = getPackageDir(outputDir, entityPackageName);
-		final Template entityTemplate = getTemplate("Entity.ftl");
+		final Template entityTemplate = getTemplate(freeMarkerConfig, "Entity.ftl");
 
 		final String daoPackageName = basePackageName + ".dao";
 		final String daoDir = getPackageDir(outputDir, daoPackageName);
-		final Template daoTemplate = getTemplate("Dao.ftl");
+		final Template daoTemplate = getTemplate(freeMarkerConfig, "Dao.ftl");
 
 		final String realIdGeneratedValue = StringUtils.isBlank(idGeneratedValue) ? DEFAULT_ID_GENERATED_VALUE
 				: idGeneratedValue;
@@ -83,7 +86,7 @@ public class EntityGenerator {
 		}
 
 		final String ehcacheDir = Files.toUnixPath(outputDir);
-		final Template ehcacheTemplate = getTemplate("ehcache.ftl");
+		final Template ehcacheTemplate = getTemplate(freeMarkerConfig, "ehcache.ftl");
 		final Map<String, Object> ehcacheModel = Maps.newHashMap();
 		ehcacheModel.put("config", ehcacheConfig);
 		final String ehcacheString = FreeMarkers.render(ehcacheTemplate, ehcacheModel);
@@ -94,8 +97,8 @@ public class EntityGenerator {
 		return Urls.concat(Files.toUnixPath(outputDir), Reflections.packageToPath(packageName));
 	}
 
-	private static Template getTemplate(String templateName) {
-		return FreeMarkers.getTemplate(TEMPLATE_DIR, templateName);
+	private static Template getTemplate(Configuration freeMarkerConfig, String templateName) {
+		return FreeMarkers.getTemplate(freeMarkerConfig, templateName);
 	}
 
 	private static String getSerialVersionUIDStr(String className) {
