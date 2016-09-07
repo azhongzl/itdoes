@@ -97,7 +97,7 @@ public class EntityGenerator {
 		final Map<String, Object> ehcacheModel = Maps.newHashMap();
 		ehcacheModel.put("config", ehcacheConfig);
 		final String ehcacheString = FreeMarkers.render(ehcacheTemplate, ehcacheModel);
-		writeFile(ehcacheDir, "ehcache.xml", ehcacheString);
+		writeFile(ehcacheDir, ehcacheConfig.getName() + ".xml", ehcacheString);
 	}
 
 	private static String getPackageDir(String outputDir, String packageName) {
