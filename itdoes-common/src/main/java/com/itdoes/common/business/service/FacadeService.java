@@ -17,8 +17,7 @@ import com.itdoes.common.business.EntityPair;
 public class FacadeService extends BaseService {
 	public <T, ID extends Serializable> Page<T> search(EntityPair<T, ID> pair, Specification<T> specification,
 			PageRequest pageRequest) {
-		final Page<T> page = pair.getDao().findAll(specification, pageRequest);
-		return page;
+		return pair.getDao().findAll(specification, pageRequest);
 	}
 
 	public <T, ID extends Serializable> long count(EntityPair<T, ID> pair, Specification<T> specification) {
@@ -26,8 +25,7 @@ public class FacadeService extends BaseService {
 	}
 
 	public <T, ID extends Serializable> T get(EntityPair<T, ID> pair, ID id) {
-		final T entity = pair.getDao().findOne(id);
-		return entity;
+		return pair.getDao().findOne(id);
 	}
 
 	@Transactional(readOnly = false)

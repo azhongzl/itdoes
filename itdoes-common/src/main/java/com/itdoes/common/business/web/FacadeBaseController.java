@@ -80,6 +80,9 @@ public abstract class FacadeBaseController extends BaseController {
 	@Autowired
 	protected FacadeService facadeService;
 
+	@Autowired
+	protected FacadeServiceFieldSecurer facadeServiceFieldSecurer;
+
 	public <T, ID extends Serializable> EntityPair<T, ID> getEntityPair(String ec) {
 		return env.getEntityPair(ec);
 	}
