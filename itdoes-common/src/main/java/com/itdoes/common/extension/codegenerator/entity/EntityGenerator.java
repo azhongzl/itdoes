@@ -40,7 +40,7 @@ public class EntityGenerator {
 	private static final String TEMPLATE_DIR = "classpath:/" + Reflections.packageToPath(EntityGenerator.class);
 
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
-			String outputDir, String basePackageName, Map<String, String> tableMapping,
+			String outputDir, String basePackageName, Map<String, String> tableMapping, List<String> tableSkipList,
 			Map<String, String> columnMapping, List<String> secureColumnList, String idGeneratedValue,
 			Map<String, String> ehcacheMap) {
 		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
@@ -62,6 +62,10 @@ public class EntityGenerator {
 		final List<Table> tableList = parser.parseTables();
 		for (Table table : tableList) {
 			final String tableName = table.getName();
+
+			if (tableSkipList.contains(tableName)) {
+				continue;
+			}
 
 			// Generate Entity
 			final String entityClassName = mapEntityClassName(tableName, tableMapping);
