@@ -3,6 +3,7 @@ package com.itdoes.common.core.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -23,6 +24,8 @@ public class TxtLoader {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TxtLoader.class);
 
 	private static final ResourceLoader RESOURCE_LOADER = new DefaultResourceLoader();
+
+	private static final List<Character> COMMENT_SIGNS = Arrays.asList(new Character[] { '#', ';' });
 
 	private static List<String> loadLineList(Charset encoding, String... paths) {
 		final List<String> lines = Lists.newArrayList();
@@ -45,6 +48,11 @@ public class TxtLoader {
 					}
 
 					final String formattedLine = StringUtils.trim(line);
+
+					if (COMMENT_SIGNS.contains(formattedLine.charAt(0))) {
+						continue;
+					}
+
 					if (!lines.contains(formattedLine)) {
 						lines.add(formattedLine);
 					}
