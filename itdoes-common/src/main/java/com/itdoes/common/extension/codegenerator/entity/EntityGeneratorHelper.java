@@ -19,6 +19,7 @@ public class EntityGeneratorHelper {
 	private static final String TABLE_MAPPING_FILE = CONFIG_DIR + "table.mapping.properties";
 	private static final String COLUMN_MAPPING_FILE = CONFIG_DIR + "column.mapping.properties";
 	private static final String COLUMN_SECURE_FILE = CONFIG_DIR + "column.secure.properties";
+	private static final String EHCACHE_FILE = CONFIG_DIR + "ehcache.properties";
 
 	public static void generateEntities(String basePackageName, String idGeneratedValue) {
 		final PropertiesLoader pl = new PropertiesLoader("classpath:/application.properties",
@@ -26,10 +27,11 @@ public class EntityGeneratorHelper {
 		final Map<String, String> tableMapping = toMap(TABLE_MAPPING_FILE);
 		final Map<String, String> columnMapping = toMap(COLUMN_MAPPING_FILE);
 		final List<String> secureColumnList = getSecureColumnList();
+		final Map<String, String> ehcacheMap = toMap(EHCACHE_FILE);
 
 		EntityGenerator.generateEntities(pl.getProperty("jdbc.driver"), pl.getProperty("jdbc.url"),
 				pl.getProperty("jdbc.username"), pl.getProperty("jdbc.password"), OUTPUT_DIR, basePackageName,
-				tableMapping, columnMapping, secureColumnList, idGeneratedValue);
+				tableMapping, columnMapping, secureColumnList, idGeneratedValue, ehcacheMap);
 	}
 
 	private static List<String> getSecureColumnList() {

@@ -23,7 +23,10 @@ import com.itdoes.common.core.util.Files;
 import com.itdoes.common.core.util.Reflections;
 import com.itdoes.common.core.util.Strings;
 import com.itdoes.common.core.util.Urls;
-import com.itdoes.common.extension.codegenerator.entity.EhcacheConfig.EhcacheItem;
+import com.itdoes.common.extension.codegenerator.entity.EhcacheConfig.Cache;
+import com.itdoes.common.extension.codegenerator.entity.EhcacheConfig.DefaultCache;
+import com.itdoes.common.extension.codegenerator.entity.EhcacheConfig.DiskStore;
+import com.itdoes.common.extension.codegenerator.entity.EhcacheConfig.Persistence;
 import com.itdoes.common.extension.codegenerator.entity.EntityConfig.EntityField;
 
 import freemarker.template.Configuration;
@@ -38,7 +41,8 @@ public class EntityGenerator {
 
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
 			String outputDir, String basePackageName, Map<String, String> tableMapping,
-			Map<String, String> columnMapping, List<String> secureColumnList, String idGeneratedValue) {
+			Map<String, String> columnMapping, List<String> secureColumnList, String idGeneratedValue,
+			Map<String, String> ehcacheMap) {
 		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
 
 		final String entityPackageName = basePackageName + ".entity";
@@ -52,7 +56,7 @@ public class EntityGenerator {
 		final String realIdGeneratedValue = StringUtils.isBlank(idGeneratedValue) ? DEFAULT_ID_GENERATED_VALUE
 				: idGeneratedValue;
 
-		final EhcacheConfig ehcacheConfig = new EhcacheConfig();
+		final EhcacheConfig ehcacheConfig = mapEhcacheConfig(ehcacheMap);
 
 		final MetaParser parser = new MetaParser(jdbcDriver, jdbcUrl, jdbcUsername, jdbcPassword);
 		final List<Table> tableList = parser.parseTables();
@@ -80,9 +84,8 @@ public class EntityGenerator {
 			final String daoString = FreeMarkers.render(daoTemplate, daoModel);
 			writeJavaFile(daoDir, daoClassName, daoString);
 
-			final EhcacheItem ehcacheItem = new EhcacheItem(entityPackageName + "." + entityClassName, "10000", "false",
-					"true", "100000");
-			ehcacheConfig.addItem(ehcacheItem);
+			final Cache cache = mapEhcacheCache(entityPackageName, entityClassName, ehcacheMap);
+			ehcacheConfig.addCache(cache);
 		}
 
 		final String ehcacheDir = Files.toUnixPath(outputDir);
@@ -208,6 +211,32 @@ public class EntityGenerator {
 		}
 
 		return pkType;
+	}
+
+	private static EhcacheConfig mapEhcacheConfig(Map<String, String> ehcacheMap) {
+		final String name = ehcacheMap.get("name");
+		final DiskStore diskStore = new DiskStore(ehcacheMap.get("diskStore.path"));
+		final Persistence persisence = new Persistence(ehcacheMap.get("defaultCache.persistence.strategy"),
+				ehcacheMap.get("defaultCache.persistence.synchronousWrites"));
+		final DefaultCache defaultCache = new DefaultCache(ehcacheMap.get("defaultCache.maxEntriesLocalHeap"),
+				ehcacheMap.get("defaultCache.maxEntriesLocalDisk"), ehcacheMap.get("defaultCache.eternal"),
+				ehcacheMap.get("defaultCache.timeToIdleSeconds"), ehcacheMap.get("defaultCache.timeToLiveSeconds"),
+				persisence);
+		return new EhcacheConfig(name, diskStore, defaultCache);
+	}
+
+	private static Cache mapEhcacheCache(String entityPackageName, String entityClassName,
+			Map<String, String> ehcacheMap) {
+		final Persistence persisence = new Persistence(
+				ehcacheMap.get("cache." + entityClassName + ".persistence.strategy"),
+				ehcacheMap.get("cache." + entityClassName + ".persistence.synchronousWrites"));
+		final Cache cache = new Cache(entityPackageName + "." + entityClassName,
+				ehcacheMap.get("cache." + entityClassName + ".maxEntriesLocalHeap"),
+				ehcacheMap.get("cache." + entityClassName + ".maxEntriesLocalDisk"),
+				ehcacheMap.get("cache." + entityClassName + ".eternal"),
+				ehcacheMap.get("cache." + entityClassName + ".timeToIdleSeconds"),
+				ehcacheMap.get("cache." + entityClassName + ".timeToLiveSeconds"), persisence);
+		return cache;
 	}
 
 	private EntityGenerator() {

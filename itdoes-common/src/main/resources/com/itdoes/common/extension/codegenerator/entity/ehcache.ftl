@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ehcache>
-<ehcache updateCheck="false" name="hibernateCache">
+<ehcache<#if config.name??> name="${config.name}"</#if> updateCheck="false">
 	<!-- http://ehcache.org/ehcache.xml -->
-	<diskStore path="java.io.tmpdir/ehcache/erp/hibernate" />
+<#if config.diskStore.path??>
+	<diskStore path="${config.diskStore.path}" />
+</#if>
 
 	<!-- Default cache setting -->
-	<defaultCache maxEntriesLocalHeap="10000" eternal="false" timeToIdleSeconds="300" timeToLiveSeconds="600"
-		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<defaultCache<#if config.defaultCache.maxEntriesLocalHeap??> maxEntriesLocalHeap="${config.defaultCache.maxEntriesLocalHeap}"</#if><#if config.defaultCache.maxEntriesLocalDisk??> maxEntriesLocalDisk="${config.defaultCache.maxEntriesLocalDisk}"</#if><#if config.defaultCache.eternal??> eternal="${config.defaultCache.eternal}"</#if><#if config.defaultCache.timeToIdleSeconds??> timeToIdleSeconds="${config.defaultCache.timeToIdleSeconds}"</#if><#if config.defaultCache.timeToLiveSeconds??> timeToLiveSeconds="${config.defaultCache.timeToLiveSeconds}"</#if>>
+<#if config.defaultCache.persistence.strategy??>
+		<persistence strategy="${config.defaultCache.persistence.strategy}"/>
+</#if>
+	</defaultCache>
+<#list config.cacheList as cache>
 
-	<!-- Specific cache setting -->
-<#list config.itemList as item>
-	<cache name="${item.name}" maxEntriesLocalHeap="${item.maxEntriesLocalHeap}" eternal="${item.eternal}" overflowToDisk="${item.overflowToDisk}"
-		maxEntriesLocalDisk="${item.maxEntriesLocalDisk}" />
+	<cache name="${cache.name}"<#if cache.maxEntriesLocalHeap??> maxEntriesLocalHeap="${cache.maxEntriesLocalHeap}"</#if><#if cache.maxEntriesLocalDisk??> maxEntriesLocalDisk="${cache.maxEntriesLocalDisk}"</#if><#if cache.eternal??> eternal="${cache.eternal}"</#if><#if cache.timeToIdleSeconds??> timeToIdleSeconds="${cache.timeToIdleSeconds}"</#if><#if cache.timeToLiveSeconds??> timeToLiveSeconds="${cache.timeToLiveSeconds}"</#if>>
+<#if cache.persistence.strategy??>
+		<persistence strategy="${cache.persistence.strategy}"/>
+</#if>
+	</cache>
 </#list>
 </ehcache>
