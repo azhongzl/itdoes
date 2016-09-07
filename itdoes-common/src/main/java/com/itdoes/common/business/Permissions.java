@@ -3,10 +3,13 @@ package com.itdoes.common.business;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
+import com.google.common.collect.Sets;
 import com.itdoes.common.core.util.Reflections;
 
 /**
@@ -18,6 +21,27 @@ public class Permissions {
 	private static final String PERM_READ = "read";
 	private static final String PERM_WRITE = "write";
 	private static final String PERM_ANY = "*";
+
+	public static Set<String> getAllPermissions(Env env) {
+		final Set<String> all = Sets.newHashSet();
+
+		for (Entry<String, EntityPair<?, ? extends Serializable>> entry : env.getEntityPairMap().entrySet()) {
+			final String entityName = entry.getKey();
+
+			// Add entity permission
+			all.add(getEntityAllPermission(entityName));
+
+			// Add field permission
+			final EntityPair<?, ? extends Serializable> pair = entry.getValue();
+			if (pair.hasSecureFields()) {
+				for (Field field : pair.getSecureFields()) {
+					all.add(getFieldAllPermission(entityName, field.getName()));
+				}
+			}
+		}
+
+		return all;
+	}
 
 	public static String getEntityAllPermission(String entityName) {
 		return entityName;

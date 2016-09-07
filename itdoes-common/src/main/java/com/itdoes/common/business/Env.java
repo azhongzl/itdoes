@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.Id;
@@ -31,15 +30,15 @@ public class Env implements ApplicationContextAware {
 		return entityClassName + "Dao";
 	}
 
-	private ApplicationContext context;
+	private ApplicationContext applicationContext;
 
 	private String entityPackage;
 
 	private final Map<String, EntityPair<?, ? extends Serializable>> entityPairMap = Maps.newHashMap();
 
 	@Override
-	public void setApplicationContext(ApplicationContext context) throws BeansException {
-		this.context = context;
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 
 	public void setEntityPackage(String entityPackage) {
@@ -51,15 +50,15 @@ public class Env implements ApplicationContextAware {
 		initEntityPairMap();
 	}
 
+	public Map<String, EntityPair<?, ? extends Serializable>> getEntityPairMap() {
+		return entityPairMap;
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T, ID extends Serializable> EntityPair<T, ID> getEntityPair(String entityClassSimpleName) {
 		final EntityPair<T, ID> pair = (EntityPair<T, ID>) entityPairMap.get(entityClassSimpleName);
 		Validate.notNull(pair, "Cannot find EntityPair for class [%s]", entityClassSimpleName);
 		return pair;
-	}
-
-	public Set<String> getEntityClassSimpleNames() {
-		return entityPairMap.keySet();
 	}
 
 	private void initEntityPairMap() {
@@ -81,7 +80,7 @@ public class Env implements ApplicationContextAware {
 
 		// Dao
 		final String daoBeanId = Springs.getBeanId(getDaoClassName(key));
-		final BaseDao<T, ID> dao = (BaseDao<T, ID>) context.getBean(daoBeanId);
+		final BaseDao<T, ID> dao = (BaseDao<T, ID>) applicationContext.getBean(daoBeanId);
 		Validate.notNull(dao, "Cannot find bean for id [%s]", daoBeanId);
 
 		// Secure Fields
