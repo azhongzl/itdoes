@@ -232,15 +232,21 @@ public class EntityGenerator {
 	private static Cache mapEhcacheCache(String entityPackageName, String entityClassName,
 			Map<String, String> ehcacheMap) {
 		final Persistence persisence = new Persistence(
-				ehcacheMap.get("cache." + entityClassName + ".persistence.strategy"),
-				ehcacheMap.get("cache." + entityClassName + ".persistence.synchronousWrites"));
+				mapEhcacheCacheValue(entityPackageName, entityClassName, "persistence.strategy", ehcacheMap),
+				mapEhcacheCacheValue(entityPackageName, entityClassName, "persistence.synchronousWrites", ehcacheMap));
 		final Cache cache = new Cache(entityPackageName + "." + entityClassName,
-				ehcacheMap.get("cache." + entityClassName + ".maxEntriesLocalHeap"),
-				ehcacheMap.get("cache." + entityClassName + ".maxEntriesLocalDisk"),
-				ehcacheMap.get("cache." + entityClassName + ".eternal"),
-				ehcacheMap.get("cache." + entityClassName + ".timeToIdleSeconds"),
-				ehcacheMap.get("cache." + entityClassName + ".timeToLiveSeconds"), persisence);
+				mapEhcacheCacheValue(entityPackageName, entityClassName, "maxEntriesLocalHeap", ehcacheMap),
+				mapEhcacheCacheValue(entityPackageName, entityClassName, "maxEntriesLocalDisk", ehcacheMap),
+				mapEhcacheCacheValue(entityPackageName, entityClassName, "eternal", ehcacheMap),
+				mapEhcacheCacheValue(entityPackageName, entityClassName, "timeToIdleSeconds", ehcacheMap),
+				mapEhcacheCacheValue(entityPackageName, entityClassName, "timeToLiveSeconds", ehcacheMap), persisence);
 		return cache;
+	}
+
+	private static String mapEhcacheCacheValue(String entityPackageName, String entityClassName, String key,
+			Map<String, String> ehcacheMap) {
+		final String value = ehcacheMap.get("cache." + entityClassName + "." + key);
+		return value != null ? value : ehcacheMap.get("templateCache." + key);
 	}
 
 	private EntityGenerator() {
