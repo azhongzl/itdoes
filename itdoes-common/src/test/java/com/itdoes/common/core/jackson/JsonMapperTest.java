@@ -46,9 +46,9 @@ import com.google.common.collect.Maps;
  * @author Jalen Zhong
  */
 public class JsonMapperTest {
-	private static final JsonMapper NON_DEFAULT = JsonMapperBuilder.newBuilder().nonDefault().build();
-	private static final JsonMapper NON_EMPTY = JsonMapperBuilder.newBuilder().nonEmpty().build();
-	private static final JsonMapper ALL = JsonMapperBuilder.newBuilder().build();
+	private static final JsonMapper NON_DEFAULT = new JsonMapper(ObjectMapperBuilder.newBuilder().nonDefault().build());
+	private static final JsonMapper NON_EMPTY = new JsonMapper(ObjectMapperBuilder.newBuilder().nonEmpty().build());
+	private static final JsonMapper ALL = new JsonMapper(ObjectMapperBuilder.newBuilder().build());
 
 	@Test
 	public void toJson() {
@@ -160,7 +160,7 @@ public class JsonMapperTest {
 
 	@Test
 	public void withJaxbAnnotation() {
-		JsonMapper mapper = JsonMapperBuilder.newBuilder().nonEmpty().registerModuleJaxb().build();
+		JsonMapper mapper = new JsonMapper(ObjectMapperBuilder.newBuilder().nonEmpty().registerModuleJaxb().build());
 		TestBeanWithJaxbAnnotation bean = new TestBeanWithJaxbAnnotation(1, "foo", 18);
 		assertThat(mapper.toJson(bean)).isEqualTo("{\"productName\":\"foo\",\"id\":1}");
 	}
@@ -205,7 +205,8 @@ public class JsonMapperTest {
 		assertThat(NON_DEFAULT.fromJson("\"One\"", TestEnum.class)).isEqualTo(TestEnum.One);
 		assertThat(NON_DEFAULT.fromJson("0", TestEnum.class)).isEqualTo(TestEnum.One);
 
-		JsonMapper mapper = JsonMapperBuilder.newBuilder().nonEmpty().enableEnumsUsingToString().build();
+		JsonMapper mapper = new JsonMapper(
+				ObjectMapperBuilder.newBuilder().nonEmpty().enableEnumsUsingToString().build());
 		assertThat(mapper.toJson(TestEnum.One)).isEqualTo("\"1\"");
 		assertThat(mapper.fromJson("\"1\"", TestEnum.class)).isEqualTo(TestEnum.One);
 	}
@@ -410,7 +411,8 @@ public class JsonMapperTest {
 		SimpleModule module = new SimpleModule("MoneyModule");
 		module.addSerializer(new MoneySerializer());
 		module.addDeserializer(Money.class, new MoneyDeserializer());
-		JsonMapper mapper = JsonMapperBuilder.newBuilder().nonDefault().registerModule(module).build();
+		JsonMapper mapper = new JsonMapper(
+				ObjectMapperBuilder.newBuilder().nonDefault().registerModule(module).build());
 
 		User user = new User();
 		user.setName("Foo");
@@ -494,7 +496,7 @@ public class JsonMapperTest {
 		TestBean bean = new TestBean("Foo");
 		bean.setDefaultValue("Bar");
 
-		JsonMapper mapper = JsonMapperBuilder.newBuilder().nonDefault().build();
+		JsonMapper mapper = new JsonMapper(ObjectMapperBuilder.newBuilder().nonDefault().build());
 		mapper.getMapper().setPropertyNamingStrategy(new LowerCaseNaming());
 		assertThat(mapper.toJson(bean)).isEqualTo("{\"name\":\"Foo\",\"defaultvalue\":\"Bar\"}");
 	}

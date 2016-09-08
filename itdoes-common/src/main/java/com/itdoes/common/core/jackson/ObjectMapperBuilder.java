@@ -13,9 +13,9 @@ import com.google.common.collect.Sets;
 /**
  * @author Jalen Zhong
  */
-public class JsonMapperBuilder {
-	public static JsonMapperBuilder newBuilder() {
-		return new JsonMapperBuilder();
+public class ObjectMapperBuilder {
+	public static ObjectMapperBuilder newBuilder() {
+		return new ObjectMapperBuilder();
 	}
 
 	private Include serializationInclusion;
@@ -25,58 +25,58 @@ public class JsonMapperBuilder {
 	private final Set<DeserializationFeature> disableDeserializationFeatures = Sets.newHashSet();
 	private final Set<Module> registerModules = Sets.newHashSet();
 
-	public JsonMapperBuilder setSerializationInclusion(Include include) {
+	public ObjectMapperBuilder setSerializationInclusion(Include include) {
 		serializationInclusion = include;
 		return this;
 	}
 
-	public JsonMapperBuilder enable(SerializationFeature feature) {
+	public ObjectMapperBuilder enable(SerializationFeature feature) {
 		enableSerializationFeatures.add(feature);
 		return this;
 	}
 
-	public JsonMapperBuilder enable(DeserializationFeature feature) {
+	public ObjectMapperBuilder enable(DeserializationFeature feature) {
 		enableDeserializationFeatures.add(feature);
 		return this;
 	}
 
-	public JsonMapperBuilder disable(SerializationFeature feature) {
+	public ObjectMapperBuilder disable(SerializationFeature feature) {
 		disableSerializationFeatures.add(feature);
 		return this;
 	}
 
-	public JsonMapperBuilder disable(DeserializationFeature feature) {
+	public ObjectMapperBuilder disable(DeserializationFeature feature) {
 		disableDeserializationFeatures.add(feature);
 		return this;
 	}
 
-	public JsonMapperBuilder registerModule(Module module) {
+	public ObjectMapperBuilder registerModule(Module module) {
 		registerModules.add(module);
 		return this;
 	}
 
-	public JsonMapperBuilder nonEmpty() {
+	public ObjectMapperBuilder nonEmpty() {
 		return setSerializationInclusion(Include.NON_EMPTY);
 	}
 
-	public JsonMapperBuilder nonDefault() {
+	public ObjectMapperBuilder nonDefault() {
 		return setSerializationInclusion(Include.NON_DEFAULT);
 	}
 
-	public JsonMapperBuilder enableEnumsUsingToString() {
+	public ObjectMapperBuilder enableEnumsUsingToString() {
 		return enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
 				.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
 	}
 
-	public JsonMapperBuilder disableFailOnUnknownProperties() {
+	public ObjectMapperBuilder disableFailOnUnknownProperties() {
 		return disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 	}
 
-	public JsonMapperBuilder registerModuleJaxb() {
+	public ObjectMapperBuilder registerModuleJaxb() {
 		return registerModule(new JaxbAnnotationModule());
 	}
 
-	public JsonMapper build() {
+	public ObjectMapper build() {
 		final ObjectMapper mapper = new ObjectMapper();
 
 		if (serializationInclusion != null) {
@@ -98,9 +98,9 @@ public class JsonMapperBuilder {
 			mapper.registerModule(module);
 		}
 
-		return new JsonMapper(mapper);
+		return mapper;
 	}
 
-	private JsonMapperBuilder() {
+	private ObjectMapperBuilder() {
 	}
 }
