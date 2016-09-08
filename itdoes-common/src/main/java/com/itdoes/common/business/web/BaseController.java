@@ -2,6 +2,8 @@ package com.itdoes.common.business.web;
 
 import java.beans.PropertyEditorSupport;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -153,6 +155,26 @@ public abstract class BaseController {
 			public String getAsText() {
 				final Date date = (Date) getValue();
 				return date != null ? String.valueOf(date.getTime()) : "";
+			}
+		});
+		binder.registerCustomEditor(LocalDateTime.class, new PropertyEditorSupport() {
+			@Override
+			public void setAsText(String value) {
+				if (StringUtils.isBlank(value)) {
+					setValue(null);
+				} else {
+					try {
+						setValue(LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+			@Override
+			public String getAsText() {
+				final LocalDateTime date = (LocalDateTime) getValue();
+				return date != null ? DateTimeFormatter.ISO_LOCAL_TIME.format(date) : "";
 			}
 		});
 	}
