@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
-import java.sql.Date;
 import java.sql.Ref;
 import java.sql.Struct;
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -36,9 +36,9 @@ public class SqlTypes {
 		SQL_JAVA_TYPE_MAP.put(Types.BINARY, byte[].class);
 		SQL_JAVA_TYPE_MAP.put(Types.VARBINARY, byte[].class);
 		SQL_JAVA_TYPE_MAP.put(Types.LONGVARBINARY, byte[].class);
-		SQL_JAVA_TYPE_MAP.put(Types.DATE, Date.class);
-		SQL_JAVA_TYPE_MAP.put(Types.TIME, Time.class);
-		SQL_JAVA_TYPE_MAP.put(Types.TIMESTAMP, Timestamp.class);
+		SQL_JAVA_TYPE_MAP.put(Types.DATE, LocalDate.class);
+		SQL_JAVA_TYPE_MAP.put(Types.TIME, LocalTime.class);
+		SQL_JAVA_TYPE_MAP.put(Types.TIMESTAMP, LocalDateTime.class);
 		SQL_JAVA_TYPE_MAP.put(Types.CLOB, Clob.class);
 		SQL_JAVA_TYPE_MAP.put(Types.BLOB, Blob.class);
 		SQL_JAVA_TYPE_MAP.put(Types.ARRAY, Array.class);
