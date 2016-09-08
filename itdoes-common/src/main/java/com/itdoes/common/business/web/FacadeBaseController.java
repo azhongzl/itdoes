@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.business.Env;
 import com.itdoes.common.business.service.FacadeService;
+import com.itdoes.common.business.service.FacadeServiceFieldSecurer;
 
 /**
  * <blockquote>

@@ -1,4 +1,4 @@
-package com.itdoes.common.business.web;
+package com.itdoes.common.business.service;
 
 import java.io.Serializable;
 
@@ -6,15 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.business.Permissions;
-import com.itdoes.common.business.service.FacadeService;
 import com.itdoes.common.core.util.Reflections;
 
 /**
  * @author Jalen Zhong
  */
+@Service
 public class FacadeServiceFieldSecurer {
 	@Autowired
 	private FacadeService facadeService;
