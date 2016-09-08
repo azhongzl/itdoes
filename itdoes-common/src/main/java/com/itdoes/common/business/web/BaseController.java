@@ -2,7 +2,9 @@ package com.itdoes.common.business.web;
 
 import java.beans.PropertyEditorSupport;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Enumeration;
@@ -25,6 +27,7 @@ import com.google.common.collect.Lists;
 import com.itdoes.common.core.jpa.SearchFilter;
 import com.itdoes.common.core.jpa.SearchFilter.Operator;
 import com.itdoes.common.core.jpa.Specifications;
+import com.itdoes.common.core.spring.propertyeditors.CustomLocalDateTimeEditor;
 import com.itdoes.common.core.util.Reflections;
 
 /**
@@ -157,14 +160,15 @@ public abstract class BaseController {
 				return date != null ? String.valueOf(date.getTime()) : "";
 			}
 		});
-		binder.registerCustomEditor(LocalDateTime.class, new PropertyEditorSupport() {
+		binder.registerCustomEditor(LocalDateTime.class, new CustomLocalDateTimeEditor(true));
+		binder.registerCustomEditor(LocalDate.class, new PropertyEditorSupport() {
 			@Override
 			public void setAsText(String value) {
 				if (StringUtils.isBlank(value)) {
 					setValue(null);
 				} else {
 					try {
-						setValue(LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+						setValue(LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -173,7 +177,27 @@ public abstract class BaseController {
 
 			@Override
 			public String getAsText() {
-				final LocalDateTime date = (LocalDateTime) getValue();
+				final LocalDate date = (LocalDate) getValue();
+				return date != null ? DateTimeFormatter.ISO_LOCAL_DATE.format(date) : "";
+			}
+		});
+		binder.registerCustomEditor(LocalTime.class, new PropertyEditorSupport() {
+			@Override
+			public void setAsText(String value) {
+				if (StringUtils.isBlank(value)) {
+					setValue(null);
+				} else {
+					try {
+						setValue(LocalTime.parse(value, DateTimeFormatter.ISO_LOCAL_TIME));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+			@Override
+			public String getAsText() {
+				final LocalTime date = (LocalTime) getValue();
 				return date != null ? DateTimeFormatter.ISO_LOCAL_TIME.format(date) : "";
 			}
 		});
