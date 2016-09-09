@@ -1,12 +1,9 @@
 package com.itdoes.common.business.web;
 
-import java.beans.PropertyEditorSupport;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -27,7 +24,9 @@ import com.google.common.collect.Lists;
 import com.itdoes.common.core.jpa.SearchFilter;
 import com.itdoes.common.core.jpa.SearchFilter.Operator;
 import com.itdoes.common.core.jpa.Specifications;
+import com.itdoes.common.core.spring.propertyeditors.CustomLocalDateEditor;
 import com.itdoes.common.core.spring.propertyeditors.CustomLocalDateTimeEditor;
+import com.itdoes.common.core.spring.propertyeditors.CustomLocalTimeEditor;
 import com.itdoes.common.core.util.Reflections;
 
 /**
@@ -144,62 +143,8 @@ public abstract class BaseController {
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
-		binder.registerCustomEditor(Date.class, new PropertyEditorSupport() {
-			@Override
-			public void setAsText(String value) {
-				if (StringUtils.isBlank(value)) {
-					setValue(null);
-				} else {
-					setValue(new Date(Long.valueOf(value)));
-				}
-			}
-
-			@Override
-			public String getAsText() {
-				final Date date = (Date) getValue();
-				return date != null ? String.valueOf(date.getTime()) : "";
-			}
-		});
-		binder.registerCustomEditor(LocalDateTime.class, new CustomLocalDateTimeEditor(true));
-		binder.registerCustomEditor(LocalDate.class, new PropertyEditorSupport() {
-			@Override
-			public void setAsText(String value) {
-				if (StringUtils.isBlank(value)) {
-					setValue(null);
-				} else {
-					try {
-						setValue(LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-
-			@Override
-			public String getAsText() {
-				final LocalDate date = (LocalDate) getValue();
-				return date != null ? DateTimeFormatter.ISO_LOCAL_DATE.format(date) : "";
-			}
-		});
-		binder.registerCustomEditor(LocalTime.class, new PropertyEditorSupport() {
-			@Override
-			public void setAsText(String value) {
-				if (StringUtils.isBlank(value)) {
-					setValue(null);
-				} else {
-					try {
-						setValue(LocalTime.parse(value, DateTimeFormatter.ISO_LOCAL_TIME));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-
-			@Override
-			public String getAsText() {
-				final LocalTime date = (LocalTime) getValue();
-				return date != null ? DateTimeFormatter.ISO_LOCAL_TIME.format(date) : "";
-			}
-		});
+		binder.registerCustomEditor(LocalDateTime.class, new CustomLocalDateTimeEditor());
+		binder.registerCustomEditor(LocalDate.class, new CustomLocalDateEditor());
+		binder.registerCustomEditor(LocalTime.class, new CustomLocalTimeEditor());
 	}
 }
