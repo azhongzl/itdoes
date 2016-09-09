@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.itdoes.common.core.util.Collections3;
+import com.itdoes.common.core.util.Reflections;
 
 /**
  * @author Jalen Zhong
@@ -34,24 +35,37 @@ public class Specifications {
 							expression = expression.get(names[i]);
 						}
 
+						Object value = filter.value;
+						if (value == null) {
+							continue;
+						}
+						if (value instanceof String) {
+							final String stringValue = (String) value;
+							if (StringUtils.isBlank(stringValue)) {
+								continue;
+							}
+
+							value = Reflections.convert(stringValue, expression.getJavaType());
+						}
+
 						switch (filter.operator) {
 						case EQ:
-							predicates.add(builder.equal(expression, filter.value));
+							predicates.add(builder.equal(expression, value));
 							break;
 						case LIKE:
-							predicates.add(builder.like(expression, "%" + filter.value + "%"));
+							predicates.add(builder.like(expression, "%" + value + "%"));
 							break;
 						case GT:
-							predicates.add(builder.greaterThan(expression, (Comparable) filter.value));
+							predicates.add(builder.greaterThan(expression, (Comparable) value));
 							break;
 						case LT:
-							predicates.add(builder.lessThan(expression, (Comparable) filter.value));
+							predicates.add(builder.lessThan(expression, (Comparable) value));
 							break;
 						case GTE:
-							predicates.add(builder.greaterThanOrEqualTo(expression, (Comparable) filter.value));
+							predicates.add(builder.greaterThanOrEqualTo(expression, (Comparable) value));
 							break;
 						case LTE:
-							predicates.add(builder.lessThanOrEqualTo(expression, (Comparable) filter.value));
+							predicates.add(builder.lessThanOrEqualTo(expression, (Comparable) value));
 							break;
 						default:
 							throw new IllegalArgumentException("Cannot find Operator: " + filter.operator);

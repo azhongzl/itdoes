@@ -8,6 +8,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -360,7 +363,12 @@ public class Reflections {
 	}
 
 	public static Object convert(String value, Class<?> toClass) {
-		if (toClass.equals(Integer.class)) {
+		Validate.notBlank(value, "Value is blank");
+		Validate.notNull(toClass, "ToClass is null");
+
+		if (toClass.equals(String.class)) {
+			return value;
+		} else if (toClass.equals(Integer.class)) {
 			return Integer.valueOf(value);
 		} else if (toClass.equals(Long.class)) {
 			return Long.valueOf(value);
@@ -374,8 +382,15 @@ public class Reflections {
 			return Double.valueOf(value);
 		} else if (toClass.equals(Boolean.class)) {
 			return Boolean.valueOf(value);
+		} else if (toClass.equals(LocalDateTime.class)) {
+			return LocalDateTime.parse(value);
+		} else if (toClass.equals(LocalDate.class)) {
+			return LocalDate.parse(value);
+		} else if (toClass.equals(LocalTime.class)) {
+			return LocalTime.parse(value);
 		}
-		return value;
+
+		throw new IllegalArgumentException("Class [" + toClass + "] is not supported for converting");
 	}
 
 	public static <T> T newInstance(Class<T> clazz) {
