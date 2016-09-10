@@ -16,6 +16,8 @@ import com.itdoes.common.core.util.Reflections;
  * @author Jalen Zhong
  */
 public class Permissions {
+	public static final String UPLOAD_PERMISSON_PREFIX = "upload";
+
 	private static final char ENTITY_FIELD_SEPARATOR = '.';
 	private static final char PERM_SEPARATOR = ':';
 	private static final String PERM_READ = "read";
@@ -24,6 +26,9 @@ public class Permissions {
 
 	public static Set<String> getAllPermissions(Env env) {
 		final Set<String> all = Sets.newHashSet();
+
+		// Upload permission
+		all.add(getUploadAllPermission());
 
 		for (Entry<String, EntityPair<?, ? extends Serializable>> entry : env.getEntityPairMap().entrySet()) {
 			final String entityName = entry.getKey();
@@ -41,6 +46,10 @@ public class Permissions {
 		}
 
 		return all;
+	}
+
+	public static String getUploadAllPermission() {
+		return UPLOAD_PERMISSON_PREFIX;
 	}
 
 	public static String getEntityAllPermission(String entityName) {

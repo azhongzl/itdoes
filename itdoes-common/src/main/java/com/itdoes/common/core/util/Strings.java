@@ -48,6 +48,19 @@ public class Strings {
 		return StringUtils.capitalize(underscoreToCamel(str));
 	}
 
+	public static String substring(String str, String toFind) {
+		if (StringUtils.isBlank(str) || StringUtils.isBlank(toFind)) {
+			return str;
+		}
+
+		final int index = str.indexOf(toFind);
+		if (index == -1) {
+			return str;
+		}
+
+		return str.substring(index + toFind.length());
+	}
+
 	private Strings() {
 	}
 }
