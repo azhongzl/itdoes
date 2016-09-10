@@ -5,7 +5,7 @@ package com.itdoes.common.core.jpa;
  */
 public class SearchFilter {
 	public enum Operator {
-		EQ, LIKE, GT, LT, GTE, LTE
+		EQ, LIKE, GT, LT, GTE, LTE, BTWN
 	}
 
 	public final String field;

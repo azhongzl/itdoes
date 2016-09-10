@@ -92,7 +92,18 @@ public abstract class BaseController {
 					operator = Operator.valueOf(names[1]);
 				}
 
-				final SearchFilter filter = new SearchFilter(field, operator, value);
+				final Object v;
+				if (operator == Operator.BTWN) {
+					final String[] values = StringUtils.split(value, FILTER_SEPARATOR);
+					Validate.isTrue(values.length == 2,
+							"Filter value for Operator BTWN should be in format <Value1>%s<Value2>, but now it is %s",
+							FILTER_SEPARATOR, value);
+					v = values;
+				} else {
+					v = value;
+				}
+
+				final SearchFilter filter = new SearchFilter(field, operator, v);
 				filters.add(filter);
 			}
 		}

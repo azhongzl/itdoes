@@ -11,8 +11,10 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.springframework.data.jpa.domain.Specification;
 
+import com.itdoes.common.core.jpa.SearchFilter.Operator;
 import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Reflections;
 
@@ -39,13 +41,18 @@ public class Specifications {
 						if (value == null) {
 							continue;
 						}
-						if (value instanceof String) {
-							final String stringValue = (String) value;
-							if (StringUtils.isBlank(stringValue)) {
+
+						Object value2 = null;
+						if (filter.operator == Operator.BTWN) {
+							final Object[] values = (Object[]) value;
+							if (Collections3.isEmpty(values) || values[0] == null || values[1] == null) {
 								continue;
 							}
 
-							value = Reflections.convert(stringValue, expression.getJavaType());
+							value = convertString(values[0], expression.getJavaType());
+							value2 = convertString(values[1], expression.getJavaType());
+						} else {
+							value = convertString(value, expression.getJavaType());
 						}
 
 						switch (filter.operator) {
@@ -67,6 +74,9 @@ public class Specifications {
 						case LTE:
 							predicates.add(builder.lessThanOrEqualTo(expression, (Comparable) value));
 							break;
+						case BTWN:
+							predicates.add(builder.between(expression, (Comparable) value, (Comparable) value2));
+							break;
 						default:
 							throw new IllegalArgumentException("Cannot find Operator: " + filter.operator);
 						}
@@ -80,6 +90,16 @@ public class Specifications {
 				return builder.conjunction();
 			}
 		};
+	}
+
+	private static Object convertString(Object value, Class<?> toClass) {
+		if (!(value instanceof String)) {
+			return value;
+		}
+
+		final String stringValue = (String) value;
+		Validate.notBlank(stringValue, "Filter value is blank");
+		return Reflections.convert(stringValue, toClass);
 	}
 
 	private Specifications() {
