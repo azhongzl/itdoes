@@ -6,12 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.business.Env;
+import com.itdoes.common.business.Permissions;
 import com.itdoes.common.business.service.FacadeService;
 import com.itdoes.common.business.service.FacadeServiceFieldSecurer;
 
 /**
  * <blockquote>
- * <table border=0 cellspacing=3 cellpadding=0 summary="Usage of FacadeController">
+ * <table border=0 cellspacing=3 cellpadding=0 summary="Facade Controller Usage">
  * <tr style="background-color: rgb(204, 204, 255);">
  * <th align=left>Operation
  * <th align=left>URL
@@ -19,17 +20,18 @@ import com.itdoes.common.business.service.FacadeServiceFieldSecurer;
  * <th align=left>Parameter
  * <tr>
  * <td><code>Search</code>
- * <td>/facade/(Entity_Class)/search
- * <td>GET</a>
+ * <td>/facade/&lt;Entity_Class&gt;/search
+ * <td>GET
  * <td>
  * <ul>
  * <li>1) Filter:<br/>
- * ff_(Property)[_Operator]=(Value)<br/>
- * Operator: EQ, LIKE, LT, GT, LTE, GTE, if Operator is not set, default is EQ<br/>
+ * ff_&lt;property&gt;[_Operator]=&lt;Value&gt;<br/>
+ * Operator: EQ, LIKE, LT, GT, LTE, GTE, BTWN, if Operator is not set, default is EQ<br/>
  * Examples:<br/>
  * ff_username_EQ=Jalen (the same as: ff_username=Jalen<br/>
  * ff_email_EQ=azhongzl@gmail.com (the same as: ff_email=azhongzl@gmail.com)<br/>
  * ff_age_GTE=40 (GTE should NOT be omitted)<br/>
+ * ff_age_BTWN=30_40 (BTWN should NOT be omitted. Two values are separated by '_')<br/>
  * ff_department.id=3 (the same as: ff_department.id_EQ=3<br/>
  * <li>2) Page:<br/>
  * page_no=1<br/>
@@ -38,27 +40,27 @@ import com.itdoes.common.business.service.FacadeServiceFieldSecurer;
  * </ul>
  * <tr style="background-color: rgb(238, 238, 255);">
  * <td><code>Count</code>
- * <td>/facade/(Entity_Class)/count
- * <td>GET</a>
+ * <td>/facade/&lt;Entity_Class&gt;/count
+ * <td>GET
  * <td>The same as "Filter" parameter of "Search" operation, but without "Page" parameter
  * <tr>
  * <td><code>Get</code>
- * <td>/facade/(Entity_Class)/get/(id)
- * <td>GET</a>
+ * <td>/facade/&lt;Entity_Class&gt;/get/&lt;id&gt;
+ * <td>GET
  * <td>
  * <tr style="background-color: rgb(238, 238, 255);">
  * <td><code>Delete</code>
- * <td>/facade/(Entity_Class)/delete/(id)
+ * <td>/facade/&lt;Entity_Class&gt;/delete/&lt;id&gt;
  * <td>GET or POST
  * <td>
  * <tr>
  * <td><code>Post</code>
- * <td>/facade/(Entity_Class)/post
+ * <td>/facade/&lt;Entity_Class&gt;/post
  * <td>POST
  * <td>
  * <tr style="background-color: rgb(238, 238, 255);">
  * <td><code>Put</code>
- * <td>/facade/(Entity_Class)/put/(id)
+ * <td>/facade/&lt;Entity_Class&gt;/put/&lt;id&gt;
  * <td>POST
  * <td>
  * </table>
@@ -67,7 +69,7 @@ import com.itdoes.common.business.service.FacadeServiceFieldSecurer;
  * @author Jalen Zhong
  */
 public abstract class FacadeBaseController extends BaseController {
-	public static final String FACADE_URL_PREFIX = "/facade";
+	public static final String FACADE_URL_PREFIX = "/" + Permissions.FACADE_PERMISSON_PREFIX;
 	public static final String FACADE_URL_SEARCH = "search";
 	public static final String FACADE_URL_COUNT = "count";
 	public static final String FACADE_URL_GET = "get";
