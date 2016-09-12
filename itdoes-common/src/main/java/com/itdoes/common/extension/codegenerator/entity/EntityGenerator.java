@@ -90,7 +90,7 @@ public class EntityGenerator {
 		final String ehcacheDir = Files.toUnixPath(outputDir);
 		final Template ehcacheTemplate = getTemplate(freeMarkerConfig, "ehcache.ftl");
 		final String ehcacheString = FreeMarkers.render(ehcacheTemplate, ehcacheModel);
-		writeFile(ehcacheDir, ehcacheModel.getName() + ".xml", ehcacheString);
+		writeEhcacheFile(ehcacheDir, ehcacheModel.getName(), ehcacheString);
 	}
 
 	private static String getPackageDir(String outputDir, String packageName) {
@@ -111,6 +111,14 @@ public class EntityGenerator {
 
 	private static String getJavaFilename(String className) {
 		return className + ".java";
+	}
+
+	private static void writeEhcacheFile(String dir, String ehcacheName, String content) {
+		writeFile(dir, getEhcacheFilename(ehcacheName), content);
+	}
+
+	private static String getEhcacheFilename(String ehcacheName) {
+		return (StringUtils.isNotBlank(ehcacheName) ? ehcacheName : "ehcache") + ".xml";
 	}
 
 	private static void writeFile(String dir, String filename, String content) {
