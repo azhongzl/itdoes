@@ -1,4 +1,4 @@
-package ${config.packageName};
+package ${packageName};
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,15 +18,15 @@ import com.itdoes.common.business.entity.BaseEntity;
  * @author Jalen Zhong
  */
 @Entity
-@Table(name = "${config.tableName}")
+@Table(name = "${tableName}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class ${config.className} extends BaseEntity {
-	private static final long serialVersionUID = ${config.serialVersionUID}L;
+public class ${className} extends BaseEntity {
+	private static final long serialVersionUID = ${serialVersionUID}L;
 
-<#list config.fieldList as field>
+<#list fieldList as field>
   <#if field.column.pk>
 	@Id
-	${config.idGeneratedValue}
+	${idGeneratedValue}
   </#if>
   <#if field.secure>
 	@com.itdoes.common.business.entity.SecureColumn
@@ -34,7 +34,7 @@ public class ${config.className} extends BaseEntity {
 	@Column(name = "${field.column.name}")
 	private ${field.type} ${field.name};
 </#list>
-<#list config.fieldList as field>
+<#list fieldList as field>
 
 	public ${field.type} get${field.upperName}() {
 		return ${field.name};

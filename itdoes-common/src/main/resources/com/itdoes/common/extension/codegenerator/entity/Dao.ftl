@@ -1,11 +1,11 @@
-package ${config.packageName};
+package ${packageName};
 
-import ${config.entityPackageName}.${config.entityClassName};
+import ${entityPackageName}.${entityClassName};
 
 /**
  * This code is auto-generated.
  * 
  * @author Jalen Zhong
  */
-public interface ${config.className} extends com.itdoes.common.business.dao.<#if config.queryCacheEnabled>BaseQueryCacheDao<#else>BaseDao</#if><${config.entityClassName}, ${config.entityIdType}> {
+public interface ${className} extends com.itdoes.common.business.dao.<#if queryCacheEnabled>BaseQueryCacheDao<#else>BaseDao</#if><${entityClassName}, ${entityIdType}> {
 }

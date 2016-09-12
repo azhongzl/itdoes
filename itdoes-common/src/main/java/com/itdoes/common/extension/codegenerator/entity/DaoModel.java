@@ -3,7 +3,7 @@ package com.itdoes.common.extension.codegenerator.entity;
 /**
  * @author Jalen Zhong
  */
-public class DaoConfig {
+public class DaoModel {
 	private final String packageName;
 	private final String entityPackageName;
 	private final String entityClassName;
@@ -11,7 +11,7 @@ public class DaoConfig {
 	private final boolean queryCacheEnabled;
 	private final String entityIdType;
 
-	public DaoConfig(String packageName, String entityPackageName, String entityClassName, String className,
+	public DaoModel(String packageName, String entityPackageName, String entityClassName, String className,
 			boolean queryCacheEnabled, String entityIdType) {
 		this.packageName = packageName;
 		this.entityPackageName = entityPackageName;

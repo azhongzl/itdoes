@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 /**
  * @author Jalen Zhong
  */
-public class EhcacheConfig {
+public class EhcacheModel {
 	public static class DiskStore {
 		private final String path;
 
@@ -102,7 +102,7 @@ public class EhcacheConfig {
 	private final Cache updateTimestampsCache;
 	private final List<Cache> cacheList = Lists.newArrayList();
 
-	public EhcacheConfig(String name, DiskStore diskStore, DefaultCache defaultCache, Cache standardQueryCache,
+	public EhcacheModel(String name, DiskStore diskStore, DefaultCache defaultCache, Cache standardQueryCache,
 			Cache updateTimestampsCache) {
 		this.name = name;
 		this.diskStore = diskStore;

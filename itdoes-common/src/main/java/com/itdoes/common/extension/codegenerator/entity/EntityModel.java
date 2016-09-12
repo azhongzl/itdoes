@@ -8,7 +8,7 @@ import com.itdoes.common.extension.codegenerator.Field;
 /**
  * @author Jalen Zhong
  */
-public class EntityConfig {
+public class EntityModel {
 	public static class EntityField extends Field {
 		private final Column column;
 		private final boolean secure;
@@ -35,7 +35,7 @@ public class EntityConfig {
 	private final List<EntityField> fieldList;
 	private final String idGeneratedValue;
 
-	public EntityConfig(String packageName, String tableName, String className, String serialVersionUID,
+	public EntityModel(String packageName, String tableName, String className, String serialVersionUID,
 			List<EntityField> fieldList, String idGeneratedValue) {
 		this.packageName = packageName;
 		this.tableName = tableName;
