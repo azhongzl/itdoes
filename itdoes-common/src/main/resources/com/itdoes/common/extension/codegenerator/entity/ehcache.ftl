@@ -2,8 +2,10 @@
 <!DOCTYPE ehcache>
 <ehcache<#if config.name??> name="${config.name}"</#if> updateCheck="false">
 	<!-- http://ehcache.org/ehcache.xml -->
+<#if config.diskStore??>
 <#if config.diskStore.path??>
 	<diskStore path="${config.diskStore.path}" />
+</#if>
 </#if>
 
 	<!-- Default cache setting -->
