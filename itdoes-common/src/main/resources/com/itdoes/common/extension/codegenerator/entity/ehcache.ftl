@@ -14,16 +14,20 @@
 	</defaultCache>
 
 	<!-- Query cache setting -->
+<#if config.standardQueryCache??>
 	<cache name="${config.standardQueryCache.name}" <#if config.standardQueryCache.maxEntriesLocalHeap??> maxEntriesLocalHeap="${config.standardQueryCache.maxEntriesLocalHeap}"</#if><#if config.standardQueryCache.maxEntriesLocalDisk??> maxEntriesLocalDisk="${config.standardQueryCache.maxEntriesLocalDisk}"</#if><#if config.standardQueryCache.eternal??> eternal="${config.standardQueryCache.eternal}"</#if><#if config.standardQueryCache.timeToIdleSeconds??> timeToIdleSeconds="${config.standardQueryCache.timeToIdleSeconds}"</#if><#if config.standardQueryCache.timeToLiveSeconds??> timeToLiveSeconds="${config.standardQueryCache.timeToLiveSeconds}"</#if>>
 <#if config.standardQueryCache.persistence.strategy??>
 		<persistence strategy="${config.standardQueryCache.persistence.strategy}"/>
 </#if>
 	</cache>
+</#if>
+<#if config.updateTimestampsCache??>
 	<cache name="${config.updateTimestampsCache.name}" <#if config.updateTimestampsCache.maxEntriesLocalHeap??> maxEntriesLocalHeap="${config.updateTimestampsCache.maxEntriesLocalHeap}"</#if><#if config.updateTimestampsCache.maxEntriesLocalDisk??> maxEntriesLocalDisk="${config.updateTimestampsCache.maxEntriesLocalDisk}"</#if><#if config.updateTimestampsCache.eternal??> eternal="${config.updateTimestampsCache.eternal}"</#if><#if config.updateTimestampsCache.timeToIdleSeconds??> timeToIdleSeconds="${config.updateTimestampsCache.timeToIdleSeconds}"</#if><#if config.updateTimestampsCache.timeToLiveSeconds??> timeToLiveSeconds="${config.updateTimestampsCache.timeToLiveSeconds}"</#if>>
 <#if config.updateTimestampsCache.persistence.strategy??>
 		<persistence strategy="${config.updateTimestampsCache.persistence.strategy}"/>
 </#if>
 	</cache>
+</#if>
 
 	<!-- Entity cache setting -->
 <#list config.cacheList as cache>
