@@ -23,9 +23,6 @@ import com.itdoes.common.core.util.Reflections;
 import com.itdoes.common.core.util.Strings;
 import com.itdoes.common.core.util.Urls;
 import com.itdoes.common.extension.codegenerator.entity.EhcacheModel.Cache;
-import com.itdoes.common.extension.codegenerator.entity.EhcacheModel.DefaultCache;
-import com.itdoes.common.extension.codegenerator.entity.EhcacheModel.DiskStore;
-import com.itdoes.common.extension.codegenerator.entity.EhcacheModel.Persistence;
 import com.itdoes.common.extension.codegenerator.entity.EntityModel.EntityField;
 
 import freemarker.template.Configuration;
@@ -41,7 +38,7 @@ public class EntityGenerator {
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
 			String outputDir, String basePackageName, Map<String, String> tableMapping, List<String> tableSkipList,
 			Map<String, String> columnMapping, List<String> secureColumnList, String idGeneratedValue,
-			Map<String, Boolean> queryCacheMap, Map<String, String> ehcacheMap) {
+			QueryCacheConfig queryCacheConfig, EhcacheConfig ehcacheConfig) {
 		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
 
 		final String entityPackageName = basePackageName + ".entity";
@@ -55,7 +52,7 @@ public class EntityGenerator {
 		final String realIdGeneratedValue = StringUtils.isBlank(idGeneratedValue) ? DEFAULT_ID_GENERATED_VALUE
 				: idGeneratedValue;
 
-		final EhcacheModel ehcacheModel = mapEhcacheModel(ehcacheMap);
+		final EhcacheModel ehcacheModel = ehcacheConfig.newModel();
 
 		final MetaParser parser = new MetaParser(jdbcDriver, jdbcUrl, jdbcUsername, jdbcPassword);
 		final List<Table> tableList = parser.parseTables();
@@ -77,13 +74,14 @@ public class EntityGenerator {
 
 			// Generate Dao
 			final String daoClassName = Env.getDaoClassName(entityClassName);
-			final boolean queryCacheEnabled = mapQueryCacheEnabled(entityClassName, queryCacheMap);
+			final boolean queryCacheEnabled = queryCacheConfig.isEnabled(entityClassName);
 			final DaoModel daoModel = new DaoModel(daoPackageName, entityPackageName, entityClassName, daoClassName,
 					queryCacheEnabled, mapIdType(tableName, table.getColumnList()));
 			final String daoString = FreeMarkers.render(daoTemplate, daoModel);
 			writeJavaFile(daoDir, daoClassName, daoString);
 
-			final Cache cache = mapEhcacheCache(entityPackageName, entityClassName, ehcacheMap);
+			// Generate ehcache cache
+			final Cache cache = ehcacheConfig.newCache(entityPackageName, entityClassName);
 			ehcacheModel.addCache(cache);
 		}
 
@@ -206,60 +204,6 @@ public class EntityGenerator {
 		}
 
 		return pkType;
-	}
-
-	private static boolean mapQueryCacheEnabled(String entityClassName, Map<String, Boolean> queryCacheMap) {
-		final Boolean value = queryCacheMap.get("queryCache." + entityClassName + ".enabled");
-		return value != null ? value : queryCacheMap.get("default.queryCache.enabled");
-	}
-
-	private static EhcacheModel mapEhcacheModel(Map<String, String> ehcacheMap) {
-		final String name = ehcacheMap.get("name");
-		final DiskStore diskStore = new DiskStore(ehcacheMap.get("diskStore.path"));
-		final Persistence persisence = new Persistence(ehcacheMap.get("defaultCache.persistence.strategy"),
-				ehcacheMap.get("defaultCache.persistence.synchronousWrites"));
-		final DefaultCache defaultCache = new DefaultCache(ehcacheMap.get("defaultCache.maxEntriesLocalHeap"),
-				ehcacheMap.get("defaultCache.maxEntriesLocalDisk"), ehcacheMap.get("defaultCache.eternal"),
-				ehcacheMap.get("defaultCache.timeToIdleSeconds"), ehcacheMap.get("defaultCache.timeToLiveSeconds"),
-				persisence);
-		final Persistence standardQueryCachePersisence = new Persistence(
-				ehcacheMap.get("StandardQueryCache.persistence.strategy"),
-				ehcacheMap.get("StandardQueryCache.persistence.synchronousWrites"));
-		final Cache standardQueryCache = new Cache("org.hibernate.cache.internal.StandardQueryCache",
-				ehcacheMap.get("StandardQueryCache.maxEntriesLocalHeap"),
-				ehcacheMap.get("StandardQueryCache.maxEntriesLocalDisk"), ehcacheMap.get("StandardQueryCache.eternal"),
-				ehcacheMap.get("StandardQueryCache.timeToIdleSeconds"),
-				ehcacheMap.get("StandardQueryCache.timeToLiveSeconds"), standardQueryCachePersisence);
-		final Persistence updateTimestampsCachePersisence = new Persistence(
-				ehcacheMap.get("UpdateTimestampsCache.persistence.strategy"),
-				ehcacheMap.get("UpdateTimestampsCache.persistence.synchronousWrites"));
-		final Cache updateTimestampsCache = new Cache("org.hibernate.cache.spi.UpdateTimestampsCache",
-				ehcacheMap.get("UpdateTimestampsCache.maxEntriesLocalHeap"),
-				ehcacheMap.get("UpdateTimestampsCache.maxEntriesLocalDisk"),
-				ehcacheMap.get("UpdateTimestampsCache.eternal"),
-				ehcacheMap.get("UpdateTimestampsCache.timeToIdleSeconds"),
-				ehcacheMap.get("UpdateTimestampsCache.timeToLiveSeconds"), updateTimestampsCachePersisence);
-		return new EhcacheModel(name, diskStore, defaultCache, standardQueryCache, updateTimestampsCache);
-	}
-
-	private static Cache mapEhcacheCache(String entityPackageName, String entityClassName,
-			Map<String, String> ehcacheMap) {
-		final Persistence persisence = new Persistence(
-				mapEhcacheCacheValue(entityPackageName, entityClassName, "persistence.strategy", ehcacheMap),
-				mapEhcacheCacheValue(entityPackageName, entityClassName, "persistence.synchronousWrites", ehcacheMap));
-		final Cache cache = new Cache(entityPackageName + "." + entityClassName,
-				mapEhcacheCacheValue(entityPackageName, entityClassName, "maxEntriesLocalHeap", ehcacheMap),
-				mapEhcacheCacheValue(entityPackageName, entityClassName, "maxEntriesLocalDisk", ehcacheMap),
-				mapEhcacheCacheValue(entityPackageName, entityClassName, "eternal", ehcacheMap),
-				mapEhcacheCacheValue(entityPackageName, entityClassName, "timeToIdleSeconds", ehcacheMap),
-				mapEhcacheCacheValue(entityPackageName, entityClassName, "timeToLiveSeconds", ehcacheMap), persisence);
-		return cache;
-	}
-
-	private static String mapEhcacheCacheValue(String entityPackageName, String entityClassName, String key,
-			Map<String, String> ehcacheMap) {
-		final String value = ehcacheMap.get("cache." + entityClassName + "." + key);
-		return value != null ? value : ehcacheMap.get("templateCache." + key);
 	}
 
 	private EntityGenerator() {
