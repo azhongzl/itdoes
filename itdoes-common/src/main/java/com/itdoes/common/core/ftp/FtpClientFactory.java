@@ -27,24 +27,28 @@ public class FtpClientFactory<T extends FTPClient> implements PooledObjectFactor
 
 	@Override
 	public PooledObject<T> makeObject() throws Exception {
-		final T ftp = builder.build();
 		LOGGER.info("makeObject()");
+
+		final T ftp = builder.build();
 		return new DefaultPooledObject<T>(ftp);
 	}
 
 	@Override
 	public void destroyObject(PooledObject<T> p) throws Exception {
+		LOGGER.info("destroyObject()");
+
 		final T ftp = p.getObject();
 		if (ftp == null) {
 			return;
 		}
 
-		LOGGER.info("destroyObject()");
 		FtpClients.close(ftp);
 	}
 
 	@Override
 	public boolean validateObject(PooledObject<T> p) {
+		LOGGER.info("validateObject()");
+
 		final FTPClient ftp = p.getObject();
 		if (ftp == null) {
 			return false;
@@ -57,7 +61,7 @@ public class FtpClientFactory<T extends FTPClient> implements PooledObjectFactor
 			valid = false;
 		}
 		if (valid) {
-			LOGGER.debug("validateObject() = true");
+			LOGGER.info("validateObject() = true");
 		} else {
 			LOGGER.warn("validateObject() = false");
 		}
@@ -66,9 +70,11 @@ public class FtpClientFactory<T extends FTPClient> implements PooledObjectFactor
 
 	@Override
 	public void activateObject(PooledObject<T> p) throws Exception {
+		LOGGER.info("activateObject()");
 	}
 
 	@Override
 	public void passivateObject(PooledObject<T> p) throws Exception {
+		LOGGER.info("passivateObject()");
 	}
 }
