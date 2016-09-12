@@ -5,7 +5,6 @@ import java.net.URL;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.fluent.Request;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
@@ -48,7 +47,7 @@ public abstract class BaseFunctionalTestCase {
 		}
 
 		jettyServer = JettyServer.createAndStart(URL_BASE_URL.getPort(), PL.getString("jetty.context"),
-				StringUtils.split(PL.getString("jetty.taglib"), ","));
+				PL.getStrings("jetty.taglib"));
 	}
 
 	protected static void initDataSource() {
@@ -65,7 +64,7 @@ public abstract class BaseFunctionalTestCase {
 			return;
 		}
 
-		SqlExecutors.executeSql(dataSource, StringUtils.split(PL.getString("sql.file"), ","));
+		SqlExecutors.executeSql(dataSource, PL.getStrings("sql.file"));
 	}
 
 	protected static String getContent(String urlString) {

@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
@@ -60,17 +59,17 @@ public class PropertiesMailHelper implements MailHelper {
 		final String[] cc;
 		final String[] bcc;
 		if (success) {
-			to = getAddresses("mail.to.success");
+			to = pl.getStrings("mail.to.success");
 			subject = getSubject(true);
 
-			cc = getAddresses("mail.cc.success");
-			bcc = getAddresses("mail.bcc.success");
+			cc = pl.getStrings("mail.cc.success");
+			bcc = pl.getStrings("mail.bcc.success");
 		} else {
-			to = getAddresses("mail.to.fail", "mail.to.success");
+			to = pl.getStrings(new String[] { "mail.to.fail", "mail.to.success" });
 			subject = getSubject(false);
 
-			cc = getAddresses("mail.cc.fail", "mail.cc.success");
-			bcc = getAddresses("mail.bcc.fail", "mail.bcc.success");
+			cc = pl.getStrings(new String[] { "mail.cc.fail", "mail.cc.success" });
+			bcc = pl.getStrings(new String[] { "mail.bcc.fail", "mail.bcc.success" });
 		}
 
 		mimeMessage.setTo(to).setSubject(subject);
@@ -139,23 +138,6 @@ public class PropertiesMailHelper implements MailHelper {
 		sendText(false, Exceptions.getStackTraceString(t), attachments);
 	}
 
-	private String[] getAddresses(String key, String defaultKey) {
-		final String[] values = getAddresses(key);
-		return !Collections3.isEmpty(values) ? values : getAddresses(defaultKey);
-	}
-
-	private String[] getAddresses(String key) {
-		final String value = pl.getString(key);
-		if (StringUtils.isNotBlank(value)) {
-			final String[] values = StringUtils.split(value, ",");
-			if (!Collections3.isEmpty(values)) {
-				return values;
-			}
-		}
-
-		return ArrayUtils.EMPTY_STRING_ARRAY;
-	}
-
 	private String getSubject(boolean success) {
 		final String templateString = pl.getString("mail.subject");
 		final Map<String, String> model = Maps.newHashMap();
@@ -173,18 +155,15 @@ public class PropertiesMailHelper implements MailHelper {
 				.setPort(pl.getInteger("mail.port")).setUsername(pl.getString("mail.username"))
 				.setPassword(Cryptos.aesDecryptDefault(pl.getString("mail.password")));
 
-		final String mailProperties = pl.getString("mail.properties");
-		if (StringUtils.isNotBlank(mailProperties)) {
-			final String[] mailPropertiesEntries = StringUtils.split(mailProperties, ",");
-			if (!Collections3.isEmpty(mailPropertiesEntries)) {
-				for (String mailPropertiesEntry : mailPropertiesEntries) {
-					final String[] mailPropertyPair = StringUtils.split(mailPropertiesEntry, "|");
-					Validate.isTrue(mailPropertyPair.length == 2,
-							"mail.properties should be: <key>|<value>, but now it is: " + mailPropertyPair);
-					final String key = mailPropertyPair[0];
-					final String value = mailPropertyPair[1];
-					sender.setJavaMailProperty(key, value);
-				}
+		final String[] mailPropertiesEntries = pl.getStrings("mail.properties");
+		if (!Collections3.isEmpty(mailPropertiesEntries)) {
+			for (String mailPropertiesEntry : mailPropertiesEntries) {
+				final String[] mailPropertyPair = StringUtils.split(mailPropertiesEntry, "|");
+				Validate.isTrue(mailPropertyPair.length == 2,
+						"mail.properties should be: <key>|<value>, but now it is: " + mailPropertyPair);
+				final String key = mailPropertyPair[0];
+				final String value = mailPropertyPair[1];
+				sender.setJavaMailProperty(key, value);
 			}
 		}
 
