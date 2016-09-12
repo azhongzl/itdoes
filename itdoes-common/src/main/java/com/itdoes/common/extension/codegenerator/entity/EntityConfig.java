@@ -29,17 +29,15 @@ public class EntityConfig {
 	}
 
 	private final String packageName;
-	private final boolean hasSecure;
 	private final String tableName;
 	private final String className;
 	private final String serialVersionUID;
 	private final List<EntityField> fieldList;
 	private final String idGeneratedValue;
 
-	public EntityConfig(String packageName, boolean hasSecure, String tableName, String className,
-			String serialVersionUID, List<EntityField> fieldList, String idGeneratedValue) {
+	public EntityConfig(String packageName, String tableName, String className, String serialVersionUID,
+			List<EntityField> fieldList, String idGeneratedValue) {
 		this.packageName = packageName;
-		this.hasSecure = hasSecure;
 		this.tableName = tableName;
 		this.className = className;
 		this.serialVersionUID = serialVersionUID;
@@ -49,10 +47,6 @@ public class EntityConfig {
 
 	public String getPackageName() {
 		return packageName;
-	}
-
-	public boolean isHasSecure() {
-		return hasSecure;
 	}
 
 	public String getTableName() {

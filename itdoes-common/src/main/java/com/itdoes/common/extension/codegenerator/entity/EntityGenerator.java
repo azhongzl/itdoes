@@ -69,11 +69,10 @@ public class EntityGenerator {
 
 			// Generate Entity
 			final String entityClassName = mapEntityClassName(tableName, tableMapping);
-			final EntityFieldListResult entityFieldListResult = mapEntityFieldList(tableName, table.getColumnList(),
+			final List<EntityField> entityFieldList = mapEntityFieldList(tableName, table.getColumnList(),
 					columnMapping, secureColumnList);
-			final EntityConfig entityConfig = new EntityConfig(entityPackageName, entityFieldListResult.hasSecure,
-					tableName, entityClassName, getSerialVersionUIDStr(entityClassName),
-					entityFieldListResult.entityFieldList, realIdGeneratedValue);
+			final EntityConfig entityConfig = new EntityConfig(entityPackageName, tableName, entityClassName,
+					getSerialVersionUIDStr(entityClassName), entityFieldList, realIdGeneratedValue);
 			final Map<String, Object> entityModel = Maps.newHashMap();
 			entityModel.put("config", entityConfig);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
@@ -139,21 +138,14 @@ public class EntityGenerator {
 		return Strings.underscoreToPascal(tableName);
 	}
 
-	private static class EntityFieldListResult {
-		private List<EntityField> entityFieldList;
-		private boolean hasSecure;
-	}
-
-	private static EntityFieldListResult mapEntityFieldList(String tableName, List<Column> columnList,
+	private static List<EntityField> mapEntityFieldList(String tableName, List<Column> columnList,
 			Map<String, String> columnMapping, List<String> secureColumnList) {
 		final List<EntityField> entityFieldList = Lists.newArrayList();
-		boolean hasSecure = false;
 		for (Column column : columnList) {
 			boolean secure = false;
 			if (!Collections3.isEmpty(secureColumnList)) {
 				if (secureColumnList.contains(getColumnKey(tableName, column.getName()))) {
 					secure = true;
-					hasSecure = true;
 				}
 			}
 
@@ -162,10 +154,7 @@ public class EntityGenerator {
 			entityFieldList.add(entityField);
 		}
 
-		final EntityFieldListResult entityFieldListResult = new EntityFieldListResult();
-		entityFieldListResult.entityFieldList = entityFieldList;
-		entityFieldListResult.hasSecure = hasSecure;
-		return entityFieldListResult;
+		return entityFieldList;
 	}
 
 	private static String mapFieldName(String tableName, String columnName, Map<String, String> columnMapping) {
