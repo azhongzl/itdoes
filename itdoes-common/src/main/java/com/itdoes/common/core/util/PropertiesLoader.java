@@ -18,6 +18,8 @@ import org.springframework.core.io.ResourceLoader;
  * @author Jalen Zhong
  */
 public class PropertiesLoader {
+	private static final String DEFAULT_VALUE_SEPARATOR = ",";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesLoader.class);
 
 	private static final ResourceLoader RESOURCE_LOADER = new DefaultResourceLoader();
@@ -56,7 +58,7 @@ public class PropertiesLoader {
 		return properties;
 	}
 
-	public String getProperty(String key) {
+	public String getString(String key) {
 		final String value = getValue(key);
 		if (value == null) {
 			throw new NoSuchElementException("Key " + key + " does not exist");
@@ -64,12 +66,12 @@ public class PropertiesLoader {
 		return value;
 	}
 
-	public String getProperty(String key, String defaultValue) {
+	public String getString(String key, String defaultValue) {
 		final String value = getValue(key);
 		return value == null ? defaultValue : value;
 	}
 
-	public String getProperty(String[] keys) {
+	public String getString(String[] keys) {
 		String value = getValue(keys);
 		if (value == null) {
 			throw new NoSuchElementException("Keys " + Arrays.toString(keys) + " does not exist");
@@ -77,9 +79,45 @@ public class PropertiesLoader {
 		return value;
 	}
 
-	public String getProperty(String[] keys, String defaultValue) {
+	public String getString(String[] keys, String defaultValue) {
 		final String value = getValue(keys);
 		return value == null ? defaultValue : value;
+	}
+
+	public String[] getStrings(String key, String separator) {
+		final String value = getString(key);
+		return StringUtils.split(value, separator);
+	}
+
+	public String[] getStrings(String key) {
+		return getStrings(key, DEFAULT_VALUE_SEPARATOR);
+	}
+
+	public String[] getStringsWithDefault(String key, String defaultValue, String separator) {
+		final String value = getString(key, defaultValue);
+		return StringUtils.split(value, separator);
+	}
+
+	public String[] getStringsWithDefault(String key, String defaultValue) {
+		return getStringsWithDefault(key, defaultValue, DEFAULT_VALUE_SEPARATOR);
+	}
+
+	public String[] getStrings(String[] keys, String separator) {
+		final String value = getString(keys);
+		return StringUtils.split(value, separator);
+	}
+
+	public String[] getStrings(String[] keys) {
+		return getStrings(keys, DEFAULT_VALUE_SEPARATOR);
+	}
+
+	public String[] getStringsWithDefault(String[] keys, String defaultValue, String separator) {
+		final String value = getString(keys, defaultValue);
+		return StringUtils.split(value, separator);
+	}
+
+	public String[] getStringsWithDefault(String[] keys, String defaultValue) {
+		return getStringsWithDefault(keys, defaultValue, DEFAULT_VALUE_SEPARATOR);
 	}
 
 	public Integer getInteger(String key) {

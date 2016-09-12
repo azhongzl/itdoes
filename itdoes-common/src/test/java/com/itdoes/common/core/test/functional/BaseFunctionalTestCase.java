@@ -26,7 +26,7 @@ public abstract class BaseFunctionalTestCase {
 	// Required
 	protected static final PropertiesLoader PL = new PropertiesLoader("classpath:/application.properties",
 			"classpath:/application.functionaltest.properties", "classpath:/application.local.properties");
-	protected static final String URL_BASE = PL.getProperty("url.base");
+	protected static final String URL_BASE = PL.getString("url.base");
 	protected static final URL URL_BASE_URL = Urls.createUrl(URL_BASE);
 
 	// Optional
@@ -47,8 +47,8 @@ public abstract class BaseFunctionalTestCase {
 			return;
 		}
 
-		jettyServer = JettyServer.createAndStart(URL_BASE_URL.getPort(), PL.getProperty("jetty.context"),
-				StringUtils.split(PL.getProperty("jetty.taglib"), ","));
+		jettyServer = JettyServer.createAndStart(URL_BASE_URL.getPort(), PL.getString("jetty.context"),
+				StringUtils.split(PL.getString("jetty.taglib"), ","));
 	}
 
 	protected static void initDataSource() {
@@ -56,8 +56,8 @@ public abstract class BaseFunctionalTestCase {
 			return;
 		}
 
-		dataSource = SimpleDriverDataSources.createDataSource(PL.getProperty("jdbc.driver"), PL.getProperty("jdbc.url"),
-				PL.getProperty("jdbc.username"), PL.getProperty("jdbc.password"));
+		dataSource = SimpleDriverDataSources.createDataSource(PL.getString("jdbc.driver"), PL.getString("jdbc.url"),
+				PL.getString("jdbc.username"), PL.getString("jdbc.password"));
 	}
 
 	protected static void initDb() {
@@ -65,7 +65,7 @@ public abstract class BaseFunctionalTestCase {
 			return;
 		}
 
-		SqlExecutors.executeSql(dataSource, StringUtils.split(PL.getProperty("sql.file"), ","));
+		SqlExecutors.executeSql(dataSource, StringUtils.split(PL.getString("sql.file"), ","));
 	}
 
 	protected static String getContent(String urlString) {

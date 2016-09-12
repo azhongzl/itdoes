@@ -10,7 +10,7 @@ import com.itdoes.common.core.test.selenium.SeleniumScreenshotRule;
  * @author Jalen Zhong
  */
 public abstract class BaseSeleniumTestCase extends BaseFunctionalTestCase {
-	protected static final Selenium2 s = new Selenium2(PL.getProperty("selenium.driver"), URL_BASE,
+	protected static final Selenium2 s = new Selenium2(PL.getString("selenium.driver"), URL_BASE,
 			PL.getInteger("selenium.timeout", -1));
 
 	@Rule

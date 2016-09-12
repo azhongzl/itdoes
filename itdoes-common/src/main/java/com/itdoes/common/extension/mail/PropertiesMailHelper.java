@@ -49,7 +49,7 @@ public class PropertiesMailHelper implements MailHelper {
 
 		final MailMimeMessages mimeMessage = Mails.createMimeMessage(sender, multipart);
 
-		final String from = pl.getProperty("mail.from");
+		final String from = pl.getString("mail.from");
 		final String personal = from.substring(0, from.indexOf("@"));
 		mimeMessage.setFrom(from, personal).setReplyTo(from, personal);
 
@@ -145,7 +145,7 @@ public class PropertiesMailHelper implements MailHelper {
 	}
 
 	private String[] getAddresses(String key) {
-		final String value = pl.getProperty(key);
+		final String value = pl.getString(key);
 		if (StringUtils.isNotBlank(value)) {
 			final String[] values = StringUtils.split(value, ",");
 			if (!Collections3.isEmpty(values)) {
@@ -157,7 +157,7 @@ public class PropertiesMailHelper implements MailHelper {
 	}
 
 	private String getSubject(boolean success) {
-		final String templateString = pl.getProperty("mail.subject");
+		final String templateString = pl.getString("mail.subject");
 		final Map<String, String> model = Maps.newHashMap();
 		model.put("result", success ? "success" : "fail");
 		model.put("date", DATE_FORMAT.format(new Date()));
@@ -169,11 +169,11 @@ public class PropertiesMailHelper implements MailHelper {
 			return NopMailSenders.INSTANCE;
 		}
 
-		final MailSenders sender = Mails.createSender().setHost(pl.getProperty("mail.host"))
-				.setPort(pl.getInteger("mail.port")).setUsername(pl.getProperty("mail.username"))
-				.setPassword(Cryptos.aesDecryptDefault(pl.getProperty("mail.password")));
+		final MailSenders sender = Mails.createSender().setHost(pl.getString("mail.host"))
+				.setPort(pl.getInteger("mail.port")).setUsername(pl.getString("mail.username"))
+				.setPassword(Cryptos.aesDecryptDefault(pl.getString("mail.password")));
 
-		final String mailProperties = pl.getProperty("mail.properties");
+		final String mailProperties = pl.getString("mail.properties");
 		if (StringUtils.isNotBlank(mailProperties)) {
 			final String[] mailPropertiesEntries = StringUtils.split(mailProperties, ",");
 			if (!Collections3.isEmpty(mailPropertiesEntries)) {

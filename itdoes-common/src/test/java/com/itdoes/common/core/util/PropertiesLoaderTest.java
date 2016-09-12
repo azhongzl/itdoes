@@ -32,12 +32,12 @@ public class PropertiesLoaderTest {
 		PropertiesLoader pl = new PropertiesLoader("classpath:/test1.properties");
 
 		try {
-			pl.getProperty("notExist");
+			pl.getString("notExist");
 			failBecauseExceptionWasNotThrown(NoSuchElementException.class);
 		} catch (NoSuchElementException e) {
 		}
 
-		assertThat(pl.getProperty("notExist", "defaultValue")).isEqualTo("defaultValue");
+		assertThat(pl.getString("notExist", "defaultValue")).isEqualTo("defaultValue");
 	}
 
 	@Test
@@ -87,9 +87,9 @@ public class PropertiesLoaderTest {
 		PropertiesLoader plPreferLocal = new PropertiesLoader(false, "classpath:/test1.properties",
 				"classpath:/test2.properties");
 
-		assertThat(plDefault.getProperty("p1")).isEqualTo("sys");
-		assertThat(plPreferSystem.getProperty("p1")).isEqualTo("sys");
-		assertThat(plPreferLocal.getProperty("p1")).isEqualTo("1");
+		assertThat(plDefault.getString("p1")).isEqualTo("sys");
+		assertThat(plPreferSystem.getString("p1")).isEqualTo("sys");
+		assertThat(plPreferLocal.getString("p1")).isEqualTo("1");
 
 		System.clearProperty("p1");
 	}

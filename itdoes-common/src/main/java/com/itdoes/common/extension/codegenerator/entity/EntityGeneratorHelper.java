@@ -31,10 +31,9 @@ public class EntityGeneratorHelper {
 		final Map<String, Boolean> queryCacheMap = toQueryCacheMap(QUERY_CACHE_FILE);
 		final Map<String, String> ehcacheMap = toMap(EHCACHE_FILE);
 
-		EntityGenerator.generateEntities(pl.getProperty("jdbc.driver"), pl.getProperty("jdbc.url"),
-				pl.getProperty("jdbc.username"), pl.getProperty("jdbc.password"), OUTPUT_DIR, basePackageName,
-				tableMapping, tableSkipList, columnMapping, secureColumnList, idGeneratedValue, queryCacheMap,
-				ehcacheMap);
+		EntityGenerator.generateEntities(pl.getString("jdbc.driver"), pl.getString("jdbc.url"),
+				pl.getString("jdbc.username"), pl.getString("jdbc.password"), OUTPUT_DIR, basePackageName, tableMapping,
+				tableSkipList, columnMapping, secureColumnList, idGeneratedValue, queryCacheMap, ehcacheMap);
 	}
 
 	private static Map<String, String> toMap(String propertyFilename) {
