@@ -76,7 +76,7 @@ public class EntityGeneratorHelper {
 		public Cache newCache(String entityPackageName, String entityClassName) {
 			final Persistence persisence = new Persistence(
 					mapEhcacheCacheValue(entityClassName, "persistence.strategy"),
-					mapEhcacheCacheValue(entityClassName, "persistence.synchronousWrites"));
+					mapEhcacheCacheValue(entityClassName, "persistence.synchronousWrites", null));
 			final Cache cache = new Cache(entityPackageName + "." + entityClassName,
 					mapEhcacheCacheValue(entityClassName, "maxEntriesLocalHeap"),
 					mapEhcacheCacheValue(entityClassName, "maxEntriesLocalDisk"),
@@ -87,7 +87,12 @@ public class EntityGeneratorHelper {
 		}
 
 		private String mapEhcacheCacheValue(String entityClassName, String key) {
-			return pl.getString(new String[] { "cache." + entityClassName + "." + key, "templateCache." + key }, null);
+			return pl.getString(new String[] { "cache." + entityClassName + "." + key, "templateCache." + key });
+		}
+
+		private String mapEhcacheCacheValue(String entityClassName, String key, String defaultValue) {
+			return pl.getString(new String[] { "cache." + entityClassName + "." + key, "templateCache." + key },
+					defaultValue);
 		}
 	}
 
