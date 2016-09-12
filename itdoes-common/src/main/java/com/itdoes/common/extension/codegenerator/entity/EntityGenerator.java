@@ -81,8 +81,8 @@ public class EntityGenerator {
 			// Generate Dao
 			final String daoClassName = Env.getDaoClassName(entityClassName);
 			final boolean queryCacheEnabled = mapQueryCacheEnabled(entityClassName, queryCacheMap);
-			final DaoConfig daoConfig = new DaoConfig(daoPackageName, queryCacheEnabled, entityPackageName,
-					entityClassName, daoClassName, mapIdType(tableName, table.getColumnList()));
+			final DaoConfig daoConfig = new DaoConfig(daoPackageName, entityPackageName, entityClassName, daoClassName,
+					queryCacheEnabled, mapIdType(tableName, table.getColumnList()));
 			final Map<String, Object> daoModel = Maps.newHashMap();
 			daoModel.put("config", daoConfig);
 			final String daoString = FreeMarkers.render(daoTemplate, daoModel);

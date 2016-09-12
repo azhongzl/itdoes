@@ -5,28 +5,24 @@ package com.itdoes.common.extension.codegenerator.entity;
  */
 public class DaoConfig {
 	private final String packageName;
-	private final boolean queryCacheEnabled;
 	private final String entityPackageName;
 	private final String entityClassName;
 	private final String className;
+	private final boolean queryCacheEnabled;
 	private final String entityIdType;
 
-	public DaoConfig(String packageName, boolean queryCacheEnabled, String entityPackageName, String entityClassName,
-			String className, String entityIdType) {
+	public DaoConfig(String packageName, String entityPackageName, String entityClassName, String className,
+			boolean queryCacheEnabled, String entityIdType) {
 		this.packageName = packageName;
-		this.queryCacheEnabled = queryCacheEnabled;
 		this.entityPackageName = entityPackageName;
 		this.entityClassName = entityClassName;
 		this.className = className;
+		this.queryCacheEnabled = queryCacheEnabled;
 		this.entityIdType = entityIdType;
 	}
 
 	public String getPackageName() {
 		return packageName;
-	}
-
-	public boolean isQueryCacheEnabled() {
-		return queryCacheEnabled;
 	}
 
 	public String getEntityPackageName() {
@@ -39,6 +35,10 @@ public class DaoConfig {
 
 	public String getClassName() {
 		return className;
+	}
+
+	public boolean isQueryCacheEnabled() {
+		return queryCacheEnabled;
 	}
 
 	public String getEntityIdType() {
