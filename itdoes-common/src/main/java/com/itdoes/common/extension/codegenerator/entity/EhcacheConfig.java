@@ -98,12 +98,17 @@ public class EhcacheConfig {
 	private final String name;
 	private final DiskStore diskStore;
 	private final DefaultCache defaultCache;
+	private final Cache standardQueryCache;
+	private final Cache updateTimestampsCache;
 	private final List<Cache> cacheList = Lists.newArrayList();
 
-	public EhcacheConfig(String name, DiskStore diskStore, DefaultCache defaultCache) {
+	public EhcacheConfig(String name, DiskStore diskStore, DefaultCache defaultCache, Cache standardQueryCache,
+			Cache updateTimestampsCache) {
 		this.name = name;
 		this.diskStore = diskStore;
 		this.defaultCache = defaultCache;
+		this.standardQueryCache = standardQueryCache;
+		this.updateTimestampsCache = updateTimestampsCache;
 	}
 
 	public String getName() {
@@ -116,6 +121,14 @@ public class EhcacheConfig {
 
 	public DefaultCache getDefaultCache() {
 		return defaultCache;
+	}
+
+	public Cache getStandardQueryCache() {
+		return standardQueryCache;
+	}
+
+	public Cache getUpdateTimestampsCache() {
+		return updateTimestampsCache;
 	}
 
 	public List<Cache> getCacheList() {

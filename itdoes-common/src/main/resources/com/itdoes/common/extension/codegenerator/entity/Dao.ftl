@@ -1,6 +1,10 @@
 package ${config.packageName};
 
+<#if config.queryCacheEnabled>
+import com.itdoes.common.business.dao.BaseQueryCacheDao;
+<#else>
 import com.itdoes.common.business.dao.BaseDao;
+</#if>
 import ${config.entityPackageName}.${config.entityClassName};
 
 /**
@@ -8,5 +12,5 @@ import ${config.entityPackageName}.${config.entityClassName};
  * 
  * @author Jalen Zhong
  */
-public interface ${config.className} extends BaseDao<${config.entityClassName}, ${config.entityIdType}> {
+public interface ${config.className} extends <#if config.queryCacheEnabled>BaseQueryCacheDao<#else>BaseDao</#if><${config.entityClassName}, ${config.entityIdType}> {
 }

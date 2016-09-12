@@ -12,6 +12,20 @@
 		<persistence strategy="${config.defaultCache.persistence.strategy}"/>
 </#if>
 	</defaultCache>
+
+	<!-- Query cache setting -->
+	<cache name="${config.standardQueryCache.name}" <#if config.standardQueryCache.maxEntriesLocalHeap??> maxEntriesLocalHeap="${config.standardQueryCache.maxEntriesLocalHeap}"</#if><#if config.standardQueryCache.maxEntriesLocalDisk??> maxEntriesLocalDisk="${config.standardQueryCache.maxEntriesLocalDisk}"</#if><#if config.standardQueryCache.eternal??> eternal="${config.standardQueryCache.eternal}"</#if><#if config.standardQueryCache.timeToIdleSeconds??> timeToIdleSeconds="${config.standardQueryCache.timeToIdleSeconds}"</#if><#if config.standardQueryCache.timeToLiveSeconds??> timeToLiveSeconds="${config.standardQueryCache.timeToLiveSeconds}"</#if>>
+<#if config.standardQueryCache.persistence.strategy??>
+		<persistence strategy="${config.standardQueryCache.persistence.strategy}"/>
+</#if>
+	</cache>
+	<cache name="${config.updateTimestampsCache.name}" <#if config.updateTimestampsCache.maxEntriesLocalHeap??> maxEntriesLocalHeap="${config.updateTimestampsCache.maxEntriesLocalHeap}"</#if><#if config.updateTimestampsCache.maxEntriesLocalDisk??> maxEntriesLocalDisk="${config.updateTimestampsCache.maxEntriesLocalDisk}"</#if><#if config.updateTimestampsCache.eternal??> eternal="${config.updateTimestampsCache.eternal}"</#if><#if config.updateTimestampsCache.timeToIdleSeconds??> timeToIdleSeconds="${config.updateTimestampsCache.timeToIdleSeconds}"</#if><#if config.updateTimestampsCache.timeToLiveSeconds??> timeToLiveSeconds="${config.updateTimestampsCache.timeToLiveSeconds}"</#if>>
+<#if config.updateTimestampsCache.persistence.strategy??>
+		<persistence strategy="${config.updateTimestampsCache.persistence.strategy}"/>
+</#if>
+	</cache>
+
+	<!-- Entity cache setting -->
 <#list config.cacheList as cache>
 
 	<cache name="${cache.name}"<#if cache.maxEntriesLocalHeap??> maxEntriesLocalHeap="${cache.maxEntriesLocalHeap}"</#if><#if cache.maxEntriesLocalDisk??> maxEntriesLocalDisk="${cache.maxEntriesLocalDisk}"</#if><#if cache.eternal??> eternal="${cache.eternal}"</#if><#if cache.timeToIdleSeconds??> timeToIdleSeconds="${cache.timeToIdleSeconds}"</#if><#if cache.timeToLiveSeconds??> timeToLiveSeconds="${cache.timeToLiveSeconds}"</#if>>
