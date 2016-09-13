@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import com.google.common.collect.Maps;
 import com.itdoes.common.business.dao.BaseDao;
+import com.itdoes.common.business.dao.loader.LazyDaoLoader;
 import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.business.entity.SecureColumn;
 import com.itdoes.common.core.cglib.CglibMapper;
@@ -70,7 +71,6 @@ public class Env implements ApplicationContextAware {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private <T, ID extends Serializable> void initEntityPair(Class<T> entityClass) {
 		final String key = entityClass.getSimpleName();
 
@@ -80,7 +80,8 @@ public class Env implements ApplicationContextAware {
 
 		// Dao
 		final String daoBeanId = Springs.getBeanId(getDaoClassName(key));
-		final BaseDao<T, ID> dao = (BaseDao<T, ID>) applicationContext.getBean(daoBeanId);
+		final BaseDao<T, ID> dao = LazyDaoLoader.getInstance().load(applicationContext, daoBeanId);// (BaseDao<T, ID>)
+																									// applicationContext.getBean(daoBeanId);
 		Validate.notNull(dao, "Cannot find bean for id [%s]", daoBeanId);
 
 		// Secure Fields
