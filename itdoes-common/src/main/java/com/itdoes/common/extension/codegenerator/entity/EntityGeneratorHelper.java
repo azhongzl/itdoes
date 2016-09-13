@@ -74,25 +74,26 @@ public class EntityGeneratorHelper {
 
 		@Override
 		public Cache newCache(String entityPackageName, String entityClassName) {
-			final Persistence persisence = new Persistence(
-					mapEhcacheCacheValue(entityClassName, "persistence.strategy"),
-					mapEhcacheCacheValue(entityClassName, "persistence.synchronousWrites", null));
+			final Persistence persisence = new Persistence(getCacheValue(entityClassName, "persistence.strategy"),
+					getCacheValue(entityClassName, "persistence.synchronousWrites", null));
 			final Cache cache = new Cache(entityPackageName + "." + entityClassName,
-					mapEhcacheCacheValue(entityClassName, "maxEntriesLocalHeap"),
-					mapEhcacheCacheValue(entityClassName, "maxEntriesLocalDisk"),
-					mapEhcacheCacheValue(entityClassName, "eternal"),
-					mapEhcacheCacheValue(entityClassName, "timeToIdleSeconds"),
-					mapEhcacheCacheValue(entityClassName, "timeToLiveSeconds"), persisence);
+					getCacheValue(entityClassName, "maxEntriesLocalHeap"),
+					getCacheValue(entityClassName, "maxEntriesLocalDisk"), getCacheValue(entityClassName, "eternal"),
+					getCacheValue(entityClassName, "timeToIdleSeconds"),
+					getCacheValue(entityClassName, "timeToLiveSeconds"), persisence);
 			return cache;
 		}
 
-		private String mapEhcacheCacheValue(String entityClassName, String key) {
-			return pl.getString(new String[] { "cache." + entityClassName + "." + key, "templateCache." + key });
+		private String getCacheValue(String entityClassName, String key) {
+			return pl.getString(getCacheKeys(entityClassName, key));
 		}
 
-		private String mapEhcacheCacheValue(String entityClassName, String key, String defaultValue) {
-			return pl.getString(new String[] { "cache." + entityClassName + "." + key, "templateCache." + key },
-					defaultValue);
+		private String getCacheValue(String entityClassName, String key, String defaultValue) {
+			return pl.getString(getCacheKeys(entityClassName, key), defaultValue);
+		}
+
+		private static String[] getCacheKeys(String entityClassName, String key) {
+			return new String[] { "cache." + entityClassName + "." + key, "templateCache." + key };
 		}
 	}
 
