@@ -57,16 +57,16 @@ public class EntityGeneratorHelper {
 			final Cache standardQueryCache = new Cache("org.hibernate.cache.internal.StandardQueryCache",
 					pl.getString("StandardQueryCache.maxEntriesLocalHeap"),
 					pl.getString("StandardQueryCache.maxEntriesLocalDisk"), pl.getString("StandardQueryCache.eternal"),
-					pl.getString("StandardQueryCache.timeToIdleSeconds"),
-					pl.getString("StandardQueryCache.timeToLiveSeconds"),
+					pl.getString("StandardQueryCache.timeToIdleSeconds", null),
+					pl.getString("StandardQueryCache.timeToLiveSeconds", null),
 					new Persistence(pl.getString("StandardQueryCache.persistence.strategy"),
 							pl.getString("StandardQueryCache.persistence.synchronousWrites", null)));
 			final Cache updateTimestampsCache = new Cache("org.hibernate.cache.spi.UpdateTimestampsCache",
 					pl.getString("UpdateTimestampsCache.maxEntriesLocalHeap"),
 					pl.getString("UpdateTimestampsCache.maxEntriesLocalDisk"),
 					pl.getString("UpdateTimestampsCache.eternal"),
-					pl.getString("UpdateTimestampsCache.timeToIdleSeconds"),
-					pl.getString("UpdateTimestampsCache.timeToLiveSeconds"),
+					pl.getString("UpdateTimestampsCache.timeToIdleSeconds", null),
+					pl.getString("UpdateTimestampsCache.timeToLiveSeconds", null),
 					new Persistence(pl.getString("UpdateTimestampsCache.persistence.strategy"),
 							pl.getString("UpdateTimestampsCache.persistence.synchronousWrites", null)));
 			return new EhcacheModel(name, diskStore, defaultCache, standardQueryCache, updateTimestampsCache);
@@ -79,8 +79,8 @@ public class EntityGeneratorHelper {
 			final Cache cache = new Cache(entityPackageName + "." + entityClassName,
 					getCacheValue(entityClassName, "maxEntriesLocalHeap"),
 					getCacheValue(entityClassName, "maxEntriesLocalDisk"), getCacheValue(entityClassName, "eternal"),
-					getCacheValue(entityClassName, "timeToIdleSeconds"),
-					getCacheValue(entityClassName, "timeToLiveSeconds"), persisence);
+					getCacheValue(entityClassName, "timeToIdleSeconds", null),
+					getCacheValue(entityClassName, "timeToLiveSeconds", null), persisence);
 			return cache;
 		}
 
