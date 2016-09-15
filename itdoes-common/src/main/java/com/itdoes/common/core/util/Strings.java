@@ -3,6 +3,7 @@ package com.itdoes.common.core.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -59,6 +60,17 @@ public class Strings {
 		}
 
 		return str.substring(index + toFind.length());
+	}
+
+	public static String[] splitNoLimit(String value, String separator) {
+		if (StringUtils.isBlank(value)) {
+			return ArrayUtils.EMPTY_STRING_ARRAY;
+		}
+
+		if (separator.equals("|")) {
+			separator = "\\|";
+		}
+		return value.split(separator, -1);
 	}
 
 	private Strings() {
