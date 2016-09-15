@@ -51,7 +51,8 @@ public class EntityGeneratorHelper {
 			final DiskStore diskStore = new DiskStore(pl.getString("diskStore.path"));
 			final DefaultCache defaultCache = new DefaultCache(pl.getString("defaultCache.maxEntriesLocalHeap"),
 					pl.getString("defaultCache.maxEntriesLocalDisk"), pl.getString("defaultCache.eternal"),
-					pl.getString("defaultCache.timeToIdleSeconds"), pl.getString("defaultCache.timeToLiveSeconds"),
+					pl.getString("defaultCache.timeToIdleSeconds", null),
+					pl.getString("defaultCache.timeToLiveSeconds", null),
 					new Persistence(pl.getString("defaultCache.persistence.strategy"),
 							pl.getString("defaultCache.persistence.synchronousWrites", null)));
 			final Cache standardQueryCache = new Cache("org.hibernate.cache.internal.StandardQueryCache",
