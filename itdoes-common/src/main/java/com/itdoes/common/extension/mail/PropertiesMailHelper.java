@@ -62,14 +62,14 @@ public class PropertiesMailHelper implements MailHelper {
 			to = pl.getStrings("mail.to.success");
 			subject = getSubject(true);
 
-			cc = pl.getStrings("mail.cc.success");
-			bcc = pl.getStrings("mail.bcc.success");
+			cc = pl.getStrings("mail.cc.success", null);
+			bcc = pl.getStrings("mail.bcc.success", null);
 		} else {
 			to = pl.getStrings(new String[] { "mail.to.fail", "mail.to.success" });
 			subject = getSubject(false);
 
-			cc = pl.getStrings(new String[] { "mail.cc.fail", "mail.cc.success" });
-			bcc = pl.getStrings(new String[] { "mail.bcc.fail", "mail.bcc.success" });
+			cc = pl.getStrings(new String[] { "mail.cc.fail", "mail.cc.success" }, null);
+			bcc = pl.getStrings(new String[] { "mail.bcc.fail", "mail.bcc.success" }, null);
 		}
 
 		mimeMessage.setTo(to).setSubject(subject);
@@ -155,7 +155,7 @@ public class PropertiesMailHelper implements MailHelper {
 				.setPort(pl.getInteger("mail.port")).setUsername(pl.getString("mail.username"))
 				.setPassword(Cryptos.aesDecryptDefault(pl.getString("mail.password")));
 
-		final String[] mailPropertiesEntries = pl.getStrings("mail.properties");
+		final String[] mailPropertiesEntries = pl.getStrings("mail.properties", null);
 		if (!Collections3.isEmpty(mailPropertiesEntries)) {
 			for (String mailPropertiesEntry : mailPropertiesEntries) {
 				final String[] mailPropertyPair = StringUtils.split(mailPropertiesEntry, "|");

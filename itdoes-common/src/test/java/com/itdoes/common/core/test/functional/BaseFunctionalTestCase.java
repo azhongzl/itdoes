@@ -47,7 +47,7 @@ public abstract class BaseFunctionalTestCase {
 		}
 
 		jettyServer = JettyServer.createAndStart(URL_BASE_URL.getPort(), PL.getString("jetty.context"),
-				PL.getStrings("jetty.taglib"));
+				PL.getStrings("jetty.taglib", null));
 	}
 
 	protected static void initDataSource() {

@@ -82,9 +82,9 @@ public class PropertiesLoaderTest {
 		System.setProperty("p1", "sys");
 
 		PropertiesLoader plDefault = new PropertiesLoader("classpath:/test1.properties", "classpath:/test2.properties");
-		PropertiesLoader plPreferSystem = new PropertiesLoader(true, "classpath:/test1.properties",
+		PropertiesLoader plPreferSystem = new PropertiesLoader(true, false, "classpath:/test1.properties",
 				"classpath:/test2.properties");
-		PropertiesLoader plPreferLocal = new PropertiesLoader(false, "classpath:/test1.properties",
+		PropertiesLoader plPreferLocal = new PropertiesLoader(false, false, "classpath:/test1.properties",
 				"classpath:/test2.properties");
 
 		assertThat(plDefault.getString("p1")).isEqualTo("sys");
