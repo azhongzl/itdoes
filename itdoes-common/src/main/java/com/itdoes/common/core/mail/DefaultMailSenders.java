@@ -67,61 +67,81 @@ public class DefaultMailSenders implements MailSenders {
 
 	@Override
 	public MailSenders setJavaMailProperties(Properties javaMailProperties) {
-		sender.setJavaMailProperties(javaMailProperties);
+		if (javaMailProperties != null) {
+			sender.setJavaMailProperties(javaMailProperties);
+		}
 		return this;
 	}
 
 	@Override
 	public MailSenders setJavaMailProperty(String key, String value) {
-		sender.getJavaMailProperties().setProperty(key, value);
+		if (key != null && value != null) {
+			sender.getJavaMailProperties().setProperty(key, value);
+		}
 		return this;
 	}
 
 	@Override
 	public MailSenders setSession(Session session) {
-		sender.setSession(session);
+		if (session != null) {
+			sender.setSession(session);
+		}
 		return this;
 	}
 
 	@Override
 	public MailSenders setProtocol(String protocol) {
-		sender.setProtocol(protocol);
+		if (protocol != null) {
+			sender.setProtocol(protocol);
+		}
 		return this;
 	}
 
 	@Override
 	public MailSenders setHost(String host) {
-		sender.setHost(host);
+		if (host != null) {
+			sender.setHost(host);
+		}
 		return this;
 	}
 
 	@Override
-	public MailSenders setPort(int port) {
-		sender.setPort(port);
+	public MailSenders setPort(Integer port) {
+		if (port != null) {
+			sender.setPort(port);
+		}
 		return this;
 	}
 
 	@Override
 	public MailSenders setUsername(String username) {
-		sender.setUsername(username);
+		if (username != null) {
+			sender.setUsername(username);
+		}
 		return this;
 	}
 
 	@Override
 	public MailSenders setPassword(String password) {
-		sender.setPassword(password);
+		if (password != null) {
+			sender.setPassword(password);
+		}
 		return this;
 	}
 
 	@Override
 	public MailSenders setDefaultEncoding(String defaultEncoding) {
-		sender.setDefaultEncoding(defaultEncoding);
+		if (defaultEncoding != null) {
+			sender.setDefaultEncoding(defaultEncoding);
+		}
 		return this;
 	}
 
 	@Override
 	public MailSenders setDefaultFileTypeMap(FileTypeMap defaultFileTypeMap) {
-		sender.setDefaultFileTypeMap(defaultFileTypeMap);
+		if (defaultFileTypeMap != null) {
+			sender.setDefaultFileTypeMap(defaultFileTypeMap);
+		}
 		return this;
 	}
 }

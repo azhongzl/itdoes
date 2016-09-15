@@ -42,13 +42,13 @@ public class PropertiesMailHelper implements MailHelper {
 
 	@Override
 	public MailMimeMessages createMimeMessage(boolean multipart, boolean success) {
-		if (!pl.getBoolean("mail.on")) {
+		if (!pl.getBooleanMust("mail.on")) {
 			return NopMailMimeMessages.INSTANCE;
 		}
 
 		final MailMimeMessages mimeMessage = Mails.createMimeMessage(sender, multipart);
 
-		final String from = pl.getString("mail.from");
+		final String from = pl.getStringMust("mail.from");
 		final String personal = from.substring(0, from.indexOf("@"));
 		mimeMessage.setFrom(from, personal).setReplyTo(from, personal);
 
@@ -59,17 +59,17 @@ public class PropertiesMailHelper implements MailHelper {
 		final String[] cc;
 		final String[] bcc;
 		if (success) {
-			to = pl.getStrings("mail.to.success");
+			to = pl.getStringsMust("mail.to.success");
 			subject = getSubject(true);
 
-			cc = pl.getStrings("mail.cc.success", null);
-			bcc = pl.getStrings("mail.bcc.success", null);
+			cc = pl.getStringsMay("mail.cc.success", null);
+			bcc = pl.getStringsMay("mail.bcc.success", null);
 		} else {
-			to = pl.getStrings(new String[] { "mail.to.fail", "mail.to.success" });
+			to = pl.getStringsMust(new String[] { "mail.to.fail", "mail.to.success" });
 			subject = getSubject(false);
 
-			cc = pl.getStrings(new String[] { "mail.cc.fail", "mail.cc.success" }, null);
-			bcc = pl.getStrings(new String[] { "mail.bcc.fail", "mail.bcc.success" }, null);
+			cc = pl.getStringsMay(new String[] { "mail.cc.fail", "mail.cc.success" }, null);
+			bcc = pl.getStringsMay(new String[] { "mail.bcc.fail", "mail.bcc.success" }, null);
 		}
 
 		mimeMessage.setTo(to).setSubject(subject);
@@ -139,7 +139,7 @@ public class PropertiesMailHelper implements MailHelper {
 	}
 
 	private String getSubject(boolean success) {
-		final String templateString = pl.getString("mail.subject");
+		final String templateString = pl.getStringMust("mail.subject");
 		final Map<String, String> model = Maps.newHashMap();
 		model.put("result", success ? "success" : "fail");
 		model.put("date", DATE_FORMAT.format(new Date()));
@@ -147,15 +147,15 @@ public class PropertiesMailHelper implements MailHelper {
 	}
 
 	private MailSenders createSender() {
-		if (!pl.getBoolean("mail.on")) {
+		if (!pl.getBooleanMust("mail.on")) {
 			return NopMailSenders.INSTANCE;
 		}
 
-		final MailSenders sender = Mails.createSender().setHost(pl.getString("mail.host"))
-				.setPort(pl.getInteger("mail.port")).setUsername(pl.getString("mail.username"))
-				.setPassword(Cryptos.aesDecryptDefault(pl.getString("mail.password")));
+		final MailSenders sender = Mails.createSender().setHost(pl.getStringMust("mail.host"))
+				.setPort(pl.getIntegerMay("mail.port", null)).setUsername(pl.getStringMust("mail.username"))
+				.setPassword(Cryptos.aesDecryptDefault(pl.getStringMust("mail.password")));
 
-		final String[] mailPropertiesEntries = pl.getStrings("mail.properties", null);
+		final String[] mailPropertiesEntries = pl.getStringsMay("mail.properties", null);
 		if (!Collections3.isEmpty(mailPropertiesEntries)) {
 			for (String mailPropertiesEntry : mailPropertiesEntries) {
 				final String[] mailPropertyPair = StringUtils.split(mailPropertiesEntry, "|");

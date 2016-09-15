@@ -35,7 +35,7 @@ public interface MailSenders {
 
 	MailSenders setHost(String host);
 
-	MailSenders setPort(int port);
+	MailSenders setPort(Integer port);
 
 	MailSenders setUsername(String username);
 

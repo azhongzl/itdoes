@@ -32,49 +32,49 @@ public class PropertiesLoaderTest {
 		PropertiesLoader pl = new PropertiesLoader("classpath:/test1.properties");
 
 		try {
-			pl.getString("notExist");
+			pl.getStringMust("notExist");
 			failBecauseExceptionWasNotThrown(NoSuchElementException.class);
 		} catch (NoSuchElementException e) {
 		}
 
-		assertThat(pl.getString("notExist", "defaultValue")).isEqualTo("defaultValue");
+		assertThat(pl.getStringMay("notExist", "defaultValue")).isEqualTo("defaultValue");
 	}
 
 	@Test
 	public void primitiveTypes() {
 		PropertiesLoader pl = new PropertiesLoader("classpath:/test1.properties", "classpath:/test2.properties");
 
-		assertThat(pl.getInteger("p1")).isEqualTo(1);
+		assertThat(pl.getIntegerMust("p1")).isEqualTo(1);
 		try {
-			pl.getInteger("notExist");
+			pl.getIntegerMust("notExist");
 			failBecauseExceptionWasNotThrown(NoSuchElementException.class);
 		} catch (NoSuchElementException e) {
 		}
-		assertThat(pl.getInteger("notExist", 100)).isEqualTo(100);
+		assertThat(pl.getIntegerMay("notExist", 100)).isEqualTo(100);
 
-		assertThat(pl.getLong("p1")).isEqualTo(1L);
+		assertThat(pl.getLongMust("p1")).isEqualTo(1L);
 		try {
-			pl.getLong("notExist");
+			pl.getLongMust("notExist");
 			failBecauseExceptionWasNotThrown(NoSuchElementException.class);
 		} catch (NoSuchElementException e) {
 		}
-		assertThat(pl.getLong("notExist", 100L)).isEqualTo(100L);
+		assertThat(pl.getLongMay("notExist", 100L)).isEqualTo(100L);
 
-		assertThat(pl.getDouble("p1")).isEqualTo(1D);
+		assertThat(pl.getDoubleMust("p1")).isEqualTo(1D);
 		try {
-			pl.getDouble("notExist");
+			pl.getDoubleMust("notExist");
 			failBecauseExceptionWasNotThrown(NoSuchElementException.class);
 		} catch (NoSuchElementException e) {
 		}
-		assertThat(pl.getDouble("notExist", 100D)).isEqualTo(100D);
+		assertThat(pl.getDoubleMay("notExist", 100D)).isEqualTo(100D);
 
-		assertThat(pl.getBoolean("p4")).isEqualTo(true);
+		assertThat(pl.getBooleanMust("p4")).isEqualTo(true);
 		try {
-			pl.getBoolean("notExist");
+			pl.getBooleanMust("notExist");
 			failBecauseExceptionWasNotThrown(NoSuchElementException.class);
 		} catch (NoSuchElementException e) {
 		}
-		assertThat(pl.getBoolean("notExist", true)).isEqualTo(true);
+		assertThat(pl.getBooleanMay("notExist", true)).isEqualTo(true);
 	}
 
 	@Test
@@ -87,9 +87,9 @@ public class PropertiesLoaderTest {
 		PropertiesLoader plPreferLocal = new PropertiesLoader(false, false, "classpath:/test1.properties",
 				"classpath:/test2.properties");
 
-		assertThat(plDefault.getString("p1")).isEqualTo("sys");
-		assertThat(plPreferSystem.getString("p1")).isEqualTo("sys");
-		assertThat(plPreferLocal.getString("p1")).isEqualTo("1");
+		assertThat(plDefault.getStringMust("p1")).isEqualTo("sys");
+		assertThat(plPreferSystem.getStringMust("p1")).isEqualTo("sys");
+		assertThat(plPreferLocal.getStringMust("p1")).isEqualTo("1");
 
 		System.clearProperty("p1");
 	}

@@ -72,7 +72,7 @@ public class NopMailSenders implements MailSenders {
 	}
 
 	@Override
-	public MailSenders setPort(int port) {
+	public MailSenders setPort(Integer port) {
 		return this;
 	}
 

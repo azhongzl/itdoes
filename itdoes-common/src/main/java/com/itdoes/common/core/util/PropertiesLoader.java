@@ -60,7 +60,7 @@ public class PropertiesLoader {
 		return properties;
 	}
 
-	public String getString(String key) {
+	public String getStringMust(String key) {
 		final String value = getValue(key);
 		if (!hasValue(value)) {
 			throw new NoSuchElementException("Key " + key + " does not exist");
@@ -68,12 +68,12 @@ public class PropertiesLoader {
 		return value;
 	}
 
-	public String getString(String key, String defaultValue) {
+	public String getStringMay(String key, String defaultValue) {
 		final String value = getValue(key);
 		return hasValue(value) ? value : defaultValue;
 	}
 
-	public String getString(String[] keys) {
+	public String getStringMust(String[] keys) {
 		final String value = getValue(keys);
 		if (!hasValue(value)) {
 			throw new NoSuchElementException("Keys " + Arrays.toString(keys) + " does not exist");
@@ -81,48 +81,48 @@ public class PropertiesLoader {
 		return value;
 	}
 
-	public String getString(String[] keys, String defaultValue) {
+	public String getStringMay(String[] keys, String defaultValue) {
 		final String value = getValue(keys);
 		return hasValue(value) ? value : defaultValue;
 	}
 
-	public String[] getStringsBySeparator(String key, String separator) {
-		final String value = getString(key);
+	public String[] getStringsMustBySeparator(String key, String separator) {
+		final String value = getStringMust(key);
 		return StringUtils.split(value, separator);
 	}
 
-	public String[] getStrings(String key) {
-		return getStringsBySeparator(key, DEFAULT_VALUE_SEPARATOR);
+	public String[] getStringsMust(String key) {
+		return getStringsMustBySeparator(key, DEFAULT_VALUE_SEPARATOR);
 	}
 
-	public String[] getStringsBySeparator(String key, String defaultValue, String separator) {
-		final String value = getString(key, defaultValue);
+	public String[] getStringsMayBySeparator(String key, String defaultValue, String separator) {
+		final String value = getStringMay(key, defaultValue);
 		return StringUtils.split(value, separator);
 	}
 
-	public String[] getStrings(String key, String defaultValue) {
-		return getStringsBySeparator(key, defaultValue, DEFAULT_VALUE_SEPARATOR);
+	public String[] getStringsMay(String key, String defaultValue) {
+		return getStringsMayBySeparator(key, defaultValue, DEFAULT_VALUE_SEPARATOR);
 	}
 
-	public String[] getStringsBySeparator(String[] keys, String separator) {
-		final String value = getString(keys);
+	public String[] getStringsMustBySeparator(String[] keys, String separator) {
+		final String value = getStringMust(keys);
 		return StringUtils.split(value, separator);
 	}
 
-	public String[] getStrings(String[] keys) {
-		return getStringsBySeparator(keys, DEFAULT_VALUE_SEPARATOR);
+	public String[] getStringsMust(String[] keys) {
+		return getStringsMustBySeparator(keys, DEFAULT_VALUE_SEPARATOR);
 	}
 
-	public String[] getStringsBySeparator(String[] keys, String defaultValue, String separator) {
-		final String value = getString(keys, defaultValue);
+	public String[] getStringsMayBySeparator(String[] keys, String defaultValue, String separator) {
+		final String value = getStringMay(keys, defaultValue);
 		return StringUtils.split(value, separator);
 	}
 
-	public String[] getStrings(String[] keys, String defaultValue) {
-		return getStringsBySeparator(keys, defaultValue, DEFAULT_VALUE_SEPARATOR);
+	public String[] getStringsMay(String[] keys, String defaultValue) {
+		return getStringsMayBySeparator(keys, defaultValue, DEFAULT_VALUE_SEPARATOR);
 	}
 
-	public Integer getInteger(String key) {
+	public Integer getIntegerMust(String key) {
 		final String value = getValue(key);
 		if (!hasValue(value)) {
 			throw new NoSuchElementException("Key " + key + " does not exist");
@@ -130,12 +130,12 @@ public class PropertiesLoader {
 		return Integer.valueOf(value);
 	}
 
-	public Integer getInteger(String key, Integer defaultValue) {
+	public Integer getIntegerMay(String key, Integer defaultValue) {
 		final String value = getValue(key);
 		return hasValue(value) ? Integer.valueOf(value) : defaultValue;
 	}
 
-	public Integer getInteger(String[] keys) {
+	public Integer getIntegerMust(String[] keys) {
 		final String value = getValue(keys);
 		if (!hasValue(value)) {
 			throw new NoSuchElementException("Keys " + Arrays.toString(keys) + " does not exist");
@@ -143,12 +143,12 @@ public class PropertiesLoader {
 		return Integer.valueOf(value);
 	}
 
-	public Integer getInteger(String[] keys, Integer defaultValue) {
+	public Integer getIntegerMay(String[] keys, Integer defaultValue) {
 		final String value = getValue(keys);
 		return hasValue(value) ? Integer.valueOf(value) : defaultValue;
 	}
 
-	public Long getLong(String key) {
+	public Long getLongMust(String key) {
 		final String value = getValue(key);
 		if (!hasValue(value)) {
 			throw new NoSuchElementException("Key " + key + " does not exist");
@@ -156,12 +156,12 @@ public class PropertiesLoader {
 		return Long.valueOf(value);
 	}
 
-	public Long getLong(String key, Long defaultValue) {
+	public Long getLongMay(String key, Long defaultValue) {
 		final String value = getValue(key);
 		return hasValue(value) ? Long.valueOf(value) : defaultValue;
 	}
 
-	public Long getLong(String[] keys) {
+	public Long getLongMust(String[] keys) {
 		final String value = getValue(keys);
 		if (!hasValue(value)) {
 			throw new NoSuchElementException("Keys " + Arrays.toString(keys) + " does not exist");
@@ -169,12 +169,12 @@ public class PropertiesLoader {
 		return Long.valueOf(value);
 	}
 
-	public Long getLong(String[] keys, Long defaultValue) {
+	public Long getLongMay(String[] keys, Long defaultValue) {
 		final String value = getValue(keys);
 		return hasValue(value) ? Long.valueOf(value) : defaultValue;
 	}
 
-	public Double getDouble(String key) {
+	public Double getDoubleMust(String key) {
 		final String value = getValue(key);
 		if (!hasValue(value)) {
 			throw new NoSuchElementException("Key " + key + " does not exist");
@@ -182,12 +182,12 @@ public class PropertiesLoader {
 		return Double.valueOf(value);
 	}
 
-	public Double getDouble(String key, Double defaultValue) {
+	public Double getDoubleMay(String key, Double defaultValue) {
 		final String value = getValue(key);
 		return hasValue(value) ? Double.valueOf(value) : defaultValue;
 	}
 
-	public Double getDouble(String[] keys) {
+	public Double getDoubleMust(String[] keys) {
 		final String value = getValue(keys);
 		if (!hasValue(value)) {
 			throw new NoSuchElementException("Keys " + Arrays.toString(keys) + " does not exist");
@@ -195,12 +195,12 @@ public class PropertiesLoader {
 		return Double.valueOf(value);
 	}
 
-	public Double getDouble(String[] keys, Double defaultValue) {
+	public Double getDoubleMay(String[] keys, Double defaultValue) {
 		final String value = getValue(keys);
 		return hasValue(value) ? Double.valueOf(value) : defaultValue;
 	}
 
-	public Boolean getBoolean(String key) {
+	public Boolean getBooleanMust(String key) {
 		final String value = getValue(key);
 		if (!hasValue(value)) {
 			throw new NoSuchElementException("Key " + key + " does not exist");
@@ -208,12 +208,12 @@ public class PropertiesLoader {
 		return Boolean.valueOf(value);
 	}
 
-	public Boolean getBoolean(String key, Boolean defaultValue) {
+	public Boolean getBooleanMay(String key, Boolean defaultValue) {
 		final String value = getValue(key);
 		return hasValue(value) ? Boolean.valueOf(value) : defaultValue;
 	}
 
-	public Boolean getBoolean(String[] keys) {
+	public Boolean getBooleanMust(String[] keys) {
 		final String value = getValue(keys);
 		if (!hasValue(value)) {
 			throw new NoSuchElementException("Keys " + Arrays.toString(keys) + " does not exist");
@@ -221,7 +221,7 @@ public class PropertiesLoader {
 		return Boolean.valueOf(value);
 	}
 
-	public Boolean getBoolean(String[] keys, Boolean defaultValue) {
+	public Boolean getBooleanMay(String[] keys, Boolean defaultValue) {
 		final String value = getValue(keys);
 		return hasValue(value) ? Boolean.valueOf(value) : defaultValue;
 	}
