@@ -19,6 +19,7 @@ import com.itdoes.common.core.mail.NopMailSenders;
 import com.itdoes.common.core.security.Cryptos;
 import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Exceptions;
+import com.itdoes.common.core.util.Nets;
 import com.itdoes.common.core.util.PropertiesLoader;
 
 /**
@@ -142,6 +143,7 @@ public class PropertiesMailHelper implements MailHelper {
 		final String templateString = pl.getStringMust("mail.subject");
 		final Map<String, String> model = Maps.newHashMap();
 		model.put("result", success ? "success" : "fail");
+		model.put("localhostName", Nets.getLocalHost().getCanonicalHostName());
 		model.put("date", DATE_FORMAT.format(new Date()));
 		return FreeMarkers.render(templateString, model);
 	}

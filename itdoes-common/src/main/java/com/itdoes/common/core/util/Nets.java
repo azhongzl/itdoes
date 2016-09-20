@@ -7,10 +7,9 @@ import java.net.UnknownHostException;
  * @author Jalen Zhong
  */
 public class Nets {
-	public static String getLocalHost() {
+	public static InetAddress getLocalHost() {
 		try {
-			final InetAddress address = InetAddress.getLocalHost();
-			return address.getCanonicalHostName();
+			return InetAddress.getLocalHost();
 		} catch (UnknownHostException e) {
 			throw Exceptions.unchecked(e);
 		}
