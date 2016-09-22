@@ -202,6 +202,22 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.igniterealtime.smack</groupId>
+			<artifactId>smack-tcp</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.igniterealtime.smack</groupId>
+			<artifactId>smack-extensions</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.igniterealtime.smack</groupId>
+			<artifactId>smack-java7</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
