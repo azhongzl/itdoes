@@ -14,7 +14,7 @@ import com.itdoes.common.business.EntityPair;
  * @author Jalen Zhong
  */
 @Service
-public class FacadeService extends BaseService {
+public class FacadeService extends BaseTransactionalService {
 	public <T, ID extends Serializable> Page<T> search(EntityPair<T, ID> pair, Specification<T> specification,
 			PageRequest pageRequest) {
 		return pair.getDao().findAll(specification, pageRequest);
