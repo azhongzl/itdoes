@@ -20,11 +20,17 @@ import com.itdoes.common.core.util.Exceptions;
  * @author Jalen Zhong
  */
 public class Smacks {
+	public static final String RESOURCE_SPARK = "Spark";
+
+	public static AbstractXMPPConnection connect(String serviceName, String username, String password) {
+		return connect(serviceName, -1, username, password, RESOURCE_SPARK, false, true);
+	}
+
 	public static AbstractXMPPConnection connect(String serviceName, int port, String username, String password,
-			boolean compressionEnabled) {
+			String resource, boolean compressionEnabled, boolean enabledPerDefault) {
 		try {
 			final XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder()
-					.setUsernameAndPassword(username, password).setServiceName(serviceName)
+					.setUsernameAndPassword(username, password).setServiceName(serviceName).setResource(resource)
 					.setCompressionEnabled(compressionEnabled);
 			if (port > 0) {
 				builder.setPort(port);
@@ -32,9 +38,9 @@ public class Smacks {
 
 			TLSUtils.acceptAllCertificates(builder);
 			TLSUtils.disableHostnameVerificationForTlsCertificicates(builder);
-			ReconnectionManager.setEnabledPerDefault(true);
+			ReconnectionManager.setEnabledPerDefault(enabledPerDefault);
 
-			AbstractXMPPConnection connection = new XMPPTCPConnection(builder.build());
+			final AbstractXMPPConnection connection = new XMPPTCPConnection(builder.build());
 			connection.connect();
 			connection.login();
 			return connection;
