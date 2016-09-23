@@ -39,15 +39,15 @@ public class SmackMain {
 		Smacks.addChatManagerListener(connection, new ChatManagerListener() {
 			@Override
 			public void chatCreated(Chat chat, boolean createdLocally) {
-				if (!createdLocally)
-					chat.addMessageListener(new ChatMessageListener() {
-						@Override
-						public void processMessage(Chat chat, Message message) {
-							if (message.getBody() != null)
-								System.out.println("Received message: " + message.getBody());
+				// if (!createdLocally)
+				chat.addMessageListener(new ChatMessageListener() {
+					@Override
+					public void processMessage(Chat chat, Message message) {
+						if (message.getBody() != null)
+							System.out.println("Received message: " + message.getBody());
 
-						}
-					});
+					}
+				});
 			}
 		});
 
@@ -75,8 +75,9 @@ public class SmackMain {
 	public static void main(String[] args) throws Exception {
 		String username = "jalen";
 		String password = "dhxlsfn";
-		String serviceName = "0nl1ne.cc";
-		String userJid = "dhxlsfn@0nl1ne.cc/Spark";
+		// String serviceName = "0nl1ne.cc";
+		String serviceName = "jabber.at";
+		String userJid = "dhxlsfn@jabber.at/Spark";
 
 		SmackMain main = new SmackMain(serviceName, username, password, userJid);
 		main.demo();
