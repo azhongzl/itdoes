@@ -200,7 +200,11 @@ public class Selenium2 {
 	public void typeEnter(By by) {
 		typeKeys(by, Keys.ENTER);
 	}
-
+	
+	public void typeEsc(By by) {
+		typeKeys(by, Keys.ESCAPE);
+	}
+	
 	public void typeReturn(By by) {
 		typeKeys(by, Keys.RETURN);
 	}
