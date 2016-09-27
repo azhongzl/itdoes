@@ -32,7 +32,10 @@ import freemarker.template.Template;
  * @author Jalen Zhong
  */
 public class EntityGenerator {
-	private static final String DEFAULT_ID_GENERATED_VALUE = "@GeneratedValue(strategy = GenerationType.AUTO)";
+	public static final String AUTO_ID_GENERATED_VALUE = "@javax.persistence.GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)";
+	public static final String UUID_ID_GENERATED_VALUE = "@javax.persistence.GeneratedValue";
+	public static final String EMPTY_ID_GENERATED_VALUE = "";
+
 	private static final String TEMPLATE_DIR = "classpath:/" + Reflections.packageToPath(EntityGenerator.class);
 
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
@@ -48,9 +51,6 @@ public class EntityGenerator {
 		final String daoPackageName = basePackageName + ".dao";
 		final String daoDir = getPackageDir(outputDir, daoPackageName);
 		final Template daoTemplate = getTemplate(freeMarkerConfig, "Dao.ftl");
-
-		final String realIdGeneratedValue = StringUtils.isBlank(idGeneratedValue) ? DEFAULT_ID_GENERATED_VALUE
-				: idGeneratedValue;
 
 		final EhcacheModel ehcacheModel = ehcacheConfig.newModel();
 
@@ -68,7 +68,7 @@ public class EntityGenerator {
 			final List<EntityField> entityFieldList = mapEntityFieldList(tableName, table.getColumnList(),
 					columnMapping, secureColumnList);
 			final EntityModel entityModel = new EntityModel(entityPackageName, tableName, entityClassName,
-					getSerialVersionUIDStr(entityClassName), entityFieldList, realIdGeneratedValue);
+					getSerialVersionUIDStr(entityClassName), entityFieldList, idGeneratedValue);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
 			writeJavaFile(entityDir, entityClassName, entityString);
 
