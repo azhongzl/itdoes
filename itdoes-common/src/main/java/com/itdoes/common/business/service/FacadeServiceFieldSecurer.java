@@ -16,7 +16,7 @@ import com.itdoes.common.core.util.Reflections;
  * @author Jalen Zhong
  */
 @Service
-public class FacadeServiceFieldSecurer {
+public class FacadeServiceFieldSecurer extends BaseService {
 	@Autowired
 	private FacadeService facadeService;
 
