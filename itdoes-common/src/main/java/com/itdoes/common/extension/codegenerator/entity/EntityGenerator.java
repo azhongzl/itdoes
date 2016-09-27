@@ -172,12 +172,7 @@ public class EntityGenerator {
 	}
 
 	private static String mapFieldType(Column column) {
-		final Class<?> typeClass;
-		if (column.isPk()) {
-			typeClass = CustomSqlTypes.getIdSqlJavaTypeMap().get(column.getType().getId());
-		} else {
-			typeClass = CustomSqlTypes.getFieldSqlJavaTypeMap().get(column.getType().getId());
-		}
+		final Class<?> typeClass = CustomSqlTypes.getSqlJavaTypeMap().get(column.getType().getId());
 
 		if (typeClass != null) {
 			final String typeClassName = typeClass.getName();
