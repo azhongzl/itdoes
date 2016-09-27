@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 import com.itdoes.common.business.Env;
 import com.itdoes.common.core.Constants;
 import com.itdoes.common.core.freemarker.FreeMarkers;
-import com.itdoes.common.core.jdbc.SqlTypes;
+import com.itdoes.common.core.jdbc.CustomSqlTypes;
 import com.itdoes.common.core.jdbc.meta.Column;
 import com.itdoes.common.core.jdbc.meta.MetaParser;
 import com.itdoes.common.core.jdbc.meta.Table;
@@ -32,7 +32,10 @@ import freemarker.template.Template;
  * @author Jalen Zhong
  */
 public class EntityGenerator {
-	private static final String DEFAULT_ID_GENERATED_VALUE = "@GeneratedValue(strategy = GenerationType.AUTO)";
+	public static final String AUTO_ID_GENERATED_VALUE = "@javax.persistence.GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)";
+	public static final String UUID_ID_GENERATED_VALUE = "@javax.persistence.GeneratedValue";
+	public static final String EMPTY_ID_GENERATED_VALUE = "";
+
 	private static final String TEMPLATE_DIR = "classpath:/" + Reflections.packageToPath(EntityGenerator.class);
 
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
@@ -48,9 +51,6 @@ public class EntityGenerator {
 		final String daoPackageName = basePackageName + ".dao";
 		final String daoDir = getPackageDir(outputDir, daoPackageName);
 		final Template daoTemplate = getTemplate(freeMarkerConfig, "Dao.ftl");
-
-		final String realIdGeneratedValue = StringUtils.isBlank(idGeneratedValue) ? DEFAULT_ID_GENERATED_VALUE
-				: idGeneratedValue;
 
 		final EhcacheModel ehcacheModel = ehcacheConfig.newModel();
 
@@ -68,7 +68,7 @@ public class EntityGenerator {
 			final List<EntityField> entityFieldList = mapEntityFieldList(tableName, table.getColumnList(),
 					columnMapping, secureColumnList);
 			final EntityModel entityModel = new EntityModel(entityPackageName, tableName, entityClassName,
-					getSerialVersionUIDStr(entityClassName), entityFieldList, realIdGeneratedValue);
+					getSerialVersionUIDStr(entityClassName), entityFieldList, idGeneratedValue);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
 			writeJavaFile(entityDir, entityClassName, entityString);
 
@@ -76,7 +76,7 @@ public class EntityGenerator {
 			final String daoClassName = Env.getDaoClassName(entityClassName);
 			final boolean queryCacheEnabled = queryCacheConfig.isEnabled(entityClassName);
 			final DaoModel daoModel = new DaoModel(daoPackageName, entityPackageName, entityClassName, daoClassName,
-					queryCacheEnabled, mapIdType(tableName, table.getColumnList()));
+					queryCacheEnabled, mapIdType(tableName, entityFieldList));
 			final String daoString = FreeMarkers.render(daoTemplate, daoModel);
 			writeJavaFile(daoDir, daoClassName, daoString);
 
@@ -149,7 +149,7 @@ public class EntityGenerator {
 			}
 
 			final EntityField entityField = new EntityField(mapFieldName(tableName, column.getName(), columnMapping),
-					mapFieldType(column.getType().getId()), column, secure);
+					mapFieldType(column), column, secure);
 			entityFieldList.add(entityField);
 		}
 
@@ -171,8 +171,14 @@ public class EntityGenerator {
 		return tableName + "." + columnName;
 	}
 
-	private static String mapFieldType(int sqlType) {
-		final Class<?> typeClass = SqlTypes.toJavaType(sqlType);
+	private static String mapFieldType(Column column) {
+		final Class<?> typeClass;
+		if (column.isPk()) {
+			typeClass = CustomSqlTypes.getIdSqlJavaTypeMap().get(column.getType().getId());
+		} else {
+			typeClass = CustomSqlTypes.getFieldSqlJavaTypeMap().get(column.getType().getId());
+		}
+
 		if (typeClass != null) {
 			final String typeClassName = typeClass.getName();
 			if (typeClassName.startsWith("java.lang")) {
@@ -185,13 +191,13 @@ public class EntityGenerator {
 		return "String";
 	}
 
-	private static String mapIdType(String tableName, List<Column> columnList) {
+	private static String mapIdType(String tableName, List<EntityField> entityFieldList) {
 		int pkSum = 0;
 		String pkType = null;
-		for (Column column : columnList) {
-			if (column.isPk()) {
+		for (EntityField entityField : entityFieldList) {
+			if (entityField.getColumn().isPk()) {
 				pkSum++;
-				pkType = mapFieldType(column.getType().getId());
+				pkType = entityField.getType();
 			}
 		}
 
