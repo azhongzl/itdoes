@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -372,6 +373,8 @@ public class Reflections {
 			return Integer.valueOf(value);
 		} else if (toClass.equals(Long.class)) {
 			return Long.valueOf(value);
+		} else if (toClass.equals(UUID.class)) {
+			return UUID.fromString(value);
 		} else if (toClass.equals(Byte.class)) {
 			return Byte.valueOf(value);
 		} else if (toClass.equals(Short.class)) {
