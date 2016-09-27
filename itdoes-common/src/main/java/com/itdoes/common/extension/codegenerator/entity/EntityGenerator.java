@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 import com.itdoes.common.business.Env;
 import com.itdoes.common.core.Constants;
 import com.itdoes.common.core.freemarker.FreeMarkers;
-import com.itdoes.common.core.jdbc.SqlTypes;
+import com.itdoes.common.core.jdbc.CustomSqlTypes;
 import com.itdoes.common.core.jdbc.meta.Column;
 import com.itdoes.common.core.jdbc.meta.MetaParser;
 import com.itdoes.common.core.jdbc.meta.Table;
@@ -76,7 +76,7 @@ public class EntityGenerator {
 			final String daoClassName = Env.getDaoClassName(entityClassName);
 			final boolean queryCacheEnabled = queryCacheConfig.isEnabled(entityClassName);
 			final DaoModel daoModel = new DaoModel(daoPackageName, entityPackageName, entityClassName, daoClassName,
-					queryCacheEnabled, mapIdType(tableName, table.getColumnList()));
+					queryCacheEnabled, mapIdType(tableName, entityFieldList));
 			final String daoString = FreeMarkers.render(daoTemplate, daoModel);
 			writeJavaFile(daoDir, daoClassName, daoString);
 
@@ -149,7 +149,7 @@ public class EntityGenerator {
 			}
 
 			final EntityField entityField = new EntityField(mapFieldName(tableName, column.getName(), columnMapping),
-					mapFieldType(column.getType().getId()), column, secure);
+					mapFieldType(column), column, secure);
 			entityFieldList.add(entityField);
 		}
 
@@ -171,8 +171,14 @@ public class EntityGenerator {
 		return tableName + "." + columnName;
 	}
 
-	private static String mapFieldType(int sqlType) {
-		final Class<?> typeClass = SqlTypes.toJavaType(sqlType);
+	private static String mapFieldType(Column column) {
+		final Class<?> typeClass;
+		if (column.isPk()) {
+			typeClass = CustomSqlTypes.getIdSqlJavaTypeMap().get(column.getType().getId());
+		} else {
+			typeClass = CustomSqlTypes.getFieldSqlJavaTypeMap().get(column.getType().getId());
+		}
+
 		if (typeClass != null) {
 			final String typeClassName = typeClass.getName();
 			if (typeClassName.startsWith("java.lang")) {
@@ -185,13 +191,13 @@ public class EntityGenerator {
 		return "String";
 	}
 
-	private static String mapIdType(String tableName, List<Column> columnList) {
+	private static String mapIdType(String tableName, List<EntityField> entityFieldList) {
 		int pkSum = 0;
 		String pkType = null;
-		for (Column column : columnList) {
-			if (column.isPk()) {
+		for (EntityField entityField : entityFieldList) {
+			if (entityField.getColumn().isPk()) {
 				pkSum++;
-				pkType = mapFieldType(column.getType().getId());
+				pkType = entityField.getType();
 			}
 		}
 
