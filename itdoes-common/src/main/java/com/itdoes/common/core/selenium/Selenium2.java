@@ -205,6 +205,10 @@ public class Selenium2 {
 		typeKeys(by, Keys.RETURN);
 	}
 
+	public void typeEsc(By by) {
+		typeKeys(by, Keys.ESCAPE);
+	}
+
 	public void typeKeys(By by, CharSequence... keys) {
 		actStaleElement(new Action() {
 			@Override
