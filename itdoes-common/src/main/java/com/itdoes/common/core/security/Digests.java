@@ -16,123 +16,51 @@ import com.itdoes.common.core.util.Randoms;
  * @author Jalen Zhong
  */
 public class Digests {
-	private static final String SHA1 = "SHA-1";
-	private static final String SHA256 = "SHA-256";
-	private static final String MD5 = "MD5";
+	public static final String SHA1 = "SHA-1";
+	public static final String SHA256 = "SHA-256";
+	public static final String MD5 = "MD5";
 
 	private static final int DEFAULT_SALT_SIZE = 8;
 
 	private static final int BUFFER_LENGTH = 8 * 1024;
 
-	public static byte[] sha1(byte[] data) {
-		return sha1(data, null);
+	public static byte[] digest(String algorithm, String data) {
+		return digest(algorithm, data, Constants.UTF8_CHARSET);
 	}
 
-	public static byte[] sha1(byte[] data, byte[] salt) {
-		return sha1(data, salt, 1);
+	public static byte[] digest(String algorithm, String data, Charset charset) {
+		return digest(algorithm, data.getBytes(charset));
 	}
 
-	public static byte[] sha1(byte[] data, byte[] salt, int iterations) {
-		return digest(SHA1, data, salt, iterations);
+	public static byte[] digest(String algorithm, String data, byte[] salt) {
+		return digest(algorithm, data, Constants.UTF8_CHARSET, salt);
 	}
 
-	public static byte[] sha1(String data) {
-		return sha1(data, Constants.UTF8_CHARSET);
+	public static byte[] digest(String algorithm, String data, Charset charset, byte[] salt) {
+		return digest(algorithm, data.getBytes(charset), salt);
 	}
 
-	public static byte[] sha1(String data, Charset charset) {
-		return sha1(data.getBytes(charset));
+	public static byte[] digest(String algorithm, String data, byte[] salt, int iterations) {
+		return digest(algorithm, data, Constants.UTF8_CHARSET, salt, iterations);
 	}
 
-	public static byte[] sha1(String data, byte[] salt) {
-		return sha1(data, Constants.UTF8_CHARSET, salt);
+	public static byte[] digest(String algorithm, String data, Charset charset, byte[] salt, int iterations) {
+		return digest(algorithm, data.getBytes(charset), salt, iterations);
 	}
 
-	public static byte[] sha1(String data, Charset charset, byte[] salt) {
-		return sha1(data.getBytes(charset), salt);
+	public static byte[] digest(String algorithm, byte[] data) {
+		return digest(algorithm, data, null);
 	}
 
-	public static byte[] sha1(String input, byte[] salt, int iterations) {
-		return sha1(input, Constants.UTF8_CHARSET, salt, iterations);
+	public static byte[] digest(String algorithm, byte[] data, byte[] salt) {
+		return digest(algorithm, data, salt, 1);
 	}
 
-	public static byte[] sha1(String input, Charset charset, byte[] salt, int iterations) {
-		return sha1(input.getBytes(charset), salt, iterations);
+	public static byte[] digest(String algorithm, byte[] data, int iterations) {
+		return digest(algorithm, data, null, iterations);
 	}
 
-	public static byte[] sha256(byte[] data) {
-		return sha256(data, null);
-	}
-
-	public static byte[] sha256(byte[] data, byte[] salt) {
-		return sha256(data, salt, 1);
-	}
-
-	public static byte[] sha256(byte[] data, byte[] salt, int iterations) {
-		return digest(SHA256, data, salt, iterations);
-	}
-
-	public static byte[] sha256(String data) {
-		return sha256(data, Constants.UTF8_CHARSET);
-	}
-
-	public static byte[] sha256(String data, Charset charset) {
-		return sha256(data.getBytes(charset));
-	}
-
-	public static byte[] sha256(String data, byte[] salt) {
-		return sha256(data, Constants.UTF8_CHARSET, salt);
-	}
-
-	public static byte[] sha256(String data, Charset charset, byte[] salt) {
-		return sha256(data.getBytes(charset), salt);
-	}
-
-	public static byte[] sha256(String input, byte[] salt, int iterations) {
-		return sha256(input, Constants.UTF8_CHARSET, salt, iterations);
-	}
-
-	public static byte[] sha256(String input, Charset charset, byte[] salt, int iterations) {
-		return sha256(input.getBytes(charset), salt, iterations);
-	}
-
-	public static byte[] md5(byte[] data) {
-		return md5(data, null);
-	}
-
-	public static byte[] md5(byte[] data, byte[] salt) {
-		return md5(data, salt, 1);
-	}
-
-	public static byte[] md5(byte[] data, byte[] salt, int iterations) {
-		return digest(MD5, data, salt, iterations);
-	}
-
-	public static byte[] md5(String data) {
-		return md5(data, Constants.UTF8_CHARSET);
-	}
-
-	public static byte[] md5(String data, Charset charset) {
-		return md5(data.getBytes(charset));
-	}
-
-	public static byte[] md5(String data, byte[] salt) {
-		return md5(data, Constants.UTF8_CHARSET, salt);
-	}
-
-	public static byte[] md5(String data, Charset charset, byte[] salt) {
-		return md5(data.getBytes(charset), salt);
-	}
-
-	public static byte[] md5(String input, byte[] salt, int iterations) {
-		return md5(input, Constants.UTF8_CHARSET, salt, iterations);
-	}
-
-	public static byte[] md5(String input, Charset charset, byte[] salt, int iterations) {
-		return md5(input.getBytes(charset), salt, iterations);
-	}
-
-	private static byte[] digest(String algorithm, byte[] data, byte[] salt, int iterations) {
+	public static byte[] digest(String algorithm, byte[] data, byte[] salt, int iterations) {
 		try {
 			final MessageDigest digest = MessageDigest.getInstance(algorithm);
 
@@ -153,19 +81,7 @@ public class Digests {
 		}
 	}
 
-	public static byte[] sha1(InputStream is) {
-		return digest(SHA1, is);
-	}
-
-	public static byte[] sha256(InputStream is) {
-		return digest(SHA256, is);
-	}
-
-	public static byte[] md5(InputStream is) {
-		return digest(MD5, is);
-	}
-
-	private static byte[] digest(String algorithm, InputStream is) {
+	public static byte[] digest(String algorithm, InputStream is) {
 		try {
 			final MessageDigest digest = MessageDigest.getInstance(algorithm);
 			final byte[] buffer = new byte[BUFFER_LENGTH];
