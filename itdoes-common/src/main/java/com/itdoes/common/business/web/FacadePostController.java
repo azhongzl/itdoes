@@ -27,7 +27,7 @@ public class FacadePostController extends FacadeBaseController {
 	public <T, ID extends Serializable> Result post(@PathVariable(value = "ec") String ec,
 			@Valid @ModelAttribute("entity") T entity) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
-		final ID id = facadeServiceFieldSecurer.securePost(pair, entity);
+		final ID id = facadeFieldSecurerService.securePost(pair, entity);
 		return HttpResults.success(id);
 	}
 

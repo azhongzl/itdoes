@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.business.Env;
 import com.itdoes.common.business.Permissions;
-import com.itdoes.common.business.service.FacadeService;
-import com.itdoes.common.business.service.FacadeServiceFieldSecurer;
+import com.itdoes.common.business.service.FacadeFieldSecurerService;
+import com.itdoes.common.business.service.FacadeTransactionalService;
 
 /**
  * <blockquote>
@@ -87,10 +87,10 @@ public abstract class FacadeBaseController extends BaseController {
 	protected Env env;
 
 	@Autowired
-	protected FacadeService facadeService;
+	protected FacadeTransactionalService facadeService;
 
 	@Autowired
-	protected FacadeServiceFieldSecurer facadeServiceFieldSecurer;
+	protected FacadeFieldSecurerService facadeFieldSecurerService;
 
 	protected <T, ID extends Serializable> EntityPair<T, ID> getEntityPair(String ec) {
 		return env.getEntityPair(ec);

@@ -30,7 +30,7 @@ public class FacadePutController extends FacadeBaseController {
 			@Valid @ModelAttribute("entity") T entity, ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
-		facadeServiceFieldSecurer.securePut(pair, entity, oldEntity);
+		facadeFieldSecurerService.securePut(pair, entity, oldEntity);
 		return HttpResults.success();
 	}
 

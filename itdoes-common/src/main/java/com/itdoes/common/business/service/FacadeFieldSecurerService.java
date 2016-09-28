@@ -16,9 +16,9 @@ import com.itdoes.common.core.util.Reflections;
  * @author Jalen Zhong
  */
 @Service
-public class FacadeServiceFieldSecurer extends BaseService {
+public class FacadeFieldSecurerService extends BaseService {
 	@Autowired
-	private FacadeService facadeService;
+	private FacadeTransactionalService facadeService;
 
 	public <T, ID extends Serializable> Page<T> secureSearch(EntityPair<T, ID> pair, Specification<T> specification,
 			PageRequest pageRequest) {

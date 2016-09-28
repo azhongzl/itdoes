@@ -28,7 +28,7 @@ public class FacadeMainController extends FacadeBaseController {
 			@RequestParam(value = "page_size", defaultValue = "-1") int pageSize,
 			@RequestParam(value = "page_sort", required = false) String pageSort, ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
-		final Page<T> page = facadeServiceFieldSecurer.secureSearch(pair,
+		final Page<T> page = facadeFieldSecurerService.secureSearch(pair,
 				buildSpecification(pair.getEntityClass(), request), buildPageRequest(pageNo, pageSize, pageSort));
 		return HttpResults.success(page);
 	}
@@ -36,7 +36,7 @@ public class FacadeMainController extends FacadeBaseController {
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_SEARCH_ONE, method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result searchOne(@PathVariable("ec") String ec, ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
-		final T entity = facadeServiceFieldSecurer.secureSearchOne(pair,
+		final T entity = facadeFieldSecurerService.secureSearchOne(pair,
 				buildSpecification(pair.getEntityClass(), request));
 		return HttpResults.success(entity);
 	}
@@ -51,7 +51,7 @@ public class FacadeMainController extends FacadeBaseController {
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_GET + "/{id}", method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result get(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
-		final T entity = facadeServiceFieldSecurer.secureGet(pair, convertId(pair, id));
+		final T entity = facadeFieldSecurerService.secureGet(pair, convertId(pair, id));
 		return HttpResults.success(entity);
 	}
 
