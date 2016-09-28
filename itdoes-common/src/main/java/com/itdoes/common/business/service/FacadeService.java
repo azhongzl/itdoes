@@ -20,6 +20,10 @@ public class FacadeService extends BaseTransactionalService {
 		return pair.getDao().findAll(specification, pageRequest);
 	}
 
+	public <T, ID extends Serializable> T searchOne(EntityPair<T, ID> pair, Specification<T> specification) {
+		return pair.getDao().findOne(specification);
+	}
+
 	public <T, ID extends Serializable> long count(EntityPair<T, ID> pair, Specification<T> specification) {
 		return pair.getDao().count(specification);
 	}

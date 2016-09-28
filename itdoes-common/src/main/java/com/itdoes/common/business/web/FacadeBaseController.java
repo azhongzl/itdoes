@@ -39,26 +39,31 @@ import com.itdoes.common.business.service.FacadeServiceFieldSecurer;
  * page_sort=username_a, "a" = ASC, "d" = DESC
  * </ul>
  * <tr style="background-color: rgb(238, 238, 255);">
+ * <td><code>SearchOne</code>
+ * <td>/facade/&lt;Entity_Class&gt;/searchOne
+ * <td>GET
+ * <td>The same as "Filter" parameter of "Search" operation, but without "Page" parameter
+ * <tr>
  * <td><code>Count</code>
  * <td>/facade/&lt;Entity_Class&gt;/count
  * <td>GET
  * <td>The same as "Filter" parameter of "Search" operation, but without "Page" parameter
- * <tr>
+ * <tr style="background-color: rgb(238, 238, 255);">
  * <td><code>Get</code>
  * <td>/facade/&lt;Entity_Class&gt;/get/&lt;id&gt;
  * <td>GET
  * <td>
- * <tr style="background-color: rgb(238, 238, 255);">
+ * <tr>
  * <td><code>Delete</code>
  * <td>/facade/&lt;Entity_Class&gt;/delete/&lt;id&gt;
  * <td>GET or POST
  * <td>
- * <tr>
+ * <tr style="background-color: rgb(238, 238, 255);">
  * <td><code>Post</code>
  * <td>/facade/&lt;Entity_Class&gt;/post
  * <td>POST
  * <td>
- * <tr style="background-color: rgb(238, 238, 255);">
+ * <tr>
  * <td><code>Put</code>
  * <td>/facade/&lt;Entity_Class&gt;/put/&lt;id&gt;
  * <td>POST
@@ -71,6 +76,7 @@ import com.itdoes.common.business.service.FacadeServiceFieldSecurer;
 public abstract class FacadeBaseController extends BaseController {
 	public static final String FACADE_URL_PREFIX = "/" + Permissions.FACADE_PERMISSON_PREFIX;
 	public static final String FACADE_URL_SEARCH = "search";
+	public static final String FACADE_URL_SEARCH_ONE = "searchOne";
 	public static final String FACADE_URL_COUNT = "count";
 	public static final String FACADE_URL_GET = "get";
 	public static final String FACADE_URL_DELETE = "delete";
@@ -86,12 +92,12 @@ public abstract class FacadeBaseController extends BaseController {
 	@Autowired
 	protected FacadeServiceFieldSecurer facadeServiceFieldSecurer;
 
-	public <T, ID extends Serializable> EntityPair<T, ID> getEntityPair(String ec) {
+	protected <T, ID extends Serializable> EntityPair<T, ID> getEntityPair(String ec) {
 		return env.getEntityPair(ec);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T, ID extends Serializable> ID convertId(EntityPair<T, ID> pair, String id) {
+	protected <T, ID extends Serializable> ID convertId(EntityPair<T, ID> pair, String id) {
 		return (ID) convertId(id, pair.getIdField().getType());
 	}
 }

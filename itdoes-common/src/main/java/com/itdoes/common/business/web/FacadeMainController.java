@@ -33,6 +33,14 @@ public class FacadeMainController extends FacadeBaseController {
 		return HttpResults.success(page);
 	}
 
+	@RequestMapping(value = "/{ec}/" + FACADE_URL_SEARCH_ONE, method = RequestMethod.GET)
+	public <T, ID extends Serializable> Result searchOne(@PathVariable("ec") String ec, ServletRequest request) {
+		final EntityPair<T, ID> pair = getEntityPair(ec);
+		final T entity = facadeServiceFieldSecurer.secureSearchOne(pair,
+				buildSpecification(pair.getEntityClass(), request));
+		return HttpResults.success(entity);
+	}
+
 	@RequestMapping(value = "/{ec}/" + FACADE_URL_COUNT, method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result count(@PathVariable("ec") String ec, ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);

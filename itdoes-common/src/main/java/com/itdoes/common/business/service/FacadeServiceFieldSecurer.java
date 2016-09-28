@@ -27,6 +27,12 @@ public class FacadeServiceFieldSecurer extends BaseService {
 		return page;
 	}
 
+	public <T, ID extends Serializable> T secureSearchOne(EntityPair<T, ID> pair, Specification<T> specification) {
+		final T entity = facadeService.searchOne(pair, specification);
+		Permissions.handleGetSecureFields(pair, entity);
+		return entity;
+	}
+
 	public <T, ID extends Serializable> T secureGet(EntityPair<T, ID> pair, ID id) {
 		final T entity = facadeService.get(pair, id);
 		Permissions.handleGetSecureFields(pair, entity);

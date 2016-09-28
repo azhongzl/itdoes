@@ -47,6 +47,7 @@ import com.itdoes.common.core.util.Reflections;
  * <td>
  * <ul>
  * <li>facade:User:search
+ * <li>facade:User:searchOne
  * <li>facade:User:count
  * <li>facade:User:get
  * <li>facade:User:delete
