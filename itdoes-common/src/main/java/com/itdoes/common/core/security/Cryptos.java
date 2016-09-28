@@ -23,12 +23,12 @@ import com.itdoes.common.core.util.Randoms;
  * @author Jalen Zhong
  */
 public class Cryptos {
-	private static final String HMACSHA1 = "HmacSHA1";
-	private static final int DEFAULT_HMACSHA1_KEYSIZE = 20 * 8;
-	private static final String HMACSHA256 = "HmacSHA256";
-	private static final int DEFAULT_HMACSHA256_KEYSIZE = 32 * 8;
-	private static final String HMACMD5 = "HmacMD5";
-	private static final int DEFAULT_HMACMD5_KEYSIZE = 16 * 8;
+	public static final String HMACSHA1 = "HmacSHA1";
+	public static final int DEFAULT_HMACSHA1_KEYSIZE = 20 * 8;
+	public static final String HMACSHA256 = "HmacSHA256";
+	public static final int DEFAULT_HMACSHA256_KEYSIZE = 32 * 8;
+	public static final String HMACMD5 = "HmacMD5";
+	public static final int DEFAULT_HMACMD5_KEYSIZE = 16 * 8;
 
 	private static final String AES = "AES";
 	private static final String AES_CBC = "AES/CBC/PKCS5Padding";
@@ -37,19 +37,7 @@ public class Cryptos {
 
 	private static final byte[] DEFAULT_AES_KEY = Codecs.hexDecode("8632e36e2755802e32989baa896882f1");
 
-	public static byte[] hmacSha1(byte[] data, byte[] key) {
-		return hmac(HMACSHA1, data, key);
-	}
-
-	public static byte[] hmacSha256(byte[] data, byte[] key) {
-		return hmac(HMACSHA256, data, key);
-	}
-
-	public static byte[] hmacMd5(byte[] data, byte[] key) {
-		return hmac(HMACMD5, data, key);
-	}
-
-	private static byte[] hmac(String algorithm, byte[] data, byte[] key) {
+	public static byte[] hmac(String algorithm, byte[] data, byte[] key) {
 		try {
 			final SecretKey secretKey = new SecretKeySpec(key, algorithm);
 			final Mac mac = Mac.getInstance(algorithm);
@@ -60,36 +48,12 @@ public class Cryptos {
 		}
 	}
 
-	public static boolean isHmacSha1Valid(byte[] expected, byte[] data, byte[] key) {
-		return isHmacValid(HMACSHA1, expected, data, key);
-	}
-
-	public static boolean isHmacSha256Valid(byte[] expected, byte[] data, byte[] key) {
-		return isHmacValid(HMACSHA256, expected, data, key);
-	}
-
-	public static boolean isHmacMd5Valid(byte[] expected, byte[] data, byte[] key) {
-		return isHmacValid(HMACMD5, expected, data, key);
-	}
-
-	private static boolean isHmacValid(String algorithm, byte[] expected, byte[] data, byte[] key) {
+	public static boolean isHmacValid(String algorithm, byte[] expected, byte[] data, byte[] key) {
 		final byte[] actual = hmac(algorithm, data, key);
 		return Arrays.equals(expected, actual);
 	}
 
-	public static byte[] generateHmacSha1Key() {
-		return generateHmaKey(HMACSHA1, DEFAULT_HMACSHA1_KEYSIZE);
-	}
-
-	public static byte[] generateHmacSha256Key() {
-		return generateHmaKey(HMACSHA256, DEFAULT_HMACSHA256_KEYSIZE);
-	}
-
-	public static byte[] generateHmacMd5Key() {
-		return generateHmaKey(HMACMD5, DEFAULT_HMACMD5_KEYSIZE);
-	}
-
-	private static byte[] generateHmaKey(String algorithm, int keySize) {
+	public static byte[] generateHmacKey(String algorithm, int keySize) {
 		try {
 			final KeyGenerator keyGenerator = KeyGenerator.getInstance(algorithm);
 			keyGenerator.init(keySize);

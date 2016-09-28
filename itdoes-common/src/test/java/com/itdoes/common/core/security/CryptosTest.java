@@ -12,11 +12,11 @@ public class CryptosTest {
 	public void hmac() {
 		String data = "user";
 
-		byte[] key = Cryptos.generateHmacSha256Key();
+		byte[] key = Cryptos.generateHmacKey(Cryptos.HMACSHA256, Cryptos.DEFAULT_HMACSHA256_KEYSIZE);
 		assertThat(key).hasSize(32);
 
-		byte[] result = Cryptos.hmacSha256(data.getBytes(), key);
-		assertThat(Cryptos.isHmacSha256Valid(result, data.getBytes(), key)).isTrue();
+		byte[] result = Cryptos.hmac(Cryptos.HMACSHA256, data.getBytes(), key);
+		assertThat(Cryptos.isHmacValid(Cryptos.HMACSHA256, result, data.getBytes(), key)).isTrue();
 	}
 
 	@Test
