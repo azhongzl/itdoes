@@ -6,15 +6,13 @@ import java.util.Map;
 import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.PropertiesLoader;
 import com.itdoes.common.core.util.TxtLoader;
-import com.itdoes.common.extension.codegenerator.entity.EhcacheModel.Cache;
-import com.itdoes.common.extension.codegenerator.entity.EhcacheModel.DefaultCache;
-import com.itdoes.common.extension.codegenerator.entity.EhcacheModel.DiskStore;
-import com.itdoes.common.extension.codegenerator.entity.EhcacheModel.Persistence;
 
 /**
  * @author Jalen Zhong
  */
 public class EntityGeneratorHelper {
+	public static final String CACHE_NAME_PLACEHOLDER = "_cache_name_placeholder_";
+
 	private static final String OUTPUT_DIR = "/tmp/codegenerator/entity";
 	private static final String CONFIG_DIR = "classpath:/codegenerator/entity/";
 	private static final String TABLE_MAPPING_FILE = CONFIG_DIR + "table.mapping.properties";
@@ -48,55 +46,18 @@ public class EntityGeneratorHelper {
 		@Override
 		public EhcacheModel newModel() {
 			final String name = pl.getStringMust("name");
-			final DiskStore diskStore = new DiskStore(pl.getStringMust("diskStore.path"));
-			final DefaultCache defaultCache = new DefaultCache(pl.getStringMust("defaultCache.maxEntriesLocalHeap"),
-					pl.getStringMust("defaultCache.maxEntriesLocalDisk"), pl.getStringMust("defaultCache.eternal"),
-					pl.getStringMay("defaultCache.timeToIdleSeconds", null),
-					pl.getStringMay("defaultCache.timeToLiveSeconds", null),
-					new Persistence(pl.getStringMust("defaultCache.persistence.strategy"),
-							pl.getStringMay("defaultCache.persistence.synchronousWrites", null)));
-			final Cache standardQueryCache = new Cache("org.hibernate.cache.internal.StandardQueryCache",
-					pl.getStringMust("StandardQueryCache.maxEntriesLocalHeap"),
-					pl.getStringMust("StandardQueryCache.maxEntriesLocalDisk"),
-					pl.getStringMust("StandardQueryCache.eternal"),
-					pl.getStringMay("StandardQueryCache.timeToIdleSeconds", null),
-					pl.getStringMay("StandardQueryCache.timeToLiveSeconds", null),
-					new Persistence(pl.getStringMust("StandardQueryCache.persistence.strategy"),
-							pl.getStringMay("StandardQueryCache.persistence.synchronousWrites", null)));
-			final Cache updateTimestampsCache = new Cache("org.hibernate.cache.spi.UpdateTimestampsCache",
-					pl.getStringMust("UpdateTimestampsCache.maxEntriesLocalHeap"),
-					pl.getStringMust("UpdateTimestampsCache.maxEntriesLocalDisk"),
-					pl.getStringMust("UpdateTimestampsCache.eternal"),
-					pl.getStringMay("UpdateTimestampsCache.timeToIdleSeconds", null),
-					pl.getStringMay("UpdateTimestampsCache.timeToLiveSeconds", null),
-					new Persistence(pl.getStringMust("UpdateTimestampsCache.persistence.strategy"),
-							pl.getStringMay("UpdateTimestampsCache.persistence.synchronousWrites", null)));
+			final String diskStore = pl.getStringMay("diskStore", null);
+			final String defaultCache = pl.getStringMay("defaultCache", null);
+			final String standardQueryCache = pl.getStringMay("standardQueryCache", null);
+			final String updateTimestampsCache = pl.getStringMay("updateTimestampsCache", null);
 			return new EhcacheModel(name, diskStore, defaultCache, standardQueryCache, updateTimestampsCache);
 		}
 
 		@Override
-		public Cache newCache(String entityPackageName, String entityClassName) {
-			final Persistence persisence = new Persistence(getMustCacheValue(entityClassName, "persistence.strategy"),
-					getMayCacheValue(entityClassName, "persistence.synchronousWrites", null));
-			final Cache cache = new Cache(entityPackageName + "." + entityClassName,
-					getMustCacheValue(entityClassName, "maxEntriesLocalHeap"),
-					getMustCacheValue(entityClassName, "maxEntriesLocalDisk"),
-					getMustCacheValue(entityClassName, "eternal"),
-					getMayCacheValue(entityClassName, "timeToIdleSeconds", null),
-					getMayCacheValue(entityClassName, "timeToLiveSeconds", null), persisence);
+		public String newCache(String entityPackageName, String entityClassName) {
+			final String cache = pl.getStringMust(new String[] { "cache." + entityClassName, "cacheTemplate" })
+					.replace(CACHE_NAME_PLACEHOLDER, entityPackageName + "." + entityClassName);
 			return cache;
-		}
-
-		private String getMustCacheValue(String entityClassName, String key) {
-			return pl.getStringMust(getCacheKeys(entityClassName, key));
-		}
-
-		private String getMayCacheValue(String entityClassName, String key, String defaultValue) {
-			return pl.getStringMay(getCacheKeys(entityClassName, key), defaultValue);
-		}
-
-		private static String[] getCacheKeys(String entityClassName, String key) {
-			return new String[] { "cache." + entityClassName + "." + key, "templateCache." + key };
 		}
 	}
 

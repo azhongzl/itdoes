@@ -22,7 +22,6 @@ import com.itdoes.common.core.util.Files;
 import com.itdoes.common.core.util.Reflections;
 import com.itdoes.common.core.util.Strings;
 import com.itdoes.common.core.util.Urls;
-import com.itdoes.common.extension.codegenerator.entity.EhcacheModel.Cache;
 import com.itdoes.common.extension.codegenerator.entity.EntityModel.EntityField;
 
 import freemarker.template.Configuration;
@@ -81,7 +80,7 @@ public class EntityGenerator {
 			writeJavaFile(daoDir, daoClassName, daoString);
 
 			// Generate ehcache cache
-			final Cache cache = ehcacheConfig.newCache(entityPackageName, entityClassName);
+			final String cache = ehcacheConfig.newCache(entityPackageName, entityClassName);
 			ehcacheModel.addCache(cache);
 		}
 
