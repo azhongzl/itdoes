@@ -16,14 +16,11 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 import com.itdoes.common.core.shutdownhook.ShutdownThread;
@@ -36,57 +33,6 @@ import com.itdoes.common.core.util.Urls;
  */
 public class Selenium2 {
 	private static final int DEFAULT_TIMEOUT = 5;
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(Selenium2.class);
-
-	private static ExpectedCondition<Boolean> textToBePresentInElementLocatedNotBlank(final By locator) {
-		return new ExpectedCondition<Boolean>() {
-			@Override
-			public Boolean apply(WebDriver driver) {
-				try {
-					String elementText = findElement(locator, driver).getText();
-					return StringUtils.isNotBlank(elementText);
-				} catch (StaleElementReferenceException e) {
-					return null;
-				}
-			}
-
-			@Override
-			public String toString() {
-				return String.format("text to be present in element found by %s", locator);
-			}
-		};
-	}
-
-	private static ExpectedCondition<Boolean> textToBePresentInElementValueNotBlank(final By locator) {
-		return new ExpectedCondition<Boolean>() {
-			@Override
-			public Boolean apply(WebDriver driver) {
-				try {
-					String elementText = findElement(locator, driver).getAttribute("value");
-					return StringUtils.isNotBlank(elementText);
-				} catch (StaleElementReferenceException e) {
-					return null;
-				}
-			}
-
-			@Override
-			public String toString() {
-				return String.format("text to be the value of element located by %s", locator);
-			}
-		};
-	}
-
-	private static WebElement findElement(By by, WebDriver driver) {
-		try {
-			return driver.findElement(by);
-		} catch (NoSuchElementException e) {
-			throw e;
-		} catch (WebDriverException e) {
-			LOGGER.warn(String.format("WebDriverException thrown by findElement(%s)", by), e);
-			throw e;
-		}
-	}
 
 	private final WebDriver driver;
 	private final String baseUrl;
@@ -130,11 +76,7 @@ public class Selenium2 {
 	}
 
 	public void quit() {
-		try {
-			driver.quit();
-		} catch (Exception e) {
-			LOGGER.error("Error in quiting selenium", e);
-		}
+		driver.quit();
 	}
 
 	public WebDriver getDriver() {
@@ -143,127 +85,246 @@ public class Selenium2 {
 
 	public WebElement checkElement(By by) {
 		try {
-			return findElement(by, driver);
+			return findElement(by);
 		} catch (NoSuchElementException e) {
 			return null;
 		}
 	}
 
 	public WebElement findElement(By by) {
-		return findElement(by, driver);
+		return driver.findElement(by);
+	}
+
+	public WebElement findElement(By by, int index) {
+		return findElements(by).get(index);
 	}
 
 	public List<WebElement> findElements(By by) {
 		return driver.findElements(by);
 	}
 
-	public boolean isPresent(By by) {
-		try {
-			findElement(by);
-			return true;
-		} catch (NoSuchElementException e) {
-			return false;
-		}
+	public boolean isVisible(By by) {
+		return isVisible(findElement(by));
 	}
 
-	public boolean isVisible(By by) {
-		return findElement(by).isDisplayed();
+	public boolean isVisible(By by, int index) {
+		return isVisible(findElement(by, index));
+	}
+
+	public boolean isVisible(WebElement element) {
+		return element.isDisplayed();
 	}
 
 	public void type(By by, String text) {
+		type(findElement(by), text);
+	}
+
+	public void type(By by, int index, String text) {
+		type(findElement(by, index), text);
+	}
+
+	public void type(WebElement element, String text) {
 		actStaleElement(new Action() {
 			@Override
 			public void act() {
-				typeInternal(by, text);
+				typeInternal(element, text);
 			}
 		});
 	}
 
-	private void typeInternal(By by, String text) {
-		final WebElement element = findElement(by);
+	private void typeInternal(WebElement element, String text) {
 		element.clear();
 		element.sendKeys(text);
 	}
 
 	public void typeCtrlC(By by) {
-		typeKeys(by, Keys.CONTROL + "c");
+		typeCtrlC(findElement(by));
+	}
+
+	public void typeCtrlC(By by, int index) {
+		typeCtrlC(findElement(by, index));
+	}
+
+	public void typeCtrlC(WebElement element) {
+		typeKeys(element, Keys.CONTROL + "c");
 	}
 
 	public void typeCtrlV(By by) {
-		typeKeys(by, Keys.CONTROL + "v");
+		typeCtrlV(findElement(by));
+	}
+
+	public void typeCtrlV(By by, int index) {
+		typeCtrlV(findElement(by, index));
+	}
+
+	public void typeCtrlV(WebElement element) {
+		typeKeys(element, Keys.CONTROL + "v");
 	}
 
 	public void typeCtrlA(By by) {
-		typeKeys(by, Keys.CONTROL + "a");
+		typeCtrlA(findElement(by));
+	}
+
+	public void typeCtrlA(By by, int index) {
+		typeCtrlA(findElement(by, index));
+	}
+
+	public void typeCtrlA(WebElement element) {
+		typeKeys(element, Keys.CONTROL + "a");
 	}
 
 	public void typeEnter(By by) {
-		typeKeys(by, Keys.ENTER);
+		typeEnter(findElement(by));
+	}
+
+	public void typeEnter(By by, int index) {
+		typeEnter(findElement(by, index));
+	}
+
+	public void typeEnter(WebElement element) {
+		typeKeys(element, Keys.ENTER);
 	}
 
 	public void typeReturn(By by) {
-		typeKeys(by, Keys.RETURN);
+		typeReturn(findElement(by));
+	}
+
+	public void typeReturn(By by, int index) {
+		typeReturn(findElement(by, index));
+	}
+
+	public void typeReturn(WebElement element) {
+		typeKeys(element, Keys.RETURN);
 	}
 
 	public void typeEsc(By by) {
-		typeKeys(by, Keys.ESCAPE);
+		typeEsc(findElement(by));
+	}
+
+	public void typeEsc(By by, int index) {
+		typeEsc(findElement(by, index));
+	}
+
+	public void typeEsc(WebElement element) {
+		typeKeys(element, Keys.ESCAPE);
 	}
 
 	public void typeKeys(By by, CharSequence... keys) {
+		typeKeys(findElement(by), keys);
+	}
+
+	public void typeKeys(By by, int index, CharSequence... keys) {
+		typeKeys(findElement(by, index), keys);
+	}
+
+	public void typeKeys(WebElement element, CharSequence... keys) {
 		actStaleElement(new Action() {
 			@Override
 			public void act() {
-				sendKeysInternal(by, keys);
+				sendKeysInternal(element, keys);
 			}
 		});
 	}
 
-	private void sendKeysInternal(By by, CharSequence... keys) {
-		final WebElement element = findElement(by);
+	private void sendKeysInternal(WebElement element, CharSequence... keys) {
 		element.sendKeys(keys);
 	}
 
 	public void click(By by) {
+		click(findElement(by));
+	}
+
+	public void click(By by, int index) {
+		click(findElement(by, index));
+	}
+
+	public void click(WebElement element) {
 		actStaleElement(new Action() {
 			@Override
 			public void act() {
-				clickInternal(by);
+				clickInternal(element);
 			}
 		});
 	}
 
-	private void clickInternal(By by) {
-		findElement(by).click();
+	private void clickInternal(WebElement element) {
+		element.click();
 	}
 
 	public void check(By by) {
-		final WebElement element = findElement(by);
+		check(findElement(by));
+	}
+
+	public void check(By by, int index) {
+		check(findElement(by, index));
+	}
+
+	public void check(WebElement element) {
 		if (!element.isSelected()) {
-			click(by);
+			click(element);
 		}
 	}
 
 	public void uncheck(By by) {
-		final WebElement element = findElement(by);
+		uncheck(findElement(by));
+	}
+
+	public void uncheck(By by, int index) {
+		uncheck(findElement(by, index));
+	}
+
+	public void uncheck(WebElement element) {
 		if (element.isSelected()) {
-			click(by);
+			click(element);
 		}
 	}
 
 	public boolean isChecked(By by) {
-		return findElement(by).isSelected();
+		return isChecked(findElement(by));
+	}
+
+	public boolean isChecked(By by, int index) {
+		return isChecked(findElement(by, index));
+	}
+
+	public boolean isChecked(WebElement element) {
+		return element.isSelected();
 	}
 
 	public Select getSelect(By by) {
-		return new Select(findElement(by));
+		return getSelect(findElement(by));
+	}
+
+	public Select getSelect(By by, int index) {
+		return getSelect(findElement(by, index));
+	}
+
+	public Select getSelect(WebElement element) {
+		return new Select(element);
 	}
 
 	public String getText(By by) {
-		return findElement(by).getText();
+		return getText(findElement(by));
+	}
+
+	public String getText(By by, int index) {
+		return getText(findElement(by, index));
+	}
+
+	public String getText(WebElement element) {
+		return element.getText();
 	}
 
 	public String getValue(By by) {
-		return findElement(by).getAttribute("value");
+		return getValue(findElement(by));
+	}
+
+	public String getValue(By by, int index) {
+		return getValue(findElement(by, index));
+	}
+
+	public String getValue(WebElement element) {
+		return element.getAttribute("value");
 	}
 
 	public void screenshot(String path, String outputFilename) {
@@ -293,43 +354,123 @@ public class Selenium2 {
 	}
 
 	public WebElement waitVisible(By by) {
-		return waitVisible(by, defaultTimeout);
+		return waitVisible(findElement(by));
+	}
+
+	public WebElement waitVisibleIndex(By by, int index) {
+		return waitVisible(findElement(by, index));
+	}
+
+	public WebElement waitVisible(WebElement element) {
+		return waitVisible(element, defaultTimeout);
 	}
 
 	public WebElement waitVisible(By by, int timeout) {
-		return waitUntil(ExpectedConditions.visibilityOfElementLocated(by), timeout);
+		return waitVisible(findElement(by), timeout);
+	}
+
+	public WebElement waitVisible(By by, int index, int timeout) {
+		return waitVisible(findElement(by, index), timeout);
+	}
+
+	public WebElement waitVisible(WebElement element, int timeout) {
+		return waitUntil(ExpectedConditions.visibilityOf(element), timeout);
 	}
 
 	public void waitTextPresent(By by, String text) {
-		waitTextPresent(by, text, defaultTimeout);
+		waitTextPresent(findElement(by), text);
+	}
+
+	public void waitTextPresent(By by, int index, String text) {
+		waitTextPresent(findElement(by, index), text);
+	}
+
+	public void waitTextPresent(WebElement element, String text) {
+		waitTextPresent(element, text, defaultTimeout);
 	}
 
 	public void waitTextPresent(By by, String text, int timeout) {
-		waitUntil(ExpectedConditions.textToBePresentInElementLocated(by, text), timeout);
+		waitTextPresent(findElement(by), text, timeout);
+	}
+
+	public void waitTextPresent(By by, int index, String text, int timeout) {
+		waitTextPresent(findElement(by, index), text, timeout);
+	}
+
+	public void waitTextPresent(WebElement element, String text, int timeout) {
+		waitUntil(ExpectedConditions.textToBePresentInElement(element, text), timeout);
 	}
 
 	public void waitTextNotBlank(By by) {
-		waitTextNotBlank(by, defaultTimeout);
+		waitTextNotBlank(findElement(by));
+	}
+
+	public void waitTextNotBlankIndex(By by, int index) {
+		waitTextNotBlank(findElement(by, index));
+	}
+
+	public void waitTextNotBlank(WebElement element) {
+		waitTextNotBlank(element, defaultTimeout);
 	}
 
 	public void waitTextNotBlank(By by, int timeout) {
-		waitUntil(textToBePresentInElementLocatedNotBlank(by), timeout);
+		waitTextNotBlank(findElement(by), timeout);
+	}
+
+	public void waitTextNotBlank(By by, int index, int timeout) {
+		waitTextNotBlank(findElement(by, index), timeout);
+	}
+
+	public void waitTextNotBlank(WebElement element, int timeout) {
+		waitUntil(textToBePresentInElementLocatedNotBlank(element), timeout);
 	}
 
 	public void waitValuePresent(By by, String value) {
-		waitValuePresent(by, value, defaultTimeout);
+		waitValuePresent(findElement(by), value);
+	}
+
+	public void waitValuePresent(By by, int index, String value) {
+		waitValuePresent(findElement(by, index), value);
+	}
+
+	public void waitValuePresent(WebElement element, String value) {
+		waitValuePresent(element, value, defaultTimeout);
 	}
 
 	public void waitValuePresent(By by, String value, int timeout) {
-		waitUntil(ExpectedConditions.textToBePresentInElementValue(by, value), timeout);
+		waitValuePresent(findElement(by), value, timeout);
+	}
+
+	public void waitValuePresent(By by, int index, String value, int timeout) {
+		waitValuePresent(findElement(by, index), value, timeout);
+	}
+
+	public void waitValuePresent(WebElement element, String value, int timeout) {
+		waitUntil(ExpectedConditions.textToBePresentInElementValue(element, value), timeout);
 	}
 
 	public void waitValueNotBlank(By by) {
-		waitValueNotBlank(by, defaultTimeout);
+		waitValueNotBlank(findElement(by));
+	}
+
+	public void waitValueNotBlankIndex(By by, int index) {
+		waitValueNotBlank(findElement(by, index));
+	}
+
+	public void waitValueNotBlank(WebElement element) {
+		waitValueNotBlank(element, defaultTimeout);
 	}
 
 	public void waitValueNotBlank(By by, int timeout) {
-		waitUntil(textToBePresentInElementValueNotBlank(by), timeout);
+		waitValueNotBlank(findElement(by), timeout);
+	}
+
+	public void waitValueNotBlank(By by, int index, int timeout) {
+		waitValueNotBlank(findElement(by, index), timeout);
+	}
+
+	public void waitValueNotBlank(WebElement element, int timeout) {
+		waitUntil(textToBePresentInElementValueNotBlank(element), timeout);
 	}
 
 	public Alert checkAlert() {
@@ -358,8 +499,15 @@ public class Selenium2 {
 	}
 
 	public String getCell(By by, int rowIndex, int columnIndex) {
-		return findElement(by).findElement(By.xpath("//tr[" + (rowIndex + 1) + "]//td[" + (columnIndex + 1) + "]"))
-				.getText();
+		return getCell(findElement(by), rowIndex, columnIndex);
+	}
+
+	public String getCell(By by, int index, int rowIndex, int columnIndex) {
+		return getCell(findElement(by, index), rowIndex, columnIndex);
+	}
+
+	public String getCell(WebElement element, int rowIndex, int columnIndex) {
+		return element.findElement(By.xpath("//tr[" + (rowIndex + 1) + "]//td[" + (columnIndex + 1) + "]")).getText();
 	}
 
 	public static interface NewWindowAction {
@@ -419,6 +567,44 @@ public class Selenium2 {
 
 	private static interface Action {
 		void act();
+	}
+
+	private ExpectedCondition<Boolean> textToBePresentInElementLocatedNotBlank(final WebElement element) {
+		return new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					String elementText = element.getText();
+					return StringUtils.isNotBlank(elementText);
+				} catch (StaleElementReferenceException e) {
+					return null;
+				}
+			}
+
+			@Override
+			public String toString() {
+				return String.format("text to be present in element %s", element);
+			}
+		};
+	}
+
+	private ExpectedCondition<Boolean> textToBePresentInElementValueNotBlank(final WebElement element) {
+		return new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				try {
+					String elementText = element.getAttribute("value");
+					return StringUtils.isNotBlank(elementText);
+				} catch (StaleElementReferenceException e) {
+					return null;
+				}
+			}
+
+			@Override
+			public String toString() {
+				return String.format("text to be the value of element %s", element);
+			}
+		};
 	}
 
 	private void setStopAtShutdown(boolean stop) {
