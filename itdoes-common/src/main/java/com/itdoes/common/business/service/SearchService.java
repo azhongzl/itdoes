@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.itdoes.common.core.util.Exceptions;
+
 /**
  * @author Jalen Zhong
  */
@@ -35,9 +37,13 @@ public class SearchService extends BaseService {
 		ftem = Search.getFullTextEntityManager(em);
 	}
 
-	public void createIndex() throws Exception {
+	public void createIndex() {
 		LOGGER.info("Search engine index creating...");
-		ftem.createIndexer().startAndWait();
+		try {
+			ftem.createIndexer().startAndWait();
+		} catch (InterruptedException e) {
+			throw Exceptions.unchecked(e);
+		}
 		LOGGER.info("Search engine index created");
 	}
 

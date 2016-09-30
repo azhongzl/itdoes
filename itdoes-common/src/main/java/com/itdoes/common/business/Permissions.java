@@ -98,6 +98,7 @@ import com.itdoes.common.core.util.Reflections;
  * @author Jalen Zhong
  */
 public class Permissions {
+	public static final String SEARCH_PERMISSION_PREFIX = "search";
 	public static final String UPLOAD_PERMISSON_PREFIX = "upload";
 	public static final String FACADE_PERMISSON_PREFIX = "facade";
 
@@ -110,12 +111,22 @@ public class Permissions {
 	public static Set<String> getAllPermissions() {
 		final Set<String> all = Sets.newHashSet();
 
+		// All search permissions
+		all.add(getSearchAllPermission());
 		// All upload permissions
 		all.add(getUploadAllPermission());
 		// All facade entity and field permissions
 		all.add(getFacadeAllPermission());
 
 		return all;
+	}
+
+	public static String getSearchAllPermission() {
+		return getSearchPermission(PERM_ANY);
+	}
+
+	public static String getSearchPermission(String resource) {
+		return SEARCH_PERMISSION_PREFIX + PERM_SEPARATOR + resource;
 	}
 
 	public static String getUploadAllPermission() {
