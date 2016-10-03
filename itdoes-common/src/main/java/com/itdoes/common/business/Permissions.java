@@ -92,6 +92,24 @@ import com.itdoes.common.core.util.Reflections;
  * <li>upload:resource1
  * <li>upload:resource2
  * </ul>
+ * <tr style="background-color: rgb(238, 238, 255);">
+ * <td><code>Search</code>
+ * <td>search[:*]
+ * <td>All search commands
+ * <td>
+ * <ul>
+ * <li>search
+ * <li>search.*
+ * </ul>
+ * <tr>
+ * <td><code>Search</code>
+ * <td>search:&lt;command&gt;
+ * <td>Specific search command
+ * <td>
+ * <ul>
+ * <li>search:command1
+ * <li>search:command2
+ * </ul>
  * </table>
  * </blockquote>
  * 
@@ -125,8 +143,8 @@ public class Permissions {
 		return getSearchPermission(PERM_ANY);
 	}
 
-	public static String getSearchPermission(String resource) {
-		return SEARCH_PERMISSION_PREFIX + PERM_SEPARATOR + resource;
+	public static String getSearchPermission(String command) {
+		return SEARCH_PERMISSION_PREFIX + PERM_SEPARATOR + command;
 	}
 
 	public static String getUploadAllPermission() {
