@@ -117,8 +117,8 @@ import com.itdoes.common.core.util.Reflections;
  */
 public class Permissions {
 	public static final String SEARCH_PERMISSION_PREFIX = "search";
-	public static final String UPLOAD_PERMISSON_PREFIX = "upload";
-	public static final String FACADE_PERMISSON_PREFIX = "facade";
+	public static final String UPLOAD_PERMISSION_PREFIX = "upload";
+	public static final String FACADE_PERMISSION_PREFIX = "facade";
 
 	private static final char ENTITY_FIELD_SEPARATOR = '.';
 	private static final char PERM_SEPARATOR = ':';
@@ -126,21 +126,18 @@ public class Permissions {
 	private static final String PERM_WRITE = "write";
 	private static final String PERM_ANY = "*";
 
+	private static final String SEARCH_ALL_PERMISSION = getSearchPermission(PERM_ANY);
+	private static final String UPLOAD_ALL_PERMISSION = getUploadPermission(PERM_ANY);
+	private static final String FACADE_ALL_PERMISSION = getFacadeEntityAllPermission(PERM_ANY);
+	private static final Set<String> ALL_PERMISSIONS = Sets.newHashSet(SEARCH_ALL_PERMISSION, UPLOAD_ALL_PERMISSION,
+			FACADE_ALL_PERMISSION);
+
 	public static Set<String> getAllPermissions() {
-		final Set<String> all = Sets.newHashSet();
-
-		// All search permissions
-		all.add(getSearchAllPermission());
-		// All upload permissions
-		all.add(getUploadAllPermission());
-		// All facade entity and field permissions
-		all.add(getFacadeAllPermission());
-
-		return all;
+		return ALL_PERMISSIONS;
 	}
 
 	public static String getSearchAllPermission() {
-		return getSearchPermission(PERM_ANY);
+		return SEARCH_ALL_PERMISSION;
 	}
 
 	public static String getSearchPermission(String command) {
@@ -148,15 +145,15 @@ public class Permissions {
 	}
 
 	public static String getUploadAllPermission() {
-		return getUploadPermission(PERM_ANY);
+		return UPLOAD_ALL_PERMISSION;
 	}
 
 	public static String getUploadPermission(String resource) {
-		return UPLOAD_PERMISSON_PREFIX + PERM_SEPARATOR + resource;
+		return UPLOAD_PERMISSION_PREFIX + PERM_SEPARATOR + resource;
 	}
 
 	public static String getFacadeAllPermission() {
-		return getFacadeEntityAllPermission(PERM_ANY);
+		return FACADE_ALL_PERMISSION;
 	}
 
 	public static String getFacadeEntityAllPermission(String entityName) {
@@ -164,7 +161,7 @@ public class Permissions {
 	}
 
 	public static String getFacadeEntityPermission(String entityName, String command) {
-		return FACADE_PERMISSON_PREFIX + PERM_SEPARATOR + entityName + PERM_SEPARATOR + command;
+		return FACADE_PERMISSION_PREFIX + PERM_SEPARATOR + entityName + PERM_SEPARATOR + command;
 	}
 
 	public static String getFacadeFieldAllPermission(String entityName, String fieldName) {
@@ -180,7 +177,7 @@ public class Permissions {
 	}
 
 	private static String getFacadeFieldPermission(String entityName, String fieldName, String mode) {
-		return FACADE_PERMISSON_PREFIX + PERM_SEPARATOR + entityName + ENTITY_FIELD_SEPARATOR + fieldName
+		return FACADE_PERMISSION_PREFIX + PERM_SEPARATOR + entityName + ENTITY_FIELD_SEPARATOR + fieldName
 				+ PERM_SEPARATOR + mode;
 	}
 

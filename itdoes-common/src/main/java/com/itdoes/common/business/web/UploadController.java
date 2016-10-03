@@ -25,7 +25,7 @@ import com.itdoes.common.core.web.MultipartFiles;
 @RestController
 @RequestMapping(value = UploadController.URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class UploadController extends BaseController {
-	public static final String URL_PREFIX = "/" + Permissions.UPLOAD_PERMISSON_PREFIX;
+	public static final String URL_PREFIX = "/" + Permissions.UPLOAD_PERMISSION_PREFIX;
 	private static final String URL_TO_FIND = URL_PREFIX + "/";
 
 	@RequestMapping(value = "/**", method = RequestMethod.POST)
