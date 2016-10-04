@@ -9,10 +9,16 @@ import java.util.Objects;
 public class ShiroUser implements Serializable {
 	private static final long serialVersionUID = 3843898429648345540L;
 
+	private final String id;
 	private final String username;
 
-	public ShiroUser(String username) {
+	public ShiroUser(String id, String username) {
+		this.id = id;
 		this.username = username;
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	public String getUsername() {
