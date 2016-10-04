@@ -23,12 +23,17 @@ import com.itdoes.common.core.util.Reflections;
  */
 public class Specifications {
 	public static <T> Specification<T> build(final Class<T> entityClass, final Collection<FindFilter> filters) {
+		return build(entityClass, filters, true);
+	}
+
+	public static <T> Specification<T> build(final Class<T> entityClass, final Collection<FindFilter> filters,
+			boolean and) {
 		return new Specification<T>() {
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			@Override
 			public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
 				if (!Collections3.isEmpty(filters)) {
-					final List<Predicate> predicates = new ArrayList<Predicate>(filters.size());
+					final List<Predicate> predicateList = new ArrayList<Predicate>(filters.size());
 
 					for (FindFilter filter : filters) {
 						final String[] names = StringUtils.split(filter.field, ".");
@@ -57,33 +62,38 @@ public class Specifications {
 
 						switch (filter.operator) {
 						case EQ:
-							predicates.add(builder.equal(expression, value));
+							predicateList.add(builder.equal(expression, value));
 							break;
 						case LIKE:
-							predicates.add(builder.like(expression, "%" + value + "%"));
+							predicateList.add(builder.like(expression, "%" + value + "%"));
 							break;
 						case GT:
-							predicates.add(builder.greaterThan(expression, (Comparable) value));
+							predicateList.add(builder.greaterThan(expression, (Comparable) value));
 							break;
 						case LT:
-							predicates.add(builder.lessThan(expression, (Comparable) value));
+							predicateList.add(builder.lessThan(expression, (Comparable) value));
 							break;
 						case GTE:
-							predicates.add(builder.greaterThanOrEqualTo(expression, (Comparable) value));
+							predicateList.add(builder.greaterThanOrEqualTo(expression, (Comparable) value));
 							break;
 						case LTE:
-							predicates.add(builder.lessThanOrEqualTo(expression, (Comparable) value));
+							predicateList.add(builder.lessThanOrEqualTo(expression, (Comparable) value));
 							break;
 						case BTWN:
-							predicates.add(builder.between(expression, (Comparable) value, (Comparable) value2));
+							predicateList.add(builder.between(expression, (Comparable) value, (Comparable) value2));
 							break;
 						default:
 							throw new IllegalArgumentException("Cannot find Operator: " + filter.operator);
 						}
 					}
 
-					if (!predicates.isEmpty()) {
-						return builder.and(predicates.toArray(new Predicate[predicates.size()]));
+					if (!predicateList.isEmpty()) {
+						final Predicate[] predicateArray = predicateList.toArray(new Predicate[predicateList.size()]);
+						if (and) {
+							return builder.and(predicateArray);
+						} else {
+							return builder.or(predicateArray);
+						}
 					}
 				}
 
