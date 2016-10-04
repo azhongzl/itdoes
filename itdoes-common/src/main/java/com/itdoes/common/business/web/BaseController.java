@@ -16,8 +16,8 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.google.common.collect.Lists;
-import com.itdoes.common.core.jpa.SearchFilter;
-import com.itdoes.common.core.jpa.SearchFilter.Operator;
+import com.itdoes.common.core.jpa.FindFilter;
+import com.itdoes.common.core.jpa.FindFilter.Operator;
 import com.itdoes.common.core.jpa.Specifications;
 import com.itdoes.common.core.util.Reflections;
 
@@ -63,8 +63,8 @@ public abstract class BaseController {
 		return Specifications.build(clazz, buildFilters(request));
 	}
 
-	private List<SearchFilter> buildFilters(ServletRequest request) {
-		final List<SearchFilter> filters = Lists.newArrayList();
+	private List<FindFilter> buildFilters(ServletRequest request) {
+		final List<FindFilter> filters = Lists.newArrayList();
 
 		final Enumeration<String> paramNames = request.getParameterNames();
 		while (paramNames.hasMoreElements()) {
@@ -103,7 +103,7 @@ public abstract class BaseController {
 					v = value;
 				}
 
-				final SearchFilter filter = new SearchFilter(field, operator, v);
+				final FindFilter filter = new FindFilter(field, operator, v);
 				filters.add(filter);
 			}
 		}

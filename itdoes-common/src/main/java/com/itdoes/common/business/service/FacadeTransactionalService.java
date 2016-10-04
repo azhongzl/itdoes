@@ -15,12 +15,12 @@ import com.itdoes.common.business.EntityPair;
  */
 @Service
 public class FacadeTransactionalService extends BaseTransactionalService {
-	public <T, ID extends Serializable> Page<T> search(EntityPair<T, ID> pair, Specification<T> specification,
+	public <T, ID extends Serializable> Page<T> find(EntityPair<T, ID> pair, Specification<T> specification,
 			PageRequest pageRequest) {
 		return pair.getDao().findAll(specification, pageRequest);
 	}
 
-	public <T, ID extends Serializable> T searchOne(EntityPair<T, ID> pair, Specification<T> specification) {
+	public <T, ID extends Serializable> T findOne(EntityPair<T, ID> pair, Specification<T> specification) {
 		return pair.getDao().findOne(specification);
 	}
 

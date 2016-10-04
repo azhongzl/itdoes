@@ -19,8 +19,8 @@ import com.itdoes.common.business.service.FacadeTransactionalService;
  * <th align=left>Method
  * <th align=left>Parameter
  * <tr>
- * <td><code>Search</code>
- * <td>/facade/&lt;Entity_Class&gt;/search
+ * <td><code>Find</code>
+ * <td>/facade/&lt;Entity_Class&gt;/find
  * <td>GET
  * <td>
  * <ul>
@@ -39,15 +39,15 @@ import com.itdoes.common.business.service.FacadeTransactionalService;
  * page_sort=username_a, "a" = ASC, "d" = DESC
  * </ul>
  * <tr style="background-color: rgb(238, 238, 255);">
- * <td><code>SearchOne</code>
- * <td>/facade/&lt;Entity_Class&gt;/searchOne
+ * <td><code>FindOne</code>
+ * <td>/facade/&lt;Entity_Class&gt;/findOne
  * <td>GET
- * <td>The same as "Filter" parameter of "Search" operation, but without "Page" parameter
+ * <td>The same as "Filter" parameter of "Find" operation, but without "Page" parameter
  * <tr>
  * <td><code>Count</code>
  * <td>/facade/&lt;Entity_Class&gt;/count
  * <td>GET
- * <td>The same as "Filter" parameter of "Search" operation, but without "Page" parameter
+ * <td>The same as "Filter" parameter of "Find" operation, but without "Page" parameter
  * <tr style="background-color: rgb(238, 238, 255);">
  * <td><code>Get</code>
  * <td>/facade/&lt;Entity_Class&gt;/get/&lt;id&gt;
@@ -75,8 +75,8 @@ import com.itdoes.common.business.service.FacadeTransactionalService;
  */
 public abstract class FacadeBaseController extends BaseController {
 	public static final String FACADE_URL_PREFIX = "/" + Permissions.FACADE_PERMISSION_PREFIX;
-	public static final String FACADE_URL_SEARCH = "search";
-	public static final String FACADE_URL_SEARCH_ONE = "searchOne";
+	public static final String FACADE_URL_FIND = "find";
+	public static final String FACADE_URL_FIND_ONE = "findOne";
 	public static final String FACADE_URL_COUNT = "count";
 	public static final String FACADE_URL_GET = "get";
 	public static final String FACADE_URL_DELETE = "delete";

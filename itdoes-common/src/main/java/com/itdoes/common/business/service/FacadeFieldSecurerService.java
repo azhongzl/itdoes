@@ -20,15 +20,15 @@ public class FacadeFieldSecurerService extends BaseService {
 	@Autowired
 	private FacadeTransactionalService facadeService;
 
-	public <T, ID extends Serializable> Page<T> secureSearch(EntityPair<T, ID> pair, Specification<T> specification,
+	public <T, ID extends Serializable> Page<T> secureFind(EntityPair<T, ID> pair, Specification<T> specification,
 			PageRequest pageRequest) {
-		final Page<T> page = facadeService.search(pair, specification, pageRequest);
+		final Page<T> page = facadeService.find(pair, specification, pageRequest);
 		Permissions.handleGetSecureFields(pair, page.getContent());
 		return page;
 	}
 
-	public <T, ID extends Serializable> T secureSearchOne(EntityPair<T, ID> pair, Specification<T> specification) {
-		final T entity = facadeService.searchOne(pair, specification);
+	public <T, ID extends Serializable> T secureFindOne(EntityPair<T, ID> pair, Specification<T> specification) {
+		final T entity = facadeService.findOne(pair, specification);
 		Permissions.handleGetSecureFields(pair, entity);
 		return entity;
 	}

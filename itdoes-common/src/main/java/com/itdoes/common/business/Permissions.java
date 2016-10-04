@@ -46,8 +46,8 @@ import com.itdoes.common.core.util.Reflections;
  * (not including field authorization)
  * <td>
  * <ul>
- * <li>facade:User:search
- * <li>facade:User:searchOne
+ * <li>facade:User:find
+ * <li>facade:User:findOne
  * <li>facade:User:count
  * <li>facade:User:get
  * <li>facade:User:delete

@@ -26,8 +26,8 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 		final Set<String> entityNames = env.getEntityPairMap().keySet();
 		final Map<String, String> dynamicDefinitions = new LinkedHashMap<String, String>(entityNames.size() * 6);
 		for (String entityName : entityNames) {
-			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_SEARCH);
-			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_SEARCH_ONE);
+			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_FIND);
+			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_FIND_ONE);
 			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_COUNT);
 			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_GET);
 			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_DELETE);

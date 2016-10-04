@@ -22,21 +22,21 @@ import com.itdoes.common.core.web.MediaTypes;
 @RestController
 @RequestMapping(value = FacadeBaseController.FACADE_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class FacadeMainController extends FacadeBaseController {
-	@RequestMapping(value = "/{ec}/" + FACADE_URL_SEARCH, method = RequestMethod.GET)
-	public <T, ID extends Serializable> Result search(@PathVariable("ec") String ec,
+	@RequestMapping(value = "/{ec}/" + FACADE_URL_FIND, method = RequestMethod.GET)
+	public <T, ID extends Serializable> Result find(@PathVariable("ec") String ec,
 			@RequestParam(value = "page_no", defaultValue = "1") int pageNo,
 			@RequestParam(value = "page_size", defaultValue = "-1") int pageSize,
 			@RequestParam(value = "page_sort", required = false) String pageSort, ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
-		final Page<T> page = facadeFieldSecurerService.secureSearch(pair,
+		final Page<T> page = facadeFieldSecurerService.secureFind(pair,
 				buildSpecification(pair.getEntityClass(), request), buildPageRequest(pageNo, pageSize, pageSort));
 		return HttpResults.success(page);
 	}
 
-	@RequestMapping(value = "/{ec}/" + FACADE_URL_SEARCH_ONE, method = RequestMethod.GET)
-	public <T, ID extends Serializable> Result searchOne(@PathVariable("ec") String ec, ServletRequest request) {
+	@RequestMapping(value = "/{ec}/" + FACADE_URL_FIND_ONE, method = RequestMethod.GET)
+	public <T, ID extends Serializable> Result findOne(@PathVariable("ec") String ec, ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
-		final T entity = facadeFieldSecurerService.secureSearchOne(pair,
+		final T entity = facadeFieldSecurerService.secureFindOne(pair,
 				buildSpecification(pair.getEntityClass(), request));
 		return HttpResults.success(entity);
 	}

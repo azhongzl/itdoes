@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.data.jpa.domain.Specification;
 
-import com.itdoes.common.core.jpa.SearchFilter.Operator;
+import com.itdoes.common.core.jpa.FindFilter.Operator;
 import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Reflections;
 
@@ -22,7 +22,7 @@ import com.itdoes.common.core.util.Reflections;
  * @author Jalen Zhong
  */
 public class Specifications {
-	public static <T> Specification<T> build(final Class<T> entityClass, final Collection<SearchFilter> filters) {
+	public static <T> Specification<T> build(final Class<T> entityClass, final Collection<FindFilter> filters) {
 		return new Specification<T>() {
 			@SuppressWarnings({ "rawtypes", "unchecked" })
 			@Override
@@ -30,7 +30,7 @@ public class Specifications {
 				if (!Collections3.isEmpty(filters)) {
 					final List<Predicate> predicates = new ArrayList<Predicate>(filters.size());
 
-					for (SearchFilter filter : filters) {
+					for (FindFilter filter : filters) {
 						final String[] names = StringUtils.split(filter.field, ".");
 						Path expression = root.get(names[0]);
 						for (int i = 1; i < names.length; i++) {
