@@ -39,6 +39,7 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 
 	private void addDynamicDefinition(Map<String, String> dynamicDefinitions, String entityName, String command) {
 		dynamicDefinitions.put(FacadeBaseController.FACADE_URL_PREFIX + "/" + entityName + "/" + command + URL_ANY,
-				MessageFormat.format(PERMS_PATTERN, Permissions.getFacadeEntityPermission(entityName, command)));
+				MessageFormat.format(PERMS_PATTERN,
+						Permissions.getFacadeOneEntityClassPermission(entityName, command)));
 	}
 }

@@ -42,28 +42,28 @@ import com.itdoes.common.core.util.Reflections;
  * </ul>
  * <tr>
  * <td><code>Facade</code>
- * <td>itdoes:facade:&lt;entity&gt;:entity[:*]
+ * <td>itdoes:facade:&lt;entity&gt;:class[:*]
  * <td>All facade commands for a specific entity <br />
  * (not including field authorization)
  * <td>
  * <ul>
- * <li>itdoes:facade:User:entity
- * <li>itdoes:facade:User:entity:*
+ * <li>itdoes:facade:User:class
+ * <li>itdoes:facade:User:class:*
  * </ul>
  * <tr style="background-color: rgb(238, 238, 255);">
  * <td><code>Facade</code>
- * <td>itdoes:facade:&lt;entity&gt;:entity:&lt;command&gt;
+ * <td>itdoes:facade:&lt;entity&gt;:class:&lt;command&gt;
  * <td>Specific facade operation for a specific entity <br/>
  * (not including field authorization)
  * <td>
  * <ul>
- * <li>itdoes:facade:User:entity:find
- * <li>itdoes:facade:User:entity:findOne
- * <li>itdoes:facade:User:entity:count
- * <li>itdoes:facade:User:entity:get
- * <li>itdoes:facade:User:entity:delete
- * <li>itdoes:facade:User:entity:post
- * <li>itdoes:facade:User:entity:put
+ * <li>itdoes:facade:User:class:find
+ * <li>itdoes:facade:User:class:findOne
+ * <li>itdoes:facade:User:class:count
+ * <li>itdoes:facade:User:class:get
+ * <li>itdoes:facade:User:class:delete
+ * <li>itdoes:facade:User:class:post
+ * <li>itdoes:facade:User:class:put
  * </ul>
  * <tr>
  * <td><code>Facade</code>
@@ -144,67 +144,73 @@ public class Permissions {
 
 	private static final char PERM_SEPARATOR = ':';
 	private static final String PERM_ROOT = "itdoes";
-	private static final String PERM_ENTITY = "entity";
-	private static final String PERM_FIELD = "field";
+	private static final String PERM_ENTITY_CLASS = "class";
+	private static final String PERM_ENTITY_FIELD = "field";
 	private static final String PERM_READ = "read";
 	private static final String PERM_WRITE = "write";
-	private static final String PERM_ANY = "*";
 
 	public static String getAllPermission() {
 		return PERM_ROOT;
 	}
 
 	public static String getSearchAllPermission() {
-		return getSearchPermission(PERM_ANY);
+		return getAllPermission() + PERM_SEPARATOR + PERM_SEARCH;
 	}
 
 	public static String getSearchPermission(String command) {
-		return PERM_ROOT + PERM_SEPARATOR + PERM_SEARCH + PERM_SEPARATOR + command;
+		return getSearchAllPermission() + PERM_SEPARATOR + command;
 	}
 
 	public static String getUploadAllPermission() {
-		return getUploadPermission(PERM_ANY);
+		return getAllPermission() + PERM_SEPARATOR + PERM_UPLOAD;
 	}
 
 	public static String getUploadPermission(String resource) {
-		return PERM_ROOT + PERM_SEPARATOR + PERM_UPLOAD + PERM_SEPARATOR + resource;
+		return getUploadAllPermission() + PERM_SEPARATOR + resource;
 	}
 
 	public static String getFacadeAllPermission() {
-		return PERM_ROOT + PERM_SEPARATOR + PERM_FACADE;
+		return getAllPermission() + PERM_SEPARATOR + PERM_FACADE;
 	}
 
-	public static String getFacadeEntityAllPermission(String entityName) {
-		return getFacadeEntityPermission(entityName, PERM_ANY);
+	public static String getFacadeOneEntityAllPermission(String entityName) {
+		return getFacadeAllPermission() + PERM_SEPARATOR + entityName;
 	}
 
-	public static String getFacadeEntityPermission(String entityName, String command) {
-		return PERM_ROOT + PERM_SEPARATOR + PERM_FACADE + PERM_SEPARATOR + entityName + PERM_SEPARATOR + PERM_ENTITY
-				+ PERM_SEPARATOR + command;
+	public static String getFacadeOneEntityClassAllPermission(String entityName) {
+		return getFacadeOneEntityAllPermission(entityName) + PERM_SEPARATOR + PERM_ENTITY_CLASS;
 	}
 
-	public static String getFacadeFieldAllPermission(String entityName, String fieldName) {
-		return getFacadeFieldPermission(entityName, fieldName, PERM_ANY);
+	public static String getFacadeOneEntityClassPermission(String entityName, String command) {
+		return getFacadeOneEntityClassAllPermission(entityName) + PERM_SEPARATOR + command;
 	}
 
-	public static String getFacadeFieldReadPermission(String entityName, String fieldName) {
-		return getFacadeFieldPermission(entityName, fieldName, PERM_READ);
+	public static String getFacadeOneEntityAllFieldsAllPermission(String entityName) {
+		return getFacadeOneEntityAllPermission(entityName) + PERM_SEPARATOR + PERM_ENTITY_FIELD;
 	}
 
-	public static String getFacadeFieldWritePermission(String entityName, String fieldName) {
-		return getFacadeFieldPermission(entityName, fieldName, PERM_WRITE);
+	public static String getFacadeOneEntityOneFieldAllPermission(String entityName, String fieldName) {
+		return getFacadeOneEntityAllFieldsAllPermission(entityName) + PERM_SEPARATOR + fieldName;
 	}
 
-	private static String getFacadeFieldPermission(String entityName, String fieldName, String mode) {
-		return PERM_ROOT + PERM_SEPARATOR + PERM_FACADE + PERM_SEPARATOR + entityName + PERM_SEPARATOR + PERM_FIELD
-				+ PERM_SEPARATOR + fieldName + PERM_SEPARATOR + mode;
+	public static String getFacadeOneEntityOneFieldReadPermission(String entityName, String fieldName) {
+		return getFacadeOneEntityOneFieldPermission(entityName, fieldName, PERM_READ);
+	}
+
+	public static String getFacadeOneEntityOneFieldWritePermission(String entityName, String fieldName) {
+		return getFacadeOneEntityOneFieldPermission(entityName, fieldName, PERM_WRITE);
+	}
+
+	private static String getFacadeOneEntityOneFieldPermission(String entityName, String fieldName, String mode) {
+		return getFacadeOneEntityOneFieldAllPermission(entityName, fieldName) + PERM_SEPARATOR + mode;
 	}
 
 	private static interface SecureFieldHandler {
 		SecureFieldHandler GET = new SecureFieldHandler() {
 			@Override
 			public <T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity) {
-				if (!subject.isPermitted(Permissions.getFacadeFieldReadPermission(entityName, secureFieldName))) {
+				if (!subject.isPermitted(
+						Permissions.getFacadeOneEntityOneFieldReadPermission(entityName, secureFieldName))) {
 					Reflections.invokeSet(entity, secureFieldName, null);
 				}
 			}
@@ -212,7 +218,8 @@ public class Permissions {
 		SecureFieldHandler POST = new SecureFieldHandler() {
 			@Override
 			public <T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity) {
-				if (!subject.isPermitted(Permissions.getFacadeFieldWritePermission(entityName, secureFieldName))) {
+				if (!subject.isPermitted(
+						Permissions.getFacadeOneEntityOneFieldWritePermission(entityName, secureFieldName))) {
 					Reflections.invokeSet(entity, secureFieldName, null);
 				}
 			}
@@ -220,7 +227,8 @@ public class Permissions {
 		SecureFieldHandler PUT = new SecureFieldHandler() {
 			@Override
 			public <T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity) {
-				if (!subject.isPermitted(Permissions.getFacadeFieldWritePermission(entityName, secureFieldName))) {
+				if (!subject.isPermitted(
+						Permissions.getFacadeOneEntityOneFieldWritePermission(entityName, secureFieldName))) {
 					Reflections.invokeSet(entity, secureFieldName, Reflections.invokeGet(oldEntity, secureFieldName));
 				}
 			}
