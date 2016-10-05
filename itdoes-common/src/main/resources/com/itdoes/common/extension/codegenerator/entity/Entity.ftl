@@ -27,7 +27,7 @@ public class ${className} extends BaseEntity {
 	${idGeneratedValue}
   </#if>
   <#if field.secure>
-	@com.itdoes.common.business.entity.SecureColumn
+	@com.itdoes.common.business.entity.SecureField
   </#if>
 	@Column(name = "${field.column.name}")
 	private ${field.type} ${field.name};

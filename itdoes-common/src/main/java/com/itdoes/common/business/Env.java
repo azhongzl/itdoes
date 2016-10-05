@@ -16,7 +16,7 @@ import org.springframework.context.ApplicationContextAware;
 import com.google.common.collect.Maps;
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
-import com.itdoes.common.business.entity.SecureColumn;
+import com.itdoes.common.business.entity.SecureField;
 import com.itdoes.common.core.cglib.CglibMapper;
 import com.itdoes.common.core.spring.LazyInitBeanLoader;
 import com.itdoes.common.core.spring.Springs;
@@ -99,7 +99,7 @@ public class Env implements ApplicationContextAware {
 		Validate.notNull(dao, "Cannot find bean for name [%s]", daoBeanName);
 
 		// Secure Fields
-		final List<Field> secureFields = Reflections.getFieldsWithAnnotation(entityClass, SecureColumn.class);
+		final List<Field> secureFields = Reflections.getFieldsWithAnnotation(entityClass, SecureField.class);
 		// (Optional) Initialize for performance concern, can be removed if it is not readable
 		if (!Collections3.isEmpty(secureFields)) {
 			CglibMapper.getBeanCopier(entityClass);
