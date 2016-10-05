@@ -29,7 +29,7 @@ public class UploadController extends BaseController {
 	private static final String URL_TO_FIND = URL_PREFIX + "/";
 
 	@RequestMapping(value = "/**", method = RequestMethod.POST)
-	public Result upload(@RequestParam("file") List<MultipartFile> files, HttpServletRequest request) {
+	public Result upload(@RequestParam("uploadFile") List<MultipartFile> files, HttpServletRequest request) {
 		if (Collections3.isEmpty(files)) {
 			return HttpResults.fail(HttpStatus.BAD_REQUEST.value(), "No upload file");
 		}
