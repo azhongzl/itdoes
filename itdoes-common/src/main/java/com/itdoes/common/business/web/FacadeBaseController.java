@@ -74,7 +74,7 @@ import com.itdoes.common.business.service.FacadeTransactionalService;
  * @author Jalen Zhong
  */
 public abstract class FacadeBaseController extends BaseController {
-	public static final String FACADE_URL_PREFIX = "/" + Permissions.FACADE_PERMISSION_PREFIX;
+	public static final String FACADE_URL_PREFIX = "/" + Permissions.PERM_FACADE;
 	public static final String FACADE_URL_FIND = "find";
 	public static final String FACADE_URL_FIND_ONE = "findOne";
 	public static final String FACADE_URL_COUNT = "count";

@@ -17,7 +17,7 @@ import com.itdoes.common.core.web.MediaTypes;
 @RestController
 @RequestMapping(value = SearchController.URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class SearchController extends BaseController {
-	public static final String URL_PREFIX = "/" + Permissions.SEARCH_PERMISSION_PREFIX;
+	public static final String URL_PREFIX = "/" + Permissions.PERM_SEARCH;
 
 	@Autowired
 	protected SearchService searchService;
