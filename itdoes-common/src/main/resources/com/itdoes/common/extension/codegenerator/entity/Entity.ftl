@@ -29,6 +29,9 @@ public class ${className} extends BaseEntity {
   <#if field.secure>
 	@com.itdoes.common.business.entity.SecureField
   </#if>
+  <#if field.upload>
+	@com.itdoes.common.business.entity.UploadField
+  </#if>
 	@Column(name = "${field.column.name}")
 	private ${field.type} ${field.name};
 </#list>

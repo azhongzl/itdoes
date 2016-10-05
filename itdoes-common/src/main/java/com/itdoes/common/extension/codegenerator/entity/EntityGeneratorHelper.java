@@ -19,6 +19,7 @@ public class EntityGeneratorHelper {
 	private static final String TABLE_SKIP_FILE = CONFIG_DIR + "table.skip.ini";
 	private static final String COLUMN_MAPPING_FILE = CONFIG_DIR + "column.mapping.properties";
 	private static final String COLUMN_SECURE_FILE = CONFIG_DIR + "column.secure.ini";
+	private static final String COLUMN_UPLOAD_FILE = CONFIG_DIR + "column.upload.ini";
 	private static final String QUERY_CACHE_FILE = CONFIG_DIR + "queryCache.properties";
 	private static final String EHCACHE_FILE = CONFIG_DIR + "ehcache.properties";
 
@@ -68,14 +69,15 @@ public class EntityGeneratorHelper {
 		final List<String> tableSkipList = toList(TABLE_SKIP_FILE);
 		final Map<String, String> columnMapping = toMap(COLUMN_MAPPING_FILE);
 		final List<String> secureColumnList = toList(COLUMN_SECURE_FILE);
+		final List<String> uploadColumnList = toList(COLUMN_UPLOAD_FILE);
 		final QueryCacheConfig queryCacheConfig = new PropertiesQueryCacheConfig(
 				new PropertiesLoader(QUERY_CACHE_FILE));
 		final EhcacheConfig ehcacheConfig = new PropertiesEhcacheConfig(new PropertiesLoader(EHCACHE_FILE));
 
 		EntityGenerator.generateEntities(pl.getStringMust("jdbc.driver"), pl.getStringMust("jdbc.url"),
 				pl.getStringMust("jdbc.username"), pl.getStringMust("jdbc.password"), OUTPUT_DIR, basePackageName,
-				tableMapping, tableSkipList, columnMapping, secureColumnList, idGeneratedValue, queryCacheConfig,
-				ehcacheConfig);
+				tableMapping, tableSkipList, columnMapping, secureColumnList, uploadColumnList, idGeneratedValue,
+				queryCacheConfig, ehcacheConfig);
 	}
 
 	private static Map<String, String> toMap(String propertyFilename) {

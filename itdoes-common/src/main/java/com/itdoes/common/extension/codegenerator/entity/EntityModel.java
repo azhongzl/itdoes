@@ -12,11 +12,13 @@ public class EntityModel {
 	public static class EntityField extends Field {
 		private final Column column;
 		private final boolean secure;
+		private final boolean upload;
 
-		public EntityField(String name, String type, Column column, boolean secure) {
+		public EntityField(String name, String type, Column column, boolean secure, boolean upload) {
 			super(name, type);
 			this.column = column;
 			this.secure = secure;
+			this.upload = upload;
 		}
 
 		public Column getColumn() {
@@ -25,6 +27,10 @@ public class EntityModel {
 
 		public boolean isSecure() {
 			return secure;
+		}
+
+		public boolean isUpload() {
+			return upload;
 		}
 	}
 

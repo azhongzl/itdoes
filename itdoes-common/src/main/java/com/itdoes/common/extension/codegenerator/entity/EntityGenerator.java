@@ -39,8 +39,8 @@ public class EntityGenerator {
 
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
 			String outputDir, String basePackageName, Map<String, String> tableMapping, List<String> tableSkipList,
-			Map<String, String> columnMapping, List<String> secureColumnList, String idGeneratedValue,
-			QueryCacheConfig queryCacheConfig, EhcacheConfig ehcacheConfig) {
+			Map<String, String> columnMapping, List<String> secureColumnList, List<String> uploadColumnList,
+			String idGeneratedValue, QueryCacheConfig queryCacheConfig, EhcacheConfig ehcacheConfig) {
 		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
 
 		final String entityPackageName = basePackageName + ".entity";
@@ -65,7 +65,7 @@ public class EntityGenerator {
 			// Generate Entity
 			final String entityClassName = mapEntityClassName(tableName, tableMapping);
 			final List<EntityField> entityFieldList = mapEntityFieldList(tableName, table.getColumnList(),
-					columnMapping, secureColumnList);
+					columnMapping, secureColumnList, uploadColumnList);
 			final EntityModel entityModel = new EntityModel(entityPackageName, tableName, entityClassName,
 					getSerialVersionUIDStr(entityClassName), entityFieldList, idGeneratedValue);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
@@ -137,7 +137,7 @@ public class EntityGenerator {
 	}
 
 	private static List<EntityField> mapEntityFieldList(String tableName, List<Column> columnList,
-			Map<String, String> columnMapping, List<String> secureColumnList) {
+			Map<String, String> columnMapping, List<String> secureColumnList, List<String> uploadColumnList) {
 		final List<EntityField> entityFieldList = Lists.newArrayList();
 		for (Column column : columnList) {
 			boolean secure = false;
@@ -147,8 +147,15 @@ public class EntityGenerator {
 				}
 			}
 
+			boolean upload = false;
+			if (!Collections3.isEmpty(uploadColumnList)) {
+				if (uploadColumnList.contains(getColumnKey(tableName, column.getName()))) {
+					upload = true;
+				}
+			}
+
 			final EntityField entityField = new EntityField(mapFieldName(tableName, column.getName(), columnMapping),
-					mapFieldType(column), column, secure);
+					mapFieldType(column), column, secure, upload);
 			entityFieldList.add(entityField);
 		}
 
