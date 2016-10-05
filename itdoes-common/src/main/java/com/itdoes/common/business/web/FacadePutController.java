@@ -1,6 +1,7 @@
 package com.itdoes.common.business.web;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.servlet.ServletRequest;
 import javax.validation.Valid;
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.core.Result;
@@ -27,10 +30,11 @@ public class FacadePutController extends FacadeBaseController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/{ec}/" + FacadeMainController.FACADE_URL_PUT + "/{id}", method = RequestMethod.POST)
 	public <T, ID extends Serializable> Result put(@PathVariable("ec") String ec,
-			@Valid @ModelAttribute("entity") T entity, ServletRequest request) {
+			@Valid @ModelAttribute("entity") T entity, @RequestParam("uploadFile") List<MultipartFile> files,
+			ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
-		facadeFieldSecurerService.securePut(pair, entity, oldEntity);
+		facadeFieldSecurerService.securePut(pair, entity, oldEntity, context.getRealPath("/"), files);
 		return HttpResults.success();
 	}
 

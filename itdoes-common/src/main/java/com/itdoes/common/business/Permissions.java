@@ -275,6 +275,11 @@ public class Permissions {
 		}
 	}
 
+	public static boolean isPermitted(String permission) {
+		final Subject subject = SecurityUtils.getSubject();
+		return subject.isPermitted(permission);
+	}
+
 	private Permissions() {
 	}
 }
