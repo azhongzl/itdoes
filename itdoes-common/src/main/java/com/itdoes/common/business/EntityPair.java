@@ -15,12 +15,15 @@ public class EntityPair<T, ID extends Serializable> {
 	private final Field idField;
 	private final BaseDao<T, ID> dao;
 	private final List<Field> secureFields;
+	private final Field uploadField;
 
-	public EntityPair(Class<T> entityClass, Field idField, BaseDao<T, ID> dao, List<Field> secureFields) {
+	public EntityPair(Class<T> entityClass, Field idField, BaseDao<T, ID> dao, List<Field> secureFields,
+			Field uploadField) {
 		this.entityClass = entityClass;
 		this.idField = idField;
 		this.dao = dao;
 		this.secureFields = secureFields;
+		this.uploadField = uploadField;
 	}
 
 	public Class<T> getEntityClass() {
@@ -37,6 +40,10 @@ public class EntityPair<T, ID extends Serializable> {
 
 	public List<Field> getSecureFields() {
 		return secureFields;
+	}
+
+	public Field getUploadField() {
+		return uploadField;
 	}
 
 	public boolean hasSecureFields() {

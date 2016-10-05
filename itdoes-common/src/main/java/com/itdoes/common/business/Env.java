@@ -17,6 +17,7 @@ import com.google.common.collect.Maps;
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.business.entity.SecureField;
+import com.itdoes.common.business.entity.UploadField;
 import com.itdoes.common.core.cglib.CglibMapper;
 import com.itdoes.common.core.spring.LazyInitBeanLoader;
 import com.itdoes.common.core.spring.Springs;
@@ -105,6 +106,9 @@ public class Env implements ApplicationContextAware {
 			CglibMapper.getBeanCopier(entityClass);
 		}
 
-		entityPairMap.put(key, new EntityPair<T, ID>(entityClass, idField, dao, secureFields));
+		// Upload Field
+		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, UploadField.class);
+
+		entityPairMap.put(key, new EntityPair<T, ID>(entityClass, idField, dao, secureFields, uploadField));
 	}
 }
