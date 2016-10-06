@@ -1,9 +1,12 @@
 package com.itdoes.common.business.service;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,19 +31,19 @@ public class FacadeFieldSecurerService extends BaseService {
 	public <T, ID extends Serializable> Page<T> secureFind(EntityPair<T, ID> pair, Specification<T> specification,
 			PageRequest pageRequest) {
 		final Page<T> page = facadeService.find(pair, specification, pageRequest);
-		Permissions.handleGetSecureFields(pair, page.getContent());
+		handleGetSecureFields(pair, page.getContent());
 		return page;
 	}
 
 	public <T, ID extends Serializable> T secureFindOne(EntityPair<T, ID> pair, Specification<T> specification) {
 		final T entity = facadeService.findOne(pair, specification);
-		Permissions.handleGetSecureFields(pair, entity);
+		handleGetSecureFields(pair, entity);
 		return entity;
 	}
 
 	public <T, ID extends Serializable> T secureGet(EntityPair<T, ID> pair, ID id) {
 		final T entity = facadeService.get(pair, id);
-		Permissions.handleGetSecureFields(pair, entity);
+		handleGetSecureFields(pair, entity);
 		return entity;
 	}
 
@@ -48,7 +51,7 @@ public class FacadeFieldSecurerService extends BaseService {
 	public <T, ID extends Serializable> ID securePost(EntityPair<T, ID> pair, T entity, String realRootPath,
 			List<MultipartFile> files) {
 		if (pair.getUploadField() != null
-				&& Permissions.isPermitted(Permissions.getFacadeOneEntityOneFieldWritePermission(
+				&& isPermitted(Permissions.getFacadeOneEntityOneFieldWritePermission(
 						pair.getEntityClass().getSimpleName(), pair.getUploadField().getName()))
 				&& !Collections3.isEmpty(files)) {
 			final StringBuilder sb = new StringBuilder();
@@ -61,12 +64,12 @@ public class FacadeFieldSecurerService extends BaseService {
 			Reflections.setFieldValue(entity, pair.getUploadField().getName(), sb.toString());
 		}
 
-		Permissions.handlePostSecureFields(pair, entity);
+		handlePostSecureFields(pair, entity);
 		entity = facadeService.save(pair, entity);
 		final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField().getName());
 
 		if (pair.getUploadField() != null
-				&& Permissions.isPermitted(Permissions.getFacadeOneEntityOneFieldWritePermission(
+				&& isPermitted(Permissions.getFacadeOneEntityOneFieldWritePermission(
 						pair.getEntityClass().getSimpleName(), pair.getUploadField().getName()))
 				&& !Collections3.isEmpty(files)) {
 			for (MultipartFile file : files) {
@@ -82,7 +85,7 @@ public class FacadeFieldSecurerService extends BaseService {
 	public <T, ID extends Serializable> void securePut(EntityPair<T, ID> pair, T entity, T oldEntity,
 			String realRootPath, List<MultipartFile> files) {
 		if (pair.getUploadField() != null
-				&& Permissions.isPermitted(Permissions.getFacadeOneEntityOneFieldWritePermission(
+				&& isPermitted(Permissions.getFacadeOneEntityOneFieldWritePermission(
 						pair.getEntityClass().getSimpleName(), pair.getUploadField().getName()))
 				&& !Collections3.isEmpty(files)) {
 			final ID id = (ID) Reflections.getFieldValue(oldEntity, pair.getIdField().getName());
@@ -102,7 +105,82 @@ public class FacadeFieldSecurerService extends BaseService {
 			Reflections.setFieldValue(entity, pair.getUploadField().getName(), sb.toString());
 		}
 
-		Permissions.handlePutSecureFields(pair, entity, oldEntity);
+		handlePutSecureFields(pair, entity, oldEntity);
 		facadeService.save(pair, entity);
+	}
+
+	private static interface SecureFieldHandler {
+		SecureFieldHandler GET = new SecureFieldHandler() {
+			@Override
+			public <T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity) {
+				if (!subject.isPermitted(
+						Permissions.getFacadeOneEntityOneFieldReadPermission(entityName, secureFieldName))) {
+					Reflections.invokeSet(entity, secureFieldName, null);
+				}
+			}
+		};
+		SecureFieldHandler POST = new SecureFieldHandler() {
+			@Override
+			public <T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity) {
+				if (!subject.isPermitted(
+						Permissions.getFacadeOneEntityOneFieldWritePermission(entityName, secureFieldName))) {
+					Reflections.invokeSet(entity, secureFieldName, null);
+				}
+			}
+		};
+		SecureFieldHandler PUT = new SecureFieldHandler() {
+			@Override
+			public <T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity) {
+				if (!subject.isPermitted(
+						Permissions.getFacadeOneEntityOneFieldWritePermission(entityName, secureFieldName))) {
+					Reflections.invokeSet(entity, secureFieldName, Reflections.invokeGet(oldEntity, secureFieldName));
+				}
+			}
+		};
+
+		<T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity);
+	}
+
+	private static <T, ID extends Serializable> void handleGetSecureFields(EntityPair<T, ID> pair, List<T> entityList) {
+		if (!pair.hasSecureFields()) {
+			return;
+		}
+
+		for (T entity : entityList) {
+			handleGetSecureFields(pair, entity);
+		}
+	}
+
+	private static <T, ID extends Serializable> void handleGetSecureFields(EntityPair<T, ID> pair, T entity) {
+		handleSecureFields(pair, SecureFieldHandler.GET, entity, null);
+	}
+
+	private static <T, ID extends Serializable> void handlePostSecureFields(EntityPair<T, ID> pair, T entity) {
+		handleSecureFields(pair, SecureFieldHandler.POST, entity, null);
+	}
+
+	private static <T, ID extends Serializable> void handlePutSecureFields(EntityPair<T, ID> pair, T entity,
+			T oldEntity) {
+		handleSecureFields(pair, SecureFieldHandler.PUT, entity, oldEntity);
+	}
+
+	private static <T, ID extends Serializable> void handleSecureFields(EntityPair<T, ID> pair,
+			SecureFieldHandler handler, T entity, T oldEntity) {
+		if (!pair.hasSecureFields()) {
+			return;
+		}
+
+		final Subject subject = SecurityUtils.getSubject();
+
+		final String entityName = pair.getEntityClass().getSimpleName();
+		for (Field secureField : pair.getSecureFields()) {
+			final String secureFieldName = secureField.getName();
+			handler.handle(subject, entityName, secureFieldName, entity, oldEntity);
+		}
+	}
+
+	public static boolean isPermitted(String permission) {
+		final Subject subject = SecurityUtils.getSubject();
+		return subject.isPermitted(permission);
 	}
 }

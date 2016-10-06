@@ -1,14 +1,5 @@
 package com.itdoes.common.business;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.List;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
-
-import com.itdoes.common.core.util.Reflections;
-
 /**
  * <blockquote>
  * <table border=0 cellspacing=3 cellpadding=0 summary="Permission Readme">
@@ -203,81 +194,6 @@ public class Permissions {
 
 	private static String getFacadeOneEntityOneFieldPermission(String entityName, String fieldName, String mode) {
 		return getFacadeOneEntityOneFieldAllPermission(entityName, fieldName) + PERM_SEPARATOR + mode;
-	}
-
-	private static interface SecureFieldHandler {
-		SecureFieldHandler GET = new SecureFieldHandler() {
-			@Override
-			public <T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity) {
-				if (!subject.isPermitted(
-						Permissions.getFacadeOneEntityOneFieldReadPermission(entityName, secureFieldName))) {
-					Reflections.invokeSet(entity, secureFieldName, null);
-				}
-			}
-		};
-		SecureFieldHandler POST = new SecureFieldHandler() {
-			@Override
-			public <T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity) {
-				if (!subject.isPermitted(
-						Permissions.getFacadeOneEntityOneFieldWritePermission(entityName, secureFieldName))) {
-					Reflections.invokeSet(entity, secureFieldName, null);
-				}
-			}
-		};
-		SecureFieldHandler PUT = new SecureFieldHandler() {
-			@Override
-			public <T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity) {
-				if (!subject.isPermitted(
-						Permissions.getFacadeOneEntityOneFieldWritePermission(entityName, secureFieldName))) {
-					Reflections.invokeSet(entity, secureFieldName, Reflections.invokeGet(oldEntity, secureFieldName));
-				}
-			}
-		};
-
-		<T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity);
-	}
-
-	public static <T, ID extends Serializable> void handleGetSecureFields(EntityPair<T, ID> pair, List<T> entityList) {
-		if (!pair.hasSecureFields()) {
-			return;
-		}
-
-		for (T entity : entityList) {
-			handleGetSecureFields(pair, entity);
-		}
-	}
-
-	public static <T, ID extends Serializable> void handleGetSecureFields(EntityPair<T, ID> pair, T entity) {
-		handleSecureFields(pair, SecureFieldHandler.GET, entity, null);
-	}
-
-	public static <T, ID extends Serializable> void handlePostSecureFields(EntityPair<T, ID> pair, T entity) {
-		handleSecureFields(pair, SecureFieldHandler.POST, entity, null);
-	}
-
-	public static <T, ID extends Serializable> void handlePutSecureFields(EntityPair<T, ID> pair, T entity,
-			T oldEntity) {
-		handleSecureFields(pair, SecureFieldHandler.PUT, entity, oldEntity);
-	}
-
-	private static <T, ID extends Serializable> void handleSecureFields(EntityPair<T, ID> pair,
-			SecureFieldHandler handler, T entity, T oldEntity) {
-		if (!pair.hasSecureFields()) {
-			return;
-		}
-
-		final Subject subject = SecurityUtils.getSubject();
-
-		final String entityName = pair.getEntityClass().getSimpleName();
-		for (Field secureField : pair.getSecureFields()) {
-			final String secureFieldName = secureField.getName();
-			handler.handle(subject, entityName, secureFieldName, entity, oldEntity);
-		}
-	}
-
-	public static boolean isPermitted(String permission) {
-		final Subject subject = SecurityUtils.getSubject();
-		return subject.isPermitted(permission);
 	}
 
 	private Permissions() {
