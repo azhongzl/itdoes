@@ -28,13 +28,24 @@ import com.itdoes.common.core.web.MediaTypes;
 @RequestMapping(value = EntityBaseController.ENTITY_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class EntityPutController extends EntityBaseController {
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/{ec}/" + EntityMainController.ENTITY_URL_PUT + "/{id}", method = RequestMethod.POST)
+	@RequestMapping(value = "/{ec}/" + EntityMainController.ENTITY_COMMAND_PUT + "/{id}", method = RequestMethod.POST)
 	public <T, ID extends Serializable> Result put(@PathVariable("ec") String ec,
-			@Valid @ModelAttribute("entity") T entity, @RequestParam("uploadFile") List<MultipartFile> files,
-			ServletRequest request) {
+			@Valid @ModelAttribute("entity") T entity, ServletRequest request) {
 		final EntityPair<T, ID> pair = getPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
-		entityFieldSecurerService.securePut(pair, entity, oldEntity, context.getRealPath("/"), files);
+		entityFieldSecurerService.securePut(pair, entity, oldEntity);
+		return HttpResults.success();
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/{ec}/" + EntityMainController.ENTITY_COMMAND_PUT_UPLOAD
+			+ "/{id}", method = RequestMethod.POST)
+	public <T, ID extends Serializable> Result put(@PathVariable("ec") String ec,
+			@Valid @ModelAttribute("entity") T entity,
+			@RequestParam(BaseController.UPLOAD_FILE) List<MultipartFile> uploadFileList, ServletRequest request) {
+		final EntityPair<T, ID> pair = getPair(ec);
+		final T oldEntity = (T) request.getAttribute("oldEntity");
+		entityFieldSecurerService.securePutUpload(pair, entity, oldEntity, realRootPath, uploadFileList);
 		return HttpResults.success();
 	}
 

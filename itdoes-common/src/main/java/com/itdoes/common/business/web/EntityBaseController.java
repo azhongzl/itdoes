@@ -8,6 +8,7 @@ import com.itdoes.common.business.EntityEnv;
 import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.business.service.EntityFieldSecurerService;
 import com.itdoes.common.business.service.EntityTransactionalService;
+import com.itdoes.common.core.util.Reflections;
 
 /**
  * <blockquote>
@@ -67,6 +68,16 @@ import com.itdoes.common.business.service.EntityTransactionalService;
  * <td>/e/&lt;Entity_Class&gt;/put/&lt;id&gt;
  * <td>POST
  * <td>
+ * <tr style="background-color: rgb(238, 238, 255);">
+ * <td><code>PostUpload</code>
+ * <td>/e/&lt;Entity_Class&gt;/postUpload
+ * <td>POST
+ * <td>
+ * <tr>
+ * <td><code>PutUpload</code>
+ * <td>/e/&lt;Entity_Class&gt;/putUpload/&lt;id&gt;
+ * <td>POST
+ * <td>
  * </table>
  * </blockquote>
  * 
@@ -74,13 +85,16 @@ import com.itdoes.common.business.service.EntityTransactionalService;
  */
 public abstract class EntityBaseController extends BaseController {
 	public static final String ENTITY_URL_PREFIX = "/e";
-	public static final String ENTITY_URL_FIND = "find";
-	public static final String ENTITY_URL_FIND_ONE = "findOne";
-	public static final String ENTITY_URL_COUNT = "count";
-	public static final String ENTITY_URL_GET = "get";
-	public static final String ENTITY_URL_DELETE = "delete";
-	public static final String ENTITY_URL_POST = "post";
-	public static final String ENTITY_URL_PUT = "put";
+
+	public static final String ENTITY_COMMAND_FIND = "find";
+	public static final String ENTITY_COMMAND_FIND_ONE = "findOne";
+	public static final String ENTITY_COMMAND_COUNT = "count";
+	public static final String ENTITY_COMMAND_GET = "get";
+	public static final String ENTITY_COMMAND_DELETE = "delete";
+	public static final String ENTITY_COMMAND_POST = "post";
+	public static final String ENTITY_COMMAND_PUT = "put";
+	public static final String ENTITY_COMMAND_POST_UPLOAD = "postUpload";
+	public static final String ENTITY_COMMAND_PUT_UPLOAD = "putUpload";
 
 	@Autowired
 	protected EntityEnv env;
@@ -97,6 +111,6 @@ public abstract class EntityBaseController extends BaseController {
 
 	@SuppressWarnings("unchecked")
 	protected <T, ID extends Serializable> ID convertId(EntityPair<T, ID> pair, String id) {
-		return (ID) convertId(id, pair.getIdField().getType());
+		return (ID) Reflections.convert(id, pair.getIdField().getType());
 	}
 }

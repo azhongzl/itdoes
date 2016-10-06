@@ -26,11 +26,20 @@ import com.itdoes.common.core.web.MediaTypes;
 @RestController
 @RequestMapping(value = EntityBaseController.ENTITY_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class EntityPostController extends EntityBaseController {
-	@RequestMapping(value = "/{ec}/" + EntityMainController.ENTITY_URL_POST, method = RequestMethod.POST)
+	@RequestMapping(value = "/{ec}/" + EntityMainController.ENTITY_COMMAND_POST, method = RequestMethod.POST)
 	public <T, ID extends Serializable> Result post(@PathVariable(value = "ec") String ec,
-			@Valid @ModelAttribute("entity") T entity, @RequestParam("uploadFile") List<MultipartFile> files) {
+			@Valid @ModelAttribute("entity") T entity) {
 		final EntityPair<T, ID> pair = getPair(ec);
-		final ID id = entityFieldSecurerService.securePost(pair, entity, context.getRealPath("/"), files);
+		final ID id = entityFieldSecurerService.securePost(pair, entity);
+		return HttpResults.success(id);
+	}
+
+	@RequestMapping(value = "/{ec}/" + EntityMainController.ENTITY_COMMAND_POST_UPLOAD, method = RequestMethod.POST)
+	public <T, ID extends Serializable> Result postUpload(@PathVariable(value = "ec") String ec,
+			@Valid @ModelAttribute("entity") T entity,
+			@RequestParam(BaseController.UPLOAD_FILE) List<MultipartFile> uploadFileList) {
+		final EntityPair<T, ID> pair = getPair(ec);
+		final ID id = entityFieldSecurerService.securePostUpload(pair, entity, realRootPath, uploadFileList);
 		return HttpResults.success(id);
 	}
 

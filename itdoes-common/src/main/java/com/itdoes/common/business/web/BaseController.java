@@ -1,9 +1,9 @@
 package com.itdoes.common.business.web;
 
-import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 
@@ -19,7 +19,6 @@ import com.google.common.collect.Lists;
 import com.itdoes.common.core.jpa.FindFilter;
 import com.itdoes.common.core.jpa.FindFilter.Operator;
 import com.itdoes.common.core.jpa.Specifications;
-import com.itdoes.common.core.util.Reflections;
 
 /**
  * <pre>
@@ -40,14 +39,26 @@ import com.itdoes.common.core.util.Reflections;
  * 
  */
 public abstract class BaseController {
+	public static final String PAGE_NO = "page_no";
+	public static final String PAGE_SIZE = "page_size";
+	public static final String PAGE_SORT = "page_sort";
+
+	public static final String UPLOAD_FILE = "uploadFile";
+
 	private static final int DEFAULT_MAX_PAGE_SIZE = 100;
 
 	private static final String FILTER_PREFIX = "ff_";
 	private static final char FILTER_SEPARATOR = '_';
-	private static final char SORT_SEPARATOR = '_';
 
 	@Autowired
 	protected ServletContext context;
+
+	protected String realRootPath;
+
+	@PostConstruct
+	public void myInit() {
+		realRootPath = context.getRealPath("/");
+	}
 
 	private int maxPageSize = DEFAULT_MAX_PAGE_SIZE;
 
@@ -121,10 +132,10 @@ public abstract class BaseController {
 
 		Sort sort = null;
 		if (StringUtils.isNotBlank(pageSort)) {
-			final String[] sortParams = StringUtils.split(pageSort, SORT_SEPARATOR);
+			final String[] sortParams = StringUtils.split(pageSort, FILTER_SEPARATOR);
 			Validate.isTrue(sortParams.length == 2,
-					"Page.sort shout be in format <Field>%sA or <Field>%sD, now it is %s", SORT_SEPARATOR,
-					SORT_SEPARATOR, pageSort);
+					"Page.sort shout be in format <Field>%sA or <Field>%sD, now it is %s", FILTER_SEPARATOR,
+					FILTER_SEPARATOR, pageSort);
 
 			final String field = sortParams[0];
 			final String directionString = sortParams[1];
@@ -138,9 +149,5 @@ public abstract class BaseController {
 		}
 
 		return new PageRequest(pageNo - 1, pageSize, sort);
-	}
-
-	public Serializable convertId(String id, Class<?> idClass) {
-		return (Serializable) Reflections.convert(id, idClass);
 	}
 }

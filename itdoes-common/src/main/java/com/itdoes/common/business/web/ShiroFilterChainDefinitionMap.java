@@ -26,13 +26,15 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 		final Set<String> entityNames = env.getPairMap().keySet();
 		final Map<String, String> dynamicDefinitions = new LinkedHashMap<String, String>(entityNames.size() * 6);
 		for (String entityName : entityNames) {
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_URL_FIND);
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_URL_FIND_ONE);
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_URL_COUNT);
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_URL_GET);
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_URL_DELETE);
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_URL_POST);
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_URL_PUT);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_FIND);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_FIND_ONE);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_COUNT);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_GET);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_DELETE);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_POST);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_PUT);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_POST_UPLOAD);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_PUT_UPLOAD);
 		}
 		return dynamicDefinitions;
 	}
