@@ -100,6 +100,22 @@ public class Files {
 		return FileUtils.listFilesAndDirs(dir, fileFilter, dirFilter);
 	}
 
+	public static void moveDirectory(File srcDir, File destDir) {
+		try {
+			FileUtils.moveDirectory(srcDir, destDir);
+		} catch (IOException e) {
+			throw Exceptions.unchecked(e);
+		}
+	}
+
+	public static void moveDirectoryToDirectory(File srcDir, File destDir, boolean createDestDir) {
+		try {
+			FileUtils.moveDirectoryToDirectory(srcDir, destDir, createDestDir);
+		} catch (IOException e) {
+			throw Exceptions.unchecked(e);
+		}
+	}
+
 	public static void copyFileFromDirToDir(String srcDir, String destDir) {
 		copyFileFromDirToDir(new File(srcDir), new File(destDir));
 	}

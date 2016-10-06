@@ -1,5 +1,6 @@
 package com.itdoes.common.business.service;
 
+import java.io.File;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -17,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.business.Permissions;
 import com.itdoes.common.core.util.Collections3;
+import com.itdoes.common.core.util.Files;
+import com.itdoes.common.core.util.Ids;
 import com.itdoes.common.core.util.Reflections;
 import com.itdoes.common.core.web.MultipartFiles;
 
@@ -26,6 +29,7 @@ import com.itdoes.common.core.web.MultipartFiles;
 @Service
 public class EntityFieldSecurerService extends BaseService {
 	public static final String UPLOAD_ROOT_PATH = "/upload/";
+	public static final String UPLOAD_TEMP_ROOT_PATH = "/upload/_temp/";
 
 	@Autowired
 	private EntityTransactionalService entityService;
@@ -64,13 +68,17 @@ public class EntityFieldSecurerService extends BaseService {
 
 	public <T, ID extends Serializable> ID securePostUpload(EntityPair<T, ID> pair, T entity, String realRootPath,
 			List<MultipartFile> uploadFileList) {
+		String tempUploadDir = null;
 		if (needUpload(pair, uploadFileList)) {
+			tempUploadDir = getTempEntityUploadDir(pair, realRootPath, Ids.uuid());
+
 			final StringBuilder sb = new StringBuilder();
 			for (MultipartFile uploadFile : uploadFileList) {
 				if (sb.length() != 0) {
 					sb.append(',');
 				}
 				sb.append(uploadFile.getOriginalFilename());
+				uploadFile(tempUploadDir, uploadFile);
 			}
 			Reflections.setFieldValue(entity, pair.getUploadField().getName(), sb.toString());
 		}
@@ -78,9 +86,9 @@ public class EntityFieldSecurerService extends BaseService {
 		final ID id = securePost(pair, entity);
 
 		if (needUpload(pair, uploadFileList)) {
-			for (MultipartFile uploadFile : uploadFileList) {
-				uploadFile(pair, id, realRootPath, uploadFile);
-			}
+			final File srcDir = new File(tempUploadDir);
+			final File destDir = new File(getEntityUploadDir(pair, realRootPath, id.toString()));
+			Files.moveDirectory(srcDir, destDir);
 		}
 
 		return id;
@@ -91,6 +99,8 @@ public class EntityFieldSecurerService extends BaseService {
 			String realRootPath, List<MultipartFile> uploadFileList) {
 		if (needUpload(pair, uploadFileList)) {
 			final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField().getName());
+			final String uploadDir = getEntityUploadDir(pair, realRootPath, id.toString());
+
 			final StringBuilder sb = new StringBuilder();
 			final String uploadFilesString = (String) Reflections.getFieldValue(entity,
 					pair.getUploadField().getName());
@@ -102,7 +112,7 @@ public class EntityFieldSecurerService extends BaseService {
 					sb.append(',');
 				}
 				sb.append(uploadFile.getOriginalFilename());
-				uploadFile(pair, id, realRootPath, uploadFile);
+				uploadFile(uploadDir, uploadFile);
 			}
 			Reflections.setFieldValue(entity, pair.getUploadField().getName(), sb.toString());
 		}
@@ -202,9 +212,17 @@ public class EntityFieldSecurerService extends BaseService {
 		return true;
 	}
 
-	private static <T, ID extends Serializable> void uploadFile(EntityPair<T, ID> pair, ID id, String realRootPath,
-			MultipartFile uploadFile) {
-		MultipartFiles.save(realRootPath + UPLOAD_ROOT_PATH + pair.getEntityClass().getSimpleName() + "/" + id,
-				uploadFile.getOriginalFilename(), uploadFile);
+	private static void uploadFile(String realPath, MultipartFile uploadFile) {
+		MultipartFiles.save(realPath, uploadFile.getOriginalFilename(), uploadFile);
+	}
+
+	private static <T, ID extends Serializable> String getEntityUploadDir(EntityPair<T, ID> pair, String realRootPath,
+			String uuid) {
+		return realRootPath + UPLOAD_ROOT_PATH + pair.getEntityClass().getSimpleName() + "/" + uuid;
+	}
+
+	private static <T, ID extends Serializable> String getTempEntityUploadDir(EntityPair<T, ID> pair,
+			String realRootPath, String uuid) {
+		return realRootPath + UPLOAD_TEMP_ROOT_PATH + pair.getEntityClass().getSimpleName() + "/" + uuid;
 	}
 }
