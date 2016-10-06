@@ -25,6 +25,8 @@ import com.itdoes.common.core.web.MultipartFiles;
  */
 @Service
 public class EntityFieldSecurerService extends BaseService {
+	public static final String UPLOAD_ROOT_PATH = "/upload/";
+
 	@Autowired
 	private EntityTransactionalService entityService;
 
@@ -60,13 +62,9 @@ public class EntityFieldSecurerService extends BaseService {
 		entityService.save(pair, entity);
 	}
 
-	@SuppressWarnings("unchecked")
 	public <T, ID extends Serializable> ID securePostUpload(EntityPair<T, ID> pair, T entity, String realRootPath,
 			List<MultipartFile> uploadFileList) {
-		if (pair.getUploadField() != null
-				&& isPermitted(Permissions.getEntityOneEntityOneFieldWritePermission(
-						pair.getEntityClass().getSimpleName(), pair.getUploadField().getName()))
-				&& !Collections3.isEmpty(uploadFileList)) {
+		if (needUpload(pair, uploadFileList)) {
 			final StringBuilder sb = new StringBuilder();
 			for (MultipartFile uploadFile : uploadFileList) {
 				if (sb.length() != 0) {
@@ -77,17 +75,11 @@ public class EntityFieldSecurerService extends BaseService {
 			Reflections.setFieldValue(entity, pair.getUploadField().getName(), sb.toString());
 		}
 
-		handlePostSecureFields(pair, entity);
-		entity = entityService.save(pair, entity);
-		final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField().getName());
+		final ID id = securePost(pair, entity);
 
-		if (pair.getUploadField() != null
-				&& isPermitted(Permissions.getEntityOneEntityOneFieldWritePermission(
-						pair.getEntityClass().getSimpleName(), pair.getUploadField().getName()))
-				&& !Collections3.isEmpty(uploadFileList)) {
-			for (MultipartFile file : uploadFileList) {
-				MultipartFiles.save(realRootPath + "/upload/" + pair.getEntityClass().getSimpleName(),
-						id + "_" + file.getOriginalFilename(), file);
+		if (needUpload(pair, uploadFileList)) {
+			for (MultipartFile uploadFile : uploadFileList) {
+				uploadFile(pair, id, realRootPath, uploadFile);
 			}
 		}
 
@@ -97,29 +89,25 @@ public class EntityFieldSecurerService extends BaseService {
 	@SuppressWarnings("unchecked")
 	public <T, ID extends Serializable> void securePutUpload(EntityPair<T, ID> pair, T entity, T oldEntity,
 			String realRootPath, List<MultipartFile> uploadFileList) {
-		if (pair.getUploadField() != null
-				&& isPermitted(Permissions.getEntityOneEntityOneFieldWritePermission(
-						pair.getEntityClass().getSimpleName(), pair.getUploadField().getName()))
-				&& !Collections3.isEmpty(uploadFileList)) {
-			final ID id = (ID) Reflections.getFieldValue(oldEntity, pair.getIdField().getName());
+		if (needUpload(pair, uploadFileList)) {
+			final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField().getName());
 			final StringBuilder sb = new StringBuilder();
-			final String attachments = (String) Reflections.getFieldValue(oldEntity, pair.getUploadField().getName());
-			if (StringUtils.isNotBlank(attachments)) {
-				sb.append(attachments);
+			final String uploadFilesString = (String) Reflections.getFieldValue(entity,
+					pair.getUploadField().getName());
+			if (StringUtils.isNotBlank(uploadFilesString)) {
+				sb.append(uploadFilesString.trim());
 			}
 			for (MultipartFile uploadFile : uploadFileList) {
 				if (sb.length() != 0) {
 					sb.append(',');
 				}
 				sb.append(uploadFile.getOriginalFilename());
-				MultipartFiles.save(realRootPath + "/upload/" + pair.getEntityClass().getSimpleName(),
-						id + "_" + uploadFile.getOriginalFilename(), uploadFile);
+				uploadFile(pair, id, realRootPath, uploadFile);
 			}
 			Reflections.setFieldValue(entity, pair.getUploadField().getName(), sb.toString());
 		}
 
-		handlePutSecureFields(pair, entity, oldEntity);
-		entityService.save(pair, entity);
+		securePut(pair, entity, oldEntity);
 	}
 
 	private static interface SecureFieldHandler {
@@ -192,8 +180,31 @@ public class EntityFieldSecurerService extends BaseService {
 		}
 	}
 
-	public static boolean isPermitted(String permission) {
+	private static boolean isPermitted(String permission) {
 		final Subject subject = SecurityUtils.getSubject();
 		return subject.isPermitted(permission);
+	}
+
+	private static <T, ID extends Serializable> boolean needUpload(EntityPair<T, ID> pair,
+			List<MultipartFile> uploadFileList) {
+		if (pair.getUploadField() == null
+				|| !isPermitted(Permissions.getEntityOneEntityOneFieldWritePermission(
+						pair.getEntityClass().getSimpleName(), pair.getUploadField().getName()))
+				|| Collections3.isEmpty(uploadFileList)) {
+			return false;
+		}
+
+		// Spring will auto add an empty file if no file provided
+		if (uploadFileList.size() == 1) {
+			return !uploadFileList.get(0).isEmpty();
+		}
+
+		return true;
+	}
+
+	private static <T, ID extends Serializable> void uploadFile(EntityPair<T, ID> pair, ID id, String realRootPath,
+			MultipartFile uploadFile) {
+		MultipartFiles.save(realRootPath + UPLOAD_ROOT_PATH + pair.getEntityClass().getSimpleName() + "/" + id,
+				uploadFile.getOriginalFilename(), uploadFile);
 	}
 }
