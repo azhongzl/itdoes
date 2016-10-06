@@ -10,14 +10,14 @@ import com.itdoes.common.core.util.Collections3;
 /**
  * @author Jalen Zhong
  */
-public class EntityFacadePair<T, ID extends Serializable> {
+public class EntityPair<T, ID extends Serializable> {
 	private final Class<T> entityClass;
 	private final Field idField;
 	private final BaseDao<T, ID> dao;
 	private final List<Field> secureFields;
 	private final Field uploadField;
 
-	public EntityFacadePair(Class<T> entityClass, Field idField, BaseDao<T, ID> dao, List<Field> secureFields,
+	public EntityPair(Class<T> entityClass, Field idField, BaseDao<T, ID> dao, List<Field> secureFields,
 			Field uploadField) {
 		this.entityClass = entityClass;
 		this.idField = idField;

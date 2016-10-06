@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.itdoes.common.business.EntityFacadePair;
+import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.core.Result;
 import com.itdoes.common.core.cglib.CglibMapper;
 import com.itdoes.common.core.web.HttpResults;
@@ -25,16 +25,16 @@ import com.itdoes.common.core.web.MediaTypes;
  * @author Jalen Zhong
  */
 @RestController
-@RequestMapping(value = EntityFacadeBaseController.FACADE_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
-public class EntityFacadePutController extends EntityFacadeBaseController {
+@RequestMapping(value = EntityBaseController.ENTITY_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
+public class EntityPutController extends EntityBaseController {
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/{ec}/" + EntityFacadeMainController.FACADE_URL_PUT + "/{id}", method = RequestMethod.POST)
+	@RequestMapping(value = "/{ec}/" + EntityMainController.ENTITY_URL_PUT + "/{id}", method = RequestMethod.POST)
 	public <T, ID extends Serializable> Result put(@PathVariable("ec") String ec,
 			@Valid @ModelAttribute("entity") T entity, @RequestParam("uploadFile") List<MultipartFile> files,
 			ServletRequest request) {
-		final EntityFacadePair<T, ID> pair = getPair(ec);
+		final EntityPair<T, ID> pair = getPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
-		facadeFieldSecurerService.securePut(pair, entity, oldEntity, context.getRealPath("/"), files);
+		entityFieldSecurerService.securePut(pair, entity, oldEntity, context.getRealPath("/"), files);
 		return HttpResults.success();
 	}
 
@@ -42,9 +42,9 @@ public class EntityFacadePutController extends EntityFacadeBaseController {
 	@ModelAttribute
 	public <T, ID extends Serializable> void getEntity(@PathVariable("ec") String ec, @PathVariable("id") String id,
 			Model model, ServletRequest request) {
-		final EntityFacadePair<T, ID> pair = getPair(ec);
+		final EntityPair<T, ID> pair = getPair(ec);
 
-		final T entity = facadeService.get(pair, convertId(pair, id));
+		final T entity = entityService.get(pair, convertId(pair, id));
 		model.addAttribute("entity", entity);
 
 		if (pair.hasSecureFields()) {

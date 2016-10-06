@@ -27,7 +27,7 @@ import com.itdoes.common.core.util.Reflections;
 /**
  * @author Jalen Zhong
  */
-public class EntityFacadeEnv implements ApplicationContextAware {
+public class EntityEnv implements ApplicationContextAware {
 	public static String getDaoClassName(String entityClassName) {
 		return entityClassName + "Dao";
 	}
@@ -38,7 +38,7 @@ public class EntityFacadeEnv implements ApplicationContextAware {
 
 	private boolean daoLazyInit;
 
-	private final Map<String, EntityFacadePair<?, ? extends Serializable>> pairMap = Maps.newHashMap();
+	private final Map<String, EntityPair<?, ? extends Serializable>> pairMap = Maps.newHashMap();
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -58,20 +58,20 @@ public class EntityFacadeEnv implements ApplicationContextAware {
 		initPairMap();
 	}
 
-	public Map<String, EntityFacadePair<?, ? extends Serializable>> getPairMap() {
+	public Map<String, EntityPair<?, ? extends Serializable>> getPairMap() {
 		return pairMap;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T, ID extends Serializable> EntityFacadePair<T, ID> getPair(String entityClassSimpleName) {
-		final EntityFacadePair<T, ID> pair = (EntityFacadePair<T, ID>) pairMap.get(entityClassSimpleName);
+	public <T, ID extends Serializable> EntityPair<T, ID> getPair(String entityClassSimpleName) {
+		final EntityPair<T, ID> pair = (EntityPair<T, ID>) pairMap.get(entityClassSimpleName);
 		Validate.notNull(pair, "Cannot find pair for class [%s]", entityClassSimpleName);
 		return pair;
 	}
 
 	private void initPairMap() {
 		final List<Class<?>> entityClasses = Reflections.getClasses(entityPackage,
-				new Reflections.ClassFilter.SuperClassFilter(BaseEntity.class), EntityFacadeEnv.class.getClassLoader());
+				new Reflections.ClassFilter.SuperClassFilter(BaseEntity.class), EntityEnv.class.getClassLoader());
 
 		for (Class<?> entityClass : entityClasses) {
 			initPair(entityClass);
@@ -109,6 +109,6 @@ public class EntityFacadeEnv implements ApplicationContextAware {
 		// Upload Field
 		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, UploadField.class);
 
-		pairMap.put(key, new EntityFacadePair<T, ID>(entityClass, idField, dao, secureFields, uploadField));
+		pairMap.put(key, new EntityPair<T, ID>(entityClass, idField, dao, secureFields, uploadField));
 	}
 }

@@ -20,19 +20,19 @@ public class PermissionsTest {
 
 		String entityName = "MyEntity";
 		String fieldName = "myField";
-		assertThat(Permissions.getFacadeAllPermission()).isEqualTo("itdoes:facade");
-		assertThat(Permissions.getFacadeOneEntityAllPermission(entityName)).isEqualTo("itdoes:facade:" + entityName);
-		assertThat(Permissions.getFacadeOneEntityClassAllPermission(entityName))
-				.isEqualTo("itdoes:facade:" + entityName + ":class");
-		assertThat(Permissions.getFacadeOneEntityClassPermission(entityName, "post"))
-				.isEqualTo("itdoes:facade:" + entityName + ":class:post");
-		assertThat(Permissions.getFacadeOneEntityAllFieldsAllPermission(entityName))
-				.isEqualTo("itdoes:facade:" + entityName + ":field");
-		assertThat(Permissions.getFacadeOneEntityOneFieldAllPermission(entityName, fieldName))
-				.isEqualTo("itdoes:facade:" + entityName + ":field:" + fieldName);
-		assertThat(Permissions.getFacadeOneEntityOneFieldReadPermission(entityName, fieldName))
-				.isEqualTo("itdoes:facade:" + entityName + ":field:" + fieldName + ":read");
-		assertThat(Permissions.getFacadeOneEntityOneFieldWritePermission(entityName, fieldName))
-				.isEqualTo("itdoes:facade:" + entityName + ":field:" + fieldName + ":write");
+		assertThat(Permissions.getEntityAllPermission()).isEqualTo("itdoes:entity");
+		assertThat(Permissions.getEntityOneEntityAllPermission(entityName)).isEqualTo("itdoes:entity:" + entityName);
+		assertThat(Permissions.getEntityOneEntityClassAllPermission(entityName))
+				.isEqualTo("itdoes:entity:" + entityName + ":class");
+		assertThat(Permissions.getEntityOneEntityClassPermission(entityName, "post"))
+				.isEqualTo("itdoes:entity:" + entityName + ":class:post");
+		assertThat(Permissions.getEntityOneEntityAllFieldsAllPermission(entityName))
+				.isEqualTo("itdoes:entity:" + entityName + ":field");
+		assertThat(Permissions.getEntityOneEntityOneFieldAllPermission(entityName, fieldName))
+				.isEqualTo("itdoes:entity:" + entityName + ":field:" + fieldName);
+		assertThat(Permissions.getEntityOneEntityOneFieldReadPermission(entityName, fieldName))
+				.isEqualTo("itdoes:entity:" + entityName + ":field:" + fieldName + ":read");
+		assertThat(Permissions.getEntityOneEntityOneFieldWritePermission(entityName, fieldName))
+				.isEqualTo("itdoes:entity:" + entityName + ":field:" + fieldName + ":write");
 	}
 }

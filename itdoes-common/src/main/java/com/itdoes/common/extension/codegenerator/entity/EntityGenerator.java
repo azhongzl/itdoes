@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Lists;
-import com.itdoes.common.business.EntityFacadeEnv;
+import com.itdoes.common.business.EntityEnv;
 import com.itdoes.common.core.Constants;
 import com.itdoes.common.core.freemarker.FreeMarkers;
 import com.itdoes.common.core.jdbc.CustomSqlTypes;
@@ -72,7 +72,7 @@ public class EntityGenerator {
 			writeJavaFile(entityDir, entityClassName, entityString);
 
 			// Generate Dao
-			final String daoClassName = EntityFacadeEnv.getDaoClassName(entityClassName);
+			final String daoClassName = EntityEnv.getDaoClassName(entityClassName);
 			final boolean queryCacheEnabled = queryCacheConfig.isEnabled(entityClassName);
 			final DaoModel daoModel = new DaoModel(daoPackageName, entityPackageName, entityClassName, daoClassName,
 					queryCacheEnabled, mapIdType(tableName, entityFieldList));

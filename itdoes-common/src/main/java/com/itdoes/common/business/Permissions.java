@@ -9,83 +9,83 @@ package com.itdoes.common.business;
  * <th align=left>Meaning
  * <th align=left>Example
  * <tr>
- * <td><code>Facade</code>
- * <td>itdoes:facade[:*][:*][:*][:*]
- * <td>All facade commands for all entities and fields
+ * <td><code>Entity</code>
+ * <td>itdoes:entity[:*][:*][:*][:*]
+ * <td>All entity commands for all entities and fields
  * <td>
  * <ul>
- * <li>itdoes:facade
- * <li>itdoes:facade:*
- * <li>itdoes:facade:*:*
- * <li>itdoes:facade:*:*:*
- * <li>itdoes:facade:*:*:*:*
+ * <li>itdoes:entity
+ * <li>itdoes:entity:*
+ * <li>itdoes:entity:*:*
+ * <li>itdoes:entity:*:*:*
+ * <li>itdoes:entity:*:*:*:*
  * </ul>
  * <tr style="background-color: rgb(238, 238, 255);">
- * <td><code>Facade</code>
- * <td>itdoes:facade:&lt;entity&gt;[:*][:*][:*]
- * <td>All facade commands for a specific entity and all its fields
+ * <td><code>Entity</code>
+ * <td>itdoes:entity:&lt;entity&gt;[:*][:*][:*]
+ * <td>All entity commands for a specific entity and all its fields
  * <td>
  * <ul>
- * <li>itdoes:facade:User
- * <li>itdoes:facade:User:*
- * <li>itdoes:facade:User:*:*
- * <li>itdoes:facade:User:*:*:*
+ * <li>itdoes:entity:User
+ * <li>itdoes:entity:User:*
+ * <li>itdoes:entity:User:*:*
+ * <li>itdoes:entity:User:*:*:*
  * </ul>
  * <tr>
- * <td><code>Facade</code>
- * <td>itdoes:facade:&lt;entity&gt;:class[:*]
- * <td>All facade commands for a specific entity <br />
+ * <td><code>Entity</code>
+ * <td>itdoes:entity:&lt;entity&gt;:class[:*]
+ * <td>All entity commands for a specific entity <br />
  * (not including field authorization)
  * <td>
  * <ul>
- * <li>itdoes:facade:User:class
- * <li>itdoes:facade:User:class:*
+ * <li>itdoes:entity:User:class
+ * <li>itdoes:entity:User:class:*
  * </ul>
  * <tr style="background-color: rgb(238, 238, 255);">
- * <td><code>Facade</code>
- * <td>itdoes:facade:&lt;entity&gt;:class:&lt;command&gt;
- * <td>Specific facade operation for a specific entity <br/>
+ * <td><code>Entity</code>
+ * <td>itdoes:entity:&lt;entity&gt;:class:&lt;command&gt;
+ * <td>Specific entity operation for a specific entity <br/>
  * (not including field authorization)
  * <td>
  * <ul>
- * <li>itdoes:facade:User:class:find
- * <li>itdoes:facade:User:class:findOne
- * <li>itdoes:facade:User:class:count
- * <li>itdoes:facade:User:class:get
- * <li>itdoes:facade:User:class:delete
- * <li>itdoes:facade:User:class:post
- * <li>itdoes:facade:User:class:put
+ * <li>itdoes:entity:User:class:find
+ * <li>itdoes:entity:User:class:findOne
+ * <li>itdoes:entity:User:class:count
+ * <li>itdoes:entity:User:class:get
+ * <li>itdoes:entity:User:class:delete
+ * <li>itdoes:entity:User:class:post
+ * <li>itdoes:entity:User:class:put
  * </ul>
  * <tr>
- * <td><code>Facade</code>
- * <td>itdoes:facade:&lt;entity&gt;:field:[:*][:*]
- * <td>All facade commands for all fields of a specific entity <br />
+ * <td><code>Entity</code>
+ * <td>itdoes:entity:&lt;entity&gt;:field:[:*][:*]
+ * <td>All entity commands for all fields of a specific entity <br />
  * (not including entity authorization)
  * <td>
  * <ul>
- * <li>itdoes:facade:User:field
- * <li>itdoes:facade:User:field:*
- * <li>itdoes:facade:User:field:*:*
+ * <li>itdoes:entity:User:field
+ * <li>itdoes:entity:User:field:*
+ * <li>itdoes:entity:User:field:*:*
  * </ul>
  * <tr style="background-color: rgb(238, 238, 255);">
- * <td><code>Facade</code>
- * <td>itdoes:facade:&lt;entity&gt;:field:&lt;field&gt;[:*]
- * <td>All facade commands for a specific entity field <br />
+ * <td><code>Entity</code>
+ * <td>itdoes:entity:&lt;entity&gt;:field:&lt;field&gt;[:*]
+ * <td>All entity commands for a specific entity field <br />
  * (not including entity authorization)
  * <td>
  * <ul>
- * <li>itdoes:facade:User:field:username
- * <li>itdoes:facade:User:field:username:*
+ * <li>itdoes:entity:User:field:username
+ * <li>itdoes:entity:User:field:username:*
  * </ul>
  * <tr>
- * <td><code>Facade</code>
- * <td>itdoes:facade:&lt;entity&gt;:field:&lt;field&gt;:&lt;command&gt;
- * <td>Specific facade operation for a specific entity field <br/>
+ * <td><code>Entity</code>
+ * <td>itdoes:entity:&lt;entity&gt;:field:&lt;field&gt;:&lt;command&gt;
+ * <td>Specific entity operation for a specific entity field <br/>
  * (Commands now including: get, write)
  * <td>
  * <ul>
- * <li>itdoes:facade:User:field:username:read
- * <li>itdoes:facade:User:field:username:write
+ * <li>itdoes:entity:User:field:username:read
+ * <li>itdoes:entity:User:field:username:write
  * </ul>
  * <tr style="background-color: rgb(238, 238, 255);">
  * <td><code>Upload</code>
@@ -131,7 +131,7 @@ package com.itdoes.common.business;
 public class Permissions {
 	public static final String PERM_SEARCH = "search";
 	public static final String PERM_UPLOAD = "upload";
-	public static final String PERM_FACADE = "facade";
+	public static final String PERM_ENTITY = "entity";
 
 	private static final char PERM_SEPARATOR = ':';
 	private static final String PERM_ROOT = "itdoes";
@@ -160,40 +160,40 @@ public class Permissions {
 		return getUploadAllPermission() + PERM_SEPARATOR + resource;
 	}
 
-	public static String getFacadeAllPermission() {
-		return getAllPermission() + PERM_SEPARATOR + PERM_FACADE;
+	public static String getEntityAllPermission() {
+		return getAllPermission() + PERM_SEPARATOR + PERM_ENTITY;
 	}
 
-	public static String getFacadeOneEntityAllPermission(String entityName) {
-		return getFacadeAllPermission() + PERM_SEPARATOR + entityName;
+	public static String getEntityOneEntityAllPermission(String entityName) {
+		return getEntityAllPermission() + PERM_SEPARATOR + entityName;
 	}
 
-	public static String getFacadeOneEntityClassAllPermission(String entityName) {
-		return getFacadeOneEntityAllPermission(entityName) + PERM_SEPARATOR + PERM_ENTITY_CLASS;
+	public static String getEntityOneEntityClassAllPermission(String entityName) {
+		return getEntityOneEntityAllPermission(entityName) + PERM_SEPARATOR + PERM_ENTITY_CLASS;
 	}
 
-	public static String getFacadeOneEntityClassPermission(String entityName, String command) {
-		return getFacadeOneEntityClassAllPermission(entityName) + PERM_SEPARATOR + command;
+	public static String getEntityOneEntityClassPermission(String entityName, String command) {
+		return getEntityOneEntityClassAllPermission(entityName) + PERM_SEPARATOR + command;
 	}
 
-	public static String getFacadeOneEntityAllFieldsAllPermission(String entityName) {
-		return getFacadeOneEntityAllPermission(entityName) + PERM_SEPARATOR + PERM_ENTITY_FIELD;
+	public static String getEntityOneEntityAllFieldsAllPermission(String entityName) {
+		return getEntityOneEntityAllPermission(entityName) + PERM_SEPARATOR + PERM_ENTITY_FIELD;
 	}
 
-	public static String getFacadeOneEntityOneFieldAllPermission(String entityName, String fieldName) {
-		return getFacadeOneEntityAllFieldsAllPermission(entityName) + PERM_SEPARATOR + fieldName;
+	public static String getEntityOneEntityOneFieldAllPermission(String entityName, String fieldName) {
+		return getEntityOneEntityAllFieldsAllPermission(entityName) + PERM_SEPARATOR + fieldName;
 	}
 
-	public static String getFacadeOneEntityOneFieldReadPermission(String entityName, String fieldName) {
-		return getFacadeOneEntityOneFieldPermission(entityName, fieldName, PERM_READ);
+	public static String getEntityOneEntityOneFieldReadPermission(String entityName, String fieldName) {
+		return getEntityOneEntityOneFieldPermission(entityName, fieldName, PERM_READ);
 	}
 
-	public static String getFacadeOneEntityOneFieldWritePermission(String entityName, String fieldName) {
-		return getFacadeOneEntityOneFieldPermission(entityName, fieldName, PERM_WRITE);
+	public static String getEntityOneEntityOneFieldWritePermission(String entityName, String fieldName) {
+		return getEntityOneEntityOneFieldPermission(entityName, fieldName, PERM_WRITE);
 	}
 
-	private static String getFacadeOneEntityOneFieldPermission(String entityName, String fieldName, String mode) {
-		return getFacadeOneEntityOneFieldAllPermission(entityName, fieldName) + PERM_SEPARATOR + mode;
+	private static String getEntityOneEntityOneFieldPermission(String entityName, String fieldName, String mode) {
+		return getEntityOneEntityOneFieldAllPermission(entityName, fieldName) + PERM_SEPARATOR + mode;
 	}
 
 	private Permissions() {
