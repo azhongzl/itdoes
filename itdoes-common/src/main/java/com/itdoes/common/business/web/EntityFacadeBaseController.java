@@ -4,11 +4,11 @@ import java.io.Serializable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.itdoes.common.business.EntityPair;
-import com.itdoes.common.business.Env;
+import com.itdoes.common.business.EntityFacadeEnv;
+import com.itdoes.common.business.EntityFacadePair;
 import com.itdoes.common.business.Permissions;
-import com.itdoes.common.business.service.FacadeFieldSecurerService;
-import com.itdoes.common.business.service.FacadeTransactionalService;
+import com.itdoes.common.business.service.EntityFacadeFieldSecurerService;
+import com.itdoes.common.business.service.EntityFacadeTransactionalService;
 
 /**
  * <blockquote>
@@ -73,7 +73,7 @@ import com.itdoes.common.business.service.FacadeTransactionalService;
  * 
  * @author Jalen Zhong
  */
-public abstract class FacadeBaseController extends BaseController {
+public abstract class EntityFacadeBaseController extends BaseController {
 	public static final String FACADE_URL_PREFIX = "/" + Permissions.PERM_FACADE;
 	public static final String FACADE_URL_FIND = "find";
 	public static final String FACADE_URL_FIND_ONE = "findOne";
@@ -84,20 +84,20 @@ public abstract class FacadeBaseController extends BaseController {
 	public static final String FACADE_URL_PUT = "put";
 
 	@Autowired
-	protected Env env;
+	protected EntityFacadeEnv env;
 
 	@Autowired
-	protected FacadeTransactionalService facadeService;
+	protected EntityFacadeTransactionalService facadeService;
 
 	@Autowired
-	protected FacadeFieldSecurerService facadeFieldSecurerService;
+	protected EntityFacadeFieldSecurerService facadeFieldSecurerService;
 
-	protected <T, ID extends Serializable> EntityPair<T, ID> getEntityPair(String ec) {
-		return env.getEntityPair(ec);
+	protected <T, ID extends Serializable> EntityFacadePair<T, ID> getPair(String ec) {
+		return env.getPair(ec);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T, ID extends Serializable> ID convertId(EntityPair<T, ID> pair, String id) {
+	protected <T, ID extends Serializable> ID convertId(EntityFacadePair<T, ID> pair, String id) {
 		return (ID) convertId(id, pair.getIdField().getType());
 	}
 }

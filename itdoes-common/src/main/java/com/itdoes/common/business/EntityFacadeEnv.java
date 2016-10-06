@@ -27,7 +27,7 @@ import com.itdoes.common.core.util.Reflections;
 /**
  * @author Jalen Zhong
  */
-public class Env implements ApplicationContextAware {
+public class EntityFacadeEnv implements ApplicationContextAware {
 	public static String getDaoClassName(String entityClassName) {
 		return entityClassName + "Dao";
 	}
@@ -38,7 +38,7 @@ public class Env implements ApplicationContextAware {
 
 	private boolean daoLazyInit;
 
-	private final Map<String, EntityPair<?, ? extends Serializable>> entityPairMap = Maps.newHashMap();
+	private final Map<String, EntityFacadePair<?, ? extends Serializable>> pairMap = Maps.newHashMap();
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -55,31 +55,31 @@ public class Env implements ApplicationContextAware {
 
 	@PostConstruct
 	public void init() {
-		initEntityPairMap();
+		initPairMap();
 	}
 
-	public Map<String, EntityPair<?, ? extends Serializable>> getEntityPairMap() {
-		return entityPairMap;
+	public Map<String, EntityFacadePair<?, ? extends Serializable>> getPairMap() {
+		return pairMap;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T, ID extends Serializable> EntityPair<T, ID> getEntityPair(String entityClassSimpleName) {
-		final EntityPair<T, ID> pair = (EntityPair<T, ID>) entityPairMap.get(entityClassSimpleName);
-		Validate.notNull(pair, "Cannot find EntityPair for class [%s]", entityClassSimpleName);
+	public <T, ID extends Serializable> EntityFacadePair<T, ID> getPair(String entityClassSimpleName) {
+		final EntityFacadePair<T, ID> pair = (EntityFacadePair<T, ID>) pairMap.get(entityClassSimpleName);
+		Validate.notNull(pair, "Cannot find pair for class [%s]", entityClassSimpleName);
 		return pair;
 	}
 
-	private void initEntityPairMap() {
+	private void initPairMap() {
 		final List<Class<?>> entityClasses = Reflections.getClasses(entityPackage,
-				new Reflections.ClassFilter.SuperClassFilter(BaseEntity.class), Env.class.getClassLoader());
+				new Reflections.ClassFilter.SuperClassFilter(BaseEntity.class), EntityFacadeEnv.class.getClassLoader());
 
 		for (Class<?> entityClass : entityClasses) {
-			initEntityPair(entityClass);
+			initPair(entityClass);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T, ID extends Serializable> void initEntityPair(Class<T> entityClass) {
+	private <T, ID extends Serializable> void initPair(Class<T> entityClass) {
 		final String key = entityClass.getSimpleName();
 
 		// Id Field
@@ -109,6 +109,6 @@ public class Env implements ApplicationContextAware {
 		// Upload Field
 		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, UploadField.class);
 
-		entityPairMap.put(key, new EntityPair<T, ID>(entityClass, idField, dao, secureFields, uploadField));
+		pairMap.put(key, new EntityFacadePair<T, ID>(entityClass, idField, dao, secureFields, uploadField));
 	}
 }

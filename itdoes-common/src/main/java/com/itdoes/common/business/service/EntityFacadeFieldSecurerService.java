@@ -14,7 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.itdoes.common.business.EntityPair;
+import com.itdoes.common.business.EntityFacadePair;
 import com.itdoes.common.business.Permissions;
 import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Reflections;
@@ -24,31 +24,31 @@ import com.itdoes.common.core.web.MultipartFiles;
  * @author Jalen Zhong
  */
 @Service
-public class FacadeFieldSecurerService extends BaseService {
+public class EntityFacadeFieldSecurerService extends BaseService {
 	@Autowired
-	private FacadeTransactionalService facadeService;
+	private EntityFacadeTransactionalService facadeService;
 
-	public <T, ID extends Serializable> Page<T> secureFind(EntityPair<T, ID> pair, Specification<T> specification,
+	public <T, ID extends Serializable> Page<T> secureFind(EntityFacadePair<T, ID> pair, Specification<T> specification,
 			PageRequest pageRequest) {
 		final Page<T> page = facadeService.find(pair, specification, pageRequest);
 		handleGetSecureFields(pair, page.getContent());
 		return page;
 	}
 
-	public <T, ID extends Serializable> T secureFindOne(EntityPair<T, ID> pair, Specification<T> specification) {
+	public <T, ID extends Serializable> T secureFindOne(EntityFacadePair<T, ID> pair, Specification<T> specification) {
 		final T entity = facadeService.findOne(pair, specification);
 		handleGetSecureFields(pair, entity);
 		return entity;
 	}
 
-	public <T, ID extends Serializable> T secureGet(EntityPair<T, ID> pair, ID id) {
+	public <T, ID extends Serializable> T secureGet(EntityFacadePair<T, ID> pair, ID id) {
 		final T entity = facadeService.get(pair, id);
 		handleGetSecureFields(pair, entity);
 		return entity;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T, ID extends Serializable> ID securePost(EntityPair<T, ID> pair, T entity, String realRootPath,
+	public <T, ID extends Serializable> ID securePost(EntityFacadePair<T, ID> pair, T entity, String realRootPath,
 			List<MultipartFile> files) {
 		if (pair.getUploadField() != null
 				&& isPermitted(Permissions.getFacadeOneEntityOneFieldWritePermission(
@@ -82,7 +82,7 @@ public class FacadeFieldSecurerService extends BaseService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T, ID extends Serializable> void securePut(EntityPair<T, ID> pair, T entity, T oldEntity,
+	public <T, ID extends Serializable> void securePut(EntityFacadePair<T, ID> pair, T entity, T oldEntity,
 			String realRootPath, List<MultipartFile> files) {
 		if (pair.getUploadField() != null
 				&& isPermitted(Permissions.getFacadeOneEntityOneFieldWritePermission(
@@ -141,7 +141,8 @@ public class FacadeFieldSecurerService extends BaseService {
 		<T> void handle(Subject subject, String entityName, String secureFieldName, T entity, T oldEntity);
 	}
 
-	private static <T, ID extends Serializable> void handleGetSecureFields(EntityPair<T, ID> pair, List<T> entityList) {
+	private static <T, ID extends Serializable> void handleGetSecureFields(EntityFacadePair<T, ID> pair,
+			List<T> entityList) {
 		if (!pair.hasSecureFields()) {
 			return;
 		}
@@ -151,20 +152,20 @@ public class FacadeFieldSecurerService extends BaseService {
 		}
 	}
 
-	private static <T, ID extends Serializable> void handleGetSecureFields(EntityPair<T, ID> pair, T entity) {
+	private static <T, ID extends Serializable> void handleGetSecureFields(EntityFacadePair<T, ID> pair, T entity) {
 		handleSecureFields(pair, SecureFieldHandler.GET, entity, null);
 	}
 
-	private static <T, ID extends Serializable> void handlePostSecureFields(EntityPair<T, ID> pair, T entity) {
+	private static <T, ID extends Serializable> void handlePostSecureFields(EntityFacadePair<T, ID> pair, T entity) {
 		handleSecureFields(pair, SecureFieldHandler.POST, entity, null);
 	}
 
-	private static <T, ID extends Serializable> void handlePutSecureFields(EntityPair<T, ID> pair, T entity,
+	private static <T, ID extends Serializable> void handlePutSecureFields(EntityFacadePair<T, ID> pair, T entity,
 			T oldEntity) {
 		handleSecureFields(pair, SecureFieldHandler.PUT, entity, oldEntity);
 	}
 
-	private static <T, ID extends Serializable> void handleSecureFields(EntityPair<T, ID> pair,
+	private static <T, ID extends Serializable> void handleSecureFields(EntityFacadePair<T, ID> pair,
 			SecureFieldHandler handler, T entity, T oldEntity) {
 		if (!pair.hasSecureFields()) {
 			return;

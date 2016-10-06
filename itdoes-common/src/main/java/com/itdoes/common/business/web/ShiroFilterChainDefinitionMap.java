@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.itdoes.common.business.Env;
+import com.itdoes.common.business.EntityFacadeEnv;
 import com.itdoes.common.business.Permissions;
 import com.itdoes.common.core.shiro.AbstractShiroFilterChainDefinitionMap;
 
@@ -19,27 +19,27 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 	private static final String URL_ANY = "/**";
 
 	@Autowired
-	private Env env;
+	private EntityFacadeEnv env;
 
 	@Override
 	protected Map<String, String> getDynamicDefinitions() {
-		final Set<String> entityNames = env.getEntityPairMap().keySet();
+		final Set<String> entityNames = env.getPairMap().keySet();
 		final Map<String, String> dynamicDefinitions = new LinkedHashMap<String, String>(entityNames.size() * 6);
 		for (String entityName : entityNames) {
-			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_FIND);
-			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_FIND_ONE);
-			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_COUNT);
-			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_GET);
-			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_DELETE);
-			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_POST);
-			addDynamicDefinition(dynamicDefinitions, entityName, FacadeBaseController.FACADE_URL_PUT);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityFacadeBaseController.FACADE_URL_FIND);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityFacadeBaseController.FACADE_URL_FIND_ONE);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityFacadeBaseController.FACADE_URL_COUNT);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityFacadeBaseController.FACADE_URL_GET);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityFacadeBaseController.FACADE_URL_DELETE);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityFacadeBaseController.FACADE_URL_POST);
+			addDynamicDefinition(dynamicDefinitions, entityName, EntityFacadeBaseController.FACADE_URL_PUT);
 		}
 		return dynamicDefinitions;
 	}
 
 	private void addDynamicDefinition(Map<String, String> dynamicDefinitions, String entityName, String command) {
-		dynamicDefinitions.put(FacadeBaseController.FACADE_URL_PREFIX + "/" + entityName + "/" + command + URL_ANY,
-				MessageFormat.format(PERMS_PATTERN,
-						Permissions.getFacadeOneEntityClassPermission(entityName, command)));
+		dynamicDefinitions.put(
+				EntityFacadeBaseController.FACADE_URL_PREFIX + "/" + entityName + "/" + command + URL_ANY, MessageFormat
+						.format(PERMS_PATTERN, Permissions.getFacadeOneEntityClassPermission(entityName, command)));
 	}
 }
