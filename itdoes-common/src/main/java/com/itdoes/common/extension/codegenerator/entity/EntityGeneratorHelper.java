@@ -81,7 +81,7 @@ public class EntityGeneratorHelper {
 	}
 
 	private static Map<String, String> toMap(String propertyFilename) {
-		return Collections3.toMap(new PropertiesLoader(propertyFilename).getProperties());
+		return Collections3.asMap(new PropertiesLoader(propertyFilename).getProperties());
 	}
 
 	private static List<String> toList(String propertyFilename) {

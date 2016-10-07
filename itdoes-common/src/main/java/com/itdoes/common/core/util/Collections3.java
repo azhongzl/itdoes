@@ -145,7 +145,7 @@ public class Collections3 {
 		return result;
 	}
 
-	public static Map<String, String> toMap(Properties properties) {
+	public static Map<String, String> asMap(Properties properties) {
 		final Map<String, String> map = new HashMap<String, String>(properties.size());
 		for (Object key : properties.keySet()) {
 			final String keyStr = (String) key;
