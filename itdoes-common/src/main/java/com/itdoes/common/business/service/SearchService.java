@@ -15,6 +15,9 @@ import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.itdoes.common.core.util.Exceptions;
@@ -39,18 +42,17 @@ public class SearchService extends BaseService {
 		LOGGER.info("Search engine index created");
 	}
 
-	public List<?> search(String searchString, SearchEntity searchEntity, int firstResult, int maxResults) {
+	public Page<?> search(String searchString, SearchEntity searchEntity, Pageable pageable) {
 		final FullTextEntityManager ftem = getFullTextEntityManager();
 
 		final Query q = createQuery(ftem, searchString, searchEntity);
 		final FullTextQuery ftq = ftem.createFullTextQuery(q, searchEntity.getEntityClass());
-		ftq.setFirstResult(firstResult);
-		ftq.setMaxResults(maxResults);
-		final List<?> resultList = ftq.getResultList();
-		return resultList;
+		ftq.setFirstResult(pageable.getOffset());
+		ftq.setMaxResults(pageable.getPageSize());
+		return createPage(ftq.getResultList(), pageable, ftq.getResultSize());
 	}
 
-	public List<?> search(String searchString, List<SearchEntity> searchEntities, int firstResult, int maxResults) {
+	public Page<?> search(String searchString, List<SearchEntity> searchEntities, Pageable pageable) {
 		final FullTextEntityManager ftem = getFullTextEntityManager();
 
 		final List<Class<?>> entityClasses = new ArrayList<>(searchEntities.size());
@@ -61,10 +63,9 @@ public class SearchService extends BaseService {
 		}
 		final FullTextQuery ftq = ftem.createFullTextQuery(bqb.build(),
 				entityClasses.toArray(new Class[searchEntities.size()]));
-		ftq.setFirstResult(firstResult);
-		ftq.setMaxResults(maxResults);
-		final List<?> resultList = ftq.getResultList();
-		return resultList;
+		ftq.setFirstResult(pageable.getOffset());
+		ftq.setMaxResults(pageable.getPageSize());
+		return createPage(ftq.getResultList(), pageable, ftq.getResultSize());
 	}
 
 	private FullTextEntityManager getFullTextEntityManager() {
@@ -77,6 +78,11 @@ public class SearchService extends BaseService {
 		final Query query = queryBuilder.keyword().onFields(searchEntity.getFields()).matching(searchString)
 				.createQuery();
 		return query;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private Page<?> createPage(List<?> resultList, Pageable pageable, long total) {
+		return new PageImpl(resultList, pageable, total);
 	}
 
 	public static class SearchEntity {
