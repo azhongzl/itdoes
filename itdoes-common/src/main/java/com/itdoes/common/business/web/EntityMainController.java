@@ -28,37 +28,36 @@ public class EntityMainController extends EntityBaseController {
 			@RequestParam(value = BaseController.PAGE_SIZE, defaultValue = "-1") int pageSize,
 			@RequestParam(value = BaseController.PAGE_SORT, required = false) String pageSort, ServletRequest request) {
 		final EntityPair<T, ID> pair = getPair(ec);
-		final Page<T> page = entityFieldSecurerService.secureFind(pair,
-				buildSpecification(pair.getEntityClass(), request), buildPageRequest(pageNo, pageSize, pageSort));
+		final Page<T> page = subjectService.find(pair, buildSpecification(pair.getEntityClass(), request),
+				buildPageRequest(pageNo, pageSize, pageSort));
 		return HttpResults.success(page);
 	}
 
 	@RequestMapping(value = "/{ec}/" + ENTITY_COMMAND_FIND_ONE, method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result findOne(@PathVariable("ec") String ec, ServletRequest request) {
 		final EntityPair<T, ID> pair = getPair(ec);
-		final T entity = entityFieldSecurerService.secureFindOne(pair,
-				buildSpecification(pair.getEntityClass(), request));
+		final T entity = subjectService.findOne(pair, buildSpecification(pair.getEntityClass(), request));
 		return HttpResults.success(entity);
 	}
 
 	@RequestMapping(value = "/{ec}/" + ENTITY_COMMAND_COUNT, method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result count(@PathVariable("ec") String ec, ServletRequest request) {
 		final EntityPair<T, ID> pair = getPair(ec);
-		final long count = entityService.count(pair, buildSpecification(pair.getEntityClass(), request));
+		final long count = subjectService.count(pair, buildSpecification(pair.getEntityClass(), request));
 		return HttpResults.success(count);
 	}
 
 	@RequestMapping(value = "/{ec}/" + ENTITY_COMMAND_GET + "/{id}", method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result get(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		final EntityPair<T, ID> pair = getPair(ec);
-		final T entity = entityFieldSecurerService.secureGet(pair, convertId(pair, id));
+		final T entity = subjectService.get(pair, convertId(pair, id));
 		return HttpResults.success(entity);
 	}
 
 	@RequestMapping(value = "/{ec}/" + ENTITY_COMMAND_DELETE + "/{id}")
 	public <T, ID extends Serializable> Result delete(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		final EntityPair<T, ID> pair = getPair(ec);
-		entityService.delete(pair, convertId(pair, id));
+		subjectService.delete(pair, convertId(pair, id));
 		return HttpResults.success();
 	}
 }

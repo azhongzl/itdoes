@@ -33,7 +33,7 @@ public class EntityPutController extends EntityBaseController {
 			@Valid @ModelAttribute("entity") T entity, ServletRequest request) {
 		final EntityPair<T, ID> pair = getPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
-		entityFieldSecurerService.securePut(pair, entity, oldEntity);
+		subjectService.put(pair, entity, oldEntity);
 		return HttpResults.success();
 	}
 
@@ -45,7 +45,7 @@ public class EntityPutController extends EntityBaseController {
 			@RequestParam(BaseController.UPLOAD_FILE) List<MultipartFile> uploadFileList, ServletRequest request) {
 		final EntityPair<T, ID> pair = getPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
-		entityFieldSecurerService.securePutUpload(pair, entity, oldEntity, realRootPath, uploadFileList);
+		subjectService.putUpload(pair, entity, oldEntity, realRootPath, uploadFileList);
 		return HttpResults.success();
 	}
 
@@ -55,7 +55,7 @@ public class EntityPutController extends EntityBaseController {
 			Model model, ServletRequest request) {
 		final EntityPair<T, ID> pair = getPair(ec);
 
-		final T entity = entityService.get(pair, convertId(pair, id));
+		final T entity = subjectService.get(pair, convertId(pair, id));
 		model.addAttribute("entity", entity);
 
 		if (pair.hasSecureFields()) {

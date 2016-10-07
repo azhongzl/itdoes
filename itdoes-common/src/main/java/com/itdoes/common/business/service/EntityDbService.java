@@ -14,7 +14,7 @@ import com.itdoes.common.business.EntityPair;
  * @author Jalen Zhong
  */
 @Service
-public class EntityTransactionalService extends BaseTransactionalService {
+public class EntityDbService extends BaseTransactionalService {
 	public <T, ID extends Serializable> Page<T> find(EntityPair<T, ID> pair, Specification<T> specification,
 			PageRequest pageRequest) {
 		return pair.getDao().findAll(specification, pageRequest);
