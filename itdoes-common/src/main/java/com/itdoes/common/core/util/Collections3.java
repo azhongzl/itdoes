@@ -1,10 +1,13 @@
 package com.itdoes.common.core.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -161,6 +164,25 @@ public class Collections3 {
 		} else {
 			return new ArrayList<T>(collection);
 		}
+	}
+
+	@SafeVarargs
+	public static <T> List<T> asList(T... array) {
+		if (isEmpty(array)) {
+			return Collections.emptyList();
+		}
+
+		return Arrays.asList(array);
+	}
+
+	@SafeVarargs
+	public static <T> HashSet<T> asHashSet(T... array) {
+		return new HashSet<T>(asList(array));
+	}
+
+	@SafeVarargs
+	public static <T> LinkedHashSet<T> asLinkedHashSet(T... array) {
+		return new LinkedHashSet<T>(asList(array));
 	}
 
 	public static List<Long> asList(long... array) {

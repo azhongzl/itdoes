@@ -1,8 +1,8 @@
 package com.itdoes.common.business.service;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -29,9 +29,9 @@ public class EntityUploadService extends BaseService {
 
 	public <T, ID extends Serializable> String postUploadPre(EntityPair<T, ID> pair, T entity, String realRootPath,
 			List<MultipartFile> uploadFileList) {
-		String tempUploadDir = null;
+		String uploadTempDir = null;
 		if (needUpload(pair, uploadFileList)) {
-			tempUploadDir = getTempUploadDir(pair, realRootPath, Ids.uuid());
+			uploadTempDir = getUploadTempDir(pair, realRootPath, Ids.uuid());
 
 			final StringBuilder sb = new StringBuilder();
 			for (MultipartFile uploadFile : uploadFileList) {
@@ -39,17 +39,17 @@ public class EntityUploadService extends BaseService {
 					sb.append(UPLOAD_FILENAME_SEPARATOR);
 				}
 				sb.append(uploadFile.getOriginalFilename());
-				uploadFile(tempUploadDir, uploadFile);
+				uploadFile(uploadTempDir, uploadFile);
 			}
 			Reflections.setFieldValue(entity, pair.getUploadField().getName(), sb.toString());
 		}
-		return tempUploadDir;
+		return uploadTempDir;
 	}
 
 	public <T, ID extends Serializable> void postUploadPost(EntityPair<T, ID> pair, T entity, String realRootPath,
-			List<MultipartFile> uploadFileList, ID id, String tempUploadDir) {
+			List<MultipartFile> uploadFileList, ID id, String uploadTempDir) {
 		if (needUpload(pair, uploadFileList)) {
-			Files.moveDirectory(tempUploadDir, getUploadDir(pair, realRootPath, id.toString()));
+			Files.moveDirectory(uploadTempDir, getUploadDir(pair, realRootPath, id.toString()));
 		}
 	}
 
@@ -60,25 +60,17 @@ public class EntityUploadService extends BaseService {
 			final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField().getName());
 			final String uploadDir = getUploadDir(pair, realRootPath, id.toString());
 
-			final StringBuilder sb = new StringBuilder();
-			final String uploadFilesString = (String) Reflections.getFieldValue(entity,
-					pair.getUploadField().getName());
-			if (StringUtils.isNotBlank(uploadFilesString)) {
-				sb.append(uploadFilesString.trim());
-			}
+			final Set<String> uploadFilenameSet = toUploadFilenameSet(pair, entity);
 			for (MultipartFile uploadFile : uploadFileList) {
-				if (sb.length() != 0) {
-					sb.append(UPLOAD_FILENAME_SEPARATOR);
-				}
-				sb.append(uploadFile.getOriginalFilename());
 				uploadFile(uploadDir, uploadFile);
+				uploadFilenameSet.add(uploadFile.getOriginalFilename());
 			}
 
-			final String oldUploadFilesString = (String) Reflections.getFieldValue(oldEntity,
-					pair.getUploadField().getName());
-			deleteUploadFiles(uploadDir, uploadFilesString, oldUploadFilesString);
+			final Set<String> uploadOldFilenameSet = toUploadFilenameSet(pair, oldEntity);
+			deleteUploadFiles(uploadDir, uploadFilenameSet, uploadOldFilenameSet);
 
-			Reflections.setFieldValue(entity, pair.getUploadField().getName(), sb.toString());
+			final String uploadFilenamesString = StringUtils.join(uploadFilenameSet, UPLOAD_FILENAME_SEPARATOR);
+			Reflections.setFieldValue(entity, pair.getUploadField().getName(), uploadFilenamesString);
 		}
 	}
 
@@ -122,15 +114,14 @@ public class EntityUploadService extends BaseService {
 		return realRootPath + UPLOAD_ROOT_PATH + pair.getEntityClass().getSimpleName() + "/" + uuid;
 	}
 
-	private static <T, ID extends Serializable> String getTempUploadDir(EntityPair<T, ID> pair, String realRootPath,
+	private static <T, ID extends Serializable> String getUploadTempDir(EntityPair<T, ID> pair, String realRootPath,
 			String uuid) {
 		return realRootPath + UPLOAD_TEMP_ROOT_PATH + pair.getEntityClass().getSimpleName() + "/" + uuid;
 	}
 
-	private static void deleteUploadFiles(String uploadDir, String uploadFilesString, String oldUploadFilesString) {
-		final List<String> oldUploadFilenameList = toUploadFilenameList(oldUploadFilesString);
-		final List<String> uploadFilenameList = toUploadFilenameList(uploadFilesString);
-		final List<String> toBeDeletedList = Collections3.subtract(oldUploadFilenameList, uploadFilenameList);
+	private static void deleteUploadFiles(String uploadDir, Set<String> uploadFilenameSet,
+			Set<String> uploadOldFilenameSet) {
+		final List<String> toBeDeletedList = Collections3.subtract(uploadOldFilenameSet, uploadFilenameSet);
 		if (Collections3.isEmpty(toBeDeletedList)) {
 			return;
 		}
@@ -140,16 +131,9 @@ public class EntityUploadService extends BaseService {
 		}
 	}
 
-	private static List<String> toUploadFilenameList(String filenamesString) {
-		if (StringUtils.isBlank(filenamesString)) {
-			return null;
-		}
-
-		final String[] filenames = StringUtils.split(filenamesString, UPLOAD_FILENAME_SEPARATOR);
-		if (Collections3.isEmpty(filenames)) {
-			return null;
-		}
-
-		return Arrays.asList(filenames);
+	private static <T, ID extends Serializable> Set<String> toUploadFilenameSet(EntityPair<T, ID> pair, T entity) {
+		return Collections3.asLinkedHashSet(
+				StringUtils.split((String) Reflections.getFieldValue(entity, pair.getUploadField().getName()),
+						UPLOAD_FILENAME_SEPARATOR));
 	}
 }
