@@ -3,7 +3,6 @@ package com.itdoes.common.business.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -30,17 +29,10 @@ public class SearchService extends BaseService {
 	@PersistenceContext
 	private EntityManager em;
 
-	private FullTextEntityManager ftem;
-
-	@PostConstruct
-	public void myInit() {
-		ftem = Search.getFullTextEntityManager(em);
-	}
-
 	public void createIndex() {
 		LOGGER.info("Search engine index creating...");
 		try {
-			ftem.createIndexer().startAndWait();
+			getFullTextEntityManager().createIndexer().startAndWait();
 		} catch (InterruptedException e) {
 			throw Exceptions.unchecked(e);
 		}
@@ -48,7 +40,9 @@ public class SearchService extends BaseService {
 	}
 
 	public List<?> search(String searchString, SearchEntity searchEntity, int firstResult, int maxResults) {
-		final Query q = createQuery(searchString, searchEntity);
+		final FullTextEntityManager ftem = getFullTextEntityManager();
+
+		final Query q = createQuery(ftem, searchString, searchEntity);
 		final FullTextQuery ftq = ftem.createFullTextQuery(q, searchEntity.getEntityClass());
 		ftq.setFirstResult(firstResult);
 		ftq.setMaxResults(maxResults);
@@ -57,10 +51,12 @@ public class SearchService extends BaseService {
 	}
 
 	public List<?> search(String searchString, List<SearchEntity> searchEntities, int firstResult, int maxResults) {
+		final FullTextEntityManager ftem = getFullTextEntityManager();
+
 		final List<Class<?>> entityClasses = new ArrayList<>(searchEntities.size());
 		final BooleanQuery.Builder bqb = new BooleanQuery.Builder();
 		for (SearchEntity searchEntity : searchEntities) {
-			final Query q = createQuery(searchString, searchEntity);
+			final Query q = createQuery(ftem, searchString, searchEntity);
 			bqb.add(q, Occur.SHOULD);
 		}
 		final FullTextQuery ftq = ftem.createFullTextQuery(bqb.build(),
@@ -71,7 +67,11 @@ public class SearchService extends BaseService {
 		return resultList;
 	}
 
-	private Query createQuery(String searchString, SearchEntity searchEntity) {
+	private FullTextEntityManager getFullTextEntityManager() {
+		return Search.getFullTextEntityManager(em);
+	}
+
+	private Query createQuery(FullTextEntityManager ftem, String searchString, SearchEntity searchEntity) {
 		final QueryBuilder queryBuilder = ftem.getSearchFactory().buildQueryBuilder()
 				.forEntity(searchEntity.getEntityClass()).get();
 		final Query query = queryBuilder.keyword().onFields(searchEntity.getFields()).matching(searchString)
