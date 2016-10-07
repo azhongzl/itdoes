@@ -30,7 +30,7 @@ public class EntityUploadService extends BaseService {
 	public <T, ID extends Serializable> String postUploadPre(EntityPair<T, ID> pair, T entity, String realRootPath,
 			List<MultipartFile> uploadFileList) {
 		String uploadTempDir = null;
-		if (needUpload(pair, uploadFileList)) {
+		if (isUploadable(pair, uploadFileList)) {
 			uploadTempDir = getUploadTempDir(pair, realRootPath, Ids.uuid());
 
 			final StringBuilder sb = new StringBuilder();
@@ -48,7 +48,7 @@ public class EntityUploadService extends BaseService {
 
 	public <T, ID extends Serializable> void postUploadPost(EntityPair<T, ID> pair, T entity, String realRootPath,
 			List<MultipartFile> uploadFileList, ID id, String uploadTempDir) {
-		if (needUpload(pair, uploadFileList)) {
+		if (isUploadable(pair, uploadFileList)) {
 			Files.moveDirectory(uploadTempDir, getUploadDir(pair, realRootPath, id.toString()));
 		}
 	}
@@ -56,7 +56,7 @@ public class EntityUploadService extends BaseService {
 	@SuppressWarnings("unchecked")
 	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity, T oldEntity,
 			String realRootPath, List<MultipartFile> uploadFileList) {
-		if (needUpload(pair, uploadFileList)) {
+		if (isUploadable(pair, uploadFileList)) {
 			final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField().getName());
 			final String uploadDir = getUploadDir(pair, realRootPath, id.toString());
 
@@ -88,7 +88,7 @@ public class EntityUploadService extends BaseService {
 		return subject.isPermitted(permission);
 	}
 
-	private static <T, ID extends Serializable> boolean needUpload(EntityPair<T, ID> pair,
+	private static <T, ID extends Serializable> boolean isUploadable(EntityPair<T, ID> pair,
 			List<MultipartFile> uploadFileList) {
 		if (pair.getUploadField() == null
 				|| !isPermitted(Permissions.getEntityOneEntityOneFieldWritePermission(

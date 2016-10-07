@@ -49,4 +49,8 @@ public class EntityPair<T, ID extends Serializable> {
 	public boolean hasSecureFields() {
 		return !Collections3.isEmpty(secureFields);
 	}
+
+	public boolean needCopyOldEntity() {
+		return hasSecureFields() || getUploadField() != null;
+	}
 }
