@@ -1,6 +1,5 @@
 package com.itdoes.common.business.service;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 
@@ -48,9 +47,7 @@ public class EntityUploadService extends BaseService {
 	public <T, ID extends Serializable> void postUploadPost(EntityPair<T, ID> pair, T entity, String realRootPath,
 			List<MultipartFile> uploadFileList, ID id, String tempUploadDir) {
 		if (needUpload(pair, uploadFileList)) {
-			final File srcDir = new File(tempUploadDir);
-			final File destDir = new File(getUploadDir(pair, realRootPath, id.toString()));
-			Files.moveDirectory(srcDir, destDir);
+			Files.moveDirectory(tempUploadDir, getUploadDir(pair, realRootPath, id.toString()));
 		}
 	}
 
@@ -76,6 +73,15 @@ public class EntityUploadService extends BaseService {
 			}
 			Reflections.setFieldValue(entity, pair.getUploadField().getName(), sb.toString());
 		}
+	}
+
+	public <T, ID extends Serializable> void deleteUpload(EntityPair<T, ID> pair, ID id, String realRootPath) {
+		if (pair.getUploadField() == null) {
+			return;
+		}
+
+		final String uploadDir = getUploadDir(pair, realRootPath, id.toString());
+		Files.deleteDirectory(uploadDir);
 	}
 
 	private static boolean isPermitted(String permission) {

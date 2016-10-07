@@ -100,6 +100,10 @@ public class Files {
 		return FileUtils.listFilesAndDirs(dir, fileFilter, dirFilter);
 	}
 
+	public static void moveDirectory(String srcDir, String destDir) {
+		moveDirectory(new File(srcDir), new File(destDir));
+	}
+
 	public static void moveDirectory(File srcDir, File destDir) {
 		try {
 			FileUtils.moveDirectory(srcDir, destDir);
@@ -108,9 +112,25 @@ public class Files {
 		}
 	}
 
+	public static void moveDirectoryToDirectory(String srcDir, String destDir, boolean createDestDir) {
+		moveDirectoryToDirectory(new File(srcDir), new File(destDir), createDestDir);
+	}
+
 	public static void moveDirectoryToDirectory(File srcDir, File destDir, boolean createDestDir) {
 		try {
 			FileUtils.moveDirectoryToDirectory(srcDir, destDir, createDestDir);
+		} catch (IOException e) {
+			throw Exceptions.unchecked(e);
+		}
+	}
+
+	public static void deleteDirectory(String dir) {
+		deleteDirectory(new File(dir));
+	}
+
+	public static void deleteDirectory(File dir) {
+		try {
+			FileUtils.deleteDirectory(dir);
 		} catch (IOException e) {
 			throw Exceptions.unchecked(e);
 		}

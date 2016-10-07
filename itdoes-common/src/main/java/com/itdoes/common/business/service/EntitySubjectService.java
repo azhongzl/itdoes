@@ -75,7 +75,8 @@ public class EntitySubjectService extends BaseService {
 		return dbService.count(pair, specification);
 	}
 
-	public <T, ID extends Serializable> void delete(EntityPair<T, ID> pair, ID id) {
+	public <T, ID extends Serializable> void delete(EntityPair<T, ID> pair, ID id, String realRootPath) {
 		dbService.delete(pair, id);
+		uploadService.deleteUpload(pair, id, realRootPath);
 	}
 }
