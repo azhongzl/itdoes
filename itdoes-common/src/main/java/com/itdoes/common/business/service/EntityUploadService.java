@@ -67,7 +67,7 @@ public class EntityUploadService extends BaseService {
 			}
 
 			final Set<String> uploadOldFilenameSet = toUploadFilenameSet(pair, oldEntity);
-			deleteUploadFiles(uploadDir, uploadFilenameSet, uploadOldFilenameSet);
+			deleteUploadOrphanFiles(uploadDir, uploadFilenameSet, uploadOldFilenameSet);
 
 			final String uploadFilenamesString = StringUtils.join(uploadFilenameSet, UPLOAD_FILENAME_SEPARATOR);
 			Reflections.setFieldValue(entity, pair.getUploadField().getName(), uploadFilenamesString);
@@ -119,7 +119,7 @@ public class EntityUploadService extends BaseService {
 		return realRootPath + UPLOAD_TEMP_ROOT_PATH + pair.getEntityClass().getSimpleName() + "/" + uuid;
 	}
 
-	private static void deleteUploadFiles(String uploadDir, Set<String> uploadFilenameSet,
+	private static void deleteUploadOrphanFiles(String uploadDir, Set<String> uploadFilenameSet,
 			Set<String> uploadOldFilenameSet) {
 		final List<String> toBeDeletedList = Collections3.subtract(uploadOldFilenameSet, uploadFilenameSet);
 		if (Collections3.isEmpty(toBeDeletedList)) {
