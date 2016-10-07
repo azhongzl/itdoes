@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.business.Permissions;
+import com.itdoes.common.core.spring.Springs;
 import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Files;
 import com.itdoes.common.core.util.Ids;
@@ -30,7 +31,7 @@ public class EntityUploadService extends BaseService {
 	public <T, ID extends Serializable> String postUploadPre(EntityPair<T, ID> pair, T entity, String realRootPath,
 			List<MultipartFile> uploadFileList) {
 		String uploadTempDir = null;
-		if (isUploadable(pair, uploadFileList)) {
+		if (isPostUploadable(pair, uploadFileList)) {
 			uploadTempDir = getUploadTempDir(pair, realRootPath, Ids.uuid());
 
 			final StringBuilder sb = new StringBuilder();
@@ -48,7 +49,7 @@ public class EntityUploadService extends BaseService {
 
 	public <T, ID extends Serializable> void postUploadPost(EntityPair<T, ID> pair, T entity, String realRootPath,
 			List<MultipartFile> uploadFileList, ID id, String uploadTempDir) {
-		if (isUploadable(pair, uploadFileList)) {
+		if (isPostUploadable(pair, uploadFileList)) {
 			Files.moveDirectory(uploadTempDir, getUploadDir(pair, realRootPath, id.toString()));
 		}
 	}
@@ -56,14 +57,16 @@ public class EntityUploadService extends BaseService {
 	@SuppressWarnings("unchecked")
 	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity, T oldEntity,
 			String realRootPath, List<MultipartFile> uploadFileList) {
-		if (isUploadable(pair, uploadFileList)) {
+		if (isPutUploadable(pair)) {
 			final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField().getName());
 			final String uploadDir = getUploadDir(pair, realRootPath, id.toString());
-
 			final Set<String> uploadFilenameSet = toUploadFilenameSet(pair, entity);
-			for (MultipartFile uploadFile : uploadFileList) {
-				uploadFile(uploadDir, uploadFile);
-				uploadFilenameSet.add(uploadFile.getOriginalFilename());
+
+			if (!isUploadFileEmpty(uploadFileList)) {
+				for (MultipartFile uploadFile : uploadFileList) {
+					uploadFile(uploadDir, uploadFile);
+					uploadFilenameSet.add(uploadFile.getOriginalFilename());
+				}
 			}
 
 			final Set<String> uploadOldFilenameSet = toUploadFilenameSet(pair, oldEntity);
@@ -83,26 +86,27 @@ public class EntityUploadService extends BaseService {
 		Files.deleteDirectory(uploadDir);
 	}
 
-	private static boolean isPermitted(String permission) {
-		final Subject subject = SecurityUtils.getSubject();
-		return subject.isPermitted(permission);
+	private static <T, ID extends Serializable> boolean isPostUploadable(EntityPair<T, ID> pair,
+			List<MultipartFile> uploadFileList) {
+		return hasUploadField(pair) && isUploadPermitted(pair) && !isUploadFileEmpty(uploadFileList);
 	}
 
-	private static <T, ID extends Serializable> boolean isUploadable(EntityPair<T, ID> pair,
-			List<MultipartFile> uploadFileList) {
-		if (pair.getUploadField() == null
-				|| !isPermitted(Permissions.getEntityOneEntityOneFieldWritePermission(
-						pair.getEntityClass().getSimpleName(), pair.getUploadField().getName()))
-				|| Collections3.isEmpty(uploadFileList)) {
-			return false;
-		}
+	private static <T, ID extends Serializable> boolean isPutUploadable(EntityPair<T, ID> pair) {
+		return hasUploadField(pair) && isUploadPermitted(pair);
+	}
 
-		// Spring will add an empty file automatically if no file provided
-		if (uploadFileList.size() == 1) {
-			return !uploadFileList.get(0).isEmpty();
-		}
+	private static <T, ID extends Serializable> boolean hasUploadField(EntityPair<T, ID> pair) {
+		return pair.getUploadField() != null;
+	}
 
-		return true;
+	private static <T, ID extends Serializable> boolean isUploadPermitted(EntityPair<T, ID> pair) {
+		final Subject subject = SecurityUtils.getSubject();
+		return subject.isPermitted(Permissions.getEntityOneEntityOneFieldWritePermission(
+				pair.getEntityClass().getSimpleName(), pair.getUploadField().getName()));
+	}
+
+	private static boolean isUploadFileEmpty(List<MultipartFile> uploadFileList) {
+		return Springs.isEmpty(uploadFileList);
 	}
 
 	private static void uploadFile(String realPath, MultipartFile uploadFile) {
