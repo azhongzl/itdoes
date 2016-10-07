@@ -67,7 +67,7 @@ public class EntitySubjectService extends BaseService {
 
 	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity, T oldEntity,
 			String realRootPath, List<MultipartFile> uploadFileList, boolean uploadDeleteOrphanFiles) {
-		uploadService.putUpload(pair, entity, oldEntity, realRootPath, uploadFileList, uploadDeleteOrphanFiles);
+		uploadService.putUpload(pair, entity, realRootPath, uploadFileList, uploadDeleteOrphanFiles);
 		put(pair, entity, oldEntity);
 	}
 

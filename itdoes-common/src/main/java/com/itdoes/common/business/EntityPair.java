@@ -51,6 +51,6 @@ public class EntityPair<T, ID extends Serializable> {
 	}
 
 	public boolean needCopyOldEntity() {
-		return hasSecureFields() || getUploadField() != null;
+		return hasSecureFields();
 	}
 }

@@ -58,8 +58,8 @@ public class EntityUploadService extends BaseService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity, T oldEntity,
-			String realRootPath, List<MultipartFile> uploadFileList, boolean uploadDeleteOrphanFiles) {
+	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity, String realRootPath,
+			List<MultipartFile> uploadFileList, boolean uploadDeleteOrphanFiles) {
 		if (isPutUploadable(pair)) {
 			final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField().getName());
 			final String uploadDir = getUploadDir(pair, realRootPath, id.toString());
