@@ -28,8 +28,8 @@ import com.itdoes.common.core.web.MultipartFiles;
  */
 @Service
 public class EntityUploadService extends BaseService {
-	public static final String UPLOAD_ROOT_PATH = "/upload/";
-	public static final String UPLOAD_TEMP_ROOT_PATH = "/upload/_temp/";
+	public static final String UPLOAD_ROOT_PATH = "/uploads/";
+	public static final String UPLOAD_TEMP_ROOT_PATH = "/uploads/_temp/";
 	public static final char UPLOAD_FILENAME_SEPARATOR = ',';
 
 	public <T, ID extends Serializable> String postUploadPre(EntityPair<T, ID> pair, T entity, String realRootPath,
