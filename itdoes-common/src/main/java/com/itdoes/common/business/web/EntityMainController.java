@@ -57,7 +57,7 @@ public class EntityMainController extends EntityBaseController {
 	@RequestMapping(value = "/{ec}/" + ENTITY_COMMAND_DELETE + "/{id}")
 	public <T, ID extends Serializable> Result delete(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		final EntityPair<T, ID> pair = getPair(ec);
-		subjectService.delete(pair, convertId(pair, id), realRootPath);
+		subjectService.delete(pair, convertId(pair, id), realRootPath, isUploadDeleteOrphanFiles());
 		return HttpResults.success();
 	}
 }

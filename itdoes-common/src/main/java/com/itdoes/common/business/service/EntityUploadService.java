@@ -1,9 +1,12 @@
 package com.itdoes.common.business.service;
 
+import java.io.File;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -56,7 +59,7 @@ public class EntityUploadService extends BaseService {
 
 	@SuppressWarnings("unchecked")
 	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity, T oldEntity,
-			String realRootPath, List<MultipartFile> uploadFileList) {
+			String realRootPath, List<MultipartFile> uploadFileList, boolean uploadDeleteOrphanFiles) {
 		if (isPutUploadable(pair)) {
 			final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField().getName());
 			final String uploadDir = getUploadDir(pair, realRootPath, id.toString());
@@ -69,16 +72,18 @@ public class EntityUploadService extends BaseService {
 				}
 			}
 
-			final Set<String> uploadOldFilenameSet = toUploadFilenameSet(pair, oldEntity);
-			deleteUploadOrphanFiles(uploadDir, uploadFilenameSet, uploadOldFilenameSet);
+			if (uploadDeleteOrphanFiles) {
+				deleteUploadOrphanFiles(uploadDir, uploadFilenameSet);
+			}
 
 			final String uploadFilenamesString = StringUtils.join(uploadFilenameSet, UPLOAD_FILENAME_SEPARATOR);
 			Reflections.setFieldValue(entity, pair.getUploadField().getName(), uploadFilenamesString);
 		}
 	}
 
-	public <T, ID extends Serializable> void deleteUpload(EntityPair<T, ID> pair, ID id, String realRootPath) {
-		if (pair.getUploadField() == null) {
+	public <T, ID extends Serializable> void deleteUpload(EntityPair<T, ID> pair, ID id, String realRootPath,
+			boolean uploadDeleteOrphanFiles) {
+		if (!hasUploadField(pair) || !uploadDeleteOrphanFiles) {
 			return;
 		}
 
@@ -123,15 +128,25 @@ public class EntityUploadService extends BaseService {
 		return realRootPath + UPLOAD_TEMP_ROOT_PATH + pair.getEntityClass().getSimpleName() + "/" + uuid;
 	}
 
-	private static void deleteUploadOrphanFiles(String uploadDir, Set<String> uploadFilenameSet,
-			Set<String> uploadOldFilenameSet) {
-		final List<String> toBeDeletedList = Collections3.subtract(uploadOldFilenameSet, uploadFilenameSet);
-		if (Collections3.isEmpty(toBeDeletedList)) {
+	private static void deleteUploadOrphanFiles(String uploadDir, Set<String> uploadFilenameSet) {
+		final Collection<File> toBeDeletedFileList = Files.listFiles(uploadDir, new IOFileFilter() {
+			@Override
+			public boolean accept(File file) {
+				return accept(file.getParentFile(), file.getName());
+			}
+
+			@Override
+			public boolean accept(File dir, String name) {
+				return !uploadFilenameSet.contains(name);
+			}
+		});
+
+		if (Collections3.isEmpty(toBeDeletedFileList)) {
 			return;
 		}
 
-		for (String toBeDeleted : toBeDeletedList) {
-			Files.deleteFile(uploadDir, toBeDeleted, true);
+		for (File toBeDeletedFile : toBeDeletedFileList) {
+			Files.deleteFile(toBeDeletedFile, true);
 		}
 	}
 

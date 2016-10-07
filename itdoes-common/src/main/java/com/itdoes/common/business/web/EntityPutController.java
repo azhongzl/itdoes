@@ -45,7 +45,7 @@ public class EntityPutController extends EntityBaseController {
 			@RequestParam(BaseController.UPLOAD_FILE) List<MultipartFile> uploadFileList, ServletRequest request) {
 		final EntityPair<T, ID> pair = getPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
-		subjectService.putUpload(pair, entity, oldEntity, realRootPath, uploadFileList);
+		subjectService.putUpload(pair, entity, oldEntity, realRootPath, uploadFileList, isUploadDeleteOrphanFiles());
 		return HttpResults.success();
 	}
 

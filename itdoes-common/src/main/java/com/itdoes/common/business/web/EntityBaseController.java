@@ -95,6 +95,8 @@ public abstract class EntityBaseController extends BaseController {
 	public static final String ENTITY_COMMAND_POST_UPLOAD = "postUpload";
 	public static final String ENTITY_COMMAND_PUT_UPLOAD = "putUpload";
 
+	private static final boolean DEFAULT_UPLOAD_DELETE_ORPHAN_FILES = true;
+
 	@Autowired
 	protected EntityEnv env;
 
@@ -108,5 +110,9 @@ public abstract class EntityBaseController extends BaseController {
 	@SuppressWarnings("unchecked")
 	protected <T, ID extends Serializable> ID convertId(EntityPair<T, ID> pair, String id) {
 		return (ID) Reflections.convert(id, pair.getIdField().getType());
+	}
+
+	protected boolean isUploadDeleteOrphanFiles() {
+		return DEFAULT_UPLOAD_DELETE_ORPHAN_FILES;
 	}
 }

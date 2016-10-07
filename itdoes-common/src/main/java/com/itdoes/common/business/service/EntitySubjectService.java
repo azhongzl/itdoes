@@ -66,8 +66,8 @@ public class EntitySubjectService extends BaseService {
 	}
 
 	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity, T oldEntity,
-			String realRootPath, List<MultipartFile> uploadFileList) {
-		uploadService.putUpload(pair, entity, oldEntity, realRootPath, uploadFileList);
+			String realRootPath, List<MultipartFile> uploadFileList, boolean uploadDeleteOrphanFiles) {
+		uploadService.putUpload(pair, entity, oldEntity, realRootPath, uploadFileList, uploadDeleteOrphanFiles);
 		put(pair, entity, oldEntity);
 	}
 
@@ -75,8 +75,9 @@ public class EntitySubjectService extends BaseService {
 		return dbService.count(pair, specification);
 	}
 
-	public <T, ID extends Serializable> void delete(EntityPair<T, ID> pair, ID id, String realRootPath) {
+	public <T, ID extends Serializable> void delete(EntityPair<T, ID> pair, ID id, String realRootPath,
+			boolean uploadDeleteOrphanFiles) {
 		dbService.delete(pair, id);
-		uploadService.deleteUpload(pair, id, realRootPath);
+		uploadService.deleteUpload(pair, id, realRootPath, uploadDeleteOrphanFiles);
 	}
 }
