@@ -66,7 +66,7 @@ public class Collections3 {
 		return builder.toString();
 	}
 
-	public static boolean isEmpty(Object[] objects) {
+	public static boolean isEmpty(Object... objects) {
 		return objects == null || objects.length == 0;
 	}
 
