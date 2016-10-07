@@ -23,10 +23,10 @@ import com.itdoes.common.core.web.MultipartFiles;
  * @author Jalen Zhong
  */
 @RestController
-@RequestMapping(value = UploadController.URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
+@RequestMapping(value = UploadController.UPLOAD_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class UploadController extends BaseController {
-	public static final String URL_PREFIX = "/" + Permissions.PERM_UPLOAD;
-	private static final String URL_TO_FIND = URL_PREFIX + "/";
+	public static final String UPLOAD_URL_PREFIX = "/" + Permissions.PERM_UPLOAD;
+	private static final String UPLOAD_URL_TO_FIND = UPLOAD_URL_PREFIX + "/";
 
 	@RequestMapping(value = "/**", method = RequestMethod.POST)
 	public Result upload(@RequestParam("uploadFile") List<MultipartFile> files, HttpServletRequest request) {
@@ -34,7 +34,7 @@ public class UploadController extends BaseController {
 			return HttpResults.fail(HttpStatus.BAD_REQUEST.value(), "No upload file");
 		}
 
-		final String path = Strings.substring(request.getRequestURI(), URL_TO_FIND);
+		final String path = Strings.substring(request.getRequestURI(), UPLOAD_URL_TO_FIND);
 		MultipartFiles.save(context, path, files);
 		return HttpResults.success(files.size());
 	}

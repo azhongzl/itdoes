@@ -156,8 +156,8 @@ public class Permissions {
 		return getAllPermission() + PERM_SEPARATOR + PERM_UPLOAD;
 	}
 
-	public static String getUploadPermission(String resource) {
-		return getUploadAllPermission() + PERM_SEPARATOR + resource;
+	public static String getUploadPermission(String permissionName) {
+		return getUploadAllPermission() + PERM_SEPARATOR + permissionName;
 	}
 
 	public static String getEntityAllPermission() {

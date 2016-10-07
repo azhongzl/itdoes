@@ -15,15 +15,16 @@ import com.itdoes.common.core.web.MediaTypes;
  * @author Jalen Zhong
  */
 @RestController
-@RequestMapping(value = SearchController.URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
+@RequestMapping(value = SearchController.SEARCH_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class SearchController extends BaseController {
-	public static final String URL_PREFIX = "/" + Permissions.PERM_SEARCH;
-	public static final String URL_ADMIN_PREFIX = "";
+	public static final String SEARCH_URL_PREFIX = "/" + Permissions.PERM_SEARCH;
+
+	public static final String SEARCH_COMMAND_CREATE_INDEX = "createIndex";
 
 	@Autowired
-	protected SearchService searchService;
+	private SearchService searchService;
 
-	@RequestMapping(value = "/createIndex", method = RequestMethod.GET)
+	@RequestMapping(value = "/" + SEARCH_COMMAND_CREATE_INDEX, method = RequestMethod.GET)
 	public Result createIndex() {
 		searchService.createIndex();
 		return HttpResults.success();
