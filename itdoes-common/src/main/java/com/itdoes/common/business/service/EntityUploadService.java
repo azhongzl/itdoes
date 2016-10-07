@@ -3,6 +3,7 @@ package com.itdoes.common.business.service;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -36,16 +37,15 @@ public class EntityUploadService extends BaseService {
 		String uploadTempDir = null;
 		if (isPostUploadable(pair, uploadFileList)) {
 			uploadTempDir = getUploadTempDir(pair, realRootPath, Ids.uuid());
+			final Set<String> uploadFilenameSet = new LinkedHashSet<String>(uploadFileList.size());
 
-			final StringBuilder sb = new StringBuilder();
 			for (MultipartFile uploadFile : uploadFileList) {
-				if (sb.length() != 0) {
-					sb.append(UPLOAD_FILENAME_SEPARATOR);
-				}
-				sb.append(uploadFile.getOriginalFilename());
 				uploadFile(uploadTempDir, uploadFile);
+				uploadFilenameSet.add(uploadFile.getOriginalFilename());
 			}
-			Reflections.setFieldValue(entity, pair.getUploadField().getName(), sb.toString());
+
+			Reflections.setFieldValue(entity, pair.getUploadField().getName(),
+					StringUtils.join(uploadFilenameSet, UPLOAD_FILENAME_SEPARATOR));
 		}
 		return uploadTempDir;
 	}
@@ -76,8 +76,8 @@ public class EntityUploadService extends BaseService {
 				deleteUploadOrphanFiles(uploadDir, uploadFilenameSet);
 			}
 
-			final String uploadFilenamesString = StringUtils.join(uploadFilenameSet, UPLOAD_FILENAME_SEPARATOR);
-			Reflections.setFieldValue(entity, pair.getUploadField().getName(), uploadFilenamesString);
+			Reflections.setFieldValue(entity, pair.getUploadField().getName(),
+					StringUtils.join(uploadFilenameSet, UPLOAD_FILENAME_SEPARATOR));
 		}
 	}
 
