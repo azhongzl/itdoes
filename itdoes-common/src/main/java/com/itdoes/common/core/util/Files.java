@@ -136,6 +136,26 @@ public class Files {
 		}
 	}
 
+	public static void deleteFile(String dir, String file, boolean quiet) {
+		deleteFile(new File(dir, file), quiet);
+	}
+
+	public static void deleteFile(String file, boolean quiet) {
+		deleteFile(new File(file), quiet);
+	}
+
+	public static void deleteFile(File file, boolean quiet) {
+		if (quiet) {
+			FileUtils.deleteQuietly(file);
+		} else {
+			try {
+				FileUtils.forceDelete(file);
+			} catch (IOException e) {
+				throw Exceptions.unchecked(e);
+			}
+		}
+	}
+
 	public static void copyFileFromDirToDir(String srcDir, String destDir) {
 		copyFileFromDirToDir(new File(srcDir), new File(destDir));
 	}

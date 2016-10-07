@@ -1,6 +1,7 @@
 package com.itdoes.common.business.service;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +25,7 @@ import com.itdoes.common.core.web.MultipartFiles;
 public class EntityUploadService extends BaseService {
 	public static final String UPLOAD_ROOT_PATH = "/upload/";
 	public static final String UPLOAD_TEMP_ROOT_PATH = "/upload/_temp/";
+	public static final char UPLOAD_FILENAME_SEPARATOR = ',';
 
 	public <T, ID extends Serializable> String postUploadPre(EntityPair<T, ID> pair, T entity, String realRootPath,
 			List<MultipartFile> uploadFileList) {
@@ -34,7 +36,7 @@ public class EntityUploadService extends BaseService {
 			final StringBuilder sb = new StringBuilder();
 			for (MultipartFile uploadFile : uploadFileList) {
 				if (sb.length() != 0) {
-					sb.append(',');
+					sb.append(UPLOAD_FILENAME_SEPARATOR);
 				}
 				sb.append(uploadFile.getOriginalFilename());
 				uploadFile(tempUploadDir, uploadFile);
@@ -66,11 +68,16 @@ public class EntityUploadService extends BaseService {
 			}
 			for (MultipartFile uploadFile : uploadFileList) {
 				if (sb.length() != 0) {
-					sb.append(',');
+					sb.append(UPLOAD_FILENAME_SEPARATOR);
 				}
 				sb.append(uploadFile.getOriginalFilename());
 				uploadFile(uploadDir, uploadFile);
 			}
+
+			final String oldUploadFilesString = (String) Reflections.getFieldValue(oldEntity,
+					pair.getUploadField().getName());
+			deleteUploadFiles(uploadDir, uploadFilesString, oldUploadFilesString);
+
 			Reflections.setFieldValue(entity, pair.getUploadField().getName(), sb.toString());
 		}
 	}
@@ -118,5 +125,31 @@ public class EntityUploadService extends BaseService {
 	private static <T, ID extends Serializable> String getTempUploadDir(EntityPair<T, ID> pair, String realRootPath,
 			String uuid) {
 		return realRootPath + UPLOAD_TEMP_ROOT_PATH + pair.getEntityClass().getSimpleName() + "/" + uuid;
+	}
+
+	private static void deleteUploadFiles(String uploadDir, String uploadFilesString, String oldUploadFilesString) {
+		final List<String> oldUploadFilenameList = toUploadFilenameList(oldUploadFilesString);
+		final List<String> uploadFilenameList = toUploadFilenameList(uploadFilesString);
+		final List<String> toBeDeletedList = Collections3.subtract(oldUploadFilenameList, uploadFilenameList);
+		if (Collections3.isEmpty(toBeDeletedList)) {
+			return;
+		}
+
+		for (String toBeDeleted : toBeDeletedList) {
+			Files.deleteFile(uploadDir, toBeDeleted, true);
+		}
+	}
+
+	private static List<String> toUploadFilenameList(String filenamesString) {
+		if (StringUtils.isBlank(filenamesString)) {
+			return null;
+		}
+
+		final String[] filenames = StringUtils.split(filenamesString, UPLOAD_FILENAME_SEPARATOR);
+		if (Collections3.isEmpty(filenames)) {
+			return null;
+		}
+
+		return Arrays.asList(filenames);
 	}
 }

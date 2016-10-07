@@ -2,6 +2,7 @@ package com.itdoes.common.core.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -102,12 +103,24 @@ public class Collections3 {
 	}
 
 	public static <T> List<T> union(final Collection<T> a, final Collection<T> b) {
+		if (isEmpty(a)) {
+			return asList(b);
+		} else if (isEmpty(b)) {
+			return asList(a);
+		}
+
 		final List<T> result = new ArrayList<T>(a);
 		result.addAll(b);
 		return result;
 	}
 
 	public static <T> List<T> subtract(final Collection<T> a, final Collection<T> b) {
+		if (isEmpty(a)) {
+			return Collections.emptyList();
+		} else if (isEmpty(b)) {
+			return asList(a);
+		}
+
 		final List<T> result = new ArrayList<T>(a);
 		for (T t : b) {
 			result.remove(t);
@@ -116,6 +129,10 @@ public class Collections3 {
 	}
 
 	public static <T> List<T> intersection(final Collection<T> a, final Collection<T> b) {
+		if (isEmpty(a) || isEmpty(b)) {
+			return Collections.emptyList();
+		}
+
 		final List<T> result = new ArrayList<T>();
 		for (T t : a) {
 			if (b.contains(t)) {
@@ -132,6 +149,18 @@ public class Collections3 {
 			map.put(keyStr, properties.getProperty(keyStr));
 		}
 		return map;
+	}
+
+	public static <T> List<T> asList(Collection<T> collection) {
+		if (isEmpty(collection)) {
+			return Collections.emptyList();
+		}
+
+		if (collection instanceof List) {
+			return (List<T>) collection;
+		} else {
+			return new ArrayList<T>(collection);
+		}
 	}
 
 	public static List<Long> asList(long... array) {
