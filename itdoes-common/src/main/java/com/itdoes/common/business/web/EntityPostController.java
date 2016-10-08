@@ -37,7 +37,7 @@ public class EntityPostController extends EntityBaseController {
 	@RequestMapping(value = "/{ec}/" + EntityMainController.ENTITY_COMMAND_POST_UPLOAD, method = RequestMethod.POST)
 	public <T, ID extends Serializable> Result postUpload(@PathVariable(value = "ec") String ec,
 			@Valid @ModelAttribute("entity") T entity,
-			@RequestParam(BaseController.UPLOAD_FILE) List<MultipartFile> uploadFileList) {
+			@RequestParam(BaseController.UPLOAD_FILE_PARAM) List<MultipartFile> uploadFileList) {
 		final EntityPair<T, ID> pair = getPair(ec);
 		final ID id = subjectService.postUpload(pair, entity, realRootPath, uploadFileList);
 		return HttpResults.success(id);

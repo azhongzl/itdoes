@@ -43,7 +43,7 @@ public abstract class BaseController {
 	public static final String PAGE_SIZE = "page_size";
 	public static final String PAGE_SORT = "page_sort";
 
-	public static final String UPLOAD_FILE = "uploadFile";
+	public static final String UPLOAD_FILE_PARAM = "uploadFile";
 
 	private static final int DEFAULT_MAX_PAGE_SIZE = 100;
 

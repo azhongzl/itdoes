@@ -42,7 +42,8 @@ public class EntityPutController extends EntityBaseController {
 			+ "/{id}", method = RequestMethod.POST)
 	public <T, ID extends Serializable> Result put(@PathVariable("ec") String ec,
 			@Valid @ModelAttribute("entity") T entity,
-			@RequestParam(BaseController.UPLOAD_FILE) List<MultipartFile> uploadFileList, ServletRequest request) {
+			@RequestParam(BaseController.UPLOAD_FILE_PARAM) List<MultipartFile> uploadFileList,
+			ServletRequest request) {
 		final EntityPair<T, ID> pair = getPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
 		subjectService.putUpload(pair, entity, oldEntity, realRootPath, uploadFileList, isUploadDeleteOrphanFiles());
