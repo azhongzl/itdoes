@@ -95,6 +95,7 @@ public abstract class EntityBaseController extends BaseController {
 	public static final String ENTITY_COMMAND_POST_UPLOAD = "postUpload";
 	public static final String ENTITY_COMMAND_PUT_UPLOAD = "putUpload";
 
+	private static final String DEFAULT_UPLOAD_RELATIVE_ROOT_PATH = "uploads";
 	private static final boolean DEFAULT_UPLOAD_DELETE_ORPHAN_FILES = true;
 
 	@Autowired
@@ -110,6 +111,10 @@ public abstract class EntityBaseController extends BaseController {
 	@SuppressWarnings("unchecked")
 	protected <T, ID extends Serializable> ID convertId(EntityPair<T, ID> pair, String id) {
 		return (ID) Reflections.convert(id, pair.getIdField().getType());
+	}
+
+	protected String getUploadRealRootPath() {
+		return realRootPath + "/" + DEFAULT_UPLOAD_RELATIVE_ROOT_PATH;
 	}
 
 	protected boolean isUploadDeleteOrphanFiles() {

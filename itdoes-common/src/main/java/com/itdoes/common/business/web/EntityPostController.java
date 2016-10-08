@@ -39,7 +39,7 @@ public class EntityPostController extends EntityBaseController {
 			@Valid @ModelAttribute("entity") T entity,
 			@RequestParam(BaseController.UPLOAD_FILE_PARAM) List<MultipartFile> uploadFileList) {
 		final EntityPair<T, ID> pair = getPair(ec);
-		final ID id = subjectService.postUpload(pair, entity, realRootPath, uploadFileList);
+		final ID id = subjectService.postUpload(pair, entity, getUploadRealRootPath(), uploadFileList);
 		return HttpResults.success(id);
 	}
 

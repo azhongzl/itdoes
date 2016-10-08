@@ -28,15 +28,15 @@ import com.itdoes.common.core.web.MultipartFiles;
  */
 @Service
 public class EntityUploadService extends BaseService {
-	public static final String UPLOAD_ROOT_PATH = "/uploads/";
-	public static final String UPLOAD_TEMP_ROOT_PATH = "/uploads/_temp/";
 	public static final char UPLOAD_FILENAME_SEPARATOR = ',';
 
-	public <T, ID extends Serializable> String postUploadPre(EntityPair<T, ID> pair, T entity, String realRootPath,
-			List<MultipartFile> uploadFileList) {
+	private static final String UPLOAD_TEMP_RELATIVE_PATH = "_temp";
+
+	public <T, ID extends Serializable> String postUploadPre(EntityPair<T, ID> pair, T entity,
+			String uploadRealRootPath, List<MultipartFile> uploadFileList) {
 		String uploadTempDir = null;
 		if (isPostUploadable(pair, uploadFileList)) {
-			uploadTempDir = getUploadTempDir(pair, realRootPath, Ids.uuid());
+			uploadTempDir = getUploadTempDir(pair, uploadRealRootPath, Ids.uuid());
 			final Set<String> uploadFilenameSet = new LinkedHashSet<String>(uploadFileList.size());
 
 			for (MultipartFile uploadFile : uploadFileList) {
@@ -50,19 +50,19 @@ public class EntityUploadService extends BaseService {
 		return uploadTempDir;
 	}
 
-	public <T, ID extends Serializable> void postUploadPost(EntityPair<T, ID> pair, T entity, String realRootPath,
+	public <T, ID extends Serializable> void postUploadPost(EntityPair<T, ID> pair, T entity, String uploadRealRootPath,
 			List<MultipartFile> uploadFileList, ID id, String uploadTempDir) {
 		if (isPostUploadable(pair, uploadFileList)) {
-			Files.moveDirectory(uploadTempDir, getUploadDir(pair, realRootPath, id.toString()));
+			Files.moveDirectory(uploadTempDir, getUploadDir(pair, uploadRealRootPath, id.toString()));
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity, String realRootPath,
+	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity, String uploadRealRootPath,
 			List<MultipartFile> uploadFileList, boolean uploadDeleteOrphanFiles) {
 		if (isPutUploadable(pair)) {
 			final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField().getName());
-			final String uploadDir = getUploadDir(pair, realRootPath, id.toString());
+			final String uploadDir = getUploadDir(pair, uploadRealRootPath, id.toString());
 			final Set<String> uploadFilenameSet = toUploadFilenameSet(pair, entity);
 
 			if (!isUploadFileEmpty(uploadFileList)) {
@@ -81,13 +81,13 @@ public class EntityUploadService extends BaseService {
 		}
 	}
 
-	public <T, ID extends Serializable> void deleteUpload(EntityPair<T, ID> pair, ID id, String realRootPath,
+	public <T, ID extends Serializable> void deleteUpload(EntityPair<T, ID> pair, ID id, String uploadRealRootPath,
 			boolean uploadDeleteOrphanFiles) {
 		if (!hasUploadField(pair) || !uploadDeleteOrphanFiles) {
 			return;
 		}
 
-		final String uploadDir = getUploadDir(pair, realRootPath, id.toString());
+		final String uploadDir = getUploadDir(pair, uploadRealRootPath, id.toString());
 		Files.deleteDirectory(uploadDir);
 	}
 
@@ -118,14 +118,15 @@ public class EntityUploadService extends BaseService {
 		MultipartFiles.save(realPath, uploadFile);
 	}
 
-	private static <T, ID extends Serializable> String getUploadDir(EntityPair<T, ID> pair, String realRootPath,
+	private static <T, ID extends Serializable> String getUploadDir(EntityPair<T, ID> pair, String uploadRealRootPath,
 			String uuid) {
-		return realRootPath + UPLOAD_ROOT_PATH + pair.getEntityClass().getSimpleName() + "/" + uuid;
+		return uploadRealRootPath + "/" + pair.getEntityClass().getSimpleName() + "/" + uuid;
 	}
 
-	private static <T, ID extends Serializable> String getUploadTempDir(EntityPair<T, ID> pair, String realRootPath,
-			String uuid) {
-		return realRootPath + UPLOAD_TEMP_ROOT_PATH + pair.getEntityClass().getSimpleName() + "/" + uuid;
+	private static <T, ID extends Serializable> String getUploadTempDir(EntityPair<T, ID> pair,
+			String uploadRealRootPath, String uuid) {
+		return uploadRealRootPath + "/" + UPLOAD_TEMP_RELATIVE_PATH + "/" + pair.getEntityClass().getSimpleName() + "/"
+				+ uuid;
 	}
 
 	private static void deleteUploadOrphanFiles(String uploadDir, Set<String> uploadFilenameSet) {

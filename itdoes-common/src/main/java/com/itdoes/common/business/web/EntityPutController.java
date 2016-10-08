@@ -46,7 +46,8 @@ public class EntityPutController extends EntityBaseController {
 			ServletRequest request) {
 		final EntityPair<T, ID> pair = getPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
-		subjectService.putUpload(pair, entity, oldEntity, realRootPath, uploadFileList, isUploadDeleteOrphanFiles());
+		subjectService.putUpload(pair, entity, oldEntity, getUploadRealRootPath(), uploadFileList,
+				isUploadDeleteOrphanFiles());
 		return HttpResults.success();
 	}
 
