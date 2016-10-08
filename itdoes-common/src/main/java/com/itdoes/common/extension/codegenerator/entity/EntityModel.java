@@ -13,12 +13,15 @@ public class EntityModel {
 		private final Column column;
 		private final boolean secure;
 		private final boolean upload;
+		private final String searchConfig;
 
-		public EntityField(String name, String type, Column column, boolean secure, boolean upload) {
+		public EntityField(String name, String type, Column column, boolean secure, boolean upload,
+				String searchConfig) {
 			super(name, type);
 			this.column = column;
 			this.secure = secure;
 			this.upload = upload;
+			this.searchConfig = searchConfig;
 		}
 
 		public Column getColumn() {
@@ -32,19 +35,25 @@ public class EntityModel {
 		public boolean isUpload() {
 			return upload;
 		}
+
+		public String getSearchConfig() {
+			return searchConfig;
+		}
 	}
 
 	private final String packageName;
 	private final String tableName;
+	private final String searchConfig;
 	private final String className;
 	private final String serialVersionUID;
 	private final List<EntityField> fieldList;
 	private final String idGeneratedValue;
 
-	public EntityModel(String packageName, String tableName, String className, String serialVersionUID,
-			List<EntityField> fieldList, String idGeneratedValue) {
+	public EntityModel(String packageName, String tableName, String searchConfig, String className,
+			String serialVersionUID, List<EntityField> fieldList, String idGeneratedValue) {
 		this.packageName = packageName;
 		this.tableName = tableName;
+		this.searchConfig = searchConfig;
 		this.className = className;
 		this.serialVersionUID = serialVersionUID;
 		this.fieldList = fieldList;
@@ -57,6 +66,10 @@ public class EntityModel {
 
 	public String getTableName() {
 		return tableName;
+	}
+
+	public String getSearchConfig() {
+		return searchConfig;
 	}
 
 	public String getClassName() {
