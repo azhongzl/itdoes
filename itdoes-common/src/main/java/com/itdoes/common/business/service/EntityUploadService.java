@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.itdoes.common.business.EntityPair;
-import com.itdoes.common.business.Permissions;
+import com.itdoes.common.business.Perms;
 import com.itdoes.common.core.spring.Springs;
 import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Files;
@@ -106,8 +106,8 @@ public class EntityUploadService extends BaseService {
 
 	private static <T, ID extends Serializable> boolean isUploadPermitted(EntityPair<T, ID> pair) {
 		final Subject subject = SecurityUtils.getSubject();
-		return subject.isPermitted(Permissions.getEntityOneEntityOneFieldWritePermission(
-				pair.getEntityClass().getSimpleName(), pair.getUploadField().getName()));
+		return subject.isPermitted(Perms.getEntityOneEntityOneFieldWritePerm(pair.getEntityClass().getSimpleName(),
+				pair.getUploadField().getName()));
 	}
 
 	private static boolean isUploadFileEmpty(List<MultipartFile> uploadFileList) {

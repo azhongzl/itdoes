@@ -128,7 +128,7 @@ package com.itdoes.common.business;
  * 
  * @author Jalen Zhong
  */
-public class Permissions {
+public class Perms {
 	public static final String PERM_SEARCH = "search";
 	public static final String PERM_UPLOAD = "upload";
 	public static final String PERM_ENTITY = "entity";
@@ -140,62 +140,62 @@ public class Permissions {
 	private static final String PERM_READ = "read";
 	private static final String PERM_WRITE = "write";
 
-	public static String getAllPermission() {
+	public static String getAllPerm() {
 		return PERM_ROOT;
 	}
 
-	public static String getSearchAllPermission() {
-		return getAllPermission() + PERM_SEPARATOR + PERM_SEARCH;
+	public static String getSearchAllPerm() {
+		return getAllPerm() + PERM_SEPARATOR + PERM_SEARCH;
 	}
 
-	public static String getSearchPermission(String command) {
-		return getSearchAllPermission() + PERM_SEPARATOR + command;
+	public static String getSearchPerm(String command) {
+		return getSearchAllPerm() + PERM_SEPARATOR + command;
 	}
 
-	public static String getUploadAllPermission() {
-		return getAllPermission() + PERM_SEPARATOR + PERM_UPLOAD;
+	public static String getUploadAllPerm() {
+		return getAllPerm() + PERM_SEPARATOR + PERM_UPLOAD;
 	}
 
-	public static String getUploadPermission(String permissionName) {
-		return getUploadAllPermission() + PERM_SEPARATOR + permissionName;
+	public static String getUploadPerm(String permissionName) {
+		return getUploadAllPerm() + PERM_SEPARATOR + permissionName;
 	}
 
-	public static String getEntityAllPermission() {
-		return getAllPermission() + PERM_SEPARATOR + PERM_ENTITY;
+	public static String getEntityAllPerm() {
+		return getAllPerm() + PERM_SEPARATOR + PERM_ENTITY;
 	}
 
-	public static String getEntityOneEntityAllPermission(String entityName) {
-		return getEntityAllPermission() + PERM_SEPARATOR + entityName;
+	public static String getEntityOneEntityAllPerm(String entityName) {
+		return getEntityAllPerm() + PERM_SEPARATOR + entityName;
 	}
 
-	public static String getEntityOneEntityClassAllPermission(String entityName) {
-		return getEntityOneEntityAllPermission(entityName) + PERM_SEPARATOR + PERM_ENTITY_CLASS;
+	public static String getEntityOneEntityClassAllPerm(String entityName) {
+		return getEntityOneEntityAllPerm(entityName) + PERM_SEPARATOR + PERM_ENTITY_CLASS;
 	}
 
-	public static String getEntityOneEntityClassPermission(String entityName, String command) {
-		return getEntityOneEntityClassAllPermission(entityName) + PERM_SEPARATOR + command;
+	public static String getEntityOneEntityClassPerm(String entityName, String command) {
+		return getEntityOneEntityClassAllPerm(entityName) + PERM_SEPARATOR + command;
 	}
 
-	public static String getEntityOneEntityAllFieldsAllPermission(String entityName) {
-		return getEntityOneEntityAllPermission(entityName) + PERM_SEPARATOR + PERM_ENTITY_FIELD;
+	public static String getEntityOneEntityAllFieldsAllPerm(String entityName) {
+		return getEntityOneEntityAllPerm(entityName) + PERM_SEPARATOR + PERM_ENTITY_FIELD;
 	}
 
-	public static String getEntityOneEntityOneFieldAllPermission(String entityName, String fieldName) {
-		return getEntityOneEntityAllFieldsAllPermission(entityName) + PERM_SEPARATOR + fieldName;
+	public static String getEntityOneEntityOneFieldAllPerm(String entityName, String fieldName) {
+		return getEntityOneEntityAllFieldsAllPerm(entityName) + PERM_SEPARATOR + fieldName;
 	}
 
-	public static String getEntityOneEntityOneFieldReadPermission(String entityName, String fieldName) {
-		return getEntityOneEntityOneFieldPermission(entityName, fieldName, PERM_READ);
+	public static String getEntityOneEntityOneFieldReadPerm(String entityName, String fieldName) {
+		return getEntityOneEntityOneFieldPerm(entityName, fieldName, PERM_READ);
 	}
 
-	public static String getEntityOneEntityOneFieldWritePermission(String entityName, String fieldName) {
-		return getEntityOneEntityOneFieldPermission(entityName, fieldName, PERM_WRITE);
+	public static String getEntityOneEntityOneFieldWritePerm(String entityName, String fieldName) {
+		return getEntityOneEntityOneFieldPerm(entityName, fieldName, PERM_WRITE);
 	}
 
-	private static String getEntityOneEntityOneFieldPermission(String entityName, String fieldName, String mode) {
-		return getEntityOneEntityOneFieldAllPermission(entityName, fieldName) + PERM_SEPARATOR + mode;
+	private static String getEntityOneEntityOneFieldPerm(String entityName, String fieldName, String mode) {
+		return getEntityOneEntityOneFieldAllPerm(entityName, fieldName) + PERM_SEPARATOR + mode;
 	}
 
-	private Permissions() {
+	private Perms() {
 	}
 }

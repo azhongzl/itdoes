@@ -8,7 +8,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itdoes.common.business.EntityEnv;
-import com.itdoes.common.business.Permissions;
+import com.itdoes.common.business.Perms;
 import com.itdoes.common.core.shiro.AbstractShiroFilterChainDefinitionMap;
 
 /**
@@ -41,7 +41,6 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 
 	private void addDynamicDefinition(Map<String, String> dynamicDefinitions, String entityName, String command) {
 		dynamicDefinitions.put(EntityBaseController.ENTITY_URL_PREFIX + "/" + entityName + "/" + command + URL_ANY,
-				MessageFormat.format(PERMS_PATTERN,
-						Permissions.getEntityOneEntityClassPermission(entityName, command)));
+				MessageFormat.format(PERMS_PATTERN, Perms.getEntityOneEntityClassPerm(entityName, command)));
 	}
 }

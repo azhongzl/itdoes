@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.itdoes.common.business.Permissions;
+import com.itdoes.common.business.Perms;
 import com.itdoes.common.core.Result;
 import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Strings;
@@ -25,7 +25,7 @@ import com.itdoes.common.core.web.MultipartFiles;
 @RestController
 @RequestMapping(value = UploadController.UPLOAD_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class UploadController extends BaseController {
-	public static final String UPLOAD_URL_PREFIX = "/" + Permissions.PERM_UPLOAD;
+	public static final String UPLOAD_URL_PREFIX = "/" + Perms.PERM_UPLOAD;
 	private static final String UPLOAD_URL_TO_FIND = UPLOAD_URL_PREFIX + "/";
 
 	@RequestMapping(value = "/**", method = RequestMethod.POST)

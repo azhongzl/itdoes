@@ -9,7 +9,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
 
 import com.itdoes.common.business.EntityPair;
-import com.itdoes.common.business.Permissions;
+import com.itdoes.common.business.Perms;
 import com.itdoes.common.core.util.Reflections;
 
 /**
@@ -21,8 +21,7 @@ public class EntityPermFieldService extends BaseService {
 		PermFieldHandler GET = new PermFieldHandler() {
 			@Override
 			public <T> void handle(Subject subject, String entityName, String permFieldName, T entity, T oldEntity) {
-				if (!subject
-						.isPermitted(Permissions.getEntityOneEntityOneFieldReadPermission(entityName, permFieldName))) {
+				if (!subject.isPermitted(Perms.getEntityOneEntityOneFieldReadPerm(entityName, permFieldName))) {
 					Reflections.invokeSet(entity, permFieldName, null);
 				}
 			}
@@ -30,8 +29,7 @@ public class EntityPermFieldService extends BaseService {
 		PermFieldHandler POST = new PermFieldHandler() {
 			@Override
 			public <T> void handle(Subject subject, String entityName, String permFieldName, T entity, T oldEntity) {
-				if (!subject.isPermitted(
-						Permissions.getEntityOneEntityOneFieldWritePermission(entityName, permFieldName))) {
+				if (!subject.isPermitted(Perms.getEntityOneEntityOneFieldWritePerm(entityName, permFieldName))) {
 					Reflections.invokeSet(entity, permFieldName, null);
 				}
 			}
@@ -39,8 +37,7 @@ public class EntityPermFieldService extends BaseService {
 		PermFieldHandler PUT = new PermFieldHandler() {
 			@Override
 			public <T> void handle(Subject subject, String entityName, String permFieldName, T entity, T oldEntity) {
-				if (!subject.isPermitted(
-						Permissions.getEntityOneEntityOneFieldWritePermission(entityName, permFieldName))) {
+				if (!subject.isPermitted(Perms.getEntityOneEntityOneFieldWritePerm(entityName, permFieldName))) {
 					Reflections.invokeSet(entity, permFieldName, Reflections.invokeGet(oldEntity, permFieldName));
 				}
 			}
