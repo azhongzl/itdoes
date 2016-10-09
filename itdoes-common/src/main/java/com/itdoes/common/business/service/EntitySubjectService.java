@@ -21,39 +21,39 @@ public class EntitySubjectService extends BaseService {
 	@Autowired
 	private EntityDbService dbService;
 	@Autowired
-	private EntitySecureFieldService secureFieldService;
+	private EntityPermFieldService permFieldService;
 	@Autowired
 	private EntityUploadService uploadService;
 
 	public <T, ID extends Serializable> Page<T> find(EntityPair<T, ID> pair, Specification<T> specification,
 			PageRequest pageRequest) {
 		final Page<T> page = dbService.find(pair, specification, pageRequest);
-		secureFieldService.handleGetSecureFields(pair, page.getContent());
+		permFieldService.handleGetPermFields(pair, page.getContent());
 		return page;
 	}
 
 	public <T, ID extends Serializable> T findOne(EntityPair<T, ID> pair, Specification<T> specification) {
 		final T entity = dbService.findOne(pair, specification);
-		secureFieldService.handleGetSecureFields(pair, entity);
+		permFieldService.handleGetPermFields(pair, entity);
 		return entity;
 	}
 
 	public <T, ID extends Serializable> T get(EntityPair<T, ID> pair, ID id) {
 		final T entity = dbService.get(pair, id);
-		secureFieldService.handleGetSecureFields(pair, entity);
+		permFieldService.handleGetPermFields(pair, entity);
 		return entity;
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T, ID extends Serializable> ID post(EntityPair<T, ID> pair, T entity) {
-		secureFieldService.handlePostSecureFields(pair, entity);
+		permFieldService.handlePostPermFields(pair, entity);
 		entity = dbService.save(pair, entity);
 		final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField().getName());
 		return id;
 	}
 
 	public <T, ID extends Serializable> void put(EntityPair<T, ID> pair, T entity, T oldEntity) {
-		secureFieldService.handlePutSecureFields(pair, entity, oldEntity);
+		permFieldService.handlePutPermFields(pair, entity, oldEntity);
 		dbService.save(pair, entity);
 	}
 

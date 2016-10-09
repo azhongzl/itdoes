@@ -14,15 +14,15 @@ public class EntityPair<T, ID extends Serializable> {
 	private final Class<T> entityClass;
 	private final Field idField;
 	private final BaseDao<T, ID> dao;
-	private final List<Field> secureFields;
+	private final List<Field> permFields;
 	private final Field uploadField;
 
-	public EntityPair(Class<T> entityClass, Field idField, BaseDao<T, ID> dao, List<Field> secureFields,
+	public EntityPair(Class<T> entityClass, Field idField, BaseDao<T, ID> dao, List<Field> permFields,
 			Field uploadField) {
 		this.entityClass = entityClass;
 		this.idField = idField;
 		this.dao = dao;
-		this.secureFields = secureFields;
+		this.permFields = permFields;
 		this.uploadField = uploadField;
 	}
 
@@ -38,19 +38,19 @@ public class EntityPair<T, ID extends Serializable> {
 		return dao;
 	}
 
-	public List<Field> getSecureFields() {
-		return secureFields;
+	public List<Field> getPermFields() {
+		return permFields;
 	}
 
 	public Field getUploadField() {
 		return uploadField;
 	}
 
-	public boolean hasSecureFields() {
-		return !Collections3.isEmpty(secureFields);
+	public boolean hasPermFields() {
+		return !Collections3.isEmpty(permFields);
 	}
 
 	public boolean needCopyOldEntity() {
-		return hasSecureFields();
+		return hasPermFields();
 	}
 }

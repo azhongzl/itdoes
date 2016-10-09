@@ -39,7 +39,7 @@ public class EntityGenerator {
 
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
 			String outputDir, String basePackageName, Map<String, String> tableMapping, List<String> tableSkipList,
-			Map<String, String> columnMapping, List<String> secureColumnList, List<String> uploadColumnList,
+			Map<String, String> columnMapping, List<String> permColumnList, List<String> uploadColumnList,
 			String idGeneratedValue, QueryCacheConfig queryCacheConfig, EhcacheConfig ehcacheConfig,
 			SearchConfig searchConfig) {
 		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
@@ -66,7 +66,7 @@ public class EntityGenerator {
 			// Generate Entity
 			final String entityClassName = mapEntityClassName(tableName, tableMapping);
 			final List<EntityField> entityFieldList = mapEntityFieldList(tableName, table.getColumnList(),
-					columnMapping, secureColumnList, uploadColumnList, searchConfig);
+					columnMapping, permColumnList, uploadColumnList, searchConfig);
 			final EntityModel entityModel = new EntityModel(entityPackageName, tableName,
 					searchConfig.getTableSearchConfig(tableName), entityClassName,
 					getSerialVersionUIDStr(entityClassName), entityFieldList, idGeneratedValue);
@@ -139,14 +139,14 @@ public class EntityGenerator {
 	}
 
 	private static List<EntityField> mapEntityFieldList(String tableName, List<Column> columnList,
-			Map<String, String> columnMapping, List<String> secureColumnList, List<String> uploadColumnList,
+			Map<String, String> columnMapping, List<String> permColumnList, List<String> uploadColumnList,
 			SearchConfig searchConfig) {
 		final List<EntityField> entityFieldList = Lists.newArrayList();
 		for (Column column : columnList) {
-			boolean secure = false;
-			if (!Collections3.isEmpty(secureColumnList)) {
-				if (secureColumnList.contains(getColumnKey(tableName, column.getName()))) {
-					secure = true;
+			boolean perm = false;
+			if (!Collections3.isEmpty(permColumnList)) {
+				if (permColumnList.contains(getColumnKey(tableName, column.getName()))) {
+					perm = true;
 				}
 			}
 
@@ -158,7 +158,7 @@ public class EntityGenerator {
 			}
 
 			final EntityField entityField = new EntityField(mapFieldName(tableName, column.getName(), columnMapping),
-					mapFieldType(column), column, secure, upload,
+					mapFieldType(column), column, perm, upload,
 					searchConfig.getColumnSearchConfig(tableName, column.getName()));
 			entityFieldList.add(entityField);
 		}

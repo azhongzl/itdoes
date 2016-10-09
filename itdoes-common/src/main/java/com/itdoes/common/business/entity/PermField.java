@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
  */
 @Target({ FIELD })
 @Retention(RUNTIME)
-public @interface SecureField {
+public @interface PermField {
 }

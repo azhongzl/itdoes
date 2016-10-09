@@ -11,15 +11,14 @@ import com.itdoes.common.extension.codegenerator.Field;
 public class EntityModel {
 	public static class EntityField extends Field {
 		private final Column column;
-		private final boolean secure;
+		private final boolean perm;
 		private final boolean upload;
 		private final String searchConfig;
 
-		public EntityField(String name, String type, Column column, boolean secure, boolean upload,
-				String searchConfig) {
+		public EntityField(String name, String type, Column column, boolean perm, boolean upload, String searchConfig) {
 			super(name, type);
 			this.column = column;
-			this.secure = secure;
+			this.perm = perm;
 			this.upload = upload;
 			this.searchConfig = searchConfig;
 		}
@@ -28,8 +27,8 @@ public class EntityModel {
 			return column;
 		}
 
-		public boolean isSecure() {
-			return secure;
+		public boolean isPerm() {
+			return perm;
 		}
 
 		public boolean isUpload() {
