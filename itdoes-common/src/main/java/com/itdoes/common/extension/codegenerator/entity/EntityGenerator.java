@@ -3,7 +3,6 @@ package com.itdoes.common.extension.codegenerator.entity;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,10 +37,9 @@ public class EntityGenerator {
 	private static final String TEMPLATE_DIR = "classpath:/" + Reflections.packageToPath(EntityGenerator.class);
 
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
-			String outputDir, String basePackageName, Map<String, String> tableMapping, List<String> tableSkipList,
-			Map<String, String> columnMapping, List<String> permColumnList, List<String> uploadColumnList,
-			String idGeneratedValue, QueryCacheConfig queryCacheConfig, EhcacheConfig ehcacheConfig,
-			SearchConfig searchConfig) {
+			String outputDir, String basePackageName, DbMappingConfig dbMappingConfig, List<String> tableSkipList,
+			List<String> permColumnList, List<String> uploadColumnList, String idGeneratedValue,
+			QueryCacheConfig queryCacheConfig, EhcacheConfig ehcacheConfig, SearchConfig searchConfig) {
 		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
 
 		final String entityPackageName = basePackageName + ".entity";
@@ -64,9 +62,9 @@ public class EntityGenerator {
 			}
 
 			// Generate Entity
-			final String entityClassName = mapEntityClassName(tableName, tableMapping);
+			final String entityClassName = mapEntityClassName(tableName, dbMappingConfig);
 			final List<EntityField> entityFieldList = mapEntityFieldList(tableName, table.getColumnList(),
-					columnMapping, permColumnList, uploadColumnList, searchConfig);
+					dbMappingConfig, permColumnList, uploadColumnList, searchConfig);
 			final EntityModel entityModel = new EntityModel(entityPackageName, tableName,
 					searchConfig.getTableSearchConfig(tableName), entityClassName,
 					getSerialVersionUIDStr(entityClassName), entityFieldList, idGeneratedValue);
@@ -128,18 +126,13 @@ public class EntityGenerator {
 		}
 	}
 
-	private static String mapEntityClassName(String tableName, Map<String, String> tableMapping) {
-		if (!Collections3.isEmpty(tableMapping)) {
-			if (tableMapping.containsKey(tableName)) {
-				return tableMapping.get(tableName);
-			}
-		}
-
-		return Strings.underscoreToPascal(tableName);
+	private static String mapEntityClassName(String tableName, DbMappingConfig dbMappingConfig) {
+		final String mappingEntityClassName = dbMappingConfig.toEntity(tableName);
+		return mappingEntityClassName != null ? mappingEntityClassName : Strings.underscoreToPascal(tableName);
 	}
 
 	private static List<EntityField> mapEntityFieldList(String tableName, List<Column> columnList,
-			Map<String, String> columnMapping, List<String> permColumnList, List<String> uploadColumnList,
+			DbMappingConfig dbMappingConfig, List<String> permColumnList, List<String> uploadColumnList,
 			SearchConfig searchConfig) {
 		final List<EntityField> entityFieldList = Lists.newArrayList();
 		for (Column column : columnList) {
@@ -157,7 +150,7 @@ public class EntityGenerator {
 				}
 			}
 
-			final EntityField entityField = new EntityField(mapFieldName(tableName, column.getName(), columnMapping),
+			final EntityField entityField = new EntityField(mapFieldName(tableName, column.getName(), dbMappingConfig),
 					mapFieldType(column), column, perm, upload,
 					searchConfig.getColumnSearchConfig(tableName, column.getName()));
 			entityFieldList.add(entityField);
@@ -166,15 +159,9 @@ public class EntityGenerator {
 		return entityFieldList;
 	}
 
-	private static String mapFieldName(String tableName, String columnName, Map<String, String> columnMapping) {
-		if (!Collections3.isEmpty(columnMapping)) {
-			final String key = getColumnKey(tableName, columnName);
-			if (columnMapping.containsKey(key)) {
-				return columnMapping.get(key);
-			}
-		}
-
-		return Strings.underscoreToCamel(columnName);
+	private static String mapFieldName(String tableName, String columnName, DbMappingConfig dbMappingConfig) {
+		final String mappingFieldName = dbMappingConfig.toField(tableName, columnName);
+		return mappingFieldName != null ? mappingFieldName : Strings.underscoreToCamel(columnName);
 	}
 
 	private static String getColumnKey(String tableName, String columnName) {

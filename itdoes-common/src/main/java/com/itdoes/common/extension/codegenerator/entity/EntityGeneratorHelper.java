@@ -1,9 +1,7 @@
 package com.itdoes.common.extension.codegenerator.entity;
 
 import java.util.List;
-import java.util.Map;
 
-import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.PropertiesLoader;
 import com.itdoes.common.core.util.TxtLoader;
 
@@ -13,14 +11,35 @@ import com.itdoes.common.core.util.TxtLoader;
 public class EntityGeneratorHelper {
 	private static final String OUTPUT_DIR = "/tmp/codegenerator/entity";
 	private static final String CONFIG_DIR = "classpath:/codegenerator/entity/";
-	private static final String DB_TABLE_MAPPING_FILE = CONFIG_DIR + "db.table.mapping.properties";
-	private static final String DB_TABLE_SKIP_FILE = CONFIG_DIR + "db.table.skip.ini";
-	private static final String DB_COLUMN_MAPPING_FILE = CONFIG_DIR + "db.column.mapping.properties";
-	private static final String DB_COLUMN_PERM_FILE = CONFIG_DIR + "db.column.perm.ini";
-	private static final String DB_COLUMN_UPLOAD_FILE = CONFIG_DIR + "db.column.upload.ini";
+	private static final String DB_MAPPING_FILE = CONFIG_DIR + "db.mapping.properties";
+	private static final String DB_TABLE_SKIP_FILE = CONFIG_DIR + "db.skip.ini";
+	private static final String DB_COLUMN_PERM_FILE = CONFIG_DIR + "db.perm.ini";
+	private static final String DB_COLUMN_UPLOAD_FILE = CONFIG_DIR + "db.upload.ini";
 	private static final String ENTITY_QUERY_CACHE_FILE = CONFIG_DIR + "entity.queryCache.properties";
 	private static final String ENTITY_EHCACHE_FILE = CONFIG_DIR + "entity.ehcache.properties";
 	private static final String DB_SEARCH_FILE = CONFIG_DIR + "db.search.properties";
+
+	private static String getColumnKey(String tableName, String columnName) {
+		return tableName + "." + columnName;
+	}
+
+	private static class PropertiesDbMappingConfig implements DbMappingConfig {
+		private final PropertiesLoader pl;
+
+		public PropertiesDbMappingConfig(PropertiesLoader pl) {
+			this.pl = pl;
+		}
+
+		@Override
+		public String toEntity(String tableName) {
+			return pl.getStringMay(tableName, null);
+		}
+
+		@Override
+		public String toField(String tableName, String columnName) {
+			return pl.getStringMay(getColumnKey(tableName, columnName), null);
+		}
+	}
 
 	private static class PropertiesQueryCacheConfig implements QueryCacheConfig {
 		private final PropertiesLoader pl;
@@ -96,9 +115,8 @@ public class EntityGeneratorHelper {
 	public static void generateEntities(String basePackageName, String idGeneratedValue) {
 		final PropertiesLoader pl = new PropertiesLoader("classpath:/application.properties",
 				"classpath:/application.local.properties");
-		final Map<String, String> tableMapping = toMap(DB_TABLE_MAPPING_FILE);
+		final DbMappingConfig dbMappingConfig = new PropertiesDbMappingConfig(new PropertiesLoader(DB_MAPPING_FILE));
 		final List<String> tableSkipList = toList(DB_TABLE_SKIP_FILE);
-		final Map<String, String> columnMapping = toMap(DB_COLUMN_MAPPING_FILE);
 		final List<String> permColumnList = toList(DB_COLUMN_PERM_FILE);
 		final List<String> uploadColumnList = toList(DB_COLUMN_UPLOAD_FILE);
 		final QueryCacheConfig queryCacheConfig = new PropertiesQueryCacheConfig(
@@ -108,12 +126,8 @@ public class EntityGeneratorHelper {
 
 		EntityGenerator.generateEntities(pl.getStringMust("jdbc.driver"), pl.getStringMust("jdbc.url"),
 				pl.getStringMust("jdbc.username"), pl.getStringMust("jdbc.password"), OUTPUT_DIR, basePackageName,
-				tableMapping, tableSkipList, columnMapping, permColumnList, uploadColumnList, idGeneratedValue,
-				queryCacheConfig, ehcacheConfig, searchConfig);
-	}
-
-	private static Map<String, String> toMap(String propertyFilename) {
-		return Collections3.asMap(new PropertiesLoader(propertyFilename).getProperties());
+				dbMappingConfig, tableSkipList, permColumnList, uploadColumnList, idGeneratedValue, queryCacheConfig,
+				ehcacheConfig, searchConfig);
 	}
 
 	private static List<String> toList(String propertyFilename) {
