@@ -60,6 +60,10 @@ public class PropertiesLoader {
 		return properties;
 	}
 
+	public boolean containsKey(String key) {
+		return properties.containsKey(key);
+	}
+
 	public String getStringMust(String key) {
 		final String value = getValue(key);
 		if (!hasValue(value)) {

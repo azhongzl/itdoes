@@ -19,8 +19,21 @@ public class EntityGeneratorHelper {
 	private static final String ENTITY_QUERY_CACHE_FILE = CONFIG_DIR + "entity.queryCache.properties";
 	private static final String ENTITY_EHCACHE_FILE = CONFIG_DIR + "entity.ehcache.properties";
 
+	private static final String DEFAULT_SIGN = "_";
+
 	private static String getColumnKey(String tableName, String columnName) {
 		return tableName + "." + columnName;
+	}
+
+	private static String getValue(PropertiesLoader pl, String key, String defaultKey, boolean useDefaultIfNotDefined) {
+		final String defaultValue = pl.getStringMay(defaultKey, null);
+
+		if (!pl.containsKey(key)) {
+			return useDefaultIfNotDefined ? defaultValue : null;
+		}
+
+		final String value = pl.getStringMay(key, null);
+		return DEFAULT_SIGN.equals(value) ? defaultValue : value;
 	}
 
 	private static class FileDbSkipConfig implements DbSkipConfig {
@@ -66,17 +79,12 @@ public class EntityGeneratorHelper {
 
 		@Override
 		public String getEntityPerm(String tableName) {
-			return pl.getStringMay(new String[] { tableName, DEFAULT_ENTITY }, null);
+			return getValue(pl, tableName, DEFAULT_ENTITY, true);
 		}
 
 		@Override
 		public String getFieldPerm(String tableName, String columnName) {
-			final String key = getColumnKey(tableName, columnName);
-			if (!pl.getProperties().containsKey(key)) {
-				return null;
-			}
-
-			return pl.getStringMay(new String[] { key, DEFAULT_FIELD }, null);
+			return getValue(pl, getColumnKey(tableName, columnName), DEFAULT_FIELD, false);
 		}
 	}
 
@@ -92,21 +100,12 @@ public class EntityGeneratorHelper {
 
 		@Override
 		public String getEntitySearch(String tableName) {
-			if (!pl.getProperties().containsKey(tableName)) {
-				return null;
-			}
-
-			return pl.getStringMay(new String[] { tableName, DEFAULT_ENTITY }, null);
+			return getValue(pl, tableName, DEFAULT_ENTITY, false);
 		}
 
 		@Override
 		public String getFieldSearch(String tableName, String columnName) {
-			final String key = getColumnKey(tableName, columnName);
-			if (!pl.getProperties().containsKey(key)) {
-				return null;
-			}
-
-			return pl.getStringMay(new String[] { key, DEFAULT_FIELD }, null);
+			return getValue(pl, getColumnKey(tableName, columnName), DEFAULT_FIELD, false);
 		}
 	}
 
