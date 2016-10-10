@@ -101,7 +101,7 @@ public class EntityGeneratorHelper {
 
 		@Override
 		public String getColumnSearchConfig(String tableName, String columnName) {
-			final String key = tableName + "." + columnName;
+			final String key = getColumnKey(tableName, columnName);
 			if (!pl.getProperties().containsKey(key)) {
 				return null;
 			}
@@ -166,7 +166,7 @@ public class EntityGeneratorHelper {
 
 		EntityGenerator.generateEntities(pl.getStringMust("jdbc.driver"), pl.getStringMust("jdbc.url"),
 				pl.getStringMust("jdbc.username"), pl.getStringMust("jdbc.password"), OUTPUT_DIR, basePackageName,
-				dbSkipConfig, dbMappingConfig, dbPermConfig, dbUploadConfig, dbSearchConfig, idGeneratedValue,
+				idGeneratedValue, dbSkipConfig, dbMappingConfig, dbPermConfig, dbUploadConfig, dbSearchConfig,
 				entityQueryCacheConfig, entityEhcacheConfig);
 	}
 }
