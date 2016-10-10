@@ -48,21 +48,21 @@ public class EntityPermFieldService extends BaseService {
 
 	private static <T, ID extends Serializable> void handlePermFields(EntityPair<T, ID> pair, PermFieldHandler handler,
 			T entity, T oldEntity) {
-		if (!pair.hasPermFields()) {
+		if (!pair.hasPermField()) {
 			return;
 		}
 
 		final Subject subject = SecurityUtils.getSubject();
 
 		final String entityName = pair.getEntityClass().getSimpleName();
-		for (Field permField : pair.getPermFields()) {
+		for (Field permField : pair.getPermFieldList()) {
 			final String permFieldName = permField.getName();
 			handler.handle(subject, entityName, permFieldName, entity, oldEntity);
 		}
 	}
 
 	public <T, ID extends Serializable> void handleGetPermFields(EntityPair<T, ID> pair, List<T> entityList) {
-		if (!pair.hasPermFields()) {
+		if (!pair.hasPermField()) {
 			return;
 		}
 

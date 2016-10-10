@@ -1,15 +1,20 @@
 package com.itdoes.common.business.web;
 
+import java.io.Serializable;
 import java.text.MessageFormat;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.collect.Maps;
 import com.itdoes.common.business.EntityEnv;
+import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.business.Perms;
+import com.itdoes.common.business.entity.EntityPerm;
+import com.itdoes.common.business.entity.EntityPermType;
 import com.itdoes.common.core.shiro.AbstractShiroFilterChainDefinitionMap;
+import com.itdoes.common.core.util.Collections3;
 
 /**
  * @author Jalen Zhong
@@ -23,24 +28,61 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 
 	@Override
 	protected Map<String, String> getDynamicDefinitions() {
-		final Set<String> entityNames = env.getPairMap().keySet();
-		final Map<String, String> dynamicDefinitions = new LinkedHashMap<String, String>(entityNames.size() * 9);
-		for (String entityName : entityNames) {
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_FIND);
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_FIND_ONE);
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_COUNT);
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_GET);
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_DELETE);
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_POST);
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_PUT);
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_POST_UPLOAD);
-			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_PUT_UPLOAD);
+		final Map<String, String> dynamicDefinitions = Maps.newLinkedHashMap();
+		for (EntityPair<?, ? extends Serializable> pair : env.getPairMap().values()) {
+			final EntityPerm entityPerm = pair.getEntityPerm();
+			if (entityPerm == null) {
+				continue;
+			}
+			if (Collections3.isEmpty(entityPerm.types())) {
+				continue;
+			}
+			final List<EntityPermType> entityPermTypeList = Collections3.asList(entityPerm.types());
+
+			if (EntityPermType.FIND.isIn(entityPermTypeList)) {
+				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
+						EntityBaseController.ENTITY_COMMAND_FIND);
+			}
+			if (EntityPermType.FIND_ONE.isIn(entityPermTypeList)) {
+				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
+						EntityBaseController.ENTITY_COMMAND_FIND_ONE);
+			}
+			if (EntityPermType.COUNT.isIn(entityPermTypeList)) {
+				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
+						EntityBaseController.ENTITY_COMMAND_COUNT);
+			}
+			if (EntityPermType.GET.isIn(entityPermTypeList)) {
+				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
+						EntityBaseController.ENTITY_COMMAND_GET);
+			}
+			if (EntityPermType.DELETE.isIn(entityPermTypeList)) {
+				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
+						EntityBaseController.ENTITY_COMMAND_DELETE);
+			}
+			if (EntityPermType.POST.isIn(entityPermTypeList)) {
+				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
+						EntityBaseController.ENTITY_COMMAND_POST);
+			}
+			if (EntityPermType.PUT.isIn(entityPermTypeList)) {
+				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
+						EntityBaseController.ENTITY_COMMAND_PUT);
+			}
+			if (EntityPermType.POST_UPLOAD.isIn(entityPermTypeList)) {
+				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
+						EntityBaseController.ENTITY_COMMAND_POST_UPLOAD);
+			}
+			if (EntityPermType.PUT_UPLOAD.isIn(entityPermTypeList)) {
+				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
+						EntityBaseController.ENTITY_COMMAND_PUT_UPLOAD);
+			}
 		}
 		return dynamicDefinitions;
 	}
 
-	private void addDynamicDefinition(Map<String, String> dynamicDefinitions, String entityName, String command) {
-		dynamicDefinitions.put(EntityBaseController.ENTITY_URL_PREFIX + "/" + entityName + "/" + command + URL_ANY,
-				MessageFormat.format(PERMS_PATTERN, Perms.getEntityOneEntityClassPerm(entityName, command)));
+	private void addDynamicDefinition(Map<String, String> dynamicDefinitions, Class<?> entityClass, String command) {
+		dynamicDefinitions.put(
+				EntityBaseController.ENTITY_URL_PREFIX + "/" + entityClass.getSimpleName() + "/" + command + URL_ANY,
+				MessageFormat.format(PERMS_PATTERN,
+						Perms.getEntityOneEntityClassPerm(entityClass.getSimpleName(), command)));
 	}
 }

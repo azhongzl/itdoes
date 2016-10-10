@@ -16,6 +16,7 @@ import org.springframework.context.ApplicationContextAware;
 import com.google.common.collect.Maps;
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
+import com.itdoes.common.business.entity.EntityPerm;
 import com.itdoes.common.business.entity.FieldPerm;
 import com.itdoes.common.business.entity.UploadField;
 import com.itdoes.common.core.spring.LazyInitBeanLoader;
@@ -94,15 +95,17 @@ public class EntityEnv implements ApplicationContextAware {
 			dao = (BaseDao<T, ID>) LazyInitBeanLoader.getInstance().loadBean(applicationContext, daoBeanName,
 					new Class[] { BaseDao.class });
 		}
-
 		Validate.notNull(dao, "Cannot find bean for name [%s]", daoBeanName);
 
-		// Perm Fields
-		final List<Field> permFields = Reflections.getFieldsWithAnnotation(entityClass, FieldPerm.class);
+		// Entity Perm
+		final EntityPerm entityPerm = entityClass.getAnnotation(EntityPerm.class);
 
-		// Upload Field
+		// Field Perm
+		final List<Field> permFieldList = Reflections.getFieldsWithAnnotation(entityClass, FieldPerm.class);
+
+		// Field Upload
 		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, UploadField.class);
 
-		pairMap.put(key, new EntityPair<T, ID>(entityClass, idField, dao, permFields, uploadField));
+		pairMap.put(key, new EntityPair<T, ID>(entityClass, idField, dao, entityPerm, permFieldList, uploadField));
 	}
 }
