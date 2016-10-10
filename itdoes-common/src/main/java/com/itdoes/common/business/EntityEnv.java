@@ -16,7 +16,7 @@ import org.springframework.context.ApplicationContextAware;
 import com.google.common.collect.Maps;
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
-import com.itdoes.common.business.entity.PermField;
+import com.itdoes.common.business.entity.FieldPerm;
 import com.itdoes.common.business.entity.UploadField;
 import com.itdoes.common.core.spring.LazyInitBeanLoader;
 import com.itdoes.common.core.spring.Springs;
@@ -98,7 +98,7 @@ public class EntityEnv implements ApplicationContextAware {
 		Validate.notNull(dao, "Cannot find bean for name [%s]", daoBeanName);
 
 		// Perm Fields
-		final List<Field> permFields = Reflections.getFieldsWithAnnotation(entityClass, PermField.class);
+		final List<Field> permFields = Reflections.getFieldsWithAnnotation(entityClass, FieldPerm.class);
 
 		// Upload Field
 		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, UploadField.class);

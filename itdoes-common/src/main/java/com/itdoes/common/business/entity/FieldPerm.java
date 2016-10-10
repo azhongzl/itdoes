@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
  */
 @Target({ FIELD })
 @Retention(RUNTIME)
-public @interface PermField {
-	PermFieldType type();
+public @interface FieldPerm {
+	FieldPermType type();
 }
