@@ -15,7 +15,6 @@ import com.itdoes.common.core.jdbc.CustomSqlTypes;
 import com.itdoes.common.core.jdbc.meta.Column;
 import com.itdoes.common.core.jdbc.meta.MetaParser;
 import com.itdoes.common.core.jdbc.meta.Table;
-import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Exceptions;
 import com.itdoes.common.core.util.Files;
 import com.itdoes.common.core.util.Reflections;
@@ -37,9 +36,10 @@ public class EntityGenerator {
 	private static final String TEMPLATE_DIR = "classpath:/" + Reflections.packageToPath(EntityGenerator.class);
 
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
-			String outputDir, String basePackageName, DbMappingConfig dbMappingConfig, List<String> tableSkipList,
-			List<String> permColumnList, List<String> uploadColumnList, String idGeneratedValue,
-			QueryCacheConfig queryCacheConfig, EhcacheConfig ehcacheConfig, SearchConfig searchConfig) {
+			String outputDir, String basePackageName, DbSkipConfig dbSkipConfig, DbMappingConfig dbMappingConfig,
+			DbPermConfig dbPermConfig, DbUploadConfig dbUploadConfig, DbSearchConfig dbSearchConfig,
+			String idGeneratedValue, EntityQueryCacheConfig entityQueryCacheConfig,
+			EntityEhcacheConfig entityEhcacheConfig) {
 		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
 
 		final String entityPackageName = basePackageName + ".entity";
@@ -50,37 +50,37 @@ public class EntityGenerator {
 		final String daoDir = getPackageDir(outputDir, daoPackageName);
 		final Template daoTemplate = getTemplate(freeMarkerConfig, "Dao.ftl");
 
-		final EhcacheModel ehcacheModel = ehcacheConfig.newModel();
+		final EhcacheModel ehcacheModel = entityEhcacheConfig.newModel();
 
 		final MetaParser parser = new MetaParser(jdbcDriver, jdbcUrl, jdbcUsername, jdbcPassword);
 		final List<Table> tableList = parser.parseTables();
 		for (Table table : tableList) {
 			final String tableName = table.getName();
 
-			if (tableSkipList.contains(tableName)) {
+			if (dbSkipConfig.isSkip(tableName)) {
 				continue;
 			}
 
 			// Generate Entity
 			final String entityClassName = mapEntityClassName(tableName, dbMappingConfig);
 			final List<EntityField> entityFieldList = mapEntityFieldList(tableName, table.getColumnList(),
-					dbMappingConfig, permColumnList, uploadColumnList, searchConfig);
+					dbMappingConfig, dbPermConfig, dbUploadConfig, dbSearchConfig);
 			final EntityModel entityModel = new EntityModel(entityPackageName, tableName,
-					searchConfig.getTableSearchConfig(tableName), entityClassName,
+					dbSearchConfig.getTableSearchConfig(tableName), entityClassName,
 					getSerialVersionUIDStr(entityClassName), entityFieldList, idGeneratedValue);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
 			writeJavaFile(entityDir, entityClassName, entityString);
 
 			// Generate Dao
 			final String daoClassName = EntityEnv.getDaoClassName(entityClassName);
-			final boolean queryCacheEnabled = queryCacheConfig.isEnabled(entityClassName);
+			final boolean queryCacheEnabled = entityQueryCacheConfig.isEnabled(entityClassName);
 			final DaoModel daoModel = new DaoModel(daoPackageName, entityPackageName, entityClassName, daoClassName,
 					queryCacheEnabled, mapIdType(tableName, entityFieldList));
 			final String daoString = FreeMarkers.render(daoTemplate, daoModel);
 			writeJavaFile(daoDir, daoClassName, daoString);
 
 			// Generate ehcache cache
-			final String cache = ehcacheConfig.newCache(entityPackageName, entityClassName);
+			final String cache = entityEhcacheConfig.newCache(entityPackageName, entityClassName);
 			ehcacheModel.addCache(cache);
 		}
 
@@ -132,27 +132,14 @@ public class EntityGenerator {
 	}
 
 	private static List<EntityField> mapEntityFieldList(String tableName, List<Column> columnList,
-			DbMappingConfig dbMappingConfig, List<String> permColumnList, List<String> uploadColumnList,
-			SearchConfig searchConfig) {
+			DbMappingConfig dbMappingConfig, DbPermConfig dbPermConfig, DbUploadConfig dbUploadConfig,
+			DbSearchConfig dbSearchConfig) {
 		final List<EntityField> entityFieldList = Lists.newArrayList();
 		for (Column column : columnList) {
-			boolean perm = false;
-			if (!Collections3.isEmpty(permColumnList)) {
-				if (permColumnList.contains(getColumnKey(tableName, column.getName()))) {
-					perm = true;
-				}
-			}
-
-			boolean upload = false;
-			if (!Collections3.isEmpty(uploadColumnList)) {
-				if (uploadColumnList.contains(getColumnKey(tableName, column.getName()))) {
-					upload = true;
-				}
-			}
-
 			final EntityField entityField = new EntityField(mapFieldName(tableName, column.getName(), dbMappingConfig),
-					mapFieldType(column), column, perm, upload,
-					searchConfig.getColumnSearchConfig(tableName, column.getName()));
+					mapFieldType(column), column, dbPermConfig.isPermField(tableName, column.getName()),
+					dbUploadConfig.isUploadField(tableName, column.getName()),
+					dbSearchConfig.getColumnSearchConfig(tableName, column.getName()));
 			entityFieldList.add(entityField);
 		}
 
@@ -162,10 +149,6 @@ public class EntityGenerator {
 	private static String mapFieldName(String tableName, String columnName, DbMappingConfig dbMappingConfig) {
 		final String mappingFieldName = dbMappingConfig.toField(tableName, columnName);
 		return mappingFieldName != null ? mappingFieldName : Strings.underscoreToCamel(columnName);
-	}
-
-	private static String getColumnKey(String tableName, String columnName) {
-		return tableName + "." + columnName;
 	}
 
 	private static String mapFieldType(Column column) {
