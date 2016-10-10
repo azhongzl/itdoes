@@ -66,7 +66,7 @@ public class EntityGeneratorHelper {
 
 		@Override
 		public String getEntityPerm(String tableName) {
-			return pl.getStringMust(new String[] { tableName, DEFAULT_ENTITY });
+			return pl.getStringMay(new String[] { tableName, DEFAULT_ENTITY }, null);
 		}
 
 		@Override
@@ -76,7 +76,7 @@ public class EntityGeneratorHelper {
 				return null;
 			}
 
-			return pl.getStringMust(new String[] { key, DEFAULT_FIELD });
+			return pl.getStringMay(new String[] { key, DEFAULT_FIELD }, null);
 		}
 	}
 
@@ -96,7 +96,7 @@ public class EntityGeneratorHelper {
 				return null;
 			}
 
-			return pl.getStringMust(new String[] { tableName, DEFAULT_ENTITY });
+			return pl.getStringMay(new String[] { tableName, DEFAULT_ENTITY }, null);
 		}
 
 		@Override
@@ -106,7 +106,7 @@ public class EntityGeneratorHelper {
 				return null;
 			}
 
-			return pl.getStringMust(new String[] { key, DEFAULT_FIELD });
+			return pl.getStringMay(new String[] { key, DEFAULT_FIELD }, null);
 		}
 	}
 
