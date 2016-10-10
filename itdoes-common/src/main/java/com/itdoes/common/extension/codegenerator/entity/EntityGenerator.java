@@ -37,8 +37,8 @@ public class EntityGenerator {
 
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
 			String outputDir, String basePackageName, String idGeneratedValue, DbSkipConfig dbSkipConfig,
-			DbMappingConfig dbMappingConfig, DbPermConfig dbPermConfig, DbUploadConfig dbUploadConfig,
-			DbSearchConfig dbSearchConfig, EntityQueryCacheConfig entityQueryCacheConfig,
+			DbMappingConfig dbMappingConfig, DbPermConfig dbPermConfig, DbSearchConfig dbSearchConfig,
+			DbUploadConfig dbUploadConfig, EntityQueryCacheConfig entityQueryCacheConfig,
 			EntityEhcacheConfig entityEhcacheConfig) {
 		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
 
@@ -64,10 +64,10 @@ public class EntityGenerator {
 			// Generate Entity
 			final String entityClassName = mapEntityClassName(tableName, dbMappingConfig);
 			final List<EntityField> entityFieldList = mapEntityFieldList(tableName, table.getColumnList(),
-					dbMappingConfig, dbPermConfig, dbUploadConfig, dbSearchConfig);
+					dbMappingConfig, dbPermConfig, dbSearchConfig, dbUploadConfig);
 			final EntityModel entityModel = new EntityModel(entityPackageName, tableName,
-					dbSearchConfig.getEntitySearch(tableName), entityClassName, getSerialVersionUIDStr(entityClassName),
-					entityFieldList, idGeneratedValue);
+					dbPermConfig.getEntityPerm(tableName), dbSearchConfig.getEntitySearch(tableName), entityClassName,
+					getSerialVersionUIDStr(entityClassName), entityFieldList, idGeneratedValue);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
 			writeJavaFile(entityDir, entityClassName, entityString);
 
@@ -132,14 +132,14 @@ public class EntityGenerator {
 	}
 
 	private static List<EntityField> mapEntityFieldList(String tableName, List<Column> columnList,
-			DbMappingConfig dbMappingConfig, DbPermConfig dbPermConfig, DbUploadConfig dbUploadConfig,
-			DbSearchConfig dbSearchConfig) {
+			DbMappingConfig dbMappingConfig, DbPermConfig dbPermConfig, DbSearchConfig dbSearchConfig,
+			DbUploadConfig dbUploadConfig) {
 		final List<EntityField> entityFieldList = Lists.newArrayList();
 		for (Column column : columnList) {
 			final EntityField entityField = new EntityField(mapFieldName(tableName, column.getName(), dbMappingConfig),
-					mapFieldType(column), column, dbPermConfig.isPermField(tableName, column.getName()),
-					dbUploadConfig.isUploadField(tableName, column.getName()),
-					dbSearchConfig.getFieldSearch(tableName, column.getName()));
+					mapFieldType(column), column, dbPermConfig.getFieldPerm(tableName, column.getName()),
+					dbSearchConfig.getFieldSearch(tableName, column.getName()),
+					dbUploadConfig.isFieldUpload(tableName, column.getName()));
 			entityFieldList.add(entityField);
 		}
 

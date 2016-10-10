@@ -18,10 +18,8 @@ import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.business.entity.PermField;
 import com.itdoes.common.business.entity.UploadField;
-import com.itdoes.common.core.cglib.CglibMapper;
 import com.itdoes.common.core.spring.LazyInitBeanLoader;
 import com.itdoes.common.core.spring.Springs;
-import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Reflections;
 
 /**
@@ -101,10 +99,6 @@ public class EntityEnv implements ApplicationContextAware {
 
 		// Perm Fields
 		final List<Field> permFields = Reflections.getFieldsWithAnnotation(entityClass, PermField.class);
-		// (Optional) Initialize for performance concern, can be removed if it is not readable
-		if (!Collections3.isEmpty(permFields)) {
-			CglibMapper.getBeanCopier(entityClass);
-		}
 
 		// Upload Field
 		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, UploadField.class);

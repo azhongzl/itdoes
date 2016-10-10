@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import com.itdoes.common.business.dao.BaseDao;
+import com.itdoes.common.core.cglib.CglibMapper;
 import com.itdoes.common.core.util.Collections3;
 
 /**
@@ -24,6 +25,11 @@ public class EntityPair<T, ID extends Serializable> {
 		this.dao = dao;
 		this.permFields = permFields;
 		this.uploadField = uploadField;
+
+		// (Optional) Initialize for performance concern, can be removed if it is not readable
+		if (needCopyOldEntity()) {
+			CglibMapper.getBeanCopier(entityClass);
+		}
 	}
 
 	public Class<T> getEntityClass() {

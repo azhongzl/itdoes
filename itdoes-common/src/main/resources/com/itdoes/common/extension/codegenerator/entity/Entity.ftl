@@ -18,6 +18,9 @@ import com.itdoes.common.business.entity.BaseEntity;
 @Entity
 @Table(name = "${tableName}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+<#if perm??>
+${perm}
+</#if>
 <#if search??>
 ${search}
 </#if>
@@ -29,8 +32,8 @@ public class ${className} extends BaseEntity {
 	@Id
 	${idGeneratedValue}
   </#if>
-  <#if field.perm>
-	@com.itdoes.common.business.entity.PermField
+  <#if field.perm??>
+	${field.perm}
   </#if>
   <#if field.upload>
 	@com.itdoes.common.business.entity.UploadField

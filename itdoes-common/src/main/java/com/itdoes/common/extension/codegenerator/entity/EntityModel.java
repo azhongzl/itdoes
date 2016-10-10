@@ -11,47 +11,49 @@ import com.itdoes.common.extension.codegenerator.Field;
 public class EntityModel {
 	public static class EntityField extends Field {
 		private final Column column;
-		private final boolean perm;
-		private final boolean upload;
+		private final String perm;
 		private final String search;
+		private final boolean upload;
 
-		public EntityField(String name, String type, Column column, boolean perm, boolean upload, String search) {
+		public EntityField(String name, String type, Column column, String perm, String search, boolean upload) {
 			super(name, type);
 			this.column = column;
 			this.perm = perm;
-			this.upload = upload;
 			this.search = search;
+			this.upload = upload;
 		}
 
 		public Column getColumn() {
 			return column;
 		}
 
-		public boolean isPerm() {
+		public String getPerm() {
 			return perm;
-		}
-
-		public boolean isUpload() {
-			return upload;
 		}
 
 		public String getSearch() {
 			return search;
 		}
+
+		public boolean isUpload() {
+			return upload;
+		}
 	}
 
 	private final String packageName;
 	private final String tableName;
+	private final String perm;
 	private final String search;
 	private final String className;
 	private final String serialVersionUID;
 	private final List<EntityField> fieldList;
 	private final String idGeneratedValue;
 
-	public EntityModel(String packageName, String tableName, String search, String className, String serialVersionUID,
-			List<EntityField> fieldList, String idGeneratedValue) {
+	public EntityModel(String packageName, String tableName, String perm, String search, String className,
+			String serialVersionUID, List<EntityField> fieldList, String idGeneratedValue) {
 		this.packageName = packageName;
 		this.tableName = tableName;
+		this.perm = perm;
 		this.search = search;
 		this.className = className;
 		this.serialVersionUID = serialVersionUID;
@@ -65,6 +67,10 @@ public class EntityModel {
 
 	public String getTableName() {
 		return tableName;
+	}
+
+	public String getPerm() {
+		return perm;
 	}
 
 	public String getSearch() {
