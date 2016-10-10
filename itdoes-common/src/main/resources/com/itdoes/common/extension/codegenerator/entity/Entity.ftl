@@ -18,8 +18,8 @@ import com.itdoes.common.business.entity.BaseEntity;
 @Entity
 @Table(name = "${tableName}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-<#if searchConfig??>
-${searchConfig}
+<#if search??>
+${search}
 </#if>
 public class ${className} extends BaseEntity {
 	private static final long serialVersionUID = ${serialVersionUID}L;
@@ -35,8 +35,8 @@ public class ${className} extends BaseEntity {
   <#if field.upload>
 	@com.itdoes.common.business.entity.UploadField
   </#if>
-  <#if field.searchConfig??>
-	${field.searchConfig}
+  <#if field.search??>
+	${field.search}
   </#if>
 	@Column(name = "${field.column.name}")
 	private ${field.type} ${field.name};

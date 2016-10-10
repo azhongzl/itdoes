@@ -4,7 +4,7 @@ package com.itdoes.common.extension.codegenerator.entity;
  * @author Jalen Zhong
  */
 public interface DbMappingConfig {
-	String toEntity(String tableName);
+	String getEntity(String tableName);
 
-	String toField(String tableName, String columnName);
+	String getField(String tableName, String columnName);
 }

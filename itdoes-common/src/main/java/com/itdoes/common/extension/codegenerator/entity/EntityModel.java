@@ -13,14 +13,14 @@ public class EntityModel {
 		private final Column column;
 		private final boolean perm;
 		private final boolean upload;
-		private final String searchConfig;
+		private final String search;
 
-		public EntityField(String name, String type, Column column, boolean perm, boolean upload, String searchConfig) {
+		public EntityField(String name, String type, Column column, boolean perm, boolean upload, String search) {
 			super(name, type);
 			this.column = column;
 			this.perm = perm;
 			this.upload = upload;
-			this.searchConfig = searchConfig;
+			this.search = search;
 		}
 
 		public Column getColumn() {
@@ -35,24 +35,24 @@ public class EntityModel {
 			return upload;
 		}
 
-		public String getSearchConfig() {
-			return searchConfig;
+		public String getSearch() {
+			return search;
 		}
 	}
 
 	private final String packageName;
 	private final String tableName;
-	private final String searchConfig;
+	private final String search;
 	private final String className;
 	private final String serialVersionUID;
 	private final List<EntityField> fieldList;
 	private final String idGeneratedValue;
 
-	public EntityModel(String packageName, String tableName, String searchConfig, String className,
-			String serialVersionUID, List<EntityField> fieldList, String idGeneratedValue) {
+	public EntityModel(String packageName, String tableName, String search, String className, String serialVersionUID,
+			List<EntityField> fieldList, String idGeneratedValue) {
 		this.packageName = packageName;
 		this.tableName = tableName;
-		this.searchConfig = searchConfig;
+		this.search = search;
 		this.className = className;
 		this.serialVersionUID = serialVersionUID;
 		this.fieldList = fieldList;
@@ -67,8 +67,8 @@ public class EntityModel {
 		return tableName;
 	}
 
-	public String getSearchConfig() {
-		return searchConfig;
+	public String getSearch() {
+		return search;
 	}
 
 	public String getClassName() {

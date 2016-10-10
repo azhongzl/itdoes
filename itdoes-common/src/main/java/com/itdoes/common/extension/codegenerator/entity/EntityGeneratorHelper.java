@@ -31,7 +31,7 @@ public class EntityGeneratorHelper {
 		}
 
 		@Override
-		public boolean isSkip(String tableName) {
+		public boolean isTableSkip(String tableName) {
 			return lineList.contains(tableName);
 		}
 	}
@@ -44,12 +44,12 @@ public class EntityGeneratorHelper {
 		}
 
 		@Override
-		public String toEntity(String tableName) {
+		public String getEntity(String tableName) {
 			return pl.getStringMay(tableName, null);
 		}
 
 		@Override
-		public String toField(String tableName, String columnName) {
+		public String getField(String tableName, String columnName) {
 			return pl.getStringMay(getColumnKey(tableName, columnName), null);
 		}
 	}
@@ -91,7 +91,7 @@ public class EntityGeneratorHelper {
 		}
 
 		@Override
-		public String getTableSearchConfig(String tableName) {
+		public String getEntitySearch(String tableName) {
 			if (!pl.getProperties().containsKey(tableName)) {
 				return null;
 			}
@@ -100,7 +100,7 @@ public class EntityGeneratorHelper {
 		}
 
 		@Override
-		public String getColumnSearchConfig(String tableName, String columnName) {
+		public String getFieldSearch(String tableName, String columnName) {
 			final String key = getColumnKey(tableName, columnName);
 			if (!pl.getProperties().containsKey(key)) {
 				return null;
