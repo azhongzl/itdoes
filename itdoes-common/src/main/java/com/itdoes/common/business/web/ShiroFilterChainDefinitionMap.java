@@ -24,7 +24,7 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 	@Override
 	protected Map<String, String> getDynamicDefinitions() {
 		final Set<String> entityNames = env.getPairMap().keySet();
-		final Map<String, String> dynamicDefinitions = new LinkedHashMap<String, String>(entityNames.size() * 6);
+		final Map<String, String> dynamicDefinitions = new LinkedHashMap<String, String>(entityNames.size() * 9);
 		for (String entityName : entityNames) {
 			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_FIND);
 			addDynamicDefinition(dynamicDefinitions, entityName, EntityBaseController.ENTITY_COMMAND_FIND_ONE);
