@@ -81,8 +81,8 @@ public class EntityGeneratorHelper {
 	}
 
 	private static class FileDbSearchConfig implements DbSearchConfig {
-		private static final String DEFAULT_TABLE = "_default_table_";
-		private static final String DEFAULT_COLUMN = "_default_column_";
+		private static final String DEFAULT_ENTITY = "_default_entity_";
+		private static final String DEFAULT_FIELD = "_default_field_";
 
 		private final PropertiesLoader pl;
 
@@ -96,7 +96,7 @@ public class EntityGeneratorHelper {
 				return null;
 			}
 
-			return pl.getStringMust(new String[] { tableName, DEFAULT_TABLE });
+			return pl.getStringMust(new String[] { tableName, DEFAULT_ENTITY });
 		}
 
 		@Override
@@ -106,11 +106,13 @@ public class EntityGeneratorHelper {
 				return null;
 			}
 
-			return pl.getStringMust(new String[] { key, DEFAULT_COLUMN });
+			return pl.getStringMust(new String[] { key, DEFAULT_FIELD });
 		}
 	}
 
 	private static class FileEntityQueryCacheConfig implements EntityQueryCacheConfig {
+		private static final String DEFAULT_QUERY_CACHE = "_default_";
+
 		private final PropertiesLoader pl;
 
 		public FileEntityQueryCacheConfig(PropertiesLoader pl) {
@@ -119,12 +121,12 @@ public class EntityGeneratorHelper {
 
 		@Override
 		public boolean isEnabled(String entityClassName) {
-			return pl.getBooleanMust(
-					new String[] { "queryCache." + entityClassName + ".enabled", "default.queryCache.enabled" });
+			return pl.getBooleanMust(new String[] { entityClassName, DEFAULT_QUERY_CACHE });
 		}
 	}
 
 	private static class FileEntityEhcacheConfig implements EntityEhcacheConfig {
+		private static final String CACHE_TEMPLATE = "_cache_template_";
 		private static final String CACHE_NAME_PLACEHOLDER = "_cache_name_placeholder_";
 
 		private final PropertiesLoader pl;
@@ -145,7 +147,7 @@ public class EntityGeneratorHelper {
 
 		@Override
 		public String newCache(String entityPackageName, String entityClassName) {
-			final String cache = pl.getStringMust(new String[] { "cache." + entityClassName, "cacheTemplate" })
+			final String cache = pl.getStringMust(new String[] { entityClassName, CACHE_TEMPLATE })
 					.replace(CACHE_NAME_PLACEHOLDER, entityPackageName + "." + entityClassName);
 			return cache;
 		}
