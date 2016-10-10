@@ -9,6 +9,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.itdoes.common.business.entity.BaseEntity;
+import com.itdoes.common.business.entity.EntityPerm;
+import com.itdoes.common.business.entity.EntityPermType;
 
 /**
  * This code is auto-generated.

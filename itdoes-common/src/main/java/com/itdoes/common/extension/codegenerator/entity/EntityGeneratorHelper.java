@@ -66,10 +66,6 @@ public class EntityGeneratorHelper {
 
 		@Override
 		public String getEntityPerm(String tableName) {
-			if (!pl.getProperties().containsKey(tableName)) {
-				return null;
-			}
-
 			return pl.getStringMust(new String[] { tableName, DEFAULT_ENTITY });
 		}
 
