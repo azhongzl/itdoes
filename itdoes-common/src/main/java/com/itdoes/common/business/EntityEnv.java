@@ -9,11 +9,11 @@ import javax.annotation.PostConstruct;
 import javax.persistence.Id;
 
 import org.apache.commons.lang3.Validate;
-import org.assertj.core.util.Lists;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
