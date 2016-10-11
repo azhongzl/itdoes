@@ -9,7 +9,7 @@ import com.itdoes.common.core.util.TxtLoader;
  * @author Jalen Zhong
  */
 public class EntityGeneratorHelper {
-	private static final String OUTPUT_DIR = "/tmp/codegenerator/entity";
+	private static final String DEFAULT_OUTPUT_DIR = "/tmp/codegenerator/entity";
 	private static final String CONFIG_DIR = "classpath:/codegenerator/entity/";
 	private static final String DB_SKIP_FILE = CONFIG_DIR + "db.skip.ini";
 	private static final String DB_MAPPING_FILE = CONFIG_DIR + "db.mapping.properties";
@@ -166,6 +166,10 @@ public class EntityGeneratorHelper {
 	}
 
 	public static void generateEntities(String basePackageName, String idGeneratedValue) {
+		generateEntities(DEFAULT_OUTPUT_DIR, basePackageName, idGeneratedValue);
+	}
+
+	public static void generateEntities(String outputDir, String basePackageName, String idGeneratedValue) {
 		final PropertiesLoader pl = new PropertiesLoader("classpath:/application.properties",
 				"classpath:/application.local.properties");
 		final DbSkipConfig dbSkipConfig = new FileDbSkipConfig(new TxtLoader(DB_SKIP_FILE));
@@ -179,7 +183,7 @@ public class EntityGeneratorHelper {
 				new PropertiesLoader(ENTITY_EHCACHE_FILE));
 
 		EntityGenerator.generateEntities(pl.getStringMust("jdbc.driver"), pl.getStringMust("jdbc.url"),
-				pl.getStringMust("jdbc.username"), pl.getStringMust("jdbc.password"), OUTPUT_DIR, basePackageName,
+				pl.getStringMust("jdbc.username"), pl.getStringMust("jdbc.password"), outputDir, basePackageName,
 				idGeneratedValue, dbSkipConfig, dbMappingConfig, dbPermConfig, dbSearchConfig, dbUploadConfig,
 				entityQueryCacheConfig, entityEhcacheConfig);
 	}
