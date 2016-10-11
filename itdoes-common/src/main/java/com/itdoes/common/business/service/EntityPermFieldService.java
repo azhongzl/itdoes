@@ -47,22 +47,39 @@ public class EntityPermFieldService extends BaseService {
 	}
 
 	private static <T, ID extends Serializable> void handlePermFields(EntityPair<T, ID> pair, PermFieldHandler handler,
-			T entity, T oldEntity) {
-		if (!pair.hasPermField()) {
-			return;
+			T entity, T oldEntity, boolean read) {
+		if (read) {
+			if (!pair.hasReadPermField()) {
+				return;
+			}
+		} else {
+			if (!pair.hasWritePermField()) {
+				return;
+			}
 		}
 
 		final Subject subject = SecurityUtils.getSubject();
 
 		final String entityName = pair.getEntityClass().getSimpleName();
-		for (Field permField : pair.getPermFieldList()) {
+		final List<Field> permFieldList = read ? pair.getReadPermFieldList() : pair.getWritePermFieldList();
+		for (Field permField : permFieldList) {
 			final String permFieldName = permField.getName();
 			handler.handle(subject, entityName, permFieldName, entity, oldEntity);
 		}
 	}
 
+	private static <T, ID extends Serializable> void handleReadPermFields(EntityPair<T, ID> pair,
+			PermFieldHandler handler, T entity, T oldEntity) {
+		handlePermFields(pair, handler, entity, oldEntity, true);
+	}
+
+	private static <T, ID extends Serializable> void handleWritePermFields(EntityPair<T, ID> pair,
+			PermFieldHandler handler, T entity, T oldEntity) {
+		handlePermFields(pair, handler, entity, oldEntity, false);
+	}
+
 	public <T, ID extends Serializable> void handleGetPermFields(EntityPair<T, ID> pair, List<T> entityList) {
-		if (!pair.hasPermField()) {
+		if (!pair.hasReadPermField()) {
 			return;
 		}
 
@@ -72,14 +89,14 @@ public class EntityPermFieldService extends BaseService {
 	}
 
 	public <T, ID extends Serializable> void handleGetPermFields(EntityPair<T, ID> pair, T entity) {
-		handlePermFields(pair, PermFieldHandler.GET, entity, null);
+		handleReadPermFields(pair, PermFieldHandler.GET, entity, null);
 	}
 
 	public <T, ID extends Serializable> void handlePostPermFields(EntityPair<T, ID> pair, T entity) {
-		handlePermFields(pair, PermFieldHandler.POST, entity, null);
+		handleWritePermFields(pair, PermFieldHandler.POST, entity, null);
 	}
 
 	public <T, ID extends Serializable> void handlePutPermFields(EntityPair<T, ID> pair, T entity, T oldEntity) {
-		handlePermFields(pair, PermFieldHandler.PUT, entity, oldEntity);
+		handleWritePermFields(pair, PermFieldHandler.PUT, entity, oldEntity);
 	}
 }

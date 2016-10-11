@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.Id;
 
 import org.apache.commons.lang3.Validate;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -18,9 +19,11 @@ import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.business.entity.EntityPerm;
 import com.itdoes.common.business.entity.FieldPerm;
+import com.itdoes.common.business.entity.FieldPermType;
 import com.itdoes.common.business.entity.UploadField;
 import com.itdoes.common.core.spring.LazyInitBeanLoader;
 import com.itdoes.common.core.spring.Springs;
+import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Reflections;
 
 /**
@@ -104,10 +107,31 @@ public class EntityEnv implements ApplicationContextAware {
 
 		// Field Perm
 		final List<Field> permFieldList = Reflections.getFieldsWithAnnotation(entityClass, FieldPerm.class);
+		final List<Field> readPermFieldList = Lists.newArrayList();
+		final List<Field> writePermFieldList = Lists.newArrayList();
+		if (!Collections3.isEmpty(permFieldList)) {
+			for (Field permField : permFieldList) {
+				final FieldPerm fieldPerm = permField.getAnnotation(FieldPerm.class);
+				if (fieldPerm != null) {
+					final FieldPermType fieldPermType = fieldPerm.type();
+					if (fieldPermType != null) {
+						if (fieldPermType.equals(FieldPermType.ALL)) {
+							readPermFieldList.add(permField);
+							writePermFieldList.add(permField);
+						} else if (fieldPermType.equals(FieldPermType.READ)) {
+							readPermFieldList.add(permField);
+						} else if (fieldPermType.equals(FieldPermType.WRITE)) {
+							writePermFieldList.add(permField);
+						}
+					}
+				}
+			}
+		}
 
 		// Field Upload
 		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, UploadField.class);
 
-		pairMap.put(key, new EntityPair<T, ID>(entityClass, idField, dao, entityPerm, permFieldList, uploadField));
+		pairMap.put(key, new EntityPair<T, ID>(entityClass, idField, dao, entityPerm, readPermFieldList,
+				writePermFieldList, uploadField));
 	}
 }

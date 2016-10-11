@@ -17,16 +17,18 @@ public class EntityPair<T, ID extends Serializable> {
 	private final Field idField;
 	private final BaseDao<T, ID> dao;
 	private final EntityPerm entityPerm;
-	private final List<Field> permFieldList;
+	private final List<Field> readPermFieldList;
+	private final List<Field> writePermFieldList;
 	private final Field uploadField;
 
 	public EntityPair(Class<T> entityClass, Field idField, BaseDao<T, ID> dao, EntityPerm entityPerm,
-			List<Field> permFieldList, Field uploadField) {
+			List<Field> readPermFieldList, List<Field> writePermFieldList, Field uploadField) {
 		this.entityClass = entityClass;
 		this.idField = idField;
 		this.dao = dao;
 		this.entityPerm = entityPerm;
-		this.permFieldList = permFieldList;
+		this.readPermFieldList = readPermFieldList;
+		this.writePermFieldList = writePermFieldList;
 		this.uploadField = uploadField;
 
 		// (Optional) Initialize for performance concern, can be removed if it is not readable
@@ -51,19 +53,27 @@ public class EntityPair<T, ID extends Serializable> {
 		return entityPerm;
 	}
 
-	public List<Field> getPermFieldList() {
-		return permFieldList;
+	public List<Field> getReadPermFieldList() {
+		return readPermFieldList;
+	}
+
+	public List<Field> getWritePermFieldList() {
+		return writePermFieldList;
 	}
 
 	public Field getUploadField() {
 		return uploadField;
 	}
 
-	public boolean hasPermField() {
-		return !Collections3.isEmpty(permFieldList);
+	public boolean hasReadPermField() {
+		return !Collections3.isEmpty(readPermFieldList);
+	}
+
+	public boolean hasWritePermField() {
+		return !Collections3.isEmpty(writePermFieldList);
 	}
 
 	public boolean needCopyOldEntity() {
-		return hasPermField();
+		return hasWritePermField();
 	}
 }
