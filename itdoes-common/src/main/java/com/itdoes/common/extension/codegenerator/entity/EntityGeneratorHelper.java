@@ -19,21 +19,22 @@ public class EntityGeneratorHelper {
 	private static final String ENTITY_QUERY_CACHE_FILE = CONFIG_DIR + "entity.queryCache.properties";
 	private static final String ENTITY_EHCACHE_FILE = CONFIG_DIR + "entity.ehcache.properties";
 
-	private static final String DEFAULT_SIGN = "_";
-
 	private static String getColumnKey(String tableName, String columnName) {
 		return tableName + "." + columnName;
 	}
 
 	private static String getValue(PropertiesLoader pl, String key, String defaultKey, boolean useDefaultIfNotDefined) {
-		final String defaultValue = pl.getStringMay(defaultKey, null);
-
 		if (!pl.containsKey(key)) {
-			return useDefaultIfNotDefined ? defaultValue : null;
+			return useDefaultIfNotDefined ? pl.getStringMay(defaultKey, null) : null;
 		}
 
 		final String value = pl.getStringMay(key, null);
-		return DEFAULT_SIGN.equals(value) ? defaultValue : value;
+		if (value == null) {
+			return null;
+		}
+
+		final String valueFromValue = pl.getStringMay(value, null);
+		return valueFromValue != null ? valueFromValue : value;
 	}
 
 	private static class FileDbSkipConfig implements DbSkipConfig {
@@ -138,7 +139,7 @@ public class EntityGeneratorHelper {
 	}
 
 	private static class FileEntityEhcacheConfig implements EntityEhcacheConfig {
-		private static final String CACHE_TEMPLATE = "_cache_template_";
+		private static final String DEFAULT_CACHE_TEMPLATE = "_default_cache_template_";
 		private static final String CACHE_NAME_PLACEHOLDER = "_cache_name_placeholder_";
 
 		private final PropertiesLoader pl;
@@ -159,9 +160,12 @@ public class EntityGeneratorHelper {
 
 		@Override
 		public String newCache(String entityPackageName, String entityClassName) {
-			final String cache = pl.getStringMust(new String[] { entityClassName, CACHE_TEMPLATE })
-					.replace(CACHE_NAME_PLACEHOLDER, entityPackageName + "." + entityClassName);
-			return cache;
+			final String cache = getValue(pl, entityClassName, DEFAULT_CACHE_TEMPLATE, true);
+			if (cache == null) {
+				return null;
+			}
+
+			return cache.replace(CACHE_NAME_PLACEHOLDER, entityPackageName + "." + entityClassName);
 		}
 	}
 

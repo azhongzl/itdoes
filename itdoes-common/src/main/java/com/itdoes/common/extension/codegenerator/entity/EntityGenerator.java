@@ -81,7 +81,9 @@ public class EntityGenerator {
 
 			// Generate ehcache cache
 			final String cache = entityEhcacheConfig.newCache(entityPackageName, entityClassName);
-			ehcacheModel.addCache(cache);
+			if (cache != null) {
+				ehcacheModel.addCache(cache);
+			}
 		}
 
 		final String ehcacheDir = Files.toUnixPath(outputDir);
