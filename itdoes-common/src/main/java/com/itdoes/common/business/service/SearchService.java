@@ -3,6 +3,7 @@ package com.itdoes.common.business.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -31,6 +32,11 @@ public class SearchService extends BaseService {
 
 	@PersistenceContext
 	private EntityManager em;
+
+	@PostConstruct
+	public void myInit() {
+		createIndex();
+	}
 
 	public void createIndex() {
 		LOGGER.info("Search engine index creating...");
