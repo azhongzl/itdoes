@@ -37,7 +37,7 @@ public class EntityEnv implements ApplicationContextAware {
 
 	private boolean daoLazyInit;
 
-	private final Map<String, EntityPair<?, ? extends Serializable>> pairMap = Maps.newHashMap();
+	private Map<String, EntityPair<?, ? extends Serializable>> pairMap;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -69,10 +69,12 @@ public class EntityEnv implements ApplicationContextAware {
 	}
 
 	private void initPairMap() {
-		final List<Class<?>> entityClasses = Reflections.getClasses(entityPackage,
+		final List<Class<?>> entityClassList = Reflections.getClasses(entityPackage,
 				new Reflections.ClassFilter.SuperClassFilter(BaseEntity.class), EntityEnv.class.getClassLoader());
 
-		for (Class<?> entityClass : entityClasses) {
+		pairMap = Maps.newHashMapWithExpectedSize(entityClassList.size());
+
+		for (Class<?> entityClass : entityClassList) {
 			initPair(entityClass);
 		}
 	}
