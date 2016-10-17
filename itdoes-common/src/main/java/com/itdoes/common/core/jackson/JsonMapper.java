@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 public class JsonMapper {
 	private final ObjectMapper mapper;
 
-	protected JsonMapper(ObjectMapper mapper) {
+	public JsonMapper(ObjectMapper mapper) {
 		this.mapper = mapper;
 	}
 
