@@ -8,6 +8,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.collect.Maps;
 import com.google.common.net.HttpHeaders;
 import com.itdoes.common.core.Constants;
@@ -21,6 +23,8 @@ import eu.bitwalker.useragentutils.UserAgent;
  */
 public class Webs {
 	public static final long ONE_YEAR_SECONDS = 365 * 24 * 60 * 60;
+
+	public static final String XML_HTTP_REQUEST = "XMLHttpRequest";
 
 	public static void setExpiresHeader(HttpServletResponse response, long expiresSeconds) {
 		// HTTP 1.0
@@ -126,6 +130,19 @@ public class Webs {
 
 	public static String getRealPath(ServletContext context, String relativePath) {
 		return context.getRealPath(relativePath);
+	}
+
+	public static String getFullRequestUrl(HttpServletRequest request) {
+		final StringBuffer requestUrl = request.getRequestURL();
+		final String queryString = request.getQueryString();
+		if (StringUtils.isBlank(queryString)) {
+			return requestUrl.toString();
+		}
+		return requestUrl.append('?').append(queryString).toString();
+	}
+
+	public static boolean isAjaxRequest(HttpServletRequest request) {
+		return XML_HTTP_REQUEST.equalsIgnoreCase(request.getHeader(HttpHeaders.X_REQUESTED_WITH));
 	}
 
 	private Webs() {
