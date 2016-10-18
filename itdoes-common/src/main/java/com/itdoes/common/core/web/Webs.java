@@ -135,10 +135,8 @@ public class Webs {
 	public static String getFullRequestUrl(HttpServletRequest request) {
 		final StringBuffer requestUrl = request.getRequestURL();
 		final String queryString = request.getQueryString();
-		if (StringUtils.isBlank(queryString)) {
-			return requestUrl.toString();
-		}
-		return requestUrl.append('?').append(queryString).toString();
+		return StringUtils.isBlank(queryString) ? requestUrl.toString()
+				: requestUrl.append('?').append(queryString).toString();
 	}
 
 	public static boolean isAjaxRequest(HttpServletRequest request) {
