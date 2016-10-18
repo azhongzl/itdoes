@@ -15,7 +15,7 @@ import com.itdoes.common.core.web.Webs;
 /**
  * @author Jalen Zhong
  */
-public class JsonFormAuthenticationFilter extends FormAuthenticationFilter {
+public class AjaxFormAuthenticationFilter extends FormAuthenticationFilter {
 	@Override
 	protected void saveRequest(ServletRequest request) {
 		final HttpServletRequest httpRequest = WebUtils.toHttp(request);

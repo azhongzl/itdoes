@@ -6,7 +6,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.shiro.web.filter.authc.UserFilter;
+import org.apache.shiro.web.filter.authz.PermissionsAuthorizationFilter;
 import org.apache.shiro.web.util.WebUtils;
 
 import com.itdoes.common.core.shiro.Shiros;
@@ -15,7 +15,7 @@ import com.itdoes.common.core.web.Webs;
 /**
  * @author Jalen Zhong
  */
-public class JsonUserFilter extends UserFilter {
+public class AjaxPermissionsAuthorizationFilter extends PermissionsAuthorizationFilter {
 	@Override
 	protected void saveRequest(ServletRequest request) {
 		final HttpServletRequest httpRequest = WebUtils.toHttp(request);
