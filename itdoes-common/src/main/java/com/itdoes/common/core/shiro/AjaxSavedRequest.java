@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.shiro.web.util.SavedRequest;
 
-import com.google.common.net.HttpHeaders;
+import com.itdoes.common.core.web.Webs;
 
 /**
  * @author Jalen Zhong
@@ -17,7 +17,7 @@ public class AjaxSavedRequest extends SavedRequest {
 	public AjaxSavedRequest(HttpServletRequest request) {
 		super(request);
 
-		this.referer = request.getHeader(HttpHeaders.REFERER);
+		this.referer = Webs.getReferer(request);
 	}
 
 	public String getReferer() {

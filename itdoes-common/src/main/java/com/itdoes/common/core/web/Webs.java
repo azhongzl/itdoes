@@ -143,6 +143,10 @@ public class Webs {
 		return XML_HTTP_REQUEST.equalsIgnoreCase(request.getHeader(HttpHeaders.X_REQUESTED_WITH));
 	}
 
+	public static String getReferer(HttpServletRequest request) {
+		return request.getHeader(HttpHeaders.REFERER);
+	}
+
 	private Webs() {
 	}
 }
