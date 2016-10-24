@@ -73,6 +73,10 @@ public class Strings {
 		return value.split(separator, -1);
 	}
 
+	public static String keepOneSpace(String value) {
+		return value.trim().replaceAll("[\\s|\t]+", " ");
+	}
+
 	private Strings() {
 	}
 }
