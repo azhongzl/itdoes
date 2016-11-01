@@ -96,7 +96,7 @@ public class Selenium2 {
 	}
 
 	public WebElement findElement(By by, int index) {
-		return findElements(by).get(index);
+		return findElement(ByIndex.index(by, index));
 	}
 
 	public List<WebElement> findElements(By by) {
@@ -354,123 +354,83 @@ public class Selenium2 {
 	}
 
 	public WebElement waitVisible(By by) {
-		return waitVisible(findElement(by));
-	}
-
-	public WebElement waitVisibleIndex(By by, int index) {
-		return waitVisible(findElement(by, index));
-	}
-
-	public WebElement waitVisible(WebElement element) {
-		return waitVisible(element, defaultTimeout);
+		return waitVisible(by, defaultTimeout);
 	}
 
 	public WebElement waitVisible(By by, int timeout) {
-		return waitVisible(findElement(by), timeout);
+		return waitUntil(ExpectedConditions.visibilityOfElementLocated(by), timeout);
 	}
 
-	public WebElement waitVisible(By by, int index, int timeout) {
-		return waitVisible(findElement(by, index), timeout);
+	public WebElement waitVisibleIndex(By by, int index) {
+		return waitVisibleIndex(by, index, defaultTimeout);
 	}
 
-	public WebElement waitVisible(WebElement element, int timeout) {
-		return waitUntil(ExpectedConditions.visibilityOf(element), timeout);
+	public WebElement waitVisibleIndex(By by, int index, int timeout) {
+		return waitVisible(ByIndex.index(by, index), timeout);
 	}
 
 	public void waitTextPresent(By by, String text) {
-		waitTextPresent(findElement(by), text);
-	}
-
-	public void waitTextPresent(By by, int index, String text) {
-		waitTextPresent(findElement(by, index), text);
-	}
-
-	public void waitTextPresent(WebElement element, String text) {
-		waitTextPresent(element, text, defaultTimeout);
+		waitTextPresent(by, text, defaultTimeout);
 	}
 
 	public void waitTextPresent(By by, String text, int timeout) {
-		waitTextPresent(findElement(by), text, timeout);
+		waitUntil(ExpectedConditions.textToBePresentInElementLocated(by, text), timeout);
 	}
 
-	public void waitTextPresent(By by, int index, String text, int timeout) {
-		waitTextPresent(findElement(by, index), text, timeout);
+	public void waitTextPresentIndex(By by, int index, String text) {
+		waitTextPresentIndex(by, index, text, defaultTimeout);
 	}
 
-	public void waitTextPresent(WebElement element, String text, int timeout) {
-		waitUntil(ExpectedConditions.textToBePresentInElement(element, text), timeout);
+	public void waitTextPresentIndex(By by, int index, String text, int timeout) {
+		waitTextPresent(ByIndex.index(by, index), text, timeout);
 	}
 
 	public void waitTextNotBlank(By by) {
-		waitTextNotBlank(findElement(by));
-	}
-
-	public void waitTextNotBlankIndex(By by, int index) {
-		waitTextNotBlank(findElement(by, index));
-	}
-
-	public void waitTextNotBlank(WebElement element) {
-		waitTextNotBlank(element, defaultTimeout);
+		waitTextNotBlank(by, defaultTimeout);
 	}
 
 	public void waitTextNotBlank(By by, int timeout) {
-		waitTextNotBlank(findElement(by), timeout);
+		waitUntil(textToBePresentInElementLocatedNotBlank(by), timeout);
 	}
 
-	public void waitTextNotBlank(By by, int index, int timeout) {
-		waitTextNotBlank(findElement(by, index), timeout);
+	public void waitTextNotBlankIndex(By by, int index) {
+		waitTextNotBlankIndex(by, index, defaultTimeout);
 	}
 
-	public void waitTextNotBlank(WebElement element, int timeout) {
-		waitUntil(textToBePresentInElementLocatedNotBlank(element), timeout);
+	public void waitTextNotBlankIndex(By by, int index, int timeout) {
+		waitTextNotBlank(ByIndex.index(by, index), timeout);
 	}
 
 	public void waitValuePresent(By by, String value) {
-		waitValuePresent(findElement(by), value);
-	}
-
-	public void waitValuePresent(By by, int index, String value) {
-		waitValuePresent(findElement(by, index), value);
-	}
-
-	public void waitValuePresent(WebElement element, String value) {
-		waitValuePresent(element, value, defaultTimeout);
+		waitValuePresent(by, value, defaultTimeout);
 	}
 
 	public void waitValuePresent(By by, String value, int timeout) {
-		waitValuePresent(findElement(by), value, timeout);
+		waitUntil(ExpectedConditions.textToBePresentInElementValue(by, value), timeout);
 	}
 
-	public void waitValuePresent(By by, int index, String value, int timeout) {
-		waitValuePresent(findElement(by, index), value, timeout);
+	public void waitValuePresentIndex(By by, int index, String value) {
+		waitValuePresentIndex(by, index, value, defaultTimeout);
 	}
 
-	public void waitValuePresent(WebElement element, String value, int timeout) {
-		waitUntil(ExpectedConditions.textToBePresentInElementValue(element, value), timeout);
+	public void waitValuePresentIndex(By by, int index, String value, int timeout) {
+		waitValuePresent(ByIndex.index(by, index), value, timeout);
 	}
 
 	public void waitValueNotBlank(By by) {
-		waitValueNotBlank(findElement(by));
-	}
-
-	public void waitValueNotBlankIndex(By by, int index) {
-		waitValueNotBlank(findElement(by, index));
-	}
-
-	public void waitValueNotBlank(WebElement element) {
-		waitValueNotBlank(element, defaultTimeout);
+		waitValueNotBlank(by, defaultTimeout);
 	}
 
 	public void waitValueNotBlank(By by, int timeout) {
-		waitValueNotBlank(findElement(by), timeout);
+		waitUntil(textToBePresentInElementValueNotBlank(by), timeout);
 	}
 
-	public void waitValueNotBlank(By by, int index, int timeout) {
-		waitValueNotBlank(findElement(by, index), timeout);
+	public void waitValueNotBlankIndex(By by, int index) {
+		waitValueNotBlankIndex(by, index, defaultTimeout);
 	}
 
-	public void waitValueNotBlank(WebElement element, int timeout) {
-		waitUntil(textToBePresentInElementValueNotBlank(element), timeout);
+	public void waitValueNotBlankIndex(By by, int index, int timeout) {
+		waitValueNotBlank(ByIndex.index(by, index), timeout);
 	}
 
 	public Alert checkAlert() {
@@ -569,12 +529,12 @@ public class Selenium2 {
 		void act();
 	}
 
-	private ExpectedCondition<Boolean> textToBePresentInElementLocatedNotBlank(final WebElement element) {
+	private ExpectedCondition<Boolean> textToBePresentInElementLocatedNotBlank(final By locator) {
 		return new ExpectedCondition<Boolean>() {
 			@Override
 			public Boolean apply(WebDriver driver) {
 				try {
-					String elementText = element.getText();
+					String elementText = findElement(locator).getText();
 					return StringUtils.isNotBlank(elementText);
 				} catch (StaleElementReferenceException e) {
 					return null;
@@ -583,17 +543,17 @@ public class Selenium2 {
 
 			@Override
 			public String toString() {
-				return String.format("text to be present in element %s", element);
+				return String.format("text to be present in element found by %s", locator);
 			}
 		};
 	}
 
-	private ExpectedCondition<Boolean> textToBePresentInElementValueNotBlank(final WebElement element) {
+	private ExpectedCondition<Boolean> textToBePresentInElementValueNotBlank(final By locator) {
 		return new ExpectedCondition<Boolean>() {
 			@Override
 			public Boolean apply(WebDriver driver) {
 				try {
-					String elementText = element.getAttribute("value");
+					String elementText = findElement(locator).getAttribute("value");
 					return StringUtils.isNotBlank(elementText);
 				} catch (StaleElementReferenceException e) {
 					return null;
@@ -602,7 +562,7 @@ public class Selenium2 {
 
 			@Override
 			public String toString() {
-				return String.format("text to be the value of element %s", element);
+				return String.format("text to be the value of element found by %s", locator);
 			}
 		};
 	}
