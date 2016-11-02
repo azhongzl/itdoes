@@ -83,15 +83,11 @@ public class Selenium2 {
 		return driver;
 	}
 
-	public WebElement findElement(By by, boolean errorIfNotFound) {
-		if (errorIfNotFound) {
+	public WebElement findElementNoException(By by) {
+		try {
 			return findElement(by);
-		} else {
-			try {
-				return findElement(by);
-			} catch (NoSuchElementException e) {
-				return null;
-			}
+		} catch (NoSuchElementException e) {
+			return null;
 		}
 	}
 
@@ -437,19 +433,15 @@ public class Selenium2 {
 		waitValueNotBlank(ByIndex.index(by, index), timeout);
 	}
 
-	public Alert getAlert(boolean errorIfNotFound) {
-		return getAlert(defaultTimeout, errorIfNotFound);
+	public Alert getAlertNoException() {
+		return getAlertNoException(defaultTimeout);
 	}
 
-	public Alert getAlert(int timeout, boolean errorIfNotFound) {
-		if (errorIfNotFound) {
+	public Alert getAlertNoException(int timeout) {
+		try {
 			return getAlert(timeout);
-		} else {
-			try {
-				return getAlert(timeout);
-			} catch (TimeoutException e) {
-				return null;
-			}
+		} catch (TimeoutException e) {
+			return null;
 		}
 	}
 
