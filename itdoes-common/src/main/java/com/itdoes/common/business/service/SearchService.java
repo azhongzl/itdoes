@@ -1,6 +1,5 @@
 package com.itdoes.common.business.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -48,64 +47,50 @@ public class SearchService extends BaseService {
 		LOGGER.info("Search engine index created");
 	}
 
-	public Page<?> search(String searchString, SearchEntity searchEntity, Pageable pageable) {
+	public Page<?> search(String searchString, Class<?> entityClass, QueryFactory queryFactory, Pageable pageable) {
 		final FullTextEntityManager ftem = getFullTextEntityManager();
 
-		final Query q = createQuery(ftem, searchString, searchEntity);
-		final FullTextQuery ftq = ftem.createFullTextQuery(q, searchEntity.getEntityClass());
-		ftq.setFirstResult(pageable.getOffset());
-		ftq.setMaxResults(pageable.getPageSize());
-		return createPage(ftq.getResultList(), pageable, ftq.getResultSize());
+		final Query q = createQuery(searchString, ftem, entityClass, queryFactory);
+		final FullTextQuery ftq = ftem.createFullTextQuery(q, entityClass);
+		return createPage(ftq, pageable);
 	}
 
-	public Page<?> search(String searchString, List<SearchEntity> searchEntities, Pageable pageable) {
+	public Page<?> search(String searchString, Class<?>[] entityClasses, QueryFactory[] queryFactories,
+			Pageable pageable) {
 		final FullTextEntityManager ftem = getFullTextEntityManager();
 
-		final List<Class<?>> entityClasses = new ArrayList<>(searchEntities.size());
 		final BooleanQuery.Builder bqb = new BooleanQuery.Builder();
-		for (SearchEntity searchEntity : searchEntities) {
-			final Query q = createQuery(ftem, searchString, searchEntity);
+		for (int i = 0; i < entityClasses.length; i++) {
+			final Query q = createQuery(searchString, ftem, entityClasses[i], queryFactories[i]);
 			bqb.add(q, Occur.SHOULD);
 		}
-		final FullTextQuery ftq = ftem.createFullTextQuery(bqb.build(),
-				entityClasses.toArray(new Class[searchEntities.size()]));
-		ftq.setFirstResult(pageable.getOffset());
-		ftq.setMaxResults(pageable.getPageSize());
-		return createPage(ftq.getResultList(), pageable, ftq.getResultSize());
+		final FullTextQuery ftq = ftem.createFullTextQuery(bqb.build(), entityClasses);
+		return createPage(ftq, pageable);
 	}
 
 	private FullTextEntityManager getFullTextEntityManager() {
 		return Search.getFullTextEntityManager(em);
 	}
 
-	private Query createQuery(FullTextEntityManager ftem, String searchString, SearchEntity searchEntity) {
-		final QueryBuilder queryBuilder = ftem.getSearchFactory().buildQueryBuilder()
-				.forEntity(searchEntity.getEntityClass()).get();
-		final Query query = queryBuilder.keyword().onFields(searchEntity.getFields()).matching(searchString)
-				.createQuery();
+	public static interface QueryFactory {
+		Query createQuery(String searchString, QueryBuilder queryBuilder);
+	}
+
+	private Query createQuery(String searchString, FullTextEntityManager ftem, Class<?> entityClass,
+			QueryFactory queryFactory) {
+		final QueryBuilder queryBuilder = ftem.getSearchFactory().buildQueryBuilder().forEntity(entityClass).get();
+		final Query query = queryFactory.createQuery(searchString, queryBuilder);
 		return query;
+	}
+
+	private Page<?> createPage(FullTextQuery ftq, Pageable pageable) {
+		ftq.setFirstResult(pageable.getOffset());
+		ftq.setMaxResults(pageable.getPageSize());
+		return createPage(ftq.getResultList(), pageable, ftq.getResultSize());
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Page<?> createPage(List<?> resultList, Pageable pageable, long total) {
 		return new PageImpl(resultList, pageable, total);
-	}
-
-	public static class SearchEntity {
-		private final Class<?> entityClass;
-		private final String[] fields;
-
-		public SearchEntity(Class<?> entityClass, String[] fields) {
-			this.entityClass = entityClass;
-			this.fields = fields;
-		}
-
-		public Class<?> getEntityClass() {
-			return entityClass;
-		}
-
-		public String[] getFields() {
-			return fields;
-		}
 	}
 }
