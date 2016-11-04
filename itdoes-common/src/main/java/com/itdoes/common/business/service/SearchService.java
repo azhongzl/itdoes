@@ -47,6 +47,10 @@ public class SearchService extends BaseService {
 		LOGGER.info("Search engine index created");
 	}
 
+	public Page<?> search(String searchString, Class<?> entityClass, String[] fields, Pageable pageable) {
+		return search(searchString, entityClass, new DefaultQueryFactory(fields), pageable);
+	}
+
 	public Page<?> search(String searchString, Class<?> entityClass, QueryFactory queryFactory, Pageable pageable) {
 		final FullTextEntityManager ftem = getFullTextEntityManager();
 
@@ -74,6 +78,19 @@ public class SearchService extends BaseService {
 
 	public static interface QueryFactory {
 		Query createQuery(String searchString, QueryBuilder queryBuilder);
+	}
+
+	private static class DefaultQueryFactory implements QueryFactory {
+		private final String[] fields;
+
+		public DefaultQueryFactory(String[] fields) {
+			this.fields = fields;
+		}
+
+		@Override
+		public Query createQuery(String searchString, QueryBuilder queryBuilder) {
+			return queryBuilder.keyword().wildcard().onFields(fields).matching(searchString).createQuery();
+		}
 	}
 
 	private Query createQuery(String searchString, FullTextEntityManager ftem, Class<?> entityClass,
