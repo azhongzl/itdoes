@@ -47,7 +47,7 @@ public class SearchService extends BaseService {
 		LOGGER.info("Search engine index created");
 	}
 
-	public Page<?> search(String searchString, Class<?> entityClass, String[] fields, Pageable pageable) {
+	public Page<?> searchDefault(String searchString, Class<?> entityClass, String[] fields, Pageable pageable) {
 		return search(searchString, entityClass, new DefaultQueryFactory(fields), pageable);
 	}
 
@@ -57,6 +57,14 @@ public class SearchService extends BaseService {
 		final Query q = createQuery(searchString, ftem, entityClass, queryFactory);
 		final FullTextQuery ftq = ftem.createFullTextQuery(q, entityClass);
 		return createPage(ftq, pageable);
+	}
+
+	public Page<?> searchDefault(String searchString, Class<?>[] entityClasses, String[][] fields, Pageable pageable) {
+		final QueryFactory[] queryFactories = new QueryFactory[fields.length];
+		for (int i = 0; i < fields.length; i++) {
+			queryFactories[i] = new DefaultQueryFactory(fields[i]);
+		}
+		return search(searchString, entityClasses, queryFactories, pageable);
 	}
 
 	public Page<?> search(String searchString, Class<?>[] entityClasses, QueryFactory[] queryFactories,
