@@ -531,6 +531,12 @@
 				<version>${el.version}</version>
 				<scope>test</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty.websocket</groupId>
+				<artifactId>websocket-server</artifactId>
+				<version>${jetty.version}</version>
+				<scope>test</scope>
+			</dependency>
 
 			<dependency>
 				<groupId>com.h2database</groupId>
