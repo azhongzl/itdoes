@@ -10,7 +10,7 @@
 	<properties>
 		<itdoes.version>1.0</itdoes.version>
 
-		<spring.version>4.3.3.RELEASE</spring.version>
+		<spring.version>4.3.4.RELEASE</spring.version>
 		<hibernate.version>5.2.2.Final</hibernate.version>
 		<spring-data-jpa.version>1.10.5.RELEASE</spring-data-jpa.version>
 		<aspectj.version>1.8.9</aspectj.version>
