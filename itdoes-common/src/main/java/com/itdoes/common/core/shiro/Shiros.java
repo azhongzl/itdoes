@@ -1,6 +1,7 @@
 package com.itdoes.common.core.shiro;
 
 import java.io.IOException;
+import java.security.Principal;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -12,6 +13,8 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.SavedRequest;
 import org.apache.shiro.web.util.WebUtils;
+
+import com.itdoes.common.core.util.Reflections;
 
 /**
  * @author Jalen Zhong
@@ -59,6 +62,11 @@ public class Shiros {
 		}
 
 		WebUtils.issueRedirect(request, response, successUrl, null, contextRelative);
+	}
+
+	public static ShiroUser getShiroUser(Principal principal) {
+		final ShiroUser shiroUser = (ShiroUser) Reflections.invokeGet(principal, "object");
+		return shiroUser;
 	}
 
 	private Shiros() {
