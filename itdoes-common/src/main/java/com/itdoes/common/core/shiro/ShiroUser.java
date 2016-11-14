@@ -47,7 +47,6 @@ public class ShiroUser implements Serializable {
 
 	@Override
 	public String toString() {
-		// Can be used for <shiro:principal/>
-		return username;
+		return id;
 	}
 }
