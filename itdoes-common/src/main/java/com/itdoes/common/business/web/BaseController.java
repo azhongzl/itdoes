@@ -130,6 +130,12 @@ public abstract class BaseController {
 			pageSize = maxPageSize;
 		}
 
+		final Sort sort = buildSort(pageSort);
+
+		return new PageRequest(pageNo - 1, pageSize, sort);
+	}
+
+	protected Sort buildSort(String pageSort) {
 		Sort sort = null;
 		if (StringUtils.isNotBlank(pageSort)) {
 			final String[] sortParams = StringUtils.split(pageSort, FILTER_SEPARATOR);
@@ -148,6 +154,6 @@ public abstract class BaseController {
 			sort = new Sort(direction, field);
 		}
 
-		return new PageRequest(pageNo - 1, pageSize, sort);
+		return sort;
 	}
 }

@@ -43,6 +43,10 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
 						EntityBaseController.ENTITY_COMMAND_FIND);
 			}
+			if (EntityPermType.FIND_ALL.isIn(entityPermTypeList)) {
+				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
+						EntityBaseController.ENTITY_COMMAND_FIND_ALL);
+			}
 			if (EntityPermType.FIND_ONE.isIn(entityPermTypeList)) {
 				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
 						EntityBaseController.ENTITY_COMMAND_FIND_ONE);

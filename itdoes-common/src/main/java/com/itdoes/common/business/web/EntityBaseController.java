@@ -38,41 +38,46 @@ import com.itdoes.common.core.util.Reflections;
  * page_sort=username_a, "a" = ASC, "d" = DESC
  * </ul>
  * <tr style="background-color: rgb(238, 238, 255);">
+ * <td><code>FindAll</code>
+ * <td>/e/&lt;Entity_Class&gt;/findAll
+ * <td>GET
+ * <td>The same as "Filter" parameter of "Find" operation, but only allow "page_sort" for "Page" parameter
+ * <tr>
  * <td><code>FindOne</code>
  * <td>/e/&lt;Entity_Class&gt;/findOne
  * <td>GET
  * <td>The same as "Filter" parameter of "Find" operation, but without "Page" parameter
- * <tr>
+ * <tr style="background-color: rgb(238, 238, 255);">
  * <td><code>Count</code>
  * <td>/e/&lt;Entity_Class&gt;/count
  * <td>GET
  * <td>The same as "Filter" parameter of "Find" operation, but without "Page" parameter
- * <tr style="background-color: rgb(238, 238, 255);">
+ * <tr>
  * <td><code>Get</code>
  * <td>/e/&lt;Entity_Class&gt;/get/&lt;id&gt;
  * <td>GET
  * <td>
- * <tr>
+ * <tr style="background-color: rgb(238, 238, 255);">
  * <td><code>Delete</code>
  * <td>/e/&lt;Entity_Class&gt;/delete/&lt;id&gt;
  * <td>GET or POST
  * <td>
- * <tr style="background-color: rgb(238, 238, 255);">
+ * <tr>
  * <td><code>Post</code>
  * <td>/e/&lt;Entity_Class&gt;/post
  * <td>POST
  * <td>
- * <tr>
+ * <tr style="background-color: rgb(238, 238, 255);">
  * <td><code>Put</code>
  * <td>/e/&lt;Entity_Class&gt;/put/&lt;id&gt;
  * <td>POST
  * <td>
- * <tr style="background-color: rgb(238, 238, 255);">
+ * <tr>
  * <td><code>PostUpload</code>
  * <td>/e/&lt;Entity_Class&gt;/postUpload
  * <td>POST
  * <td>
- * <tr>
+ * <tr style="background-color: rgb(238, 238, 255);">
  * <td><code>PutUpload</code>
  * <td>/e/&lt;Entity_Class&gt;/putUpload/&lt;id&gt;
  * <td>POST
@@ -86,6 +91,7 @@ public abstract class EntityBaseController extends BaseController {
 	public static final String ENTITY_URL_PREFIX = "/e";
 
 	public static final String ENTITY_COMMAND_FIND = "find";
+	public static final String ENTITY_COMMAND_FIND_ALL = "findAll";
 	public static final String ENTITY_COMMAND_FIND_ONE = "findOne";
 	public static final String ENTITY_COMMAND_COUNT = "count";
 	public static final String ENTITY_COMMAND_GET = "get";

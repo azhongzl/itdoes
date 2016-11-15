@@ -1,9 +1,11 @@
 package com.itdoes.common.business.service;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,15 @@ public class EntityDbService extends BaseTransactionalService {
 	public <T, ID extends Serializable> Page<T> find(EntityPair<T, ID> pair, Specification<T> specification,
 			PageRequest pageRequest) {
 		return pair.getDao().findAll(specification, pageRequest);
+	}
+
+	public <T, ID extends Serializable> List<T> findAll(EntityPair<T, ID> pair, Specification<T> specification,
+			Sort sort) {
+		if (sort == null) {
+			return pair.getDao().findAll(specification);
+		} else {
+			return pair.getDao().findAll(specification, sort);
+		}
 	}
 
 	public <T, ID extends Serializable> T findOne(EntityPair<T, ID> pair, Specification<T> specification) {

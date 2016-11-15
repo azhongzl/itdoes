@@ -1,6 +1,7 @@
 package com.itdoes.common.business.web;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.servlet.ServletRequest;
 
@@ -31,6 +32,15 @@ public class EntityMainController extends EntityBaseController {
 		final Page<T> page = subjectService.find(pair, buildSpecification(pair.getEntityClass(), request),
 				buildPageRequest(pageNo, pageSize, pageSort));
 		return HttpResults.success(page);
+	}
+
+	@RequestMapping(value = "/{ec}/" + ENTITY_COMMAND_FIND_ALL, method = RequestMethod.GET)
+	public <T, ID extends Serializable> Result findAll(@PathVariable("ec") String ec,
+			@RequestParam(value = BaseController.PAGE_SORT, required = false) String pageSort, ServletRequest request) {
+		final EntityPair<T, ID> pair = getPair(ec);
+		final List<T> list = subjectService.findAll(pair, buildSpecification(pair.getEntityClass(), request),
+				buildSort(pageSort));
+		return HttpResults.success(list);
 	}
 
 	@RequestMapping(value = "/{ec}/" + ENTITY_COMMAND_FIND_ONE, method = RequestMethod.GET)

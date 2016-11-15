@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +31,13 @@ public class EntitySubjectService extends BaseService {
 		final Page<T> page = dbService.find(pair, specification, pageRequest);
 		permFieldService.handleGetPermFields(pair, page.getContent());
 		return page;
+	}
+
+	public <T, ID extends Serializable> List<T> findAll(EntityPair<T, ID> pair, Specification<T> specification,
+			Sort sort) {
+		final List<T> list = dbService.findAll(pair, specification, sort);
+		permFieldService.handleGetPermFields(pair, list);
+		return list;
 	}
 
 	public <T, ID extends Serializable> T findOne(EntityPair<T, ID> pair, Specification<T> specification) {
