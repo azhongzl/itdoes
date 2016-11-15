@@ -16,6 +16,7 @@ public class EntityGeneratorHelper {
 	private static final String DB_PERM_FILE = CONFIG_DIR + "db.perm.properties";
 	private static final String DB_SEARCH_FILE = CONFIG_DIR + "db.search.properties";
 	private static final String DB_UPLOAD_FILE = CONFIG_DIR + "db.upload.ini";
+	private static final String DB_EXTRA_CONTENT_FILE = CONFIG_DIR + "db.extra.content.properties";
 	private static final String ENTITY_QUERY_CACHE_FILE = CONFIG_DIR + "entity.queryCache.properties";
 	private static final String ENTITY_EHCACHE_FILE = CONFIG_DIR + "entity.ehcache.properties";
 
@@ -123,6 +124,19 @@ public class EntityGeneratorHelper {
 		}
 	}
 
+	private static class FileDbExtraContentConfig implements DbExtraContentConfig {
+		private final PropertiesLoader pl;
+
+		public FileDbExtraContentConfig(PropertiesLoader pl) {
+			this.pl = pl;
+		}
+
+		@Override
+		public String getExtraContent(String tableName) {
+			return pl.getStringMay(tableName, null);
+		}
+	}
+
 	private static class FileEntityQueryCacheConfig implements EntityQueryCacheConfig {
 		private static final String DEFAULT_QUERY_CACHE = "_default_";
 
@@ -181,6 +195,8 @@ public class EntityGeneratorHelper {
 		final DbPermConfig dbPermConfig = new FileDbPermConfig(new PropertiesLoader(DB_PERM_FILE));
 		final DbSearchConfig dbSearchConfig = new FileDbSearchConfig(new PropertiesLoader(DB_SEARCH_FILE));
 		final DbUploadConfig dbUploadConfig = new FileDbUploadConfig(new TxtLoader(DB_UPLOAD_FILE));
+		final FileDbExtraContentConfig dbExtraContentConfig = new FileDbExtraContentConfig(
+				new PropertiesLoader(DB_EXTRA_CONTENT_FILE));
 		final EntityQueryCacheConfig entityQueryCacheConfig = new FileEntityQueryCacheConfig(
 				new PropertiesLoader(ENTITY_QUERY_CACHE_FILE));
 		final EntityEhcacheConfig entityEhcacheConfig = new FileEntityEhcacheConfig(
@@ -189,6 +205,6 @@ public class EntityGeneratorHelper {
 		EntityGenerator.generateEntities(pl.getStringMust("jdbc.driver"), pl.getStringMust("jdbc.url"),
 				pl.getStringMust("jdbc.username"), pl.getStringMust("jdbc.password"), outputDir, basePackageName,
 				idGeneratedValue, dbSkipConfig, dbMappingConfig, dbPermConfig, dbSearchConfig, dbUploadConfig,
-				entityQueryCacheConfig, entityEhcacheConfig);
+				dbExtraContentConfig, entityQueryCacheConfig, entityEhcacheConfig);
 	}
 }
