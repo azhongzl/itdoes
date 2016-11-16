@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itdoes.common.business.EntityEnv;
 import com.itdoes.common.business.EntityPair;
-import com.itdoes.common.business.service.EntitySubjectService;
+import com.itdoes.common.business.service.EntityService;
 import com.itdoes.common.core.util.Reflections;
 
 /**
@@ -108,7 +108,7 @@ public abstract class EntityBaseController extends BaseController {
 	protected EntityEnv env;
 
 	@Autowired
-	protected EntitySubjectService subjectService;
+	protected EntityService entityService;
 
 	protected <T, ID extends Serializable> EntityPair<T, ID> getPair(String ec) {
 		return env.getPair(ec);
