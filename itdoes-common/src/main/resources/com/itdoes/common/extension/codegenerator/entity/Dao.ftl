@@ -9,7 +9,6 @@ import ${entityPackageName}.${entityClassName};
  */
 public interface ${className} extends com.itdoes.common.business.dao.<#if queryCacheEnabled>BaseQueryCacheDao<#else>BaseDao</#if><${entityClassName}, ${entityIdType}> {
 <#if extension??>
-
 ${extension}
 </#if>
 }
