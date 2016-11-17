@@ -58,8 +58,8 @@ public class ${className} extends BaseEntity {
 		this.${field.name} = ${field.name};
 	}
 </#list>
-<#if extraContent??>
+<#if extension??>
 
-${extraContent}
+${extension}
 </#if>
 }

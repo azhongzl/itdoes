@@ -48,10 +48,10 @@ public class EntityModel {
 	private final String serialVersionUID;
 	private final List<EntityField> fieldList;
 	private final String idGeneratedValue;
-	private final String extraContent;
+	private final String extension;
 
 	public EntityModel(String packageName, String tableName, String perm, String search, String className,
-			String serialVersionUID, List<EntityField> fieldList, String idGeneratedValue, String extraContent) {
+			String serialVersionUID, List<EntityField> fieldList, String idGeneratedValue, String extension) {
 		this.packageName = packageName;
 		this.tableName = tableName;
 		this.perm = perm;
@@ -60,7 +60,7 @@ public class EntityModel {
 		this.serialVersionUID = serialVersionUID;
 		this.fieldList = fieldList;
 		this.idGeneratedValue = idGeneratedValue;
-		this.extraContent = extraContent;
+		this.extension = extension;
 	}
 
 	public String getPackageName() {
@@ -95,7 +95,7 @@ public class EntityModel {
 		return idGeneratedValue;
 	}
 
-	public String getExtraContent() {
-		return extraContent;
+	public String getExtension() {
+		return extension;
 	}
 }

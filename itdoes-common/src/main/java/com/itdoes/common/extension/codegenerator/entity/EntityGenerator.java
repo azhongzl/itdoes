@@ -38,7 +38,7 @@ public class EntityGenerator {
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
 			String outputDir, String basePackageName, String idGeneratedValue, DbSkipConfig dbSkipConfig,
 			DbMappingConfig dbMappingConfig, DbPermConfig dbPermConfig, DbSearchConfig dbSearchConfig,
-			DbUploadConfig dbUploadConfig, DbExtraContentConfig dbExtraContentConfig,
+			DbUploadConfig dbUploadConfig, DbEntityExtensionConfig dbEntityExtensionConfig,
 			EntityQueryCacheConfig entityQueryCacheConfig, EntityEhcacheConfig entityEhcacheConfig) {
 		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
 
@@ -68,7 +68,7 @@ public class EntityGenerator {
 			final EntityModel entityModel = new EntityModel(entityPackageName, tableName,
 					dbPermConfig.getEntityPerm(tableName), dbSearchConfig.getEntitySearch(tableName), entityClassName,
 					getSerialVersionUIDStr(entityClassName), entityFieldList, idGeneratedValue,
-					dbExtraContentConfig.getExtraContent(tableName));
+					dbEntityExtensionConfig.getEntityExtension(tableName));
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
 			writeJavaFile(entityDir, entityClassName, entityString);
 
