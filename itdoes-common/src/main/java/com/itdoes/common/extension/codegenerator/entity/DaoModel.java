@@ -10,15 +10,17 @@ public class DaoModel {
 	private final String className;
 	private final boolean queryCacheEnabled;
 	private final String entityIdType;
+	private final String extension;
 
 	public DaoModel(String packageName, String entityPackageName, String entityClassName, String className,
-			boolean queryCacheEnabled, String entityIdType) {
+			boolean queryCacheEnabled, String entityIdType, String extension) {
 		this.packageName = packageName;
 		this.entityPackageName = entityPackageName;
 		this.entityClassName = entityClassName;
 		this.className = className;
 		this.queryCacheEnabled = queryCacheEnabled;
 		this.entityIdType = entityIdType;
+		this.extension = extension;
 	}
 
 	public String getPackageName() {
@@ -43,5 +45,9 @@ public class DaoModel {
 
 	public String getEntityIdType() {
 		return entityIdType;
+	}
+
+	public String getExtension() {
+		return extension;
 	}
 }

@@ -39,7 +39,8 @@ public class EntityGenerator {
 			String outputDir, String basePackageName, String idGeneratedValue, DbSkipConfig dbSkipConfig,
 			DbMappingConfig dbMappingConfig, DbPermConfig dbPermConfig, DbSearchConfig dbSearchConfig,
 			DbUploadConfig dbUploadConfig, DbEntityExtensionConfig dbEntityExtensionConfig,
-			EntityQueryCacheConfig entityQueryCacheConfig, EntityEhcacheConfig entityEhcacheConfig) {
+			DbDaoExtensionConfig dbDaoExtensionConfig, EntityQueryCacheConfig entityQueryCacheConfig,
+			EntityEhcacheConfig entityEhcacheConfig) {
 		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
 
 		final String entityPackageName = basePackageName + ".entity";
@@ -76,7 +77,8 @@ public class EntityGenerator {
 			final String daoClassName = EntityEnv.getDaoClassName(entityClassName);
 			final boolean queryCacheEnabled = entityQueryCacheConfig.isEnabled(entityClassName);
 			final DaoModel daoModel = new DaoModel(daoPackageName, entityPackageName, entityClassName, daoClassName,
-					queryCacheEnabled, mapIdType(tableName, entityFieldList));
+					queryCacheEnabled, mapIdType(tableName, entityFieldList),
+					dbDaoExtensionConfig.getDaoExtension(tableName));
 			final String daoString = FreeMarkers.render(daoTemplate, daoModel);
 			writeJavaFile(daoDir, daoClassName, daoString);
 
