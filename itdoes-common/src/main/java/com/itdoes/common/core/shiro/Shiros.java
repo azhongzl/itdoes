@@ -15,6 +15,7 @@ import org.apache.shiro.web.util.SavedRequest;
 import org.apache.shiro.web.util.WebUtils;
 
 import com.itdoes.common.core.util.Reflections;
+import com.itdoes.common.core.util.Urls;
 
 /**
  * @author Jalen Zhong
@@ -23,6 +24,8 @@ public class Shiros {
 	public static final int SC_UNAUTHENTICATED = 499;
 
 	public static final String SAVED_REQUEST_KEY = WebUtils.SAVED_REQUEST_KEY;
+
+	public static final String SUCCESS_URL_KEY = "successUrl";
 
 	public static void saveRequestAjax(ServletRequest request) {
 		final Subject subject = SecurityUtils.getSubject();
@@ -41,18 +44,33 @@ public class Shiros {
 			throws IOException {
 		String successUrl = null;
 		boolean contextRelative = true;
-		final SavedRequest savedRequest = WebUtils.getAndClearSavedRequest(request);
-		if (savedRequest != null && savedRequest.getMethod().equalsIgnoreCase(AccessControlFilter.GET_METHOD)) {
-			if (savedRequest instanceof AjaxSavedRequest) {
-				successUrl = ((AjaxSavedRequest) savedRequest).getReferer();
-			} else {
-				successUrl = savedRequest.getRequestUrl();
-				contextRelative = false;
+
+		// 1) Use "successUrl" provided in current login request
+		successUrl = request.getParameter(SUCCESS_URL_KEY);
+		if (successUrl != null) {
+			contextRelative = Urls.isRelative(successUrl);
+		}
+
+		// 2) Use accessed request url cached in previous session
+		if (successUrl == null) {
+			final SavedRequest savedRequest = WebUtils.getAndClearSavedRequest(request);
+			if (savedRequest != null && savedRequest.getMethod().equalsIgnoreCase(AccessControlFilter.GET_METHOD)) {
+				if (savedRequest instanceof AjaxSavedRequest) {
+					successUrl = ((AjaxSavedRequest) savedRequest).getReferer();
+					contextRelative = false;
+				} else {
+					successUrl = savedRequest.getRequestUrl();
+					contextRelative = false;
+				}
 			}
 		}
 
+		// 3) Use pre-configured "successUrl" defined in shiro xml
 		if (successUrl == null) {
 			successUrl = fallbackUrl;
+			if (successUrl != null) {
+				contextRelative = Urls.isRelative(successUrl);
+			}
 		}
 
 		if (successUrl == null) {
