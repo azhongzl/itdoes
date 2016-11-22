@@ -50,7 +50,7 @@ public class ${className} extends BaseEntity {
 </#list>
 <#list fieldList as field>
 
-	public ${field.type} get${field.upperName}() {
+	public ${field.type} <#if field.type == "boolean" || field.type == "Boolean">is<#else>get</#if>${field.upperName}() {
 		return ${field.name};
 	}
 
