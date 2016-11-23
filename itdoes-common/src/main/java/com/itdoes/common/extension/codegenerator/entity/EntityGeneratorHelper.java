@@ -16,8 +16,6 @@ public class EntityGeneratorHelper {
 	private static final String DB_PERM_FILE = CONFIG_DIR + "db.perm.properties";
 	private static final String DB_SEARCH_FILE = CONFIG_DIR + "db.search.properties";
 	private static final String DB_UPLOAD_FILE = CONFIG_DIR + "db.upload.ini";
-	private static final String DB_ENTITY_EXTENSION_FILE = CONFIG_DIR + "db.entity.extension.properties";
-	private static final String DB_DAO_EXTENSION_FILE = CONFIG_DIR + "db.dao.extension.properties";
 	private static final String ENTITY_QUERY_CACHE_FILE = CONFIG_DIR + "entity.queryCache.properties";
 	private static final String ENTITY_EHCACHE_FILE = CONFIG_DIR + "entity.ehcache.properties";
 
@@ -125,32 +123,6 @@ public class EntityGeneratorHelper {
 		}
 	}
 
-	private static class FileDbEntityExtensionConfig implements DbEntityExtensionConfig {
-		private final PropertiesLoader pl;
-
-		public FileDbEntityExtensionConfig(PropertiesLoader pl) {
-			this.pl = pl;
-		}
-
-		@Override
-		public String getEntityExtension(String tableName) {
-			return pl.getStringMay(tableName, null);
-		}
-	}
-
-	private static class FileDbDaoExtensionConfig implements DbDaoExtensionConfig {
-		private final PropertiesLoader pl;
-
-		public FileDbDaoExtensionConfig(PropertiesLoader pl) {
-			this.pl = pl;
-		}
-
-		@Override
-		public String getDaoExtension(String tableName) {
-			return pl.getStringMay(tableName, null);
-		}
-	}
-
 	private static class FileEntityQueryCacheConfig implements EntityQueryCacheConfig {
 		private static final String DEFAULT_QUERY_CACHE = "_default_";
 
@@ -197,11 +169,12 @@ public class EntityGeneratorHelper {
 		}
 	}
 
-	public static void generateEntities(String basePackageName, String idGeneratedValue) {
-		generateEntities(DEFAULT_OUTPUT_DIR, basePackageName, idGeneratedValue);
+	public static void generateEntities(Class<?> loaderClass, String basePackageName, String idGeneratedValue) {
+		generateEntities(loaderClass, DEFAULT_OUTPUT_DIR, basePackageName, idGeneratedValue);
 	}
 
-	public static void generateEntities(String outputDir, String basePackageName, String idGeneratedValue) {
+	public static void generateEntities(Class<?> loaderClass, String outputDir, String basePackageName,
+			String idGeneratedValue) {
 		final PropertiesLoader pl = new PropertiesLoader("classpath:/application.properties",
 				"classpath:/application.local.properties");
 		final DbSkipConfig dbSkipConfig = new FileDbSkipConfig(new TxtLoader(DB_SKIP_FILE));
@@ -209,18 +182,14 @@ public class EntityGeneratorHelper {
 		final DbPermConfig dbPermConfig = new FileDbPermConfig(new PropertiesLoader(DB_PERM_FILE));
 		final DbSearchConfig dbSearchConfig = new FileDbSearchConfig(new PropertiesLoader(DB_SEARCH_FILE));
 		final DbUploadConfig dbUploadConfig = new FileDbUploadConfig(new TxtLoader(DB_UPLOAD_FILE));
-		final FileDbEntityExtensionConfig dbEntityExtensionConfig = new FileDbEntityExtensionConfig(
-				new PropertiesLoader(DB_ENTITY_EXTENSION_FILE));
-		final FileDbDaoExtensionConfig dbDaoExtensionConfig = new FileDbDaoExtensionConfig(
-				new PropertiesLoader(DB_DAO_EXTENSION_FILE));
 		final EntityQueryCacheConfig entityQueryCacheConfig = new FileEntityQueryCacheConfig(
 				new PropertiesLoader(ENTITY_QUERY_CACHE_FILE));
 		final EntityEhcacheConfig entityEhcacheConfig = new FileEntityEhcacheConfig(
 				new PropertiesLoader(ENTITY_EHCACHE_FILE));
 
-		EntityGenerator.generateEntities(pl.getStringMust("jdbc.driver"), pl.getStringMust("jdbc.url"),
+		EntityGenerator.generateEntities(loaderClass, pl.getStringMust("jdbc.driver"), pl.getStringMust("jdbc.url"),
 				pl.getStringMust("jdbc.username"), pl.getStringMust("jdbc.password"), outputDir, basePackageName,
 				idGeneratedValue, dbSkipConfig, dbMappingConfig, dbPermConfig, dbSearchConfig, dbUploadConfig,
-				dbEntityExtensionConfig, dbDaoExtensionConfig, entityQueryCacheConfig, entityEhcacheConfig);
+				entityQueryCacheConfig, entityEhcacheConfig);
 	}
 }

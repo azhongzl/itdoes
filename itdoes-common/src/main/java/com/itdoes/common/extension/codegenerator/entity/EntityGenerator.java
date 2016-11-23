@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.Lists;
 import com.itdoes.common.business.EntityEnv;
@@ -33,23 +34,31 @@ public class EntityGenerator {
 	public static final String UUID_ID_GENERATED_VALUE = "@javax.persistence.GeneratedValue";
 	public static final String EMPTY_ID_GENERATED_VALUE = "";
 
+	public static final String RELATIVE_ENTITY_PACKAGE_NAME = "entity";
+	public static final String RELATIVE_DAO_PACKAGE_NAME = "dao";
+
+	private static final String FTL_ENTITY = "Entity.ftl";
+	private static final String FTL_DAO = "Dao.ftl";
+	private static final String FTL_EHCACHE = "ehcache.ftl";
+
 	private static final String TEMPLATE_DIR = "classpath:/" + Reflections.packageToPath(EntityGenerator.class);
 
-	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
-			String outputDir, String basePackageName, String idGeneratedValue, DbSkipConfig dbSkipConfig,
-			DbMappingConfig dbMappingConfig, DbPermConfig dbPermConfig, DbSearchConfig dbSearchConfig,
-			DbUploadConfig dbUploadConfig, DbEntityExtensionConfig dbEntityExtensionConfig,
-			DbDaoExtensionConfig dbDaoExtensionConfig, EntityQueryCacheConfig entityQueryCacheConfig,
+	public static void generateEntities(Class<?> loaderClass, String jdbcDriver, String jdbcUrl, String jdbcUsername,
+			String jdbcPassword, String outputDir, String basePackageName, String idGeneratedValue,
+			DbSkipConfig dbSkipConfig, DbMappingConfig dbMappingConfig, DbPermConfig dbPermConfig,
+			DbSearchConfig dbSearchConfig, DbUploadConfig dbUploadConfig, EntityQueryCacheConfig entityQueryCacheConfig,
 			EntityEhcacheConfig entityEhcacheConfig) {
 		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
 
-		final String entityPackageName = basePackageName + ".entity";
-		final String entityDir = getPackageDir(outputDir, entityPackageName);
-		final Template entityTemplate = getTemplate(freeMarkerConfig, "Entity.ftl");
+		final String baseExtensionDir = getBaseExtensionDir(loaderClass, basePackageName);
 
-		final String daoPackageName = basePackageName + ".dao";
+		final String entityPackageName = basePackageName + "." + RELATIVE_ENTITY_PACKAGE_NAME;
+		final String entityDir = getPackageDir(outputDir, entityPackageName);
+		final Template entityTemplate = getTemplate(freeMarkerConfig, FTL_ENTITY);
+
+		final String daoPackageName = basePackageName + "." + RELATIVE_DAO_PACKAGE_NAME;
 		final String daoDir = getPackageDir(outputDir, daoPackageName);
-		final Template daoTemplate = getTemplate(freeMarkerConfig, "Dao.ftl");
+		final Template daoTemplate = getTemplate(freeMarkerConfig, FTL_DAO);
 
 		final EhcacheModel ehcacheModel = entityEhcacheConfig.newModel();
 
@@ -69,7 +78,7 @@ public class EntityGenerator {
 			final EntityModel entityModel = new EntityModel(entityPackageName, tableName,
 					dbPermConfig.getEntityPerm(tableName), dbSearchConfig.getEntitySearch(tableName), entityClassName,
 					getSerialVersionUIDStr(entityClassName), entityFieldList, idGeneratedValue,
-					dbEntityExtensionConfig.getEntityExtension(tableName));
+					getEntityExtension(baseExtensionDir, entityClassName));
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
 			writeJavaFile(entityDir, entityClassName, entityString);
 
@@ -78,7 +87,7 @@ public class EntityGenerator {
 			final boolean queryCacheEnabled = entityQueryCacheConfig.isEnabled(entityClassName);
 			final DaoModel daoModel = new DaoModel(daoPackageName, entityPackageName, entityClassName, daoClassName,
 					queryCacheEnabled, mapIdType(tableName, entityFieldList),
-					dbDaoExtensionConfig.getDaoExtension(tableName));
+					getDaoExtension(baseExtensionDir, daoClassName));
 			final String daoString = FreeMarkers.render(daoTemplate, daoModel);
 			writeJavaFile(daoDir, daoClassName, daoString);
 
@@ -90,7 +99,7 @@ public class EntityGenerator {
 		}
 
 		final String ehcacheDir = Files.toUnixPath(outputDir);
-		final Template ehcacheTemplate = getTemplate(freeMarkerConfig, "ehcache.ftl");
+		final Template ehcacheTemplate = getTemplate(freeMarkerConfig, FTL_EHCACHE);
 		final String ehcacheString = FreeMarkers.render(ehcacheTemplate, ehcacheModel);
 		writeEhcacheFile(ehcacheDir, ehcacheModel.getName(), ehcacheString);
 	}
@@ -190,6 +199,52 @@ public class EntityGenerator {
 		}
 
 		return pkType;
+	}
+
+	private static String getEntityExtension(String baseExtensionDir, String entityClassName) {
+		return readExtension(baseExtensionDir, RELATIVE_ENTITY_PACKAGE_NAME, entityClassName);
+	}
+
+	private static String getDaoExtension(String baseExtensionDir, String daoClassName) {
+		return readExtension(baseExtensionDir, RELATIVE_DAO_PACKAGE_NAME, daoClassName);
+	}
+
+	private static String readExtension(String baseExtensionDir, String relativePackageName, String className) {
+		final File file = new File(baseExtensionDir + relativePackageName + "/" + className + ".java");
+		if (!file.exists()) {
+			return null;
+		}
+
+		try {
+			final List<String> lineList = FileUtils.readLines(file, Constants.UTF8_CHARSET);
+			int fromIndex = -1;
+			int toIndex = -1;
+			for (int i = 0; i < lineList.size(); i++) {
+				if (lineList.get(i).contains(className)) {
+					fromIndex = i + 1;
+					break;
+				}
+			}
+			Validate.isTrue(fromIndex != -1, "Cannot find class name: [%s]", className);
+			for (int i = lineList.size() - 1; i >= 0; i--) {
+				if (lineList.get(i).contains("}")) {
+					toIndex = i;
+					break;
+				}
+			}
+			Validate.isTrue(toIndex != -1, "Cannot find end [}]");
+			return StringUtils.join(lineList.subList(fromIndex, toIndex), "\n");
+		} catch (IOException e) {
+			throw Exceptions.unchecked(e);
+		}
+	}
+
+	private static String getBaseExtensionDir(Class<?> loaderClass, String basePackageName) {
+		final String loaderLocation = loaderClass.getProtectionDomain().getCodeSource().getLocation().getPath();
+		final int index = loaderLocation.indexOf("/target/");
+		final String baseExtenstionDir = loaderLocation.substring(0, index) + "/src/test/java/"
+				+ basePackageName.replace('.', '/') + "/codegenerator/entity/";
+		return baseExtenstionDir;
 	}
 
 	private EntityGenerator() {
