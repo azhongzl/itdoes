@@ -187,9 +187,9 @@ public class EntityGeneratorHelper {
 		final EntityEhcacheConfig entityEhcacheConfig = new FileEntityEhcacheConfig(
 				new PropertiesLoader(ENTITY_EHCACHE_FILE));
 
-		EntityGenerator.generateEntities(loaderClass, pl.getStringMust("jdbc.driver"), pl.getStringMust("jdbc.url"),
-				pl.getStringMust("jdbc.username"), pl.getStringMust("jdbc.password"), outputDir, basePackageName,
-				idGeneratedValue, dbSkipConfig, dbMappingConfig, dbPermConfig, dbSearchConfig, dbUploadConfig,
-				entityQueryCacheConfig, entityEhcacheConfig);
+		EntityGenerator.generateEntities(pl.getStringMust("jdbc.driver"), pl.getStringMust("jdbc.url"),
+				pl.getStringMust("jdbc.username"), pl.getStringMust("jdbc.password"), loaderClass, outputDir,
+				basePackageName, idGeneratedValue, dbSkipConfig, dbMappingConfig, dbPermConfig, dbSearchConfig,
+				dbUploadConfig, entityQueryCacheConfig, entityEhcacheConfig);
 	}
 }

@@ -43,8 +43,8 @@ public class EntityGenerator {
 
 	private static final String TEMPLATE_DIR = "classpath:/" + Reflections.packageToPath(EntityGenerator.class);
 
-	public static void generateEntities(Class<?> loaderClass, String jdbcDriver, String jdbcUrl, String jdbcUsername,
-			String jdbcPassword, String outputDir, String basePackageName, String idGeneratedValue,
+	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
+			Class<?> loaderClass, String outputDir, String basePackageName, String idGeneratedValue,
 			DbSkipConfig dbSkipConfig, DbMappingConfig dbMappingConfig, DbPermConfig dbPermConfig,
 			DbSearchConfig dbSearchConfig, DbUploadConfig dbUploadConfig, EntityQueryCacheConfig entityQueryCacheConfig,
 			EntityEhcacheConfig entityEhcacheConfig) {
