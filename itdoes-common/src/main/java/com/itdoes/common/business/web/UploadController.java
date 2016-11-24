@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.itdoes.common.core.Result;
@@ -21,11 +20,10 @@ import com.itdoes.common.core.web.MultipartFiles;
 /**
  * @author Jalen Zhong
  */
-@RestController
+// @RestController
 @RequestMapping(value = UploadController.UPLOAD_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class UploadController extends BaseController {
-	public static final String PERM_UPLOAD = "upload";
-	public static final String UPLOAD_URL_PREFIX = "/" + PERM_UPLOAD;
+	public static final String UPLOAD_URL_PREFIX = "/upload";
 	private static final String UPLOAD_URL_TO_FIND = UPLOAD_URL_PREFIX + "/";
 
 	@RequestMapping(value = "/**", method = RequestMethod.POST)
