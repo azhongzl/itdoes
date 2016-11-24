@@ -132,12 +132,9 @@ package com.itdoes.common.business;
  * @author Jalen Zhong
  */
 public class Perms {
-	public static final String PERM_SEARCH = "search";
-	public static final String PERM_UPLOAD = "upload";
-	public static final String PERM_ENTITY = "entity";
-
 	private static final char PERM_SEPARATOR = ':';
 	private static final String PERM_ROOT = "itdoes";
+	private static final String PERM_ENTITY = "entity";
 	private static final String PERM_ENTITY_CLASS = "class";
 	private static final String PERM_ENTITY_FIELD = "field";
 	private static final String PERM_READ = "read";
@@ -147,24 +144,16 @@ public class Perms {
 		return PERM_ROOT;
 	}
 
-	public static String getSearchAllPerm() {
-		return getAllPerm() + PERM_SEPARATOR + PERM_SEARCH;
+	public static String getResourceAllPerm(String resource) {
+		return PERM_ROOT + PERM_SEPARATOR + resource;
 	}
 
-	public static String getSearchPerm(String command) {
-		return getSearchAllPerm() + PERM_SEPARATOR + command;
-	}
-
-	public static String getUploadAllPerm() {
-		return getAllPerm() + PERM_SEPARATOR + PERM_UPLOAD;
-	}
-
-	public static String getUploadPerm(String permissionName) {
-		return getUploadAllPerm() + PERM_SEPARATOR + permissionName;
+	public static String getResourcePerm(String resource, String command) {
+		return getResourceAllPerm(resource) + PERM_SEPARATOR + command;
 	}
 
 	public static String getEntityAllPerm() {
-		return getAllPerm() + PERM_SEPARATOR + PERM_ENTITY;
+		return PERM_ROOT + PERM_SEPARATOR + PERM_ENTITY;
 	}
 
 	public static String getEntityOneEntityAllPerm(String entityName) {

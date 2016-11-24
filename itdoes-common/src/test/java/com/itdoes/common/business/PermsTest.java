@@ -12,11 +12,8 @@ public class PermsTest {
 	public void getPermission() {
 		assertThat(Perms.getAllPerm()).isEqualTo("itdoes");
 
-		assertThat(Perms.getSearchAllPerm()).isEqualTo("itdoes:search");
-		assertThat(Perms.getSearchPerm("buildIndex")).isEqualTo("itdoes:search:buildIndex");
-
-		assertThat(Perms.getUploadAllPerm()).isEqualTo("itdoes:upload");
-		assertThat(Perms.getUploadPerm("myResource")).isEqualTo("itdoes:upload:myResource");
+		assertThat(Perms.getResourceAllPerm("myResource")).isEqualTo("itdoes:myResource");
+		assertThat(Perms.getResourcePerm("myResource", "myCommand")).isEqualTo("itdoes:myResource:myCommand");
 
 		String entityName = "MyEntity";
 		String fieldName = "myField";
