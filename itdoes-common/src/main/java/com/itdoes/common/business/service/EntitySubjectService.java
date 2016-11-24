@@ -18,7 +18,7 @@ import com.itdoes.common.core.util.Reflections;
  * @author Jalen Zhong
  */
 @Service
-public class EntityService extends BaseService {
+public class EntitySubjectService extends BaseService {
 	@Autowired
 	private EntityDbService dbService;
 	@Autowired

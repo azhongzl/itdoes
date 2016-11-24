@@ -34,7 +34,7 @@ public class EntityPutController extends EntityBaseController {
 			@Valid @ModelAttribute("entity") T entity, ServletRequest request) {
 		final EntityPair<T, ID> pair = getPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
-		entityService.put(pair, entity, oldEntity);
+		subjectService.put(pair, entity, oldEntity);
 		return HttpResults.success();
 	}
 
@@ -46,7 +46,7 @@ public class EntityPutController extends EntityBaseController {
 			ServletRequest request) {
 		final EntityPair<T, ID> pair = getPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
-		entityService.putUpload(pair, entity, oldEntity, getUploadRealRootPath(), uploadFileList,
+		subjectService.putUpload(pair, entity, oldEntity, getUploadRealRootPath(), uploadFileList,
 				isUploadDeleteOrphanFiles());
 		return HttpResults.success();
 	}
@@ -57,7 +57,7 @@ public class EntityPutController extends EntityBaseController {
 			Model model, ServletRequest request) {
 		final EntityPair<T, ID> pair = getPair(ec);
 
-		final T entity = entityService.get(pair, convertId(pair, id));
+		final T entity = subjectService.get(pair, convertId(pair, id));
 		model.addAttribute("entity", entity);
 
 		if (pair.needCopyOldEntity()) {
