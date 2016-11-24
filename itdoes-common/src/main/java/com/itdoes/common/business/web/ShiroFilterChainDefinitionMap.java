@@ -37,47 +37,14 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 			if (Collections3.isEmpty(entityPerm.types())) {
 				continue;
 			}
-			final List<EntityPermType> entityPermTypeList = Collections3.asList(entityPerm.types());
 
-			if (EntityPermType.FIND.isIn(entityPermTypeList)) {
-				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
-						EntityBaseController.ENTITY_COMMAND_FIND);
-			}
-			if (EntityPermType.FIND_ALL.isIn(entityPermTypeList)) {
-				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
-						EntityBaseController.ENTITY_COMMAND_FIND_ALL);
-			}
-			if (EntityPermType.FIND_ONE.isIn(entityPermTypeList)) {
-				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
-						EntityBaseController.ENTITY_COMMAND_FIND_ONE);
-			}
-			if (EntityPermType.COUNT.isIn(entityPermTypeList)) {
-				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
-						EntityBaseController.ENTITY_COMMAND_COUNT);
-			}
-			if (EntityPermType.GET.isIn(entityPermTypeList)) {
-				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
-						EntityBaseController.ENTITY_COMMAND_GET);
-			}
-			if (EntityPermType.DELETE.isIn(entityPermTypeList)) {
-				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
-						EntityBaseController.ENTITY_COMMAND_DELETE);
-			}
-			if (EntityPermType.POST.isIn(entityPermTypeList)) {
-				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
-						EntityBaseController.ENTITY_COMMAND_POST);
-			}
-			if (EntityPermType.PUT.isIn(entityPermTypeList)) {
-				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
-						EntityBaseController.ENTITY_COMMAND_PUT);
-			}
-			if (EntityPermType.POST_UPLOAD.isIn(entityPermTypeList)) {
-				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
-						EntityBaseController.ENTITY_COMMAND_POST_UPLOAD);
-			}
-			if (EntityPermType.PUT_UPLOAD.isIn(entityPermTypeList)) {
-				addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(),
-						EntityBaseController.ENTITY_COMMAND_PUT_UPLOAD);
+			final List<EntityPermType> entityPermTypeList = Collections3.asList(entityPerm.types());
+			for (EntityPermType type : EntityPermType.values()) {
+				if (type.getCommand() != null) {
+					if (type.isIn(entityPermTypeList)) {
+						addDynamicDefinition(dynamicDefinitions, pair.getEntityClass(), type.getCommand());
+					}
+				}
 			}
 		}
 		return dynamicDefinitions;

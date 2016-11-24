@@ -90,17 +90,6 @@ import com.itdoes.common.core.util.Reflections;
 public abstract class EntityBaseController extends BaseController {
 	public static final String ENTITY_URL_PREFIX = "/e";
 
-	public static final String ENTITY_COMMAND_FIND = "find";
-	public static final String ENTITY_COMMAND_FIND_ALL = "findAll";
-	public static final String ENTITY_COMMAND_FIND_ONE = "findOne";
-	public static final String ENTITY_COMMAND_COUNT = "count";
-	public static final String ENTITY_COMMAND_GET = "get";
-	public static final String ENTITY_COMMAND_DELETE = "delete";
-	public static final String ENTITY_COMMAND_POST = "post";
-	public static final String ENTITY_COMMAND_PUT = "put";
-	public static final String ENTITY_COMMAND_POST_UPLOAD = "postUpload";
-	public static final String ENTITY_COMMAND_PUT_UPLOAD = "putUpload";
-
 	private static final String DEFAULT_UPLOAD_RELATIVE_ROOT_PATH = "uploads";
 	private static final boolean DEFAULT_UPLOAD_DELETE_ORPHAN_FILES = true;
 

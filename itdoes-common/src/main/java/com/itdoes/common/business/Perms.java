@@ -91,40 +91,22 @@ package com.itdoes.common.business;
  * <li>itdoes:entity:User:field:username:write
  * </ul>
  * <tr style="background-color: rgb(238, 238, 255);">
- * <td><code>Upload</code>
- * <td>itdoes:upload[:*]
- * <td>All upload resources
+ * <td><code>&lt;Resource&gt;</code>
+ * <td>itdoes:&lt;resource&gt;[:*]
+ * <td>All resource commands
  * <td>
  * <ul>
- * <li>itdoes:upload
- * <li>itdoes:upload.*
+ * <li>itdoes:resource1
+ * <li>itdoes:resource1.*
  * </ul>
  * <tr>
- * <td><code>Upload</code>
- * <td>itdoes:upload:&lt;resource&gt;
- * <td>Specific upload resource
+ * <td><code>&lt;Resource&gt;</code>
+ * <td>itdoes:&lt;resource&gt;:&lt;command&gt;
+ * <td>Specific resource command
  * <td>
  * <ul>
- * <li>itdoes:upload:resource1
- * <li>itdoes:upload:resource2
- * </ul>
- * <tr style="background-color: rgb(238, 238, 255);">
- * <td><code>Search</code>
- * <td>itdoes:search[:*]
- * <td>All search commands
- * <td>
- * <ul>
- * <li>itdoes:search
- * <li>itdoes:search.*
- * </ul>
- * <tr>
- * <td><code>Search</code>
- * <td>itdoes:search:&lt;command&gt;
- * <td>Specific search command
- * <td>
- * <ul>
- * <li>itdoes:search:command1
- * <li>itdoes:search:command2
+ * <li>itdoes:resource1:command1
+ * <li>itdoes:resource2:command2
  * </ul>
  * </table>
  * </blockquote>
