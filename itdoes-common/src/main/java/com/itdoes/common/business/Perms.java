@@ -49,12 +49,15 @@ package com.itdoes.common.business;
  * <td>
  * <ul>
  * <li>itdoes:entity:User:class:find
+ * <li>itdoes:entity:User:class:findAll
  * <li>itdoes:entity:User:class:findOne
  * <li>itdoes:entity:User:class:count
  * <li>itdoes:entity:User:class:get
  * <li>itdoes:entity:User:class:delete
  * <li>itdoes:entity:User:class:post
  * <li>itdoes:entity:User:class:put
+ * <li>itdoes:entity:User:class:postUpload
+ * <li>itdoes:entity:User:class:putUpload
  * </ul>
  * <tr>
  * <td><code>Entity</code>
