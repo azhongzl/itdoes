@@ -12,6 +12,7 @@ import org.apache.commons.lang3.Validate;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -38,8 +39,6 @@ public class EntityEnv implements ApplicationContextAware {
 
 	private String entityPackage;
 
-	private boolean daoLazyInit;
-
 	private Map<String, EntityPair<?, ? extends Serializable>> pairMap;
 
 	@Override
@@ -49,10 +48,6 @@ public class EntityEnv implements ApplicationContextAware {
 
 	public void setEntityPackage(String entityPackage) {
 		this.entityPackage = entityPackage;
-	}
-
-	public void setDaoLazyInit(boolean daoLazyInit) {
-		this.daoLazyInit = daoLazyInit;
 	}
 
 	@PostConstruct
@@ -94,7 +89,7 @@ public class EntityEnv implements ApplicationContextAware {
 		final String daoBeanName = Springs.getBeanName(getDaoClassName(key));
 		// Generating dao by Cglib is time-consuming. Lazy initialize in non production environment
 		final BaseDao<T, ID> dao;
-		if (!daoLazyInit) {
+		if (!isLazyInit(daoBeanName)) {
 			dao = (BaseDao<T, ID>) applicationContext.getBean(daoBeanName);
 		} else {
 			dao = (BaseDao<T, ID>) LazyInitBeanLoader.getInstance().loadBean(applicationContext, daoBeanName,
@@ -133,5 +128,13 @@ public class EntityEnv implements ApplicationContextAware {
 
 		pairMap.put(key, new EntityPair<T, ID>(entityClass, idField, dao, entityPerm, readPermFieldList,
 				writePermFieldList, uploadField));
+	}
+
+	private boolean isLazyInit(String beanName) {
+		if (applicationContext instanceof ConfigurableApplicationContext) {
+			return ((ConfigurableApplicationContext) applicationContext).getBeanFactory().getBeanDefinition(beanName)
+					.isLazyInit();
+		}
+		return false;
 	}
 }
