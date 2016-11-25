@@ -22,6 +22,7 @@ import com.itdoes.common.business.entity.EntityPerm;
 import com.itdoes.common.business.entity.FieldPerm;
 import com.itdoes.common.business.entity.FieldPermType;
 import com.itdoes.common.business.entity.UploadField;
+import com.itdoes.common.business.service.EntityService;
 import com.itdoes.common.core.spring.LazyInitBeanLoader;
 import com.itdoes.common.core.spring.Springs;
 import com.itdoes.common.core.util.Collections3;
@@ -35,7 +36,11 @@ public class EntityEnv implements ApplicationContextAware {
 		return entityClassName + "Dao";
 	}
 
-	private ApplicationContext applicationContext;
+	public static String getServiceClassName(String entityClassName) {
+		return entityClassName + "Service";
+	}
+
+	private ConfigurableApplicationContext applicationContext;
 
 	private String entityPackage;
 
@@ -43,7 +48,7 @@ public class EntityEnv implements ApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
+		this.applicationContext = (ConfigurableApplicationContext) applicationContext;
 	}
 
 	public void setEntityPackage(String entityPackage) {
@@ -93,6 +98,11 @@ public class EntityEnv implements ApplicationContextAware {
 		}
 		Validate.notNull(dao, "Cannot find bean for name [%s]", daoBeanName);
 
+		// Service
+		final String serviceBeanName = Springs.getBeanName(getServiceClassName(key));
+		final EntityService service = applicationContext.containsBean(serviceBeanName)
+				? (EntityService) applicationContext.getBean(serviceBeanName) : null;
+
 		// Id Field
 		final Field idField = Reflections.getFieldWithAnnotation(entityClass, Id.class);
 		Validate.notNull(idField, "Cannot find @Id annotation for class [%s]", key);
@@ -126,15 +136,11 @@ public class EntityEnv implements ApplicationContextAware {
 		// Field Upload
 		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, UploadField.class);
 
-		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, null, idField, entityPerm, readPermFieldList,
+		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, service, idField, entityPerm, readPermFieldList,
 				writePermFieldList, uploadField));
 	}
 
 	private boolean isLazyInit(String beanName) {
-		if (applicationContext instanceof ConfigurableApplicationContext) {
-			return ((ConfigurableApplicationContext) applicationContext).getBeanFactory().getBeanDefinition(beanName)
-					.isLazyInit();
-		}
-		return false;
+		return applicationContext.getBeanFactory().getBeanDefinition(beanName).isLazyInit();
 	}
 }
