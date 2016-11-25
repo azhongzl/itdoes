@@ -81,10 +81,6 @@ public class EntityEnv implements ApplicationContextAware {
 	private <T, ID extends Serializable> void initPair(Class<T> entityClass) {
 		final String key = entityClass.getSimpleName();
 
-		// Id Field
-		final Field idField = Reflections.getFieldWithAnnotation(entityClass, Id.class);
-		Validate.notNull(idField, "Cannot find @Id annotation for class [%s]", key);
-
 		// Dao
 		final String daoBeanName = Springs.getBeanName(getDaoClassName(key));
 		// Generating dao by Cglib is time-consuming. Lazy initialize in non production environment
@@ -96,6 +92,10 @@ public class EntityEnv implements ApplicationContextAware {
 					new Class[] { BaseDao.class });
 		}
 		Validate.notNull(dao, "Cannot find bean for name [%s]", daoBeanName);
+
+		// Id Field
+		final Field idField = Reflections.getFieldWithAnnotation(entityClass, Id.class);
+		Validate.notNull(idField, "Cannot find @Id annotation for class [%s]", key);
 
 		// Entity Perm
 		final EntityPerm entityPerm = entityClass.getAnnotation(EntityPerm.class);
@@ -126,7 +126,7 @@ public class EntityEnv implements ApplicationContextAware {
 		// Field Upload
 		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, UploadField.class);
 
-		pairMap.put(key, new EntityPair<T, ID>(entityClass, idField, dao, entityPerm, readPermFieldList,
+		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, null, idField, entityPerm, readPermFieldList,
 				writePermFieldList, uploadField));
 	}
 

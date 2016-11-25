@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.EntityPerm;
+import com.itdoes.common.business.service.EntityService;
 import com.itdoes.common.core.cglib.CglibMapper;
 import com.itdoes.common.core.util.Collections3;
 
@@ -14,18 +15,20 @@ import com.itdoes.common.core.util.Collections3;
  */
 public class EntityPair<T, ID extends Serializable> {
 	private final Class<T> entityClass;
-	private final Field idField;
 	private final BaseDao<T, ID> dao;
+	private final EntityService service;
+	private final Field idField;
 	private final EntityPerm entityPerm;
 	private final List<Field> readPermFieldList;
 	private final List<Field> writePermFieldList;
 	private final Field uploadField;
 
-	public EntityPair(Class<T> entityClass, Field idField, BaseDao<T, ID> dao, EntityPerm entityPerm,
-			List<Field> readPermFieldList, List<Field> writePermFieldList, Field uploadField) {
+	public EntityPair(Class<T> entityClass, BaseDao<T, ID> dao, EntityService service, Field idField,
+			EntityPerm entityPerm, List<Field> readPermFieldList, List<Field> writePermFieldList, Field uploadField) {
 		this.entityClass = entityClass;
-		this.idField = idField;
 		this.dao = dao;
+		this.service = service;
+		this.idField = idField;
 		this.entityPerm = entityPerm;
 		this.readPermFieldList = readPermFieldList;
 		this.writePermFieldList = writePermFieldList;
@@ -41,12 +44,16 @@ public class EntityPair<T, ID extends Serializable> {
 		return entityClass;
 	}
 
-	public Field getIdField() {
-		return idField;
-	}
-
 	public BaseDao<T, ID> getDao() {
 		return dao;
+	}
+
+	public EntityService getService() {
+		return service;
+	}
+
+	public Field getIdField() {
+		return idField;
 	}
 
 	public EntityPerm getEntityPerm() {

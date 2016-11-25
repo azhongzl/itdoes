@@ -104,7 +104,8 @@ public abstract class EntityBaseController extends BaseController {
 	}
 
 	protected <T, ID extends Serializable> EntityService getEntityService(EntityPair<T, ID> pair) {
-		return defaultEntityService;
+		final EntityService entityService = pair.getService();
+		return entityService != null ? entityService : defaultEntityService;
 	}
 
 	@SuppressWarnings("unchecked")
