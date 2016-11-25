@@ -60,7 +60,7 @@ public class EntityEnv implements ApplicationContextAware {
 	}
 
 	@PostConstruct
-	public void init() {
+	public void myInit() {
 		initPairMap();
 	}
 
