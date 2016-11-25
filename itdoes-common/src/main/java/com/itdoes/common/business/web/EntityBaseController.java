@@ -94,13 +94,17 @@ public abstract class EntityBaseController extends BaseController {
 	private static final boolean DEFAULT_UPLOAD_DELETE_ORPHAN_FILES = true;
 
 	@Autowired
-	protected EntityEnv env;
+	private EntityEnv entityEnv;
 
 	@Autowired
-	protected EntityService entityService;
+	private EntityService defaultEntityService;
 
-	protected <T, ID extends Serializable> EntityPair<T, ID> getPair(String ec) {
-		return env.getPair(ec);
+	protected <T, ID extends Serializable> EntityPair<T, ID> getEntityPair(String ec) {
+		return entityEnv.getPair(ec);
+	}
+
+	protected <T, ID extends Serializable> EntityService getEntityService(EntityPair<T, ID> pair) {
+		return defaultEntityService;
 	}
 
 	@SuppressWarnings("unchecked")

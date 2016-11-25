@@ -32,9 +32,9 @@ public class EntityPutController extends EntityBaseController {
 	@RequestMapping(value = "/{ec}/" + EntityPermType.Command.PUT + "/{id}", method = RequestMethod.POST)
 	public <T, ID extends Serializable> Result put(@PathVariable("ec") String ec,
 			@Valid @ModelAttribute("entity") T entity, ServletRequest request) {
-		final EntityPair<T, ID> pair = getPair(ec);
+		final EntityPair<T, ID> pair = getEntityPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
-		entityService.put(pair, entity, oldEntity);
+		getEntityService(pair).put(pair, entity, oldEntity);
 		return HttpResults.success();
 	}
 
@@ -44,9 +44,9 @@ public class EntityPutController extends EntityBaseController {
 			@Valid @ModelAttribute("entity") T entity,
 			@RequestParam(BaseController.UPLOAD_FILE_PARAM) List<MultipartFile> uploadFileList,
 			ServletRequest request) {
-		final EntityPair<T, ID> pair = getPair(ec);
+		final EntityPair<T, ID> pair = getEntityPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
-		entityService.putUpload(pair, entity, oldEntity, getUploadRealRootPath(), uploadFileList,
+		getEntityService(pair).putUpload(pair, entity, oldEntity, getUploadRealRootPath(), uploadFileList,
 				isUploadDeleteOrphanFiles());
 		return HttpResults.success();
 	}
@@ -55,9 +55,9 @@ public class EntityPutController extends EntityBaseController {
 	@ModelAttribute
 	public <T, ID extends Serializable> void getEntity(@PathVariable("ec") String ec, @PathVariable("id") String id,
 			Model model, ServletRequest request) {
-		final EntityPair<T, ID> pair = getPair(ec);
+		final EntityPair<T, ID> pair = getEntityPair(ec);
 
-		final T entity = entityService.get(pair, convertId(pair, id));
+		final T entity = getEntityService(pair).get(pair, convertId(pair, id));
 		model.addAttribute("entity", entity);
 
 		if (pair.needCopyOldEntity()) {

@@ -29,8 +29,8 @@ public class EntityMainController extends EntityBaseController {
 			@RequestParam(value = BaseController.PAGE_NO, defaultValue = "1") int pageNo,
 			@RequestParam(value = BaseController.PAGE_SIZE, defaultValue = "-1") int pageSize,
 			@RequestParam(value = BaseController.PAGE_SORT, required = false) String pageSort, ServletRequest request) {
-		final EntityPair<T, ID> pair = getPair(ec);
-		final Page<T> page = entityService.find(pair, buildSpecification(pair.getEntityClass(), request),
+		final EntityPair<T, ID> pair = getEntityPair(ec);
+		final Page<T> page = getEntityService(pair).find(pair, buildSpecification(pair.getEntityClass(), request),
 				buildPageRequest(pageNo, pageSize, pageSort));
 		return HttpResults.success(page);
 	}
@@ -38,37 +38,37 @@ public class EntityMainController extends EntityBaseController {
 	@RequestMapping(value = "/{ec}/" + EntityPermType.Command.FIND_ALL, method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result findAll(@PathVariable("ec") String ec,
 			@RequestParam(value = BaseController.PAGE_SORT, required = false) String pageSort, ServletRequest request) {
-		final EntityPair<T, ID> pair = getPair(ec);
-		final List<T> list = entityService.findAll(pair, buildSpecification(pair.getEntityClass(), request),
+		final EntityPair<T, ID> pair = getEntityPair(ec);
+		final List<T> list = getEntityService(pair).findAll(pair, buildSpecification(pair.getEntityClass(), request),
 				buildSort(pageSort));
 		return HttpResults.success(list);
 	}
 
 	@RequestMapping(value = "/{ec}/" + EntityPermType.Command.FIND_ONE, method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result findOne(@PathVariable("ec") String ec, ServletRequest request) {
-		final EntityPair<T, ID> pair = getPair(ec);
-		final T entity = entityService.findOne(pair, buildSpecification(pair.getEntityClass(), request));
+		final EntityPair<T, ID> pair = getEntityPair(ec);
+		final T entity = getEntityService(pair).findOne(pair, buildSpecification(pair.getEntityClass(), request));
 		return HttpResults.success(entity);
 	}
 
 	@RequestMapping(value = "/{ec}/" + EntityPermType.Command.COUNT, method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result count(@PathVariable("ec") String ec, ServletRequest request) {
-		final EntityPair<T, ID> pair = getPair(ec);
-		final long count = entityService.count(pair, buildSpecification(pair.getEntityClass(), request));
+		final EntityPair<T, ID> pair = getEntityPair(ec);
+		final long count = getEntityService(pair).count(pair, buildSpecification(pair.getEntityClass(), request));
 		return HttpResults.success(count);
 	}
 
 	@RequestMapping(value = "/{ec}/" + EntityPermType.Command.GET + "/{id}", method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result get(@PathVariable("ec") String ec, @PathVariable("id") String id) {
-		final EntityPair<T, ID> pair = getPair(ec);
-		final T entity = entityService.get(pair, convertId(pair, id));
+		final EntityPair<T, ID> pair = getEntityPair(ec);
+		final T entity = getEntityService(pair).get(pair, convertId(pair, id));
 		return HttpResults.success(entity);
 	}
 
 	@RequestMapping(value = "/{ec}/" + EntityPermType.Command.DELETE + "/{id}")
 	public <T, ID extends Serializable> Result delete(@PathVariable("ec") String ec, @PathVariable("id") String id) {
-		final EntityPair<T, ID> pair = getPair(ec);
-		entityService.delete(pair, convertId(pair, id), getUploadRealRootPath(), isUploadDeleteOrphanFiles());
+		final EntityPair<T, ID> pair = getEntityPair(ec);
+		getEntityService(pair).delete(pair, convertId(pair, id), getUploadRealRootPath(), isUploadDeleteOrphanFiles());
 		return HttpResults.success();
 	}
 }
