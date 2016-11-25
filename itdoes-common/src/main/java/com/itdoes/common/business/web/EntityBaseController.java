@@ -2,13 +2,10 @@ package com.itdoes.common.business.web;
 
 import java.io.Serializable;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itdoes.common.business.EntityEnv;
 import com.itdoes.common.business.EntityPair;
-import com.itdoes.common.business.service.EntityService;
 import com.itdoes.common.core.util.Reflections;
 
 /**
@@ -98,16 +95,8 @@ public abstract class EntityBaseController extends BaseController {
 	@Autowired
 	private EntityEnv entityEnv;
 
-	@Resource(name = "entityService")
-	private EntityService defaultEntityService;
-
 	protected <T, ID extends Serializable> EntityPair<T, ID> getEntityPair(String ec) {
 		return entityEnv.getPair(ec);
-	}
-
-	protected <T, ID extends Serializable> EntityService getEntityService(EntityPair<T, ID> pair) {
-		final EntityService entityService = pair.getService();
-		return entityService != null ? entityService : defaultEntityService;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -31,7 +31,7 @@ public class EntityPostController extends EntityBaseController {
 	public <T, ID extends Serializable> Result post(@PathVariable(value = "ec") String ec,
 			@Valid @ModelAttribute("entity") T entity) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
-		final ID id = getEntityService(pair).post(pair, entity);
+		final ID id = pair.getService().post(pair, entity);
 		return HttpResults.success(id);
 	}
 
@@ -40,7 +40,7 @@ public class EntityPostController extends EntityBaseController {
 			@Valid @ModelAttribute("entity") T entity,
 			@RequestParam(BaseController.UPLOAD_FILE_PARAM) List<MultipartFile> uploadFileList) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
-		final ID id = getEntityService(pair).postUpload(pair, entity, getUploadRealRootPath(), uploadFileList);
+		final ID id = pair.getService().postUpload(pair, entity, getUploadRealRootPath(), uploadFileList);
 		return HttpResults.success(id);
 	}
 

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.persistence.Id;
 
 import org.apache.commons.lang3.Validate;
@@ -45,6 +46,9 @@ public class EntityEnv implements ApplicationContextAware {
 	private String entityPackage;
 
 	private Map<String, EntityPair<?, ? extends Serializable>> pairMap;
+
+	@Resource(name = "entityService")
+	private EntityService defaultEntityService;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -101,7 +105,7 @@ public class EntityEnv implements ApplicationContextAware {
 		// Service
 		final String serviceBeanName = Springs.getBeanName(getServiceClassName(key));
 		final EntityService service = applicationContext.containsBean(serviceBeanName)
-				? (EntityService) applicationContext.getBean(serviceBeanName) : null;
+				? (EntityService) applicationContext.getBean(serviceBeanName) : defaultEntityService;
 
 		// Id Field
 		final Field idField = Reflections.getFieldWithAnnotation(entityClass, Id.class);
