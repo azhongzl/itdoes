@@ -2,6 +2,8 @@ package com.itdoes.common.business.web;
 
 import java.io.Serializable;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itdoes.common.business.EntityEnv;
@@ -96,7 +98,7 @@ public abstract class EntityBaseController extends BaseController {
 	@Autowired
 	private EntityEnv entityEnv;
 
-	@Autowired
+	@Resource(name = "entityService")
 	private EntityService defaultEntityService;
 
 	protected <T, ID extends Serializable> EntityPair<T, ID> getEntityPair(String ec) {
