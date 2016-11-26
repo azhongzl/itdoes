@@ -122,6 +122,10 @@ public class Perms {
 	private static final String PERM_READ = "read";
 	private static final String PERM_WRITE = "write";
 
+	public static String getFullPerm(String partPerm) {
+		return PERM_ROOT + PERM_SEPARATOR + partPerm;
+	}
+
 	public static String getAllPerm() {
 		return PERM_ROOT;
 	}
