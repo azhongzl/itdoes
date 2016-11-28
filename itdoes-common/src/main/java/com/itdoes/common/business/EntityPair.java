@@ -16,18 +16,18 @@ import com.itdoes.common.core.util.Collections3;
 public class EntityPair<T, ID extends Serializable> {
 	private final Class<T> entityClass;
 	private final BaseDao<T, ID> dao;
-	private final EntityService service;
 	private final Field idField;
 	private final EntityPerm entityPerm;
 	private final List<Field> readPermFieldList;
 	private final List<Field> writePermFieldList;
 	private final Field uploadField;
 
-	public EntityPair(Class<T> entityClass, BaseDao<T, ID> dao, EntityService service, Field idField,
-			EntityPerm entityPerm, List<Field> readPermFieldList, List<Field> writePermFieldList, Field uploadField) {
+	private EntityService service;
+
+	public EntityPair(Class<T> entityClass, BaseDao<T, ID> dao, Field idField, EntityPerm entityPerm,
+			List<Field> readPermFieldList, List<Field> writePermFieldList, Field uploadField) {
 		this.entityClass = entityClass;
 		this.dao = dao;
-		this.service = service;
 		this.idField = idField;
 		this.entityPerm = entityPerm;
 		this.readPermFieldList = readPermFieldList;
@@ -46,10 +46,6 @@ public class EntityPair<T, ID extends Serializable> {
 
 	public BaseDao<T, ID> getDao() {
 		return dao;
-	}
-
-	public EntityService getService() {
-		return service;
 	}
 
 	public Field getIdField() {
@@ -82,5 +78,13 @@ public class EntityPair<T, ID extends Serializable> {
 
 	public boolean needCopyOldEntity() {
 		return hasWritePermField();
+	}
+
+	public EntityService getService() {
+		return service;
+	}
+
+	public void setService(EntityService service) {
+		this.service = service;
 	}
 }

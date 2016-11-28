@@ -84,6 +84,15 @@ public class EntityEnv implements ApplicationContextAware {
 		for (Class<?> entityClass : entityClassList) {
 			initPair(entityClass);
 		}
+
+		// Initialize service after initPair to avoid "circular reference" between EntityService and EntityPair
+		for (EntityPair<?, ? extends Serializable> pair : pairMap.values()) {
+			final String key = pair.getEntityClass().getSimpleName();
+			final String serviceBeanName = Springs.getBeanName(getServiceClassName(key));
+			final EntityService service = applicationContext.containsBean(serviceBeanName)
+					? (EntityService) applicationContext.getBean(serviceBeanName) : defaultEntityService;
+			pair.setService(service);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -101,11 +110,6 @@ public class EntityEnv implements ApplicationContextAware {
 					new Class[] { BaseDao.class });
 		}
 		Validate.notNull(dao, "Cannot find bean for name [%s]", daoBeanName);
-
-		// Service
-		final String serviceBeanName = Springs.getBeanName(getServiceClassName(key));
-		final EntityService service = applicationContext.containsBean(serviceBeanName)
-				? (EntityService) applicationContext.getBean(serviceBeanName) : defaultEntityService;
 
 		// Id Field
 		final Field idField = Reflections.getFieldWithAnnotation(entityClass, Id.class);
@@ -140,7 +144,7 @@ public class EntityEnv implements ApplicationContextAware {
 		// Field Upload
 		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, UploadField.class);
 
-		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, service, idField, entityPerm, readPermFieldList,
+		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, idField, entityPerm, readPermFieldList,
 				writePermFieldList, uploadField));
 	}
 
