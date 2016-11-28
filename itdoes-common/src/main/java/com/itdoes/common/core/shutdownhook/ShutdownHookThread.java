@@ -12,23 +12,23 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Jalen Zhong
  */
-public class ShutdownThread extends Thread {
-	public static interface ShutdownCallback {
+public class ShutdownHookThread extends Thread {
+	public static interface ShutdownHookCallback {
 		void shutdown();
 	}
 
-	private static final ShutdownThread INSTANCE = new ShutdownThread();
+	private static final ShutdownHookThread INSTANCE = new ShutdownHookThread();
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ShutdownThread.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ShutdownHookThread.class);
 
-	public static ShutdownThread getInstance() {
+	public static ShutdownHookThread getInstance() {
 		return INSTANCE;
 	}
 
-	private final ConcurrentMap<Object, ShutdownCallback> callbackMap = new ConcurrentHashMap<Object, ShutdownCallback>();
+	private final ConcurrentMap<Object, ShutdownHookCallback> callbackMap = new ConcurrentHashMap<Object, ShutdownHookCallback>();
 	private boolean hooked;
 
-	public synchronized void register(Object key, ShutdownCallback callback) {
+	public synchronized void register(Object key, ShutdownHookCallback callback) {
 		callbackMap.putIfAbsent(key, callback);
 		if (callbackMap.size() > 0) {
 			hook();
@@ -62,7 +62,7 @@ public class ShutdownThread extends Thread {
 
 	@Override
 	public void run() {
-		for (ShutdownCallback callback : callbackMap.values()) {
+		for (ShutdownHookCallback callback : callbackMap.values()) {
 			try {
 				callback.shutdown();
 			} catch (Exception e) {

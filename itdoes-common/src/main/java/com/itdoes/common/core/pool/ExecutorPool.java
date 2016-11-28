@@ -4,18 +4,18 @@ import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
-import com.itdoes.common.core.shutdownhook.ShutdownThread;
-import com.itdoes.common.core.shutdownhook.ShutdownThread.ShutdownCallback;
+import com.itdoes.common.core.shutdownhook.ShutdownHookThread;
+import com.itdoes.common.core.shutdownhook.ShutdownHookThread.ShutdownHookCallback;
 import com.itdoes.common.core.util.Exceptions;
 
 /**
  * @author Jalen Zhong
  */
 public class ExecutorPool<T> extends GenericObjectPool<T> {
-	private static class PoolShutdownCallback<T> implements ShutdownCallback {
+	private static class PoolShutdownHookCallback<T> implements ShutdownHookCallback {
 		private final ExecutorPool<T> pool;
 
-		public PoolShutdownCallback(ExecutorPool<T> pool) {
+		public PoolShutdownHookCallback(ExecutorPool<T> pool) {
 			this.pool = pool;
 		}
 
@@ -84,7 +84,7 @@ public class ExecutorPool<T> extends GenericObjectPool<T> {
 	 *            If true, this server instance will be explicitly stopped when the JVM is shutdown. Otherwise the JVM
 	 *            is stopped with the server running.
 	 * @see Runtime#addShutdownHook(Thread)
-	 * @see ShutdownThread
+	 * @see ShutdownHookThread
 	 */
 	public void setStopAtShutdown(boolean stop) {
 		// if we now want to stop
@@ -93,12 +93,12 @@ public class ExecutorPool<T> extends GenericObjectPool<T> {
 			if (!stopAtShutdown) {
 				// only register to stop if we're already started
 				if (!isClosed()) {
-					ShutdownThread.getInstance().register(this, new PoolShutdownCallback<T>(this));
+					ShutdownHookThread.getInstance().register(this, new PoolShutdownHookCallback<T>(this));
 				}
 			}
 		} else {
 			if (stopAtShutdown) {
-				ShutdownThread.getInstance().unregister(this);
+				ShutdownHookThread.getInstance().unregister(this);
 			}
 		}
 		stopAtShutdown = stop;
