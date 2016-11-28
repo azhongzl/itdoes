@@ -52,4 +52,9 @@ public class EntityDbService extends BaseTransactionalService {
 	public <T, ID extends Serializable> void delete(EntityPair<T, ID> pair, ID id) {
 		pair.getDao().delete(id);
 	}
+
+	@Transactional(readOnly = false)
+	public <T, ID extends Serializable> void deleteAll(EntityPair<T, ID> pair) {
+		pair.getDao().deleteAll();
+	}
 }
