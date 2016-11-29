@@ -1,9 +1,5 @@
 package com.itdoes.common.business.entity;
 
-import java.util.List;
-
-import com.itdoes.common.core.util.Collections3;
-
 /**
  * @author Jalen Zhong
  */
@@ -31,6 +27,22 @@ public enum EntityPermType {
 		String PUT_UPLOAD = "putUpload";
 	}
 
+	private static final EntityPermType[] READ_COMMAND_TYPES = new EntityPermType[] { FIND, FIND_ALL, FIND_ONE, COUNT,
+			GET };
+	private static final EntityPermType[] WRITE_COMMAND_TYPES = new EntityPermType[] { DELETE, POST, PUT, POST_UPLOAD,
+			PUT_UPLOAD };
+	private static final EntityPermType[] ALL_COMMAND_TYPES = new EntityPermType[READ_COMMAND_TYPES.length
+			+ WRITE_COMMAND_TYPES.length];
+	static {
+		int index = 0;
+		for (int i = 0; i < READ_COMMAND_TYPES.length; i++, index++) {
+			ALL_COMMAND_TYPES[i] = READ_COMMAND_TYPES[i];
+		}
+		for (int i = 0; i < WRITE_COMMAND_TYPES.length; i++) {
+			ALL_COMMAND_TYPES[i + index] = WRITE_COMMAND_TYPES[i];
+		}
+	}
+
 	private final String command;
 
 	private EntityPermType(String command) {
@@ -45,24 +57,15 @@ public enum EntityPermType {
 		return command;
 	}
 
-	public boolean isIn(List<EntityPermType> typeList) {
-		if (Collections3.isEmpty(typeList)) {
-			return false;
+	public EntityPermType[] getCommandTypes() {
+		if (this == ALL) {
+			return ALL_COMMAND_TYPES;
+		} else if (this == READ) {
+			return READ_COMMAND_TYPES;
+		} else if (this == WRITE) {
+			return WRITE_COMMAND_TYPES;
+		} else {
+			return new EntityPermType[] { this };
 		}
-
-		if (typeList.contains(this)) {
-			return true;
-		}
-		if (typeList.contains(ALL)) {
-			return true;
-		}
-		if (typeList.contains(READ)) {
-			return this == FIND || this == FIND_ALL || this == FIND_ONE || this == COUNT || this == GET;
-		}
-		if (typeList.contains(WRITE)) {
-			return this == DELETE || this == POST || this == PUT || this == POST_UPLOAD || this == PUT_UPLOAD;
-		}
-
-		return false;
 	}
 }
