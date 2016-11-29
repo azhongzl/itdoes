@@ -126,7 +126,7 @@ public class EntityEnv implements ApplicationContextAware {
 			for (Field permField : permFieldList) {
 				final FieldPerm fieldPerm = permField.getAnnotation(FieldPerm.class);
 				if (fieldPerm != null) {
-					final FieldPermType fieldPermType = fieldPerm.type();
+					final FieldPermType fieldPermType = fieldPerm.value();
 					if (fieldPermType != null) {
 						if (fieldPermType.equals(FieldPermType.ALL)) {
 							readPermFieldList.add(permField);

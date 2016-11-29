@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Map;
 
-import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Maps;
@@ -12,6 +11,7 @@ import com.itdoes.common.business.EntityEnv;
 import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.business.Perms;
 import com.itdoes.common.business.entity.EntityPerm;
+import com.itdoes.common.business.entity.EntityPermCommand;
 import com.itdoes.common.business.entity.EntityPermFilter;
 import com.itdoes.common.business.entity.EntityPermType;
 import com.itdoes.common.core.shiro.AbstractShiroFilterChainDefinitionMap;
@@ -39,33 +39,29 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 				continue;
 			}
 
-			final EntityPermType[] entityPermTypes = entityPerm.types();
-			final EntityPermFilter[] entityPermFilters = entityPerm.filters();
-			Validate.isTrue(!Collections3.isEmpty(entityPermTypes), "EntityPermType[] is empty");
-			Validate.isTrue(!Collections3.isEmpty(entityPermFilters), "EntityPermFilter[] is empty");
-			Validate.isTrue(entityPermTypes.length == entityPermFilters.length,
-					"EntityPermType[%d] != EntityPermFilter[%d]", entityPermTypes.length, entityPermFilters.length);
+			final EntityPermType[] entityPermTypes = entityPerm.value();
+			if (Collections3.isEmpty(entityPermTypes)) {
+				continue;
+			}
 
 			for (int i = 0; i < entityPermTypes.length; i++) {
-				final EntityPermType[] commandEntityPermTypes = entityPermTypes[i].getCommandTypes();
-				final EntityPermFilter entityPermFilter = entityPermFilters[i];
-				for (int j = 0; j < commandEntityPermTypes.length; j++) {
+				final EntityPermCommand[] subEntityPermCommands = entityPermTypes[i].command().getSubCommands();
+				final EntityPermFilter entityPermFilter = entityPermTypes[i].filter();
+				for (int j = 0; j < subEntityPermCommands.length; j++) {
 					switch (entityPermFilter) {
 					case PERMS:
 						addPermsFilter(dynamicDefinitions, pair.getEntityClass(),
-								commandEntityPermTypes[j].getCommand());
+								subEntityPermCommands[j].getCommand());
 						break;
 					case ANON:
-						addAnonFilter(dynamicDefinitions, pair.getEntityClass(),
-								commandEntityPermTypes[j].getCommand());
+						addAnonFilter(dynamicDefinitions, pair.getEntityClass(), subEntityPermCommands[j].getCommand());
 						break;
 					case USER:
-						addUserFilter(dynamicDefinitions, pair.getEntityClass(),
-								commandEntityPermTypes[j].getCommand());
+						addUserFilter(dynamicDefinitions, pair.getEntityClass(), subEntityPermCommands[j].getCommand());
 						break;
 					case AUTHC:
 						addAuthcFilter(dynamicDefinitions, pair.getEntityClass(),
-								commandEntityPermTypes[j].getCommand());
+								subEntityPermCommands[j].getCommand());
 						break;
 					default:
 						throw new IllegalArgumentException(

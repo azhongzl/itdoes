@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.itdoes.common.business.EntityPair;
-import com.itdoes.common.business.entity.EntityPermType;
+import com.itdoes.common.business.entity.EntityPermCommand;
 import com.itdoes.common.core.Result;
 import com.itdoes.common.core.util.Reflections;
 import com.itdoes.common.core.web.HttpResults;
@@ -27,7 +27,7 @@ import com.itdoes.common.core.web.MediaTypes;
 @RestController
 @RequestMapping(value = EntityBaseController.ENTITY_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
 public class EntityPostController extends EntityBaseController {
-	@RequestMapping(value = "/{ec}/" + EntityPermType.Command.POST, method = RequestMethod.POST)
+	@RequestMapping(value = "/{ec}/" + EntityPermCommand.Command.POST, method = RequestMethod.POST)
 	public <T, ID extends Serializable> Result post(@PathVariable(value = "ec") String ec,
 			@Valid @ModelAttribute("entity") T entity) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
@@ -35,7 +35,7 @@ public class EntityPostController extends EntityBaseController {
 		return HttpResults.success(id);
 	}
 
-	@RequestMapping(value = "/{ec}/" + EntityPermType.Command.POST_UPLOAD, method = RequestMethod.POST)
+	@RequestMapping(value = "/{ec}/" + EntityPermCommand.Command.POST_UPLOAD, method = RequestMethod.POST)
 	public <T, ID extends Serializable> Result postUpload(@PathVariable(value = "ec") String ec,
 			@Valid @ModelAttribute("entity") T entity,
 			@RequestParam(BaseController.UPLOAD_FILE_PARAM) List<MultipartFile> uploadFileList) {
