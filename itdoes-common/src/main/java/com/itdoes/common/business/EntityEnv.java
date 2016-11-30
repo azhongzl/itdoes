@@ -90,13 +90,12 @@ public class EntityEnv implements ApplicationContextAware {
 		}
 
 		for (EntityPair<?, ? extends Serializable> pair : pairMap.values()) {
-			// Initialize referred FieldConstraint
-			final Set<FieldConstraintPair> referringFieldConstraintPairSet = pair.getReferringFieldConstraintPairSet();
-			if (!Collections3.isEmpty(referringFieldConstraintPairSet)) {
-				for (FieldConstraintPair fieldConstraintPair : referringFieldConstraintPairSet) {
-					final EntityPair<?, ?> referredPair = pairMap
-							.get(fieldConstraintPair.getReferredEntity().getSimpleName());
-					referredPair.getReferredFieldConstraintPairSet().add(fieldConstraintPair);
+			// Initialize PK FieldConstraint
+			final Set<FieldConstraintPair> fkFieldConstraintPairSet = pair.getFkFieldConstraintPairSet();
+			if (!Collections3.isEmpty(fkFieldConstraintPairSet)) {
+				for (FieldConstraintPair fieldConstraintPair : fkFieldConstraintPairSet) {
+					final EntityPair<?, ?> pkPair = pairMap.get(fieldConstraintPair.getPkEntity().getSimpleName());
+					pkPair.getPkFieldConstraintPairSet().add(fieldConstraintPair);
 				}
 			}
 
@@ -129,16 +128,16 @@ public class EntityEnv implements ApplicationContextAware {
 		final Field idField = Reflections.getFieldWithAnnotation(entityClass, Id.class);
 		Validate.notNull(idField, "Cannot find @Id annotation for class [%s]", key);
 
-		// Constraint Field
+		// FK FieldConstraint
 		final List<Field> fieldConstraintFieldList = Reflections.getFieldsWithAnnotation(entityClass,
 				FieldConstraint.class);
-		final Set<FieldConstraintPair> referringFieldConstraintPairSet = Sets
+		final Set<FieldConstraintPair> fkFieldConstraintPairSet = Sets
 				.newHashSetWithExpectedSize(fieldConstraintFieldList.size());
 		if (!Collections3.isEmpty(fieldConstraintFieldList)) {
 			for (Field fieldConstraintField : fieldConstraintFieldList) {
 				final FieldConstraint fieldConstraint = fieldConstraintField.getAnnotation(FieldConstraint.class);
 				if (fieldConstraint != null) {
-					referringFieldConstraintPairSet
+					fkFieldConstraintPairSet
 							.add(new FieldConstraintPair(entityClass, fieldConstraintField, fieldConstraint));
 				}
 			}
@@ -173,7 +172,7 @@ public class EntityEnv implements ApplicationContextAware {
 		// Field Upload
 		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, UploadField.class);
 
-		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, idField, referringFieldConstraintPairSet, entityPerm,
+		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, idField, fkFieldConstraintPairSet, entityPerm,
 				readPermFieldList, writePermFieldList, uploadField));
 	}
 

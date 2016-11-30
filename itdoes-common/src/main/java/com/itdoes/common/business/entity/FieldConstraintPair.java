@@ -8,36 +8,36 @@ import com.itdoes.common.core.util.Reflections;
  * @author Jalen Zhong
  */
 public class FieldConstraintPair {
-	private final Class<?> referringEntity;
-	private final Field referringField;
-	private final Class<?> referredEntity;
-	private final Field referredField;
+	private final Class<?> fkEntity;
+	private final Field fkField;
+	private final Class<?> pkEntity;
+	private final Field pkField;
 	private final FieldConstraintStrategy updateStrategy;
 	private final FieldConstraintStrategy deleteStragety;
 
-	public FieldConstraintPair(Class<?> referringEntity, Field referringField, FieldConstraint fieldConstraint) {
-		this.referringEntity = referringEntity;
-		this.referringField = referringField;
-		this.referredEntity = fieldConstraint.entity();
-		this.referredField = Reflections.getField(referredEntity, fieldConstraint.field());
+	public FieldConstraintPair(Class<?> fkEntity, Field fkField, FieldConstraint fieldConstraint) {
+		this.fkEntity = fkEntity;
+		this.fkField = fkField;
+		this.pkEntity = fieldConstraint.entity();
+		this.pkField = Reflections.getField(pkEntity, fieldConstraint.field());
 		this.updateStrategy = fieldConstraint.updateStrategy();
 		this.deleteStragety = fieldConstraint.deleteStrategy();
 	}
 
-	public Class<?> getReferringEntity() {
-		return referringEntity;
+	public Class<?> getFkEntity() {
+		return fkEntity;
 	}
 
-	public Field getReferringField() {
-		return referringField;
+	public Field getFkField() {
+		return fkField;
 	}
 
-	public Class<?> getReferredEntity() {
-		return referredEntity;
+	public Class<?> getPkEntity() {
+		return pkEntity;
 	}
 
-	public Field getReferredField() {
-		return referredField;
+	public Field getPkField() {
+		return pkField;
 	}
 
 	public FieldConstraintStrategy getUpdateStrategy() {

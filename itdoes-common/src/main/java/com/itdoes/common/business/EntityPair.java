@@ -20,22 +20,22 @@ public class EntityPair<T, ID extends Serializable> {
 	private final Class<T> entityClass;
 	private final BaseDao<T, ID> dao;
 	private final Field idField;
-	private final Set<FieldConstraintPair> referringFieldConstraintPairSet;
+	private final Set<FieldConstraintPair> fkFieldConstraintPairSet;
 	private final EntityPerm entityPerm;
 	private final List<Field> readPermFieldList;
 	private final List<Field> writePermFieldList;
 	private final Field uploadField;
 
-	private final Set<FieldConstraintPair> referredFieldConstraintPairSet = Sets.newHashSet();
+	private final Set<FieldConstraintPair> pkFieldConstraintPairSet = Sets.newHashSet();
 	private EntityService service;
 
 	public EntityPair(Class<T> entityClass, BaseDao<T, ID> dao, Field idField,
-			Set<FieldConstraintPair> referringFieldConstraintPairSet, EntityPerm entityPerm,
-			List<Field> readPermFieldList, List<Field> writePermFieldList, Field uploadField) {
+			Set<FieldConstraintPair> fkFieldConstraintPairSet, EntityPerm entityPerm, List<Field> readPermFieldList,
+			List<Field> writePermFieldList, Field uploadField) {
 		this.entityClass = entityClass;
 		this.dao = dao;
 		this.idField = idField;
-		this.referringFieldConstraintPairSet = referringFieldConstraintPairSet;
+		this.fkFieldConstraintPairSet = fkFieldConstraintPairSet;
 		this.entityPerm = entityPerm;
 		this.readPermFieldList = readPermFieldList;
 		this.writePermFieldList = writePermFieldList;
@@ -57,8 +57,8 @@ public class EntityPair<T, ID extends Serializable> {
 		return idField;
 	}
 
-	public Set<FieldConstraintPair> getReferringFieldConstraintPairSet() {
-		return referringFieldConstraintPairSet;
+	public Set<FieldConstraintPair> getFkFieldConstraintPairSet() {
+		return fkFieldConstraintPairSet;
 	}
 
 	public EntityPerm getEntityPerm() {
@@ -85,8 +85,8 @@ public class EntityPair<T, ID extends Serializable> {
 		return !Collections3.isEmpty(writePermFieldList);
 	}
 
-	public Set<FieldConstraintPair> getReferredFieldConstraintPairSet() {
-		return referredFieldConstraintPairSet;
+	public Set<FieldConstraintPair> getPkFieldConstraintPairSet() {
+		return pkFieldConstraintPairSet;
 	}
 
 	public EntityService getService() {
