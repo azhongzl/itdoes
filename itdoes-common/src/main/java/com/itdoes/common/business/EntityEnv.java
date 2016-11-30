@@ -20,6 +20,7 @@ import com.google.common.collect.Maps;
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.business.entity.EntityPerm;
+import com.itdoes.common.business.entity.FieldConstraint;
 import com.itdoes.common.business.entity.FieldPerm;
 import com.itdoes.common.business.entity.FieldPermType;
 import com.itdoes.common.business.entity.UploadField;
@@ -85,8 +86,18 @@ public class EntityEnv implements ApplicationContextAware {
 			initPair(entityClass);
 		}
 
-		// Initialize service after initPair to avoid "circular reference" between EntityService and EntityPair
 		for (EntityPair<?, ? extends Serializable> pair : pairMap.values()) {
+			// Initialize referred FieldConstraint
+			final Map<Field, FieldConstraint> fieldConstraintMap = pair.getReferringFieldConstraintMap();
+			if (!Collections3.isEmpty(fieldConstraintMap)) {
+				for (FieldConstraint fieldConstraint : fieldConstraintMap.values()) {
+					final EntityPair<?, ?> referredPair = pairMap.get(fieldConstraint.entity().getSimpleName());
+					referredPair.addReferredFieldConstraint(
+							Reflections.getField(fieldConstraint.entity(), fieldConstraint.field()), fieldConstraint);
+				}
+			}
+
+			// Initialize service after initPair to avoid "circular reference" between EntityService and EntityPair
 			final String key = pair.getEntityClass().getSimpleName();
 			final String serviceBeanName = Springs.getBeanName(getServiceClassName(key));
 			final EntityService service = applicationContext.containsBean(serviceBeanName)
@@ -114,6 +125,20 @@ public class EntityEnv implements ApplicationContextAware {
 		// Id Field
 		final Field idField = Reflections.getFieldWithAnnotation(entityClass, Id.class);
 		Validate.notNull(idField, "Cannot find @Id annotation for class [%s]", key);
+
+		// Constraint Field
+		final List<Field> fieldConstraintFieldList = Reflections.getFieldsWithAnnotation(entityClass,
+				FieldConstraint.class);
+		final Map<Field, FieldConstraint> fieldConstraintMap = Maps
+				.newHashMapWithExpectedSize(fieldConstraintFieldList.size());
+		if (!Collections3.isEmpty(fieldConstraintFieldList)) {
+			for (Field fieldConstraintField : fieldConstraintFieldList) {
+				final FieldConstraint fieldConstraint = fieldConstraintField.getAnnotation(FieldConstraint.class);
+				if (fieldConstraint != null) {
+					fieldConstraintMap.put(fieldConstraintField, fieldConstraint);
+				}
+			}
+		}
 
 		// Entity Perm
 		final EntityPerm entityPerm = entityClass.getAnnotation(EntityPerm.class);
@@ -144,8 +169,8 @@ public class EntityEnv implements ApplicationContextAware {
 		// Field Upload
 		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, UploadField.class);
 
-		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, idField, entityPerm, readPermFieldList,
-				writePermFieldList, uploadField));
+		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, idField, fieldConstraintMap, entityPerm,
+				readPermFieldList, writePermFieldList, uploadField));
 	}
 
 	private boolean isLazyInit(String beanName) {
