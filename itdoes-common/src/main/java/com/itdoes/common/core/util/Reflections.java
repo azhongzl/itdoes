@@ -53,16 +53,17 @@ public class Reflections {
 	}
 
 	public static Object invokeMethod(Object obj, String methodName, Class<?>[] paramTypes, Object[] args) {
-		final Method method = getAccessibleMethod(obj, methodName, paramTypes);
-		try {
-			return method.invoke(obj, args);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw Exceptions.unchecked(e);
-		}
+		final Method method = getMethod(obj, methodName, paramTypes);
+		return invokeMethod(obj, method, args);
 	}
 
 	public static Object invokeMethodByName(Object obj, String methodName, Object[] args) {
-		final Method method = getAccessibleMethodByName(obj, methodName);
+		final Method method = getMethodByName(obj, methodName);
+		return invokeMethod(obj, method, args);
+	}
+
+	public static Object invokeMethod(Object obj, Method method, Object[] args) {
+		makeAccessible(method);
 		try {
 			return method.invoke(obj, args);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -71,7 +72,12 @@ public class Reflections {
 	}
 
 	public static Object getFieldValue(Object obj, String fieldName) {
-		final Field field = getAccessibleField(obj, fieldName);
+		final Field field = getField(obj, fieldName);
+		return getFieldValue(obj, field);
+	}
+
+	public static Object getFieldValue(Object obj, Field field) {
+		makeAccessible(field);
 		try {
 			return field.get(obj);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
@@ -80,7 +86,12 @@ public class Reflections {
 	}
 
 	public static void setFieldValue(Object obj, String fieldName, Object fieldValue) {
-		final Field field = getAccessibleField(obj, fieldName);
+		final Field field = getField(obj, fieldName);
+		setFieldValue(obj, field, fieldValue);
+	}
+
+	public static void setFieldValue(Object obj, Field field, Object fieldValue) {
+		makeAccessible(field);
 		try {
 			field.set(obj, fieldValue);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
@@ -88,8 +99,7 @@ public class Reflections {
 		}
 	}
 
-	public static Method getAccessibleMethod(Object obj, String methodName, Class<?>[] paramTypes,
-			boolean errorIfNotFound) {
+	public static Method getMethod(Object obj, String methodName, Class<?>[] paramTypes, boolean errorIfNotFound) {
 		Validate.notNull(obj, "Object cannot be null");
 		Validate.notBlank(methodName, "MethodName cannot be blank");
 
@@ -97,7 +107,6 @@ public class Reflections {
 				.getSuperclass()) {
 			try {
 				final Method method = superclass.getDeclaredMethod(methodName, paramTypes);
-				makeAccessible(method);
 				return method;
 			} catch (NoSuchMethodException e) {
 			}
@@ -111,11 +120,11 @@ public class Reflections {
 		}
 	}
 
-	public static Method getAccessibleMethod(Object obj, String methodName, Class<?>[] paramTypes) {
-		return getAccessibleMethod(obj, methodName, paramTypes, true);
+	public static Method getMethod(Object obj, String methodName, Class<?>[] paramTypes) {
+		return getMethod(obj, methodName, paramTypes, true);
 	}
 
-	public static Method getAccessibleMethodByName(Object obj, String methodName, boolean errorIfNotFound) {
+	public static Method getMethodByName(Object obj, String methodName, boolean errorIfNotFound) {
 		Validate.notNull(obj, "Object cannot be null");
 		Validate.notBlank(methodName, "MethodName cannot be null");
 
@@ -124,7 +133,6 @@ public class Reflections {
 			final Method[] methods = superclass.getDeclaredMethods();
 			for (Method method : methods) {
 				if (method.getName().equals(methodName)) {
-					makeAccessible(method);
 					return method;
 				}
 			}
@@ -137,11 +145,11 @@ public class Reflections {
 		}
 	}
 
-	public static Method getAccessibleMethodByName(Object obj, String methodName) {
-		return getAccessibleMethodByName(obj, methodName, true);
+	public static Method getMethodByName(Object obj, String methodName) {
+		return getMethodByName(obj, methodName, true);
 	}
 
-	public static Field getAccessibleField(Object obj, String fieldName, boolean errorIfNotFound) {
+	public static Field getField(Object obj, String fieldName, boolean errorIfNotFound) {
 		Validate.notNull(obj, "Object cannot be null");
 		Validate.notBlank(fieldName, "FieldName cannot be null");
 
@@ -149,7 +157,6 @@ public class Reflections {
 				.getSuperclass()) {
 			try {
 				final Field field = superclass.getDeclaredField(fieldName);
-				makeAccessible(field);
 				return field;
 			} catch (NoSuchFieldException e) {
 			}
@@ -162,20 +169,21 @@ public class Reflections {
 		}
 	}
 
-	public static Field getAccessibleField(Object obj, String fieldName) {
-		return getAccessibleField(obj, fieldName, true);
+	public static Field getField(Object obj, String fieldName) {
+		return getField(obj, fieldName, true);
 	}
 
 	public static void makeAccessible(Method method) {
-		if ((!Modifier.isPublic(method.getModifiers()) || !Modifier.isPublic(method.getDeclaringClass().getModifiers()))
-				&& !method.isAccessible()) {
+		if (!method.isAccessible() && (!Modifier.isPublic(method.getModifiers())
+				|| !Modifier.isPublic(method.getDeclaringClass().getModifiers()))) {
 			method.setAccessible(true);
 		}
 	}
 
 	public static void makeAccessible(Field field) {
-		if ((!Modifier.isPublic(field.getModifiers()) || !Modifier.isPublic(field.getDeclaringClass().getModifiers())
-				|| Modifier.isFinal(field.getModifiers())) && !field.isAccessible()) {
+		if (!field.isAccessible() && (!Modifier.isPublic(field.getModifiers())
+				|| !Modifier.isPublic(field.getDeclaringClass().getModifiers())
+				|| Modifier.isFinal(field.getModifiers()))) {
 			field.setAccessible(true);
 		}
 	}
