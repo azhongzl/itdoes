@@ -58,11 +58,11 @@ public enum EntityPermCommand {
 	}
 
 	public EntityPermCommand[] getSubCommands() {
-		if (this == ALL) {
+		if (this.equals(ALL)) {
 			return ALL_COMMANDS;
-		} else if (this == READ) {
+		} else if (this.equals(READ)) {
 			return READ_COMMANDS;
-		} else if (this == WRITE) {
+		} else if (this.equals(WRITE)) {
 			return WRITE_COMMANDS;
 		} else {
 			return new EntityPermCommand[] { this };
