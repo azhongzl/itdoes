@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -17,10 +18,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.business.entity.EntityPerm;
 import com.itdoes.common.business.entity.FieldConstraint;
+import com.itdoes.common.business.entity.FieldConstraintPair;
 import com.itdoes.common.business.entity.FieldPerm;
 import com.itdoes.common.business.entity.FieldPermType;
 import com.itdoes.common.business.entity.UploadField;
@@ -88,12 +91,12 @@ public class EntityEnv implements ApplicationContextAware {
 
 		for (EntityPair<?, ? extends Serializable> pair : pairMap.values()) {
 			// Initialize referred FieldConstraint
-			final Map<Field, FieldConstraint> fieldConstraintMap = pair.getReferringFieldConstraintMap();
-			if (!Collections3.isEmpty(fieldConstraintMap)) {
-				for (FieldConstraint fieldConstraint : fieldConstraintMap.values()) {
-					final EntityPair<?, ?> referredPair = pairMap.get(fieldConstraint.entity().getSimpleName());
-					referredPair.addReferredFieldConstraint(
-							Reflections.getField(fieldConstraint.entity(), fieldConstraint.field()), fieldConstraint);
+			final Set<FieldConstraintPair> referringFieldConstraintPairSet = pair.getReferringFieldConstraintPairSet();
+			if (!Collections3.isEmpty(referringFieldConstraintPairSet)) {
+				for (FieldConstraintPair fieldConstraintPair : referringFieldConstraintPairSet) {
+					final EntityPair<?, ?> referredPair = pairMap
+							.get(fieldConstraintPair.getReferredEntity().getSimpleName());
+					referredPair.getReferredFieldConstraintPairSet().add(fieldConstraintPair);
 				}
 			}
 
@@ -129,13 +132,14 @@ public class EntityEnv implements ApplicationContextAware {
 		// Constraint Field
 		final List<Field> fieldConstraintFieldList = Reflections.getFieldsWithAnnotation(entityClass,
 				FieldConstraint.class);
-		final Map<Field, FieldConstraint> fieldConstraintMap = Maps
-				.newHashMapWithExpectedSize(fieldConstraintFieldList.size());
+		final Set<FieldConstraintPair> referringFieldConstraintPairSet = Sets
+				.newHashSetWithExpectedSize(fieldConstraintFieldList.size());
 		if (!Collections3.isEmpty(fieldConstraintFieldList)) {
 			for (Field fieldConstraintField : fieldConstraintFieldList) {
 				final FieldConstraint fieldConstraint = fieldConstraintField.getAnnotation(FieldConstraint.class);
 				if (fieldConstraint != null) {
-					fieldConstraintMap.put(fieldConstraintField, fieldConstraint);
+					referringFieldConstraintPairSet
+							.add(new FieldConstraintPair(entityClass, fieldConstraintField, fieldConstraint));
 				}
 			}
 		}
@@ -169,7 +173,7 @@ public class EntityEnv implements ApplicationContextAware {
 		// Field Upload
 		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, UploadField.class);
 
-		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, idField, fieldConstraintMap, entityPerm,
+		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, idField, referringFieldConstraintPairSet, entityPerm,
 				readPermFieldList, writePermFieldList, uploadField));
 	}
 
