@@ -56,7 +56,7 @@ public class EntityService extends BaseService {
 	public <T, ID extends Serializable> ID post(EntityPair<T, ID> pair, T entity) {
 		permFieldService.handlePostPermFields(pair, entity);
 		entity = dbService.save(pair, entity);
-		final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField().getName());
+		final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField());
 		return id;
 	}
 

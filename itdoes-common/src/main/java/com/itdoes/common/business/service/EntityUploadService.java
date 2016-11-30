@@ -44,7 +44,7 @@ public class EntityUploadService extends BaseService {
 				uploadFilenameSet.add(uploadFile.getOriginalFilename());
 			}
 
-			Reflections.setFieldValue(entity, pair.getUploadField().getName(),
+			Reflections.setFieldValue(entity, pair.getUploadField(),
 					StringUtils.join(uploadFilenameSet, UPLOAD_FILENAME_SEPARATOR));
 		}
 		return uploadTempDir;
@@ -61,7 +61,7 @@ public class EntityUploadService extends BaseService {
 	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity, String uploadRealRootPath,
 			List<MultipartFile> uploadFileList, boolean uploadDeleteOrphanFiles) {
 		if (isPutUploadable(pair)) {
-			final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField().getName());
+			final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField());
 			final String uploadDir = getUploadDir(pair, uploadRealRootPath, id.toString());
 			final Set<String> uploadFilenameSet = toUploadFilenameSet(pair, entity);
 
@@ -76,7 +76,7 @@ public class EntityUploadService extends BaseService {
 				deleteUploadOrphanFiles(uploadDir, uploadFilenameSet);
 			}
 
-			Reflections.setFieldValue(entity, pair.getUploadField().getName(),
+			Reflections.setFieldValue(entity, pair.getUploadField(),
 					StringUtils.join(uploadFilenameSet, UPLOAD_FILENAME_SEPARATOR));
 		}
 	}
@@ -152,8 +152,7 @@ public class EntityUploadService extends BaseService {
 	}
 
 	private static <T, ID extends Serializable> Set<String> toUploadFilenameSet(EntityPair<T, ID> pair, T entity) {
-		return Collections3.asLinkedHashSet(
-				StringUtils.split((String) Reflections.getFieldValue(entity, pair.getUploadField().getName()),
-						UPLOAD_FILENAME_SEPARATOR));
+		return Collections3.asLinkedHashSet(StringUtils
+				.split((String) Reflections.getFieldValue(entity, pair.getUploadField()), UPLOAD_FILENAME_SEPARATOR));
 	}
 }
