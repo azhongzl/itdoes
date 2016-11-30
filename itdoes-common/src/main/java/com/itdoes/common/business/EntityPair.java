@@ -35,9 +35,7 @@ public class EntityPair<T, ID extends Serializable> {
 		this.uploadField = uploadField;
 
 		// (Optional) Initialize for performance concern, can be removed if it is not readable
-		if (needCopyOldEntity()) {
-			CglibMapper.getBeanCopier(entityClass);
-		}
+		CglibMapper.getBeanCopier(entityClass);
 	}
 
 	public Class<T> getEntityClass() {
@@ -74,10 +72,6 @@ public class EntityPair<T, ID extends Serializable> {
 
 	public boolean hasWritePermField() {
 		return !Collections3.isEmpty(writePermFieldList);
-	}
-
-	public boolean needCopyOldEntity() {
-		return hasWritePermField();
 	}
 
 	public EntityService getService() {

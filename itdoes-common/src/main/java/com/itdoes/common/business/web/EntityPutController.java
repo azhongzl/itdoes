@@ -60,9 +60,7 @@ public class EntityPutController extends EntityBaseController {
 		final T entity = pair.getService().get(pair, convertId(pair, id));
 		model.addAttribute("entity", entity);
 
-		if (pair.needCopyOldEntity()) {
-			final T oldEntity = (T) CglibMapper.copy(entity);
-			request.setAttribute("oldEntity", oldEntity);
-		}
+		final T oldEntity = (T) CglibMapper.copy(entity);
+		request.setAttribute("oldEntity", oldEntity);
 	}
 }
