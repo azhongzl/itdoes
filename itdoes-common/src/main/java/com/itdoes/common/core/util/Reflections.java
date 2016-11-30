@@ -53,12 +53,12 @@ public class Reflections {
 	}
 
 	public static Object invokeMethod(Object obj, String methodName, Class<?>[] paramTypes, Object[] args) {
-		final Method method = getMethod(obj, methodName, paramTypes);
+		final Method method = getMethod(obj.getClass(), methodName, paramTypes);
 		return invokeMethod(obj, method, args);
 	}
 
 	public static Object invokeMethodByName(Object obj, String methodName, Object[] args) {
-		final Method method = getMethodByName(obj, methodName);
+		final Method method = getMethodByName(obj.getClass(), methodName);
 		return invokeMethod(obj, method, args);
 	}
 
@@ -72,7 +72,7 @@ public class Reflections {
 	}
 
 	public static Object getFieldValue(Object obj, String fieldName) {
-		final Field field = getField(obj, fieldName);
+		final Field field = getField(obj.getClass(), fieldName);
 		return getFieldValue(obj, field);
 	}
 
@@ -86,7 +86,7 @@ public class Reflections {
 	}
 
 	public static void setFieldValue(Object obj, String fieldName, Object fieldValue) {
-		final Field field = getField(obj, fieldName);
+		final Field field = getField(obj.getClass(), fieldName);
 		setFieldValue(obj, field, fieldValue);
 	}
 
@@ -99,12 +99,11 @@ public class Reflections {
 		}
 	}
 
-	public static Method getMethod(Object obj, String methodName, Class<?>[] paramTypes, boolean errorIfNotFound) {
-		Validate.notNull(obj, "Object cannot be null");
+	public static Method getMethod(Class<?> clazz, String methodName, Class<?>[] paramTypes, boolean errorIfNotFound) {
+		Validate.notNull(clazz, "Class cannot be null");
 		Validate.notBlank(methodName, "MethodName cannot be blank");
 
-		for (Class<?> superclass = obj.getClass(); !Object.class.equals(superclass); superclass = superclass
-				.getSuperclass()) {
+		for (Class<?> superclass = clazz; !Object.class.equals(superclass); superclass = superclass.getSuperclass()) {
 			try {
 				final Method method = superclass.getDeclaredMethod(methodName, paramTypes);
 				return method;
@@ -113,23 +112,22 @@ public class Reflections {
 		}
 
 		if (errorIfNotFound) {
-			throw new IllegalArgumentException("Cannot find method [" + methodName + "] on object [" + obj
+			throw new IllegalArgumentException("Cannot find method [" + methodName + "] on class [" + clazz
 					+ "] by param classes [" + paramTypes + "]");
 		} else {
 			return null;
 		}
 	}
 
-	public static Method getMethod(Object obj, String methodName, Class<?>[] paramTypes) {
-		return getMethod(obj, methodName, paramTypes, true);
+	public static Method getMethod(Class<?> clazz, String methodName, Class<?>[] paramTypes) {
+		return getMethod(clazz, methodName, paramTypes, true);
 	}
 
-	public static Method getMethodByName(Object obj, String methodName, boolean errorIfNotFound) {
-		Validate.notNull(obj, "Object cannot be null");
+	public static Method getMethodByName(Class<?> clazz, String methodName, boolean errorIfNotFound) {
+		Validate.notNull(clazz, "Class cannot be null");
 		Validate.notBlank(methodName, "MethodName cannot be null");
 
-		for (Class<?> superclass = obj.getClass(); !Object.class.equals(superclass); superclass = superclass
-				.getSuperclass()) {
+		for (Class<?> superclass = clazz; !Object.class.equals(superclass); superclass = superclass.getSuperclass()) {
 			final Method[] methods = superclass.getDeclaredMethods();
 			for (Method method : methods) {
 				if (method.getName().equals(methodName)) {
@@ -139,22 +137,21 @@ public class Reflections {
 		}
 
 		if (errorIfNotFound) {
-			throw new IllegalArgumentException("Cannot find method [" + methodName + "] on object [" + obj + "]");
+			throw new IllegalArgumentException("Cannot find method [" + methodName + "] on class [" + clazz + "]");
 		} else {
 			return null;
 		}
 	}
 
-	public static Method getMethodByName(Object obj, String methodName) {
-		return getMethodByName(obj, methodName, true);
+	public static Method getMethodByName(Class<?> clazz, String methodName) {
+		return getMethodByName(clazz, methodName, true);
 	}
 
-	public static Field getField(Object obj, String fieldName, boolean errorIfNotFound) {
-		Validate.notNull(obj, "Object cannot be null");
+	public static Field getField(Class<?> clazz, String fieldName, boolean errorIfNotFound) {
+		Validate.notNull(clazz, "Class cannot be null");
 		Validate.notBlank(fieldName, "FieldName cannot be null");
 
-		for (Class<?> superclass = obj.getClass(); !Object.class.equals(superclass); superclass = superclass
-				.getSuperclass()) {
+		for (Class<?> superclass = clazz; !Object.class.equals(superclass); superclass = superclass.getSuperclass()) {
 			try {
 				final Field field = superclass.getDeclaredField(fieldName);
 				return field;
@@ -163,14 +160,14 @@ public class Reflections {
 		}
 
 		if (errorIfNotFound) {
-			throw new IllegalArgumentException("Cannot find field [" + fieldName + "] on object [" + obj + "]");
+			throw new IllegalArgumentException("Cannot find field [" + fieldName + "] on class [" + clazz + "]");
 		} else {
 			return null;
 		}
 	}
 
-	public static Field getField(Object obj, String fieldName) {
-		return getField(obj, fieldName, true);
+	public static Field getField(Class<?> clazz, String fieldName) {
+		return getField(clazz, fieldName, true);
 	}
 
 	public static void makeAccessible(Method method) {
