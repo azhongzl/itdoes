@@ -89,7 +89,6 @@ public class EntityDbService extends BaseTransactionalService {
 							for (Object fkEntity : fkEntityList) {
 								Reflections.setFieldValue(fkEntity, constraint.getFkField(), pkFieldValue);
 							}
-							fkPair.getDao().save(fkEntityList);
 						}
 					} else if (strategy.equals(FieldConstraintStrategy.RESTRICT)
 							|| strategy.equals(FieldConstraintStrategy.NO_ACTION)) {
@@ -109,7 +108,6 @@ public class EntityDbService extends BaseTransactionalService {
 							for (Object fkEntity : fkEntityList) {
 								Reflections.setFieldValue(fkEntity, constraint.getFkField(), fkFieldValue);
 							}
-							fkPair.getDao().save(fkEntityList);
 						}
 					}
 				}
@@ -208,7 +206,6 @@ public class EntityDbService extends BaseTransactionalService {
 							for (Object fkEntity : fkEntityList) {
 								Reflections.setFieldValue(fkEntity, constraint.getFkField(), fkFieldValue);
 							}
-							fkPair.getDao().save(fkEntityList);
 						}
 					}
 				}
