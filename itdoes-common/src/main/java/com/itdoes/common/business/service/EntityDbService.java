@@ -58,11 +58,13 @@ public class EntityDbService extends BaseTransactionalService {
 		return pair.getDao().findOne(id);
 	}
 
+	@Transactional(readOnly = false)
 	public <T, ID extends Serializable> T post(EntityPair<T, ID> pair, T entity) {
 		saveFk(pair, entity);
 		return pair.getDao().save(entity);
 	}
 
+	@Transactional(readOnly = false)
 	public <T, ID extends Serializable> T put(EntityPair<T, ID> pair, T entity, T oldEntity) {
 		savePk(pair, entity, oldEntity);
 		saveFk(pair, entity);
