@@ -13,9 +13,10 @@ public class EntityGeneratorHelper {
 	private static final String CONFIG_DIR = "classpath:/codegenerator/entity/";
 	private static final String DB_SKIP_FILE = CONFIG_DIR + "db.skip.ini";
 	private static final String DB_MAPPING_FILE = CONFIG_DIR + "db.mapping.properties";
+	private static final String DB_CONSTRAINT_FILE = CONFIG_DIR + "db.constraint.properties";
 	private static final String DB_PERM_FILE = CONFIG_DIR + "db.perm.properties";
 	private static final String DB_SEARCH_FILE = CONFIG_DIR + "db.search.properties";
-	private static final String DB_UPLOAD_FILE = CONFIG_DIR + "db.upload.ini";
+	private static final String DB_UPLOAD_FILE = CONFIG_DIR + "db.upload.properties";
 	private static final String ENTITY_QUERY_CACHE_FILE = CONFIG_DIR + "entity.queryCache.properties";
 	private static final String ENTITY_EHCACHE_FILE = CONFIG_DIR + "entity.ehcache.properties";
 
@@ -68,6 +69,19 @@ public class EntityGeneratorHelper {
 		}
 	}
 
+	private static class FileDbConstraintConfig implements DbConstraintConfig {
+		private final PropertiesLoader pl;
+
+		public FileDbConstraintConfig(PropertiesLoader pl) {
+			this.pl = pl;
+		}
+
+		@Override
+		public String getFieldConstraint(String tableName, String columnName) {
+			return pl.getStringMay(getColumnKey(tableName, columnName), null);
+		}
+	}
+
 	private static class FileDbPermConfig implements DbPermConfig {
 		private static final String DEFAULT_ENTITY = "_default_entity_";
 		private static final String DEFAULT_FIELD = "_default_field_";
@@ -111,15 +125,17 @@ public class EntityGeneratorHelper {
 	}
 
 	private static class FileDbUploadConfig implements DbUploadConfig {
-		private final List<String> lineList;
+		private static final String DEFAULT_FIELD = "_default_field_";
 
-		public FileDbUploadConfig(TxtLoader tl) {
-			this.lineList = tl.getLineList();
+		private final PropertiesLoader pl;
+
+		public FileDbUploadConfig(PropertiesLoader pl) {
+			this.pl = pl;
 		}
 
 		@Override
-		public boolean isFieldUpload(String tableName, String columnName) {
-			return lineList.contains(getColumnKey(tableName, columnName));
+		public String getFieldUpload(String tableName, String columnName) {
+			return getValue(pl, getColumnKey(tableName, columnName), DEFAULT_FIELD, false);
 		}
 	}
 
@@ -179,9 +195,11 @@ public class EntityGeneratorHelper {
 				"classpath:/application.local.properties");
 		final DbSkipConfig dbSkipConfig = new FileDbSkipConfig(new TxtLoader(DB_SKIP_FILE));
 		final DbMappingConfig dbMappingConfig = new FileDbMappingConfig(new PropertiesLoader(DB_MAPPING_FILE));
+		final DbConstraintConfig dbConstraintConfig = new FileDbConstraintConfig(
+				new PropertiesLoader(DB_CONSTRAINT_FILE));
 		final DbPermConfig dbPermConfig = new FileDbPermConfig(new PropertiesLoader(DB_PERM_FILE));
 		final DbSearchConfig dbSearchConfig = new FileDbSearchConfig(new PropertiesLoader(DB_SEARCH_FILE));
-		final DbUploadConfig dbUploadConfig = new FileDbUploadConfig(new TxtLoader(DB_UPLOAD_FILE));
+		final DbUploadConfig dbUploadConfig = new FileDbUploadConfig(new PropertiesLoader(DB_UPLOAD_FILE));
 		final EntityQueryCacheConfig entityQueryCacheConfig = new FileEntityQueryCacheConfig(
 				new PropertiesLoader(ENTITY_QUERY_CACHE_FILE));
 		final EntityEhcacheConfig entityEhcacheConfig = new FileEntityEhcacheConfig(
@@ -189,7 +207,7 @@ public class EntityGeneratorHelper {
 
 		EntityGenerator.generateEntities(pl.getStringMust("jdbc.driver"), pl.getStringMust("jdbc.url"),
 				pl.getStringMust("jdbc.username"), pl.getStringMust("jdbc.password"), loaderClass, outputDir,
-				basePackageName, idGeneratedValue, dbSkipConfig, dbMappingConfig, dbPermConfig, dbSearchConfig,
-				dbUploadConfig, entityQueryCacheConfig, entityEhcacheConfig);
+				basePackageName, idGeneratedValue, dbSkipConfig, dbMappingConfig, dbConstraintConfig, dbPermConfig,
+				dbSearchConfig, dbUploadConfig, entityQueryCacheConfig, entityEhcacheConfig);
 	}
 }

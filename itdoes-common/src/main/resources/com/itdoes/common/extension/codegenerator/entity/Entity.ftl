@@ -9,12 +9,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.itdoes.common.business.entity.BaseEntity;
-<#if perm??>
-import com.itdoes.common.business.entity.EntityPerm;
-import com.itdoes.common.business.entity.EntityPermCommand;
-import com.itdoes.common.business.entity.EntityPermFilter;
-import com.itdoes.common.business.entity.EntityPerms;
-</#if>
 
 /**
  * This code is auto-generated.
@@ -38,14 +32,17 @@ public class ${className} extends BaseEntity {
 	@Id
 	${idGeneratedValue}
   </#if>
+  <#if field.constraint??>
+	${field.constraint}
+  </#if>
   <#if field.perm??>
 	${field.perm}
   </#if>
-  <#if field.upload>
-	@com.itdoes.common.business.entity.FieldUpload
-  </#if>
   <#if field.search??>
 	${field.search}
+  </#if>
+  <#if field.upload??>
+	${field.upload}
   </#if>
 	@Column(name = "${field.column.name}")
 	private ${field.type} ${field.name};

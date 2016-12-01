@@ -45,9 +45,9 @@ public class EntityGenerator {
 
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
 			Class<?> loaderClass, String outputDir, String basePackageName, String idGeneratedValue,
-			DbSkipConfig dbSkipConfig, DbMappingConfig dbMappingConfig, DbPermConfig dbPermConfig,
-			DbSearchConfig dbSearchConfig, DbUploadConfig dbUploadConfig, EntityQueryCacheConfig entityQueryCacheConfig,
-			EntityEhcacheConfig entityEhcacheConfig) {
+			DbSkipConfig dbSkipConfig, DbMappingConfig dbMappingConfig, DbConstraintConfig dbConstraintConfig,
+			DbPermConfig dbPermConfig, DbSearchConfig dbSearchConfig, DbUploadConfig dbUploadConfig,
+			EntityQueryCacheConfig entityQueryCacheConfig, EntityEhcacheConfig entityEhcacheConfig) {
 		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
 
 		final String baseExtensionDir = getBaseExtensionDir(loaderClass, basePackageName);
@@ -73,12 +73,12 @@ public class EntityGenerator {
 
 			// Generate Entity
 			final String entityClassName = mapEntityClassName(tableName, dbMappingConfig);
-			final List<EntityField> entityFieldList = mapEntityFieldList(tableName, table.getColumnList(),
-					dbMappingConfig, dbPermConfig, dbSearchConfig, dbUploadConfig);
 			final EntityModel entityModel = new EntityModel(entityPackageName, tableName,
 					dbPermConfig.getEntityPerm(tableName), dbSearchConfig.getEntitySearch(tableName), entityClassName,
-					getSerialVersionUIDStr(entityClassName), entityFieldList, idGeneratedValue,
+					getSerialVersionUIDStr(entityClassName), idGeneratedValue,
 					getEntityExtension(baseExtensionDir, entityClassName));
+			populateEntityFieldList(entityModel, tableName, table.getColumnList(), dbMappingConfig, dbConstraintConfig,
+					dbPermConfig, dbSearchConfig, dbUploadConfig);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
 			writeJavaFile(entityDir, entityClassName, entityString);
 
@@ -86,7 +86,7 @@ public class EntityGenerator {
 			final String daoClassName = EntityEnv.getDaoClassName(entityClassName);
 			final boolean queryCacheEnabled = entityQueryCacheConfig.isEnabled(entityClassName);
 			final DaoModel daoModel = new DaoModel(daoPackageName, entityPackageName, entityClassName, daoClassName,
-					queryCacheEnabled, mapIdType(tableName, entityFieldList),
+					queryCacheEnabled, mapIdType(tableName, entityModel.getFieldList()),
 					getDaoExtension(baseExtensionDir, daoClassName));
 			final String daoString = FreeMarkers.render(daoTemplate, daoModel);
 			writeJavaFile(daoDir, daoClassName, daoString);
@@ -145,19 +145,20 @@ public class EntityGenerator {
 		return mappingEntityClassName != null ? mappingEntityClassName : Strings.underscoreToPascal(tableName);
 	}
 
-	private static List<EntityField> mapEntityFieldList(String tableName, List<Column> columnList,
-			DbMappingConfig dbMappingConfig, DbPermConfig dbPermConfig, DbSearchConfig dbSearchConfig,
-			DbUploadConfig dbUploadConfig) {
+	private static void populateEntityFieldList(EntityModel entityModel, String tableName, List<Column> columnList,
+			DbMappingConfig dbMappingConfig, DbConstraintConfig dbConstraintConfig, DbPermConfig dbPermConfig,
+			DbSearchConfig dbSearchConfig, DbUploadConfig dbUploadConfig) {
 		final List<EntityField> entityFieldList = Lists.newArrayList();
 		for (Column column : columnList) {
 			final EntityField entityField = new EntityField(mapFieldName(tableName, column.getName(), dbMappingConfig),
-					mapFieldType(column), column, dbPermConfig.getFieldPerm(tableName, column.getName()),
+					mapFieldType(column), column, dbConstraintConfig.getFieldConstraint(tableName, column.getName()),
+					dbPermConfig.getFieldPerm(tableName, column.getName()),
 					dbSearchConfig.getFieldSearch(tableName, column.getName()),
-					dbUploadConfig.isFieldUpload(tableName, column.getName()));
+					dbUploadConfig.getFieldUpload(tableName, column.getName()));
 			entityFieldList.add(entityField);
 		}
 
-		return entityFieldList;
+		entityModel.setFieldList(entityFieldList);
 	}
 
 	private static String mapFieldName(String tableName, String columnName, DbMappingConfig dbMappingConfig) {
