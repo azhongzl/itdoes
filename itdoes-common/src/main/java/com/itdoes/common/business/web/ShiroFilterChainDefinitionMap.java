@@ -13,7 +13,7 @@ import com.itdoes.common.business.Perms;
 import com.itdoes.common.business.entity.EntityPerm;
 import com.itdoes.common.business.entity.EntityPermCommand;
 import com.itdoes.common.business.entity.EntityPermFilter;
-import com.itdoes.common.business.entity.EntityPermType;
+import com.itdoes.common.business.entity.EntityPerms;
 import com.itdoes.common.core.shiro.AbstractShiroFilterChainDefinitionMap;
 import com.itdoes.common.core.util.Collections3;
 
@@ -34,19 +34,19 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 	protected Map<String, String> getDynamicDefinitions() {
 		final Map<String, String> dynamicDefinitions = Maps.newLinkedHashMap();
 		for (EntityPair<?, ? extends Serializable> pair : env.getPairMap().values()) {
-			final EntityPerm entityPerm = pair.getEntityPerm();
-			if (entityPerm == null) {
+			final EntityPerms entityPerms = pair.getEntityPerms();
+			if (entityPerms == null) {
 				continue;
 			}
 
-			final EntityPermType[] entityPermTypes = entityPerm.value();
-			if (Collections3.isEmpty(entityPermTypes)) {
+			final EntityPerm[] entityPermArray = entityPerms.value();
+			if (Collections3.isEmpty(entityPermArray)) {
 				continue;
 			}
 
-			for (int i = 0; i < entityPermTypes.length; i++) {
-				final EntityPermCommand[] subEntityPermCommands = entityPermTypes[i].command().getSubCommands();
-				final EntityPermFilter entityPermFilter = entityPermTypes[i].filter();
+			for (int i = 0; i < entityPermArray.length; i++) {
+				final EntityPermCommand[] subEntityPermCommands = entityPermArray[i].command().getSubCommands();
+				final EntityPermFilter entityPermFilter = entityPermArray[i].filter();
 				for (int j = 0; j < subEntityPermCommands.length; j++) {
 					switch (entityPermFilter) {
 					case PERMS:

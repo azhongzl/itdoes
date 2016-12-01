@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.itdoes.common.business.dao.BaseDao;
-import com.itdoes.common.business.entity.EntityPerm;
+import com.itdoes.common.business.entity.EntityPerms;
 import com.itdoes.common.business.entity.FieldConstraintPair;
 import com.itdoes.common.business.service.EntityService;
 import com.itdoes.common.core.cglib.CglibMapper;
@@ -21,7 +21,7 @@ public class EntityPair<T, ID extends Serializable> {
 	private final BaseDao<T, ID> dao;
 	private final Field idField;
 	private final Set<FieldConstraintPair> fkFieldConstraintPairSet;
-	private final EntityPerm entityPerm;
+	private final EntityPerms entityPerms;
 	private final List<Field> readPermFieldList;
 	private final List<Field> writePermFieldList;
 	private final Field uploadField;
@@ -30,13 +30,13 @@ public class EntityPair<T, ID extends Serializable> {
 	private EntityService service;
 
 	public EntityPair(Class<T> entityClass, BaseDao<T, ID> dao, Field idField,
-			Set<FieldConstraintPair> fkFieldConstraintPairSet, EntityPerm entityPerm, List<Field> readPermFieldList,
+			Set<FieldConstraintPair> fkFieldConstraintPairSet, EntityPerms entityPerms, List<Field> readPermFieldList,
 			List<Field> writePermFieldList, Field uploadField) {
 		this.entityClass = entityClass;
 		this.dao = dao;
 		this.idField = idField;
 		this.fkFieldConstraintPairSet = fkFieldConstraintPairSet;
-		this.entityPerm = entityPerm;
+		this.entityPerms = entityPerms;
 		this.readPermFieldList = readPermFieldList;
 		this.writePermFieldList = writePermFieldList;
 		this.uploadField = uploadField;
@@ -61,8 +61,8 @@ public class EntityPair<T, ID extends Serializable> {
 		return fkFieldConstraintPairSet;
 	}
 
-	public EntityPerm getEntityPerm() {
-		return entityPerm;
+	public EntityPerms getEntityPerms() {
+		return entityPerms;
 	}
 
 	public List<Field> getReadPermFieldList() {

@@ -11,8 +11,6 @@ import java.lang.annotation.Target;
  */
 @Target({ TYPE })
 @Retention(RUNTIME)
-public @interface EntityPermType {
-	EntityPermCommand command();
-
-	EntityPermFilter filter();
+public @interface EntityPerms {
+	EntityPerm[] value();
 }

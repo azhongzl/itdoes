@@ -13,7 +13,7 @@ import com.itdoes.common.business.entity.BaseEntity;
 import com.itdoes.common.business.entity.EntityPerm;
 import com.itdoes.common.business.entity.EntityPermCommand;
 import com.itdoes.common.business.entity.EntityPermFilter;
-import com.itdoes.common.business.entity.EntityPermType;
+import com.itdoes.common.business.entity.EntityPerms;
 </#if>
 
 /**

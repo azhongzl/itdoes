@@ -21,7 +21,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
-import com.itdoes.common.business.entity.EntityPerm;
+import com.itdoes.common.business.entity.EntityPerms;
 import com.itdoes.common.business.entity.FieldConstraint;
 import com.itdoes.common.business.entity.FieldConstraintPair;
 import com.itdoes.common.business.entity.FieldPerm;
@@ -144,7 +144,7 @@ public class EntityEnv implements ApplicationContextAware {
 		}
 
 		// Entity Perm
-		final EntityPerm entityPerm = entityClass.getAnnotation(EntityPerm.class);
+		final EntityPerms entityPerms = entityClass.getAnnotation(EntityPerms.class);
 
 		// Field Perm
 		final List<Field> permFieldList = Reflections.getFieldsWithAnnotation(entityClass, FieldPerm.class);
@@ -172,7 +172,7 @@ public class EntityEnv implements ApplicationContextAware {
 		// Field Upload
 		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, UploadField.class);
 
-		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, idField, fkFieldConstraintPairSet, entityPerm,
+		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, idField, fkFieldConstraintPairSet, entityPerms,
 				readPermFieldList, writePermFieldList, uploadField));
 	}
 
