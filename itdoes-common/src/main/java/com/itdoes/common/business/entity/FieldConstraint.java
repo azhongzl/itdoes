@@ -16,9 +16,9 @@ public @interface FieldConstraint {
 
 	String field();
 
-	FieldConstraintStrategy updateStrategy();
+	FieldConstraintStrategy updateStrategy() default FieldConstraintStrategy.CASCADE;
 
-	FieldConstraintStrategy deleteStrategy();
+	FieldConstraintStrategy deleteStrategy() default FieldConstraintStrategy.RESTRICT;
 
 	String defaultValue() default "";
 }
