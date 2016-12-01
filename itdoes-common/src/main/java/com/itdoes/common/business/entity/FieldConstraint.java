@@ -19,4 +19,6 @@ public @interface FieldConstraint {
 	FieldConstraintStrategy updateStrategy();
 
 	FieldConstraintStrategy deleteStrategy();
+
+	String defaultValue() default "";
 }
