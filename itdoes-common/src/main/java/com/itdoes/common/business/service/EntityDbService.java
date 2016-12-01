@@ -74,40 +74,42 @@ public class EntityDbService extends BaseTransactionalService {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private <T, ID extends Serializable> void savePk(EntityPair<T, ID> pair, T entity, T oldEntity) {
-		if (!pair.getPkFieldConstraintPairSet().isEmpty()) {
-			for (FieldConstraintPair constraint : pair.getPkFieldConstraintPairSet()) {
-				final Object pkFieldValue = Reflections.getFieldValue(entity, constraint.getPkField());
-				final Object oldPkFieldValue = Reflections.getFieldValue(oldEntity, constraint.getPkField());
-				if (!Objects.isEqual(pkFieldValue, oldPkFieldValue)) {
-					final FieldConstraintStrategy strategy = constraint.getUpdateStrategy();
-					if (strategy.equals(FieldConstraintStrategy.CASCADE)) {
-						final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
-						final Specification spec = Specifications.build(constraint.getFkEntity(), Lists.newArrayList(
-								new FindFilter(constraint.getFkField().getName(), Operator.EQ, oldPkFieldValue)));
-						final List fkEntityList = findAll(fkPair, spec, null);
-						if (!Collections3.isEmpty(fkEntityList)) {
-							for (Object fkEntity : fkEntityList) {
-								Reflections.setFieldValue(fkEntity, constraint.getFkField(), pkFieldValue);
-							}
+		if (pair.getPkFieldConstraintPairSet().isEmpty()) {
+			return;
+		}
+
+		for (FieldConstraintPair constraint : pair.getPkFieldConstraintPairSet()) {
+			final Object pkFieldValue = Reflections.getFieldValue(entity, constraint.getPkField());
+			final Object oldPkFieldValue = Reflections.getFieldValue(oldEntity, constraint.getPkField());
+			if (!Objects.isEqual(pkFieldValue, oldPkFieldValue)) {
+				final FieldConstraintStrategy strategy = constraint.getUpdateStrategy();
+				if (strategy.equals(FieldConstraintStrategy.CASCADE)) {
+					final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
+					final Specification spec = Specifications.build(constraint.getFkEntity(), Lists.newArrayList(
+							new FindFilter(constraint.getFkField().getName(), Operator.EQ, oldPkFieldValue)));
+					final List fkEntityList = findAll(fkPair, spec, null);
+					if (!Collections3.isEmpty(fkEntityList)) {
+						for (Object fkEntity : fkEntityList) {
+							Reflections.setFieldValue(fkEntity, constraint.getFkField(), pkFieldValue);
 						}
-					} else if (strategy.equals(FieldConstraintStrategy.RESTRICT)
-							|| strategy.equals(FieldConstraintStrategy.NO_ACTION)) {
-						throw new IllegalArgumentException("Cannot delete [" + constraint.getPkEntity().getSimpleName()
-								+ "." + constraint.getPkField().getName() + "] = [" + pkFieldValue
-								+ "] since it is referred by [" + constraint.getFkEntity().getSimpleName() + "."
-								+ constraint.getFkField().getName() + "]");
-					} else if (strategy.equals(FieldConstraintStrategy.SET_NULL)
-							|| strategy.equals(FieldConstraintStrategy.SET_DEFAULT)) {
-						final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
-						final Specification spec = Specifications.build(constraint.getFkEntity(), Lists.newArrayList(
-								new FindFilter(constraint.getFkField().getName(), Operator.EQ, oldPkFieldValue)));
-						final List fkEntityList = findAll(fkPair, spec, null);
-						if (!Collections3.isEmpty(fkEntityList)) {
-							final Object fkFieldValue = strategy.equals(FieldConstraintStrategy.SET_NULL) ? null
-									: constraint.getDefaultValue();
-							for (Object fkEntity : fkEntityList) {
-								Reflections.setFieldValue(fkEntity, constraint.getFkField(), fkFieldValue);
-							}
+					}
+				} else if (strategy.equals(FieldConstraintStrategy.RESTRICT)
+						|| strategy.equals(FieldConstraintStrategy.NO_ACTION)) {
+					throw new IllegalArgumentException("Cannot delete [" + constraint.getPkEntity().getSimpleName()
+							+ "." + constraint.getPkField().getName() + "] = [" + pkFieldValue
+							+ "] since it is referred by [" + constraint.getFkEntity().getSimpleName() + "."
+							+ constraint.getFkField().getName() + "]");
+				} else if (strategy.equals(FieldConstraintStrategy.SET_NULL)
+						|| strategy.equals(FieldConstraintStrategy.SET_DEFAULT)) {
+					final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
+					final Specification spec = Specifications.build(constraint.getFkEntity(), Lists.newArrayList(
+							new FindFilter(constraint.getFkField().getName(), Operator.EQ, oldPkFieldValue)));
+					final List fkEntityList = findAll(fkPair, spec, null);
+					if (!Collections3.isEmpty(fkEntityList)) {
+						final Object fkFieldValue = strategy.equals(FieldConstraintStrategy.SET_NULL) ? null
+								: constraint.getDefaultValue();
+						for (Object fkEntity : fkEntityList) {
+							Reflections.setFieldValue(fkEntity, constraint.getFkField(), fkFieldValue);
 						}
 					}
 				}
@@ -117,22 +119,24 @@ public class EntityDbService extends BaseTransactionalService {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private <T, ID extends Serializable> void saveFk(EntityPair<T, ID> pair, T entity) {
-		if (!pair.getFkFieldConstraintPairSet().isEmpty()) {
-			for (FieldConstraintPair constraint : pair.getFkFieldConstraintPairSet()) {
-				final Object fkFieldValue = Reflections.getFieldValue(entity, constraint.getFkField());
-				if (fkFieldValue == null) {
-					continue;
-				}
+		if (pair.getFkFieldConstraintPairSet().isEmpty()) {
+			return;
+		}
 
-				final EntityPair pkPair = env.getPair(constraint.getPkEntity().getSimpleName());
-				final Specification spec = Specifications.build(constraint.getPkEntity(), Lists
-						.newArrayList(new FindFilter(constraint.getPkField().getName(), Operator.EQ, fkFieldValue)));
-				final long count = count(pkPair, spec);
-				if (count <= 0) {
-					throw new IllegalArgumentException("Cannot save [" + constraint.getFkEntity().getSimpleName() + "."
-							+ constraint.getFkField().getName() + "] = [" + fkFieldValue + "] since it is not in ["
-							+ constraint.getPkEntity().getSimpleName() + "." + constraint.getPkField().getName() + "]");
-				}
+		for (FieldConstraintPair constraint : pair.getFkFieldConstraintPairSet()) {
+			final Object fkFieldValue = Reflections.getFieldValue(entity, constraint.getFkField());
+			if (fkFieldValue == null) {
+				continue;
+			}
+
+			final EntityPair pkPair = env.getPair(constraint.getPkEntity().getSimpleName());
+			final Specification spec = Specifications.build(constraint.getPkEntity(),
+					Lists.newArrayList(new FindFilter(constraint.getPkField().getName(), Operator.EQ, fkFieldValue)));
+			final long count = count(pkPair, spec);
+			if (count <= 0) {
+				throw new IllegalArgumentException("Cannot save [" + constraint.getFkEntity().getSimpleName() + "."
+						+ constraint.getFkField().getName() + "] = [" + fkFieldValue + "] since it is not in ["
+						+ constraint.getPkEntity().getSimpleName() + "." + constraint.getPkField().getName() + "]");
 			}
 		}
 	}
