@@ -137,10 +137,10 @@ public class EntityDbService extends BaseTransactionalService {
 							|| strategy.equals(FieldConstraintStrategy.SET_DEFAULT)) {
 						final List fkEntityList = findAll(fkPair, spec, null);
 						if (!Collections3.isEmpty(fkEntityList)) {
+							final Object fkFieldValue = strategy.equals(FieldConstraintStrategy.SET_NULL) ? null
+									: constraint.getDefaultValue();
 							for (Object fkEntity : fkEntityList) {
-								Reflections.setFieldValue(fkEntity, constraint.getFkField(),
-										strategy.equals(FieldConstraintStrategy.SET_NULL) ? null
-												: constraint.getDefaultValue());
+								Reflections.setFieldValue(fkEntity, constraint.getFkField(), fkFieldValue);
 							}
 							saveIterable(fkPair, fkEntityList);
 						}
