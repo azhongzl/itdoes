@@ -42,7 +42,7 @@ public class ${className} extends BaseEntity {
 	${field.perm}
   </#if>
   <#if field.upload>
-	@com.itdoes.common.business.entity.UploadField
+	@com.itdoes.common.business.entity.FieldUpload
   </#if>
   <#if field.search??>
 	${field.search}

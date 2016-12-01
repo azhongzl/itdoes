@@ -26,7 +26,7 @@ import com.itdoes.common.business.entity.FieldConstraint;
 import com.itdoes.common.business.entity.FieldConstraintPair;
 import com.itdoes.common.business.entity.FieldPerm;
 import com.itdoes.common.business.entity.FieldPermType;
-import com.itdoes.common.business.entity.UploadField;
+import com.itdoes.common.business.entity.FieldUpload;
 import com.itdoes.common.business.service.EntityService;
 import com.itdoes.common.core.spring.LazyInitBeanLoader;
 import com.itdoes.common.core.spring.Springs;
@@ -170,7 +170,7 @@ public class EntityEnv implements ApplicationContextAware {
 		}
 
 		// Field Upload
-		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, UploadField.class);
+		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, FieldUpload.class);
 
 		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, idField, fkFieldConstraintPairSet, entityPerms,
 				readPermFieldList, writePermFieldList, uploadField));
