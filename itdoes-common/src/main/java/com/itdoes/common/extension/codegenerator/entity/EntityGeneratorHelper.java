@@ -17,8 +17,8 @@ public class EntityGeneratorHelper {
 	private static final String DB_PERM_FILE = CONFIG_DIR + "db.perm.properties";
 	private static final String DB_SEARCH_FILE = CONFIG_DIR + "db.search.properties";
 	private static final String DB_UPLOAD_FILE = CONFIG_DIR + "db.upload.properties";
-	private static final String ENTITY_QUERY_CACHE_FILE = CONFIG_DIR + "entity.queryCache.properties";
-	private static final String ENTITY_EHCACHE_FILE = CONFIG_DIR + "entity.ehcache.properties";
+	private static final String DB_QUERY_CACHE_FILE = CONFIG_DIR + "db.queryCache.properties";
+	private static final String DB_EHCACHE_FILE = CONFIG_DIR + "db.ehcache.properties";
 
 	private static String getColumnKey(String tableName, String columnName) {
 		return tableName + "." + columnName;
@@ -139,28 +139,28 @@ public class EntityGeneratorHelper {
 		}
 	}
 
-	private static class FileEntityQueryCacheConfig implements EntityQueryCacheConfig {
+	private static class FileDbQueryCacheConfig implements DbQueryCacheConfig {
 		private static final String DEFAULT_QUERY_CACHE = "_default_";
 
 		private final PropertiesLoader pl;
 
-		public FileEntityQueryCacheConfig(PropertiesLoader pl) {
+		public FileDbQueryCacheConfig(PropertiesLoader pl) {
 			this.pl = pl;
 		}
 
 		@Override
-		public boolean isEnabled(String entityClassName) {
-			return pl.getBooleanMust(new String[] { entityClassName, DEFAULT_QUERY_CACHE });
+		public boolean isEnabled(String tableName) {
+			return pl.getBooleanMust(new String[] { tableName, DEFAULT_QUERY_CACHE });
 		}
 	}
 
-	private static class FileEntityEhcacheConfig implements EntityEhcacheConfig {
+	private static class FileDbEhcacheConfig implements DbEhcacheConfig {
 		private static final String DEFAULT_CACHE_TEMPLATE = "_default_cache_template_";
 		private static final String CACHE_NAME_PLACEHOLDER = "_cache_name_placeholder_";
 
 		private final PropertiesLoader pl;
 
-		public FileEntityEhcacheConfig(PropertiesLoader pl) {
+		public FileDbEhcacheConfig(PropertiesLoader pl) {
 			this.pl = pl;
 		}
 
@@ -175,8 +175,8 @@ public class EntityGeneratorHelper {
 		}
 
 		@Override
-		public String newCache(String entityPackageName, String entityClassName) {
-			final String cache = getValue(pl, entityClassName, DEFAULT_CACHE_TEMPLATE, true);
+		public String newCache(String tableName, String entityPackageName, String entityClassName) {
+			final String cache = getValue(pl, tableName, DEFAULT_CACHE_TEMPLATE, true);
 			if (cache == null) {
 				return null;
 			}
@@ -200,10 +200,9 @@ public class EntityGeneratorHelper {
 		final DbPermConfig dbPermConfig = new FileDbPermConfig(new PropertiesLoader(DB_PERM_FILE));
 		final DbSearchConfig dbSearchConfig = new FileDbSearchConfig(new PropertiesLoader(DB_SEARCH_FILE));
 		final DbUploadConfig dbUploadConfig = new FileDbUploadConfig(new PropertiesLoader(DB_UPLOAD_FILE));
-		final EntityQueryCacheConfig entityQueryCacheConfig = new FileEntityQueryCacheConfig(
-				new PropertiesLoader(ENTITY_QUERY_CACHE_FILE));
-		final EntityEhcacheConfig entityEhcacheConfig = new FileEntityEhcacheConfig(
-				new PropertiesLoader(ENTITY_EHCACHE_FILE));
+		final DbQueryCacheConfig entityQueryCacheConfig = new FileDbQueryCacheConfig(
+				new PropertiesLoader(DB_QUERY_CACHE_FILE));
+		final DbEhcacheConfig entityEhcacheConfig = new FileDbEhcacheConfig(new PropertiesLoader(DB_EHCACHE_FILE));
 
 		EntityGenerator.generateEntities(pl.getStringMust("jdbc.driver"), pl.getStringMust("jdbc.url"),
 				pl.getStringMust("jdbc.username"), pl.getStringMust("jdbc.password"), loaderClass, outputDir,

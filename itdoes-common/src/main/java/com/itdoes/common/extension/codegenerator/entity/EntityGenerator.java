@@ -47,7 +47,7 @@ public class EntityGenerator {
 			Class<?> loaderClass, String outputDir, String basePackageName, String idGeneratedValue,
 			DbSkipConfig dbSkipConfig, DbMappingConfig dbMappingConfig, DbConstraintConfig dbConstraintConfig,
 			DbPermConfig dbPermConfig, DbSearchConfig dbSearchConfig, DbUploadConfig dbUploadConfig,
-			EntityQueryCacheConfig entityQueryCacheConfig, EntityEhcacheConfig entityEhcacheConfig) {
+			DbQueryCacheConfig dbQueryCacheConfig, DbEhcacheConfig dbEhcacheConfig) {
 		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
 
 		final String baseExtensionDir = getBaseExtensionDir(loaderClass, basePackageName);
@@ -60,7 +60,7 @@ public class EntityGenerator {
 		final String daoDir = getPackageDir(outputDir, daoPackageName);
 		final Template daoTemplate = getTemplate(freeMarkerConfig, FTL_DAO);
 
-		final EhcacheModel ehcacheModel = entityEhcacheConfig.newModel();
+		final EhcacheModel ehcacheModel = dbEhcacheConfig.newModel();
 
 		final MetaParser parser = new MetaParser(jdbcDriver, jdbcUrl, jdbcUsername, jdbcPassword);
 		final List<Table> tableList = parser.parseTables();
@@ -84,7 +84,7 @@ public class EntityGenerator {
 
 			// Generate Dao
 			final String daoClassName = EntityEnv.getDaoClassName(entityClassName);
-			final boolean queryCacheEnabled = entityQueryCacheConfig.isEnabled(entityClassName);
+			final boolean queryCacheEnabled = dbQueryCacheConfig.isEnabled(tableName);
 			final DaoModel daoModel = new DaoModel(daoPackageName, entityPackageName, entityClassName, daoClassName,
 					queryCacheEnabled, mapIdType(tableName, entityModel.getFieldList()),
 					getDaoExtension(baseExtensionDir, daoClassName));
@@ -92,7 +92,7 @@ public class EntityGenerator {
 			writeJavaFile(daoDir, daoClassName, daoString);
 
 			// Generate ehcache cache
-			final String cache = entityEhcacheConfig.newCache(entityPackageName, entityClassName);
+			final String cache = dbEhcacheConfig.newCache(tableName, entityPackageName, entityClassName);
 			if (cache != null) {
 				ehcacheModel.addCache(cache);
 			}
