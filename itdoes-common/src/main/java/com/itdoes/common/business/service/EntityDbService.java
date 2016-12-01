@@ -156,7 +156,7 @@ public class EntityDbService extends BaseTransactionalService {
 			Iterable<T> oldEntities) {
 		if (!pair.getPkFieldConstraintPairSet().isEmpty() || !pair.getFkFieldConstraintPairSet().isEmpty()) {
 			final Iterator<T> entityIterator = entities.iterator();
-			final Iterator<T> oldEntityIterator = entities.iterator();
+			final Iterator<T> oldEntityIterator = oldEntities.iterator();
 			while (entityIterator.hasNext()) {
 				put(pair, entityIterator.next(), oldEntityIterator.next());
 			}
