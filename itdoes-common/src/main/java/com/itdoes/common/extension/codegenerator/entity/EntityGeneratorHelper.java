@@ -4,6 +4,15 @@ import java.util.List;
 
 import com.itdoes.common.core.util.PropertiesLoader;
 import com.itdoes.common.core.util.TxtLoader;
+import com.itdoes.common.extension.codegenerator.entity.config.ConstraintConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.EhcacheConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.MappingConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.PermConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.QueryCacheConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.SearchConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.SkipConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.UploadConfig;
+import com.itdoes.common.extension.codegenerator.entity.model.EhcacheModel;
 
 /**
  * @author Jalen Zhong
@@ -11,14 +20,15 @@ import com.itdoes.common.core.util.TxtLoader;
 public class EntityGeneratorHelper {
 	private static final String DEFAULT_OUTPUT_DIR = "/tmp/codegenerator/entity";
 	private static final String CONFIG_DIR = "classpath:/codegenerator/entity/";
-	private static final String DB_SKIP_FILE = CONFIG_DIR + "db.skip.ini";
-	private static final String DB_MAPPING_FILE = CONFIG_DIR + "db.mapping.properties";
-	private static final String DB_CONSTRAINT_FILE = CONFIG_DIR + "db.constraint.properties";
-	private static final String DB_PERM_FILE = CONFIG_DIR + "db.perm.properties";
-	private static final String DB_SEARCH_FILE = CONFIG_DIR + "db.search.properties";
-	private static final String DB_UPLOAD_FILE = CONFIG_DIR + "db.upload.properties";
-	private static final String DB_QUERY_CACHE_FILE = CONFIG_DIR + "db.queryCache.properties";
-	private static final String DB_EHCACHE_FILE = CONFIG_DIR + "db.ehcache.properties";
+
+	private static final String SKIP_FILE = CONFIG_DIR + "skip.ini";
+	private static final String MAPPING_FILE = CONFIG_DIR + "mapping.properties";
+	private static final String CONSTRAINT_FILE = CONFIG_DIR + "constraint.properties";
+	private static final String PERM_FILE = CONFIG_DIR + "perm.properties";
+	private static final String SEARCH_FILE = CONFIG_DIR + "search.properties";
+	private static final String UPLOAD_FILE = CONFIG_DIR + "upload.properties";
+	private static final String QUERY_CACHE_FILE = CONFIG_DIR + "queryCache.properties";
+	private static final String EHCACHE_FILE = CONFIG_DIR + "ehcache.properties";
 
 	private static String getColumnKey(String tableName, String columnName) {
 		return tableName + "." + columnName;
@@ -38,10 +48,10 @@ public class EntityGeneratorHelper {
 		return valueFromValue != null ? valueFromValue : value;
 	}
 
-	private static class FileDbSkipConfig implements DbSkipConfig {
+	private static class FileSkipConfig implements SkipConfig {
 		private final List<String> lineList;
 
-		public FileDbSkipConfig(TxtLoader tl) {
+		public FileSkipConfig(TxtLoader tl) {
 			this.lineList = tl.getLineList();
 		}
 
@@ -51,10 +61,10 @@ public class EntityGeneratorHelper {
 		}
 	}
 
-	private static class FileDbMappingConfig implements DbMappingConfig {
+	private static class FileMappingConfig implements MappingConfig {
 		private final PropertiesLoader pl;
 
-		public FileDbMappingConfig(PropertiesLoader pl) {
+		public FileMappingConfig(PropertiesLoader pl) {
 			this.pl = pl;
 		}
 
@@ -69,10 +79,10 @@ public class EntityGeneratorHelper {
 		}
 	}
 
-	private static class FileDbConstraintConfig implements DbConstraintConfig {
+	private static class FileConstraintConfig implements ConstraintConfig {
 		private final PropertiesLoader pl;
 
-		public FileDbConstraintConfig(PropertiesLoader pl) {
+		public FileConstraintConfig(PropertiesLoader pl) {
 			this.pl = pl;
 		}
 
@@ -82,13 +92,13 @@ public class EntityGeneratorHelper {
 		}
 	}
 
-	private static class FileDbPermConfig implements DbPermConfig {
+	private static class FilePermConfig implements PermConfig {
 		private static final String DEFAULT_ENTITY = "_default_entity_";
 		private static final String DEFAULT_FIELD = "_default_field_";
 
 		private final PropertiesLoader pl;
 
-		public FileDbPermConfig(PropertiesLoader pl) {
+		public FilePermConfig(PropertiesLoader pl) {
 			this.pl = pl;
 		}
 
@@ -103,13 +113,13 @@ public class EntityGeneratorHelper {
 		}
 	}
 
-	private static class FileDbSearchConfig implements DbSearchConfig {
+	private static class FileSearchConfig implements SearchConfig {
 		private static final String DEFAULT_ENTITY = "_default_entity_";
 		private static final String DEFAULT_FIELD = "_default_field_";
 
 		private final PropertiesLoader pl;
 
-		public FileDbSearchConfig(PropertiesLoader pl) {
+		public FileSearchConfig(PropertiesLoader pl) {
 			this.pl = pl;
 		}
 
@@ -124,12 +134,12 @@ public class EntityGeneratorHelper {
 		}
 	}
 
-	private static class FileDbUploadConfig implements DbUploadConfig {
+	private static class FileUploadConfig implements UploadConfig {
 		private static final String DEFAULT_FIELD = "_default_field_";
 
 		private final PropertiesLoader pl;
 
-		public FileDbUploadConfig(PropertiesLoader pl) {
+		public FileUploadConfig(PropertiesLoader pl) {
 			this.pl = pl;
 		}
 
@@ -139,28 +149,28 @@ public class EntityGeneratorHelper {
 		}
 	}
 
-	private static class FileDbQueryCacheConfig implements DbQueryCacheConfig {
+	private static class FileQueryCacheConfig implements QueryCacheConfig {
 		private static final String DEFAULT_QUERY_CACHE = "_default_";
 
 		private final PropertiesLoader pl;
 
-		public FileDbQueryCacheConfig(PropertiesLoader pl) {
+		public FileQueryCacheConfig(PropertiesLoader pl) {
 			this.pl = pl;
 		}
 
 		@Override
-		public boolean isEnabled(String tableName) {
+		public boolean isEntityEnabled(String tableName) {
 			return pl.getBooleanMust(new String[] { tableName, DEFAULT_QUERY_CACHE });
 		}
 	}
 
-	private static class FileDbEhcacheConfig implements DbEhcacheConfig {
+	private static class FileEhcacheConfig implements EhcacheConfig {
 		private static final String DEFAULT_CACHE_TEMPLATE = "_default_cache_template_";
 		private static final String CACHE_NAME_PLACEHOLDER = "_cache_name_placeholder_";
 
 		private final PropertiesLoader pl;
 
-		public FileDbEhcacheConfig(PropertiesLoader pl) {
+		public FileEhcacheConfig(PropertiesLoader pl) {
 			this.pl = pl;
 		}
 
@@ -175,7 +185,7 @@ public class EntityGeneratorHelper {
 		}
 
 		@Override
-		public String newCache(String tableName, String entityPackageName, String entityClassName) {
+		public String newEntityCache(String tableName, String entityPackageName, String entityClassName) {
 			final String cache = getValue(pl, tableName, DEFAULT_CACHE_TEMPLATE, true);
 			if (cache == null) {
 				return null;
@@ -193,20 +203,18 @@ public class EntityGeneratorHelper {
 			String idGeneratedValue) {
 		final PropertiesLoader pl = new PropertiesLoader("classpath:/application.properties",
 				"classpath:/application.local.properties");
-		final DbSkipConfig dbSkipConfig = new FileDbSkipConfig(new TxtLoader(DB_SKIP_FILE));
-		final DbMappingConfig dbMappingConfig = new FileDbMappingConfig(new PropertiesLoader(DB_MAPPING_FILE));
-		final DbConstraintConfig dbConstraintConfig = new FileDbConstraintConfig(
-				new PropertiesLoader(DB_CONSTRAINT_FILE));
-		final DbPermConfig dbPermConfig = new FileDbPermConfig(new PropertiesLoader(DB_PERM_FILE));
-		final DbSearchConfig dbSearchConfig = new FileDbSearchConfig(new PropertiesLoader(DB_SEARCH_FILE));
-		final DbUploadConfig dbUploadConfig = new FileDbUploadConfig(new PropertiesLoader(DB_UPLOAD_FILE));
-		final DbQueryCacheConfig entityQueryCacheConfig = new FileDbQueryCacheConfig(
-				new PropertiesLoader(DB_QUERY_CACHE_FILE));
-		final DbEhcacheConfig entityEhcacheConfig = new FileDbEhcacheConfig(new PropertiesLoader(DB_EHCACHE_FILE));
+		final SkipConfig skipConfig = new FileSkipConfig(new TxtLoader(SKIP_FILE));
+		final MappingConfig mappingConfig = new FileMappingConfig(new PropertiesLoader(MAPPING_FILE));
+		final ConstraintConfig constraintConfig = new FileConstraintConfig(new PropertiesLoader(CONSTRAINT_FILE));
+		final PermConfig permConfig = new FilePermConfig(new PropertiesLoader(PERM_FILE));
+		final SearchConfig searchConfig = new FileSearchConfig(new PropertiesLoader(SEARCH_FILE));
+		final UploadConfig uploadConfig = new FileUploadConfig(new PropertiesLoader(UPLOAD_FILE));
+		final QueryCacheConfig queryCacheConfig = new FileQueryCacheConfig(new PropertiesLoader(QUERY_CACHE_FILE));
+		final EhcacheConfig ehcacheConfig = new FileEhcacheConfig(new PropertiesLoader(EHCACHE_FILE));
 
 		EntityGenerator.generateEntities(pl.getStringMust("jdbc.driver"), pl.getStringMust("jdbc.url"),
 				pl.getStringMust("jdbc.username"), pl.getStringMust("jdbc.password"), loaderClass, outputDir,
-				basePackageName, idGeneratedValue, dbSkipConfig, dbMappingConfig, dbConstraintConfig, dbPermConfig,
-				dbSearchConfig, dbUploadConfig, entityQueryCacheConfig, entityEhcacheConfig);
+				basePackageName, idGeneratedValue, skipConfig, mappingConfig, constraintConfig, permConfig,
+				searchConfig, uploadConfig, queryCacheConfig, ehcacheConfig);
 	}
 }

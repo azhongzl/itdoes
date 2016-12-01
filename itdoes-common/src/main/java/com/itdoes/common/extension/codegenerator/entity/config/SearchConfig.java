@@ -1,9 +1,9 @@
-package com.itdoes.common.extension.codegenerator.entity;
+package com.itdoes.common.extension.codegenerator.entity.config;
 
 /**
  * @author Jalen Zhong
  */
-public interface DbSearchConfig {
+public interface SearchConfig {
 	String getEntitySearch(String tableName);
 
 	String getFieldSearch(String tableName, String columnName);

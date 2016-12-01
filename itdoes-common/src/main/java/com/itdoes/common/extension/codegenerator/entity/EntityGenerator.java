@@ -21,7 +21,18 @@ import com.itdoes.common.core.util.Files;
 import com.itdoes.common.core.util.Reflections;
 import com.itdoes.common.core.util.Strings;
 import com.itdoes.common.core.util.Urls;
-import com.itdoes.common.extension.codegenerator.entity.EntityModel.EntityField;
+import com.itdoes.common.extension.codegenerator.entity.config.ConstraintConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.EhcacheConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.MappingConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.PermConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.QueryCacheConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.SearchConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.SkipConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.UploadConfig;
+import com.itdoes.common.extension.codegenerator.entity.model.DaoModel;
+import com.itdoes.common.extension.codegenerator.entity.model.EhcacheModel;
+import com.itdoes.common.extension.codegenerator.entity.model.EntityModel;
+import com.itdoes.common.extension.codegenerator.entity.model.EntityModel.EntityField;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -45,9 +56,9 @@ public class EntityGenerator {
 
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
 			Class<?> loaderClass, String outputDir, String basePackageName, String idGeneratedValue,
-			DbSkipConfig dbSkipConfig, DbMappingConfig dbMappingConfig, DbConstraintConfig dbConstraintConfig,
-			DbPermConfig dbPermConfig, DbSearchConfig dbSearchConfig, DbUploadConfig dbUploadConfig,
-			DbQueryCacheConfig dbQueryCacheConfig, DbEhcacheConfig dbEhcacheConfig) {
+			SkipConfig skipConfig, MappingConfig mappingConfig, ConstraintConfig constraintConfig,
+			PermConfig permConfig, SearchConfig searchConfig, UploadConfig uploadConfig,
+			QueryCacheConfig queryCacheConfig, EhcacheConfig ehcacheConfig) {
 		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
 
 		final String baseExtensionDir = getBaseExtensionDir(loaderClass, basePackageName);
@@ -60,31 +71,31 @@ public class EntityGenerator {
 		final String daoDir = getPackageDir(outputDir, daoPackageName);
 		final Template daoTemplate = getTemplate(freeMarkerConfig, FTL_DAO);
 
-		final EhcacheModel ehcacheModel = dbEhcacheConfig.newModel();
+		final EhcacheModel ehcacheModel = ehcacheConfig.newModel();
 
 		final MetaParser parser = new MetaParser(jdbcDriver, jdbcUrl, jdbcUsername, jdbcPassword);
 		final List<Table> tableList = parser.parseTables();
 		for (Table table : tableList) {
 			final String tableName = table.getName();
 
-			if (dbSkipConfig.isTableSkip(tableName)) {
+			if (skipConfig.isTableSkip(tableName)) {
 				continue;
 			}
 
 			// Generate Entity
-			final String entityClassName = mapEntityClassName(tableName, dbMappingConfig);
+			final String entityClassName = mapEntityClassName(tableName, mappingConfig);
 			final EntityModel entityModel = new EntityModel(entityPackageName, tableName,
-					dbPermConfig.getEntityPerm(tableName), dbSearchConfig.getEntitySearch(tableName), entityClassName,
+					permConfig.getEntityPerm(tableName), searchConfig.getEntitySearch(tableName), entityClassName,
 					getSerialVersionUIDStr(entityClassName), idGeneratedValue,
 					getEntityExtension(baseExtensionDir, entityClassName));
-			populateEntityFieldList(entityModel, tableName, table.getColumnList(), dbMappingConfig, dbConstraintConfig,
-					dbPermConfig, dbSearchConfig, dbUploadConfig);
+			populateEntityFieldList(entityModel, tableName, table.getColumnList(), mappingConfig, constraintConfig,
+					permConfig, searchConfig, uploadConfig);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
 			writeJavaFile(entityDir, entityClassName, entityString);
 
 			// Generate Dao
 			final String daoClassName = EntityEnv.getDaoClassName(entityClassName);
-			final boolean queryCacheEnabled = dbQueryCacheConfig.isEnabled(tableName);
+			final boolean queryCacheEnabled = queryCacheConfig.isEntityEnabled(tableName);
 			final DaoModel daoModel = new DaoModel(daoPackageName, entityPackageName, entityClassName, daoClassName,
 					queryCacheEnabled, mapIdType(tableName, entityModel.getFieldList()),
 					getDaoExtension(baseExtensionDir, daoClassName));
@@ -92,7 +103,7 @@ public class EntityGenerator {
 			writeJavaFile(daoDir, daoClassName, daoString);
 
 			// Generate ehcache cache
-			final String cache = dbEhcacheConfig.newCache(tableName, entityPackageName, entityClassName);
+			final String cache = ehcacheConfig.newEntityCache(tableName, entityPackageName, entityClassName);
 			if (cache != null) {
 				ehcacheModel.addCache(cache);
 			}
@@ -140,29 +151,29 @@ public class EntityGenerator {
 		}
 	}
 
-	private static String mapEntityClassName(String tableName, DbMappingConfig dbMappingConfig) {
-		final String mappingEntityClassName = dbMappingConfig.getEntity(tableName);
+	private static String mapEntityClassName(String tableName, MappingConfig mappingConfig) {
+		final String mappingEntityClassName = mappingConfig.getEntity(tableName);
 		return mappingEntityClassName != null ? mappingEntityClassName : Strings.underscoreToPascal(tableName);
 	}
 
 	private static void populateEntityFieldList(EntityModel entityModel, String tableName, List<Column> columnList,
-			DbMappingConfig dbMappingConfig, DbConstraintConfig dbConstraintConfig, DbPermConfig dbPermConfig,
-			DbSearchConfig dbSearchConfig, DbUploadConfig dbUploadConfig) {
+			MappingConfig mappingConfig, ConstraintConfig constraintConfig, PermConfig permConfig,
+			SearchConfig searchConfig, UploadConfig uploadConfig) {
 		final List<EntityField> entityFieldList = Lists.newArrayList();
 		for (Column column : columnList) {
-			final EntityField entityField = new EntityField(mapFieldName(tableName, column.getName(), dbMappingConfig),
-					mapFieldType(column), column, dbConstraintConfig.getFieldConstraint(tableName, column.getName()),
-					dbPermConfig.getFieldPerm(tableName, column.getName()),
-					dbSearchConfig.getFieldSearch(tableName, column.getName()),
-					dbUploadConfig.getFieldUpload(tableName, column.getName()));
+			final EntityField entityField = new EntityField(mapFieldName(tableName, column.getName(), mappingConfig),
+					mapFieldType(column), column, constraintConfig.getFieldConstraint(tableName, column.getName()),
+					permConfig.getFieldPerm(tableName, column.getName()),
+					searchConfig.getFieldSearch(tableName, column.getName()),
+					uploadConfig.getFieldUpload(tableName, column.getName()));
 			entityFieldList.add(entityField);
 		}
 
 		entityModel.setFieldList(entityFieldList);
 	}
 
-	private static String mapFieldName(String tableName, String columnName, DbMappingConfig dbMappingConfig) {
-		final String mappingFieldName = dbMappingConfig.getField(tableName, columnName);
+	private static String mapFieldName(String tableName, String columnName, MappingConfig mappingConfig) {
+		final String mappingFieldName = mappingConfig.getField(tableName, columnName);
 		return mappingFieldName != null ? mappingFieldName : Strings.underscoreToCamel(columnName);
 	}
 

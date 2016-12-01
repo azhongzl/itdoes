@@ -1,4 +1,4 @@
-package com.itdoes.common.extension.codegenerator.entity;
+package com.itdoes.common.extension.codegenerator.entity.model;
 
 /**
  * @author Jalen Zhong
