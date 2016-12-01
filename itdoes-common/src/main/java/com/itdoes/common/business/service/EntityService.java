@@ -55,14 +55,14 @@ public class EntityService extends BaseService {
 	@SuppressWarnings("unchecked")
 	public <T, ID extends Serializable> ID post(EntityPair<T, ID> pair, T entity) {
 		permFieldService.handlePostPermFields(pair, entity);
-		entity = dbService.save(pair, entity);
+		entity = dbService.post(pair, entity);
 		final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField());
 		return id;
 	}
 
 	public <T, ID extends Serializable> void put(EntityPair<T, ID> pair, T entity, T oldEntity) {
 		permFieldService.handlePutPermFields(pair, entity, oldEntity);
-		dbService.save(pair, entity);
+		dbService.put(pair, entity, oldEntity);
 	}
 
 	public <T, ID extends Serializable> ID postUpload(EntityPair<T, ID> pair, T entity, String realRootPath,

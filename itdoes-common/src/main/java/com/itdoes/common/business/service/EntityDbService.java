@@ -1,6 +1,7 @@
 package com.itdoes.common.business.service;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import com.itdoes.common.core.jpa.FindFilter;
 import com.itdoes.common.core.jpa.FindFilter.Operator;
 import com.itdoes.common.core.jpa.Specifications;
 import com.itdoes.common.core.util.Collections3;
+import com.itdoes.common.core.util.Objects;
 import com.itdoes.common.core.util.Reflections;
 
 /**
@@ -56,15 +58,65 @@ public class EntityDbService extends BaseTransactionalService {
 		return pair.getDao().findOne(id);
 	}
 
+	public <T, ID extends Serializable> T post(EntityPair<T, ID> pair, T entity) {
+		saveFk(pair, entity);
+		return pair.getDao().save(entity);
+	}
+
+	public <T, ID extends Serializable> T put(EntityPair<T, ID> pair, T entity, T oldEntity) {
+		savePk(pair, entity, oldEntity);
+		saveFk(pair, entity);
+		return pair.getDao().save(entity);
+
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Transactional(readOnly = false)
-	public <T, ID extends Serializable> T save(EntityPair<T, ID> pair, T entity) {
+	private <T, ID extends Serializable> void savePk(EntityPair<T, ID> pair, T entity, T oldEntity) {
 		if (!pair.getPkFieldConstraintPairSet().isEmpty()) {
 			for (FieldConstraintPair constraint : pair.getPkFieldConstraintPairSet()) {
-
+				final Object pkFieldValue = Reflections.getFieldValue(entity, constraint.getPkField());
+				final Object oldPkFieldValue = Reflections.getFieldValue(oldEntity, constraint.getPkField());
+				if (!Objects.isEqual(pkFieldValue, oldPkFieldValue)) {
+					final FieldConstraintStrategy strategy = constraint.getUpdateStrategy();
+					if (strategy.equals(FieldConstraintStrategy.CASCADE)) {
+						final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
+						final Specification spec = Specifications.build(constraint.getFkEntity(), Lists.newArrayList(
+								new FindFilter(constraint.getFkField().getName(), Operator.EQ, oldPkFieldValue)));
+						final List fkEntityList = findAll(fkPair, spec, null);
+						if (!Collections3.isEmpty(fkEntityList)) {
+							for (Object fkEntity : fkEntityList) {
+								Reflections.setFieldValue(fkEntity, constraint.getFkField(), pkFieldValue);
+							}
+							fkPair.getDao().save(fkEntityList);
+						}
+					} else if (strategy.equals(FieldConstraintStrategy.RESTRICT)
+							|| strategy.equals(FieldConstraintStrategy.NO_ACTION)) {
+						throw new IllegalArgumentException("Cannot delete [" + constraint.getPkEntity().getSimpleName()
+								+ "." + constraint.getPkField().getName() + "] = [" + pkFieldValue
+								+ "] since it is referred by [" + constraint.getFkEntity().getSimpleName() + "."
+								+ constraint.getFkField().getName() + "]");
+					} else if (strategy.equals(FieldConstraintStrategy.SET_NULL)
+							|| strategy.equals(FieldConstraintStrategy.SET_DEFAULT)) {
+						final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
+						final Specification spec = Specifications.build(constraint.getFkEntity(), Lists.newArrayList(
+								new FindFilter(constraint.getFkField().getName(), Operator.EQ, oldPkFieldValue)));
+						final List fkEntityList = findAll(fkPair, spec, null);
+						if (!Collections3.isEmpty(fkEntityList)) {
+							final Object fkFieldValue = strategy.equals(FieldConstraintStrategy.SET_NULL) ? null
+									: constraint.getDefaultValue();
+							for (Object fkEntity : fkEntityList) {
+								Reflections.setFieldValue(fkEntity, constraint.getFkField(), fkFieldValue);
+							}
+							fkPair.getDao().save(fkEntityList);
+						}
+					}
+				}
 			}
 		}
+	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private <T, ID extends Serializable> void saveFk(EntityPair<T, ID> pair, T entity) {
 		if (!pair.getFkFieldConstraintPairSet().isEmpty()) {
 			for (FieldConstraintPair constraint : pair.getFkFieldConstraintPairSet()) {
 				final Object fkFieldValue = Reflections.getFieldValue(entity, constraint.getFkField());
@@ -77,22 +129,34 @@ public class EntityDbService extends BaseTransactionalService {
 						.newArrayList(new FindFilter(constraint.getPkField().getName(), Operator.EQ, fkFieldValue)));
 				final long count = count(pkPair, spec);
 				if (count <= 0) {
-					throw new IllegalArgumentException("[" + fkFieldValue + "] in ["
-							+ constraint.getFkEntity().getSimpleName() + "." + constraint.getFkField().getName()
-							+ "] is invalid since it is not in [" + constraint.getPkEntity().getSimpleName() + "."
-							+ constraint.getPkField().getName() + "]");
+					throw new IllegalArgumentException("Cannot save [" + constraint.getFkEntity().getSimpleName() + "."
+							+ constraint.getFkField().getName() + "] = [" + fkFieldValue + "] since it is not in ["
+							+ constraint.getPkEntity().getSimpleName() + "." + constraint.getPkField().getName() + "]");
 				}
 			}
 		}
-
-		return pair.getDao().save(entity);
 	}
 
 	@Transactional(readOnly = false)
-	public <T, ID extends Serializable> Iterable<T> saveIterable(EntityPair<T, ID> pair, Iterable<T> entities) {
-		if (!pair.getPkFieldConstraintPairSet().isEmpty() || !pair.getFkFieldConstraintPairSet().isEmpty()) {
+	public <T, ID extends Serializable> Iterable<T> postIterable(EntityPair<T, ID> pair, Iterable<T> entities) {
+		if (!pair.getFkFieldConstraintPairSet().isEmpty()) {
 			for (T entity : entities) {
-				save(pair, entity);
+				post(pair, entity);
+			}
+			return entities;
+		} else {
+			return pair.getDao().save(entities);
+		}
+	}
+
+	@Transactional(readOnly = false)
+	public <T, ID extends Serializable> Iterable<T> putIterable(EntityPair<T, ID> pair, Iterable<T> entities,
+			Iterable<T> oldEntities) {
+		if (!pair.getPkFieldConstraintPairSet().isEmpty() || !pair.getFkFieldConstraintPairSet().isEmpty()) {
+			final Iterator<T> entityIterator = entities.iterator();
+			final Iterator<T> oldEntityIterator = entities.iterator();
+			while (entityIterator.hasNext()) {
+				put(pair, entityIterator.next(), oldEntityIterator.next());
 			}
 			return entities;
 		} else {
@@ -121,7 +185,7 @@ public class EntityDbService extends BaseTransactionalService {
 						.newArrayList(new FindFilter(constraint.getFkField().getName(), Operator.EQ, pkFieldValue)));
 				final long count = count(fkPair, spec);
 				if (count > 0) {
-					final FieldConstraintStrategy strategy = constraint.getDeleteStragety();
+					final FieldConstraintStrategy strategy = constraint.getDeleteStrategy();
 					if (strategy.equals(FieldConstraintStrategy.CASCADE)) {
 						final List fkEntityList = findAll(fkPair, spec, null);
 						if (!Collections3.isEmpty(fkEntityList)) {
@@ -129,8 +193,8 @@ public class EntityDbService extends BaseTransactionalService {
 						}
 					} else if (strategy.equals(FieldConstraintStrategy.RESTRICT)
 							|| strategy.equals(FieldConstraintStrategy.NO_ACTION)) {
-						throw new IllegalStateException("Cannot delete [" + pkFieldValue + "] from ["
-								+ constraint.getPkEntity().getSimpleName() + "." + constraint.getPkField().getName()
+						throw new IllegalArgumentException("Cannot delete [" + constraint.getPkEntity().getSimpleName()
+								+ "." + constraint.getPkField().getName() + "] = [" + pkFieldValue
 								+ "] since it is referred by [" + constraint.getFkEntity().getSimpleName() + "."
 								+ constraint.getFkField().getName() + "]");
 					} else if (strategy.equals(FieldConstraintStrategy.SET_NULL)
@@ -142,7 +206,7 @@ public class EntityDbService extends BaseTransactionalService {
 							for (Object fkEntity : fkEntityList) {
 								Reflections.setFieldValue(fkEntity, constraint.getFkField(), fkFieldValue);
 							}
-							saveIterable(fkPair, fkEntityList);
+							fkPair.getDao().save(fkEntityList);
 						}
 					}
 				}

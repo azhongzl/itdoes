@@ -13,7 +13,7 @@ public class FieldConstraintPair {
 	private final Class<?> pkEntity;
 	private final Field pkField;
 	private final FieldConstraintStrategy updateStrategy;
-	private final FieldConstraintStrategy deleteStragety;
+	private final FieldConstraintStrategy deleteStrategy;
 	private final String defaultValue;
 
 	public FieldConstraintPair(Class<?> fkEntity, Field fkField, FieldConstraint fieldConstraint) {
@@ -22,7 +22,7 @@ public class FieldConstraintPair {
 		this.pkEntity = fieldConstraint.entity();
 		this.pkField = Reflections.getField(pkEntity, fieldConstraint.field());
 		this.updateStrategy = fieldConstraint.updateStrategy();
-		this.deleteStragety = fieldConstraint.deleteStrategy();
+		this.deleteStrategy = fieldConstraint.deleteStrategy();
 		this.defaultValue = fieldConstraint.defaultValue();
 	}
 
@@ -46,8 +46,8 @@ public class FieldConstraintPair {
 		return updateStrategy;
 	}
 
-	public FieldConstraintStrategy getDeleteStragety() {
-		return deleteStragety;
+	public FieldConstraintStrategy getDeleteStrategy() {
+		return deleteStrategy;
 	}
 
 	public String getDefaultValue() {
