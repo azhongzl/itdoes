@@ -26,21 +26,21 @@ import com.itdoes.common.core.web.MediaTypes;
 public class EntityMainController extends EntityBaseController {
 	@RequestMapping(value = "/{ec}/" + EntityPermCommand.Command.FIND, method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result find(@PathVariable("ec") String ec,
+			@RequestParam(value = BaseController.OO_SORT, required = false) String ooSort,
 			@RequestParam(value = BaseController.PAGE_NO, defaultValue = "1") int pageNo,
-			@RequestParam(value = BaseController.PAGE_SIZE, defaultValue = "-1") int pageSize,
-			@RequestParam(value = BaseController.PAGE_SORT, required = false) String pageSort, ServletRequest request) {
+			@RequestParam(value = BaseController.PAGE_SIZE, defaultValue = "-1") int pageSize, ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
 		final Page<T> page = pair.getService().find(pair, buildSpecification(pair.getEntityClass(), request),
-				buildPageRequest(pageNo, pageSize, pageSort));
+				buildPageRequest(ooSort, pageNo, pageSize));
 		return HttpResults.success(page);
 	}
 
 	@RequestMapping(value = "/{ec}/" + EntityPermCommand.Command.FIND_ALL, method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result findAll(@PathVariable("ec") String ec,
-			@RequestParam(value = BaseController.PAGE_SORT, required = false) String pageSort, ServletRequest request) {
+			@RequestParam(value = BaseController.OO_SORT, required = false) String ooSort, ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
 		final List<T> list = pair.getService().findAll(pair, buildSpecification(pair.getEntityClass(), request),
-				buildSort(pageSort));
+				buildSort(ooSort));
 		return HttpResults.success(list);
 	}
 

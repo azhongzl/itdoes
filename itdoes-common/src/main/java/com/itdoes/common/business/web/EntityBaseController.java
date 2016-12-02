@@ -31,26 +31,27 @@ import com.itdoes.common.core.util.Reflections;
  * ff_age_GTE=40 (GTE should NOT be omitted)<br/>
  * ff_age_BTWN=30_40 (BTWN should NOT be omitted. Two values are separated by '_')<br/>
  * ff_department.id=3 (the same as: ff_department.id_EQ=3<br/>
- * <li>2) Page:<br/>
+ * <li>2) Order:<br/>
+ * oo_sort=username_a ("a" : ASC, "d" : DESC)<br/>
+ * <li>3) Page:<br/>
  * page_no=1<br/>
  * page_size=50<br/>
- * page_sort=username_a, "a" = ASC, "d" = DESC
  * </ul>
  * <tr style="background-color: rgb(238, 238, 255);">
  * <td><code>FindAll</code>
  * <td>/e/&lt;Entity_Class&gt;/findAll
  * <td>GET
- * <td>The same as "Filter" parameter of "Find" operation, but only allow "page_sort" for "Page" parameter
+ * <td>The same as "Filter" and "Order" parameter of "Find" operation, but without "Page" parameter
  * <tr>
  * <td><code>FindOne</code>
  * <td>/e/&lt;Entity_Class&gt;/findOne
  * <td>GET
- * <td>The same as "Filter" parameter of "Find" operation, but without "Page" parameter
+ * <td>The same as "Filter" parameter of "Find" operation, but without "Order" and "Page" parameter
  * <tr style="background-color: rgb(238, 238, 255);">
  * <td><code>Count</code>
  * <td>/e/&lt;Entity_Class&gt;/count
  * <td>GET
- * <td>The same as "Filter" parameter of "Find" operation, but without "Page" parameter
+ * <td>The same as "Filter" parameter of "Find" operation, but without "Order" and "Page" parameter
  * <tr>
  * <td><code>Get</code>
  * <td>/e/&lt;Entity_Class&gt;/get/&lt;id&gt;

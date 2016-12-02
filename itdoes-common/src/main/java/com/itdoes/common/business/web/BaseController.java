@@ -39,9 +39,10 @@ import com.itdoes.common.core.jpa.Specifications;
  * 
  */
 public abstract class BaseController {
+	public static final String OO_SORT = "oo_sort";
+
 	public static final String PAGE_NO = "page_no";
 	public static final String PAGE_SIZE = "page_size";
-	public static final String PAGE_SORT = "page_sort";
 
 	public static final String UPLOAD_FILE_PARAM = "uploadFile";
 
@@ -121,7 +122,7 @@ public abstract class BaseController {
 		return filters;
 	}
 
-	protected PageRequest buildPageRequest(int pageNo, int pageSize, String pageSort) {
+	protected PageRequest buildPageRequest(String ooSort, int pageNo, int pageSize) {
 		if (pageNo < 1) {
 			pageNo = 1;
 		}
@@ -130,18 +131,18 @@ public abstract class BaseController {
 			pageSize = maxPageSize;
 		}
 
-		final Sort sort = buildSort(pageSort);
+		final Sort sort = buildSort(ooSort);
 
 		return new PageRequest(pageNo - 1, pageSize, sort);
 	}
 
-	protected Sort buildSort(String pageSort) {
+	protected Sort buildSort(String ooSort) {
 		Sort sort = null;
-		if (StringUtils.isNotBlank(pageSort)) {
-			final String[] sortParams = StringUtils.split(pageSort, FILTER_SEPARATOR);
+		if (StringUtils.isNotBlank(ooSort)) {
+			final String[] sortParams = StringUtils.split(ooSort, FILTER_SEPARATOR);
 			Validate.isTrue(sortParams.length == 2,
 					"Page.sort shout be in format <Field>%sA or <Field>%sD, now it is %s", FILTER_SEPARATOR,
-					FILTER_SEPARATOR, pageSort);
+					FILTER_SEPARATOR, ooSort);
 
 			final String field = sortParams[0];
 			final String directionString = sortParams[1];
