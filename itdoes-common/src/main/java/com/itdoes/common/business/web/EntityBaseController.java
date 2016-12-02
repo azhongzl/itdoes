@@ -24,7 +24,7 @@ import com.itdoes.common.core.util.Reflections;
  * <ul>
  * <li>1) Filter:<br/>
  * ff_&lt;property&gt;[_Operator]=&lt;Value&gt;<br/>
- * Operator: EQ, LIKE, LT, GT, LTE, GTE, BTWN, if Operator is not set, default is EQ<br/>
+ * Operator: EQ, NEQ, LIKE, LT, GT, LTE, GTE, BTWN, if Operator is not set, default is EQ<br/>
  * Examples:<br/>
  * ff_username_EQ=Jalen (the same as: ff_username=Jalen<br/>
  * ff_email_EQ=azhongzl@gmail.com (the same as: ff_email=azhongzl@gmail.com)<br/>
