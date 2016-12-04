@@ -30,8 +30,8 @@ public class EntityMainController extends EntityBaseController {
 			@RequestParam(value = BaseController.PAGE_NO, defaultValue = "1") int pageNo,
 			@RequestParam(value = BaseController.PAGE_SIZE, defaultValue = "-1") int pageSize, ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
-		final Page<T> page = pair.getService().find(pair, buildSpecification(pair.getEntityClass(), request),
-				buildPageRequest(ooSort, pageNo, pageSize));
+		final Page<T> page = getEntityExternalService(pair).find(pair,
+				buildSpecification(pair.getEntityClass(), request), buildPageRequest(ooSort, pageNo, pageSize));
 		return HttpResults.success(page);
 	}
 
@@ -39,36 +39,38 @@ public class EntityMainController extends EntityBaseController {
 	public <T, ID extends Serializable> Result findAll(@PathVariable("ec") String ec,
 			@RequestParam(value = BaseController.OO_SORT, required = false) String ooSort, ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
-		final List<T> list = pair.getService().findAll(pair, buildSpecification(pair.getEntityClass(), request),
-				buildSort(ooSort));
+		final List<T> list = getEntityExternalService(pair).findAll(pair,
+				buildSpecification(pair.getEntityClass(), request), buildSort(ooSort));
 		return HttpResults.success(list);
 	}
 
 	@RequestMapping(value = "/{ec}/" + EntityPermCommand.Command.FIND_ONE, method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result findOne(@PathVariable("ec") String ec, ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
-		final T entity = pair.getService().findOne(pair, buildSpecification(pair.getEntityClass(), request));
+		final T entity = getEntityExternalService(pair).findOne(pair,
+				buildSpecification(pair.getEntityClass(), request));
 		return HttpResults.success(entity);
 	}
 
 	@RequestMapping(value = "/{ec}/" + EntityPermCommand.Command.COUNT, method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result count(@PathVariable("ec") String ec, ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
-		final long count = pair.getService().count(pair, buildSpecification(pair.getEntityClass(), request));
+		final long count = getEntityExternalService(pair).count(pair,
+				buildSpecification(pair.getEntityClass(), request));
 		return HttpResults.success(count);
 	}
 
 	@RequestMapping(value = "/{ec}/" + EntityPermCommand.Command.GET + "/{id}", method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result get(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
-		final T entity = pair.getService().get(pair, convertId(pair, id));
+		final T entity = getEntityExternalService(pair).get(pair, convertId(pair, id));
 		return HttpResults.success(entity);
 	}
 
 	@RequestMapping(value = "/{ec}/" + EntityPermCommand.Command.DELETE + "/{id}")
 	public <T, ID extends Serializable> Result delete(@PathVariable("ec") String ec, @PathVariable("id") String id) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
-		pair.getService().delete(pair, convertId(pair, id), getUploadRealRootPath(), isUploadDeleteOrphanFiles());
+		getEntityExternalService(pair).delete(pair, convertId(pair, id));
 		return HttpResults.success();
 	}
 }

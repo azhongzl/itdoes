@@ -27,7 +27,9 @@ import com.itdoes.common.business.entity.FieldConstraintPair;
 import com.itdoes.common.business.entity.FieldPerm;
 import com.itdoes.common.business.entity.FieldPermType;
 import com.itdoes.common.business.entity.FieldUpload;
-import com.itdoes.common.business.service.EntityService;
+import com.itdoes.common.business.service.entity.external.EntityExternalPermFieldService;
+import com.itdoes.common.business.service.entity.external.EntityExternalService;
+import com.itdoes.common.business.service.entity.internal.EntityInternalService;
 import com.itdoes.common.core.spring.LazyInitBeanLoader;
 import com.itdoes.common.core.spring.Springs;
 import com.itdoes.common.core.util.Collections3;
@@ -37,30 +39,34 @@ import com.itdoes.common.core.util.Reflections;
  * @author Jalen Zhong
  */
 public class EntityEnv implements ApplicationContextAware {
-	public static String getDaoClassName(String entityClassName) {
-		return entityClassName + "Dao";
+	public static String getDaoClassSimpleName(String entityClassSimpleName) {
+		return entityClassSimpleName + "Dao";
 	}
 
-	public static String getServiceClassName(String entityClassName) {
-		return entityClassName + "Service";
+	public static String getInternalServiceClassSimpleName(String entityClassSimpleName) {
+		return entityClassSimpleName + "InternalService";
 	}
 
-	private ConfigurableApplicationContext applicationContext;
+	public static String getExternalServiceClassSimpleName(String entityClassSimpleName) {
+		return entityClassSimpleName + "ExternalService";
+	}
 
-	private String entityPackage;
+	private ConfigurableApplicationContext context;
+	private String basePackage;
 
 	private Map<String, EntityPair<?, ? extends Serializable>> pairMap;
 
-	@Resource(name = "entityService")
-	private EntityService defaultEntityService;
+	@Resource(name = "entityInternalService")
+	private EntityInternalService defaultInternalService;
+	private Map<String, EntityExternalService> externalServiceMap = Maps.newHashMap();
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = (ConfigurableApplicationContext) applicationContext;
+		this.context = (ConfigurableApplicationContext) applicationContext;
 	}
 
-	public void setEntityPackage(String entityPackage) {
-		this.entityPackage = entityPackage;
+	public void setBasePackage(String basePackage) {
+		this.basePackage = basePackage;
 	}
 
 	@PostConstruct
@@ -80,15 +86,20 @@ public class EntityEnv implements ApplicationContextAware {
 	}
 
 	private void initPairMap() {
-		final List<Class<?>> entityClassList = Reflections.getClasses(entityPackage,
+		final List<Class<?>> entityClassList = Reflections.getClasses(basePackage + ".entity",
 				new Reflections.ClassFilter.SuperClassFilter(BaseEntity.class), EntityEnv.class.getClassLoader());
-
 		pairMap = Maps.newHashMapWithExpectedSize(entityClassList.size());
-
 		for (Class<?> entityClass : entityClassList) {
 			initPair(entityClass);
 		}
 
+		final Map<String, Class<?>> externalServiceClassMap = Maps.newHashMap();
+		final List<Class<?>> externalServiceClassList = Reflections.getClasses(basePackage + ".service",
+				new Reflections.ClassFilter.SuperClassFilter(EntityExternalService.class),
+				EntityEnv.class.getClassLoader());
+		for (Class<?> externalServiceClass : externalServiceClassList) {
+			externalServiceClassMap.put(externalServiceClass.getSimpleName(), externalServiceClass);
+		}
 		for (EntityPair<?, ? extends Serializable> pair : pairMap.values()) {
 			// Initialize PK FieldConstraint
 			final Set<FieldConstraintPair> fkFieldConstraintPairSet = pair.getFkFieldConstraintPairSet();
@@ -100,11 +111,30 @@ public class EntityEnv implements ApplicationContextAware {
 			}
 
 			// Initialize service after initPair to avoid "circular reference" between EntityService and EntityPair
-			final String key = pair.getEntityClass().getSimpleName();
-			final String serviceBeanName = Springs.getBeanName(getServiceClassName(key));
-			final EntityService service = applicationContext.containsBean(serviceBeanName)
-					? (EntityService) applicationContext.getBean(serviceBeanName) : defaultEntityService;
-			pair.setService(service);
+			final String entityClassSimpleName = pair.getEntityClass().getSimpleName();
+
+			final String internalServiceBeanName = Springs
+					.getBeanName(getInternalServiceClassSimpleName(entityClassSimpleName));
+			final EntityInternalService internalService = context.containsBean(internalServiceBeanName)
+					? (EntityInternalService) context.getBean(internalServiceBeanName) : defaultInternalService;
+			pair.setInternalService(internalService);
+
+			final EntityExternalService externalService;
+			final String externalServiceClassSimpleName = getExternalServiceClassSimpleName(entityClassSimpleName);
+			final Class<?> externalServiceClass = externalServiceClassMap.containsKey(externalServiceClassSimpleName)
+					? externalServiceClassMap.get(externalServiceClassSimpleName) : EntityExternalService.class;
+			final String externalServiceMapKey = getExternalServiceMapKey(externalServiceClass,
+					internalService.getClass());
+			if (externalServiceMap.containsKey(externalServiceMapKey)) {
+				externalService = externalServiceMap.get(externalServiceMapKey);
+			} else {
+				externalService = (EntityExternalService) Reflections.newInstance(externalServiceClass,
+						new Class<?>[] { EntityInternalService.class, EntityExternalPermFieldService.class },
+						new Object[] { internalService, context
+								.getBean(Springs.getBeanName(EntityExternalPermFieldService.class.getSimpleName())) });
+				externalServiceMap.put(externalServiceMapKey, externalService);
+			}
+			pair.setExternalService(externalService);
 		}
 	}
 
@@ -113,13 +143,13 @@ public class EntityEnv implements ApplicationContextAware {
 		final String key = entityClass.getSimpleName();
 
 		// Dao
-		final String daoBeanName = Springs.getBeanName(getDaoClassName(key));
+		final String daoBeanName = Springs.getBeanName(getDaoClassSimpleName(key));
 		// Generating dao by Cglib is time-consuming. Lazy initialize in non production environment
 		final BaseDao<T, ID> dao;
 		if (!isLazyInit(daoBeanName)) {
-			dao = (BaseDao<T, ID>) applicationContext.getBean(daoBeanName);
+			dao = (BaseDao<T, ID>) context.getBean(daoBeanName);
 		} else {
-			dao = (BaseDao<T, ID>) LazyInitBeanLoader.getInstance().loadBean(applicationContext, daoBeanName,
+			dao = (BaseDao<T, ID>) LazyInitBeanLoader.getInstance().loadBean(context, daoBeanName,
 					new Class[] { BaseDao.class });
 		}
 		Validate.notNull(dao, "Cannot find bean for name [%s]", daoBeanName);
@@ -177,6 +207,10 @@ public class EntityEnv implements ApplicationContextAware {
 	}
 
 	private boolean isLazyInit(String beanName) {
-		return applicationContext.getBeanFactory().getBeanDefinition(beanName).isLazyInit();
+		return context.getBeanFactory().getBeanDefinition(beanName).isLazyInit();
+	}
+
+	private String getExternalServiceMapKey(Class<?> externalServiceClass, Class<?> internalServiceClass) {
+		return externalServiceClass.getSimpleName() + "-" + internalServiceClass.getSimpleName();
 	}
 }

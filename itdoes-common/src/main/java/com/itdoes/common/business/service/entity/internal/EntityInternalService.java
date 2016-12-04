@@ -1,4 +1,4 @@
-package com.itdoes.common.business.service;
+package com.itdoes.common.business.service.entity.internal;
 
 import java.io.Serializable;
 import java.util.List;
@@ -18,74 +18,80 @@ import com.itdoes.common.core.util.Reflections;
  * @author Jalen Zhong
  */
 @Service
-public class EntityService extends BaseService {
+public class EntityInternalService {
 	@Autowired
-	private EntityDbService dbService;
+	private EntityInternalDbService dbService;
 	@Autowired
-	private EntityPermFieldService permFieldService;
-	@Autowired
-	private EntityUploadService uploadService;
+	private EntityInternalUploadService uploadService;
 
 	public <T, ID extends Serializable> Page<T> find(EntityPair<T, ID> pair, Specification<T> specification,
 			PageRequest pageRequest) {
-		final Page<T> page = dbService.find(pair, specification, pageRequest);
-		permFieldService.handleGetPermFields(pair, page.getContent());
-		return page;
+		return dbService.find(pair, specification, pageRequest);
 	}
 
 	public <T, ID extends Serializable> List<T> findAll(EntityPair<T, ID> pair, Specification<T> specification,
 			Sort sort) {
-		final List<T> list = dbService.findAll(pair, specification, sort);
-		permFieldService.handleGetPermFields(pair, list);
-		return list;
+		return dbService.findAll(pair, specification, sort);
 	}
 
 	public <T, ID extends Serializable> T findOne(EntityPair<T, ID> pair, Specification<T> specification) {
-		final T entity = dbService.findOne(pair, specification);
-		permFieldService.handleGetPermFields(pair, entity);
-		return entity;
+		return dbService.findOne(pair, specification);
 	}
 
 	public <T, ID extends Serializable> T get(EntityPair<T, ID> pair, ID id) {
-		final T entity = dbService.get(pair, id);
-		permFieldService.handleGetPermFields(pair, entity);
-		return entity;
+		return dbService.get(pair, id);
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T, ID extends Serializable> ID post(EntityPair<T, ID> pair, T entity) {
-		permFieldService.handlePostPermFields(pair, entity);
 		entity = dbService.post(pair, entity);
-		final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField());
-		return id;
+		return (ID) Reflections.getFieldValue(entity, pair.getIdField());
 	}
 
 	public <T, ID extends Serializable> void put(EntityPair<T, ID> pair, T entity, T oldEntity) {
-		permFieldService.handlePutPermFields(pair, entity, oldEntity);
 		dbService.put(pair, entity, oldEntity);
 	}
 
-	public <T, ID extends Serializable> ID postUpload(EntityPair<T, ID> pair, T entity, String realRootPath,
+	public <T, ID extends Serializable> ID postUpload(EntityPair<T, ID> pair, T entity,
 			List<MultipartFile> uploadFileList) {
-		final String tempUploadDir = uploadService.postUploadPre(pair, entity, realRootPath, uploadFileList);
+		final String tempUploadDir = uploadService.postUploadPre(pair, entity, uploadFileList);
 		final ID id = post(pair, entity);
-		uploadService.postUploadPost(pair, entity, realRootPath, uploadFileList, id, tempUploadDir);
+		uploadService.postUploadPost(pair, entity, uploadFileList, id, tempUploadDir);
 		return id;
 	}
 
 	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity, T oldEntity,
-			String realRootPath, List<MultipartFile> uploadFileList, boolean uploadDeleteOrphanFiles) {
-		uploadService.putUpload(pair, entity, realRootPath, uploadFileList, uploadDeleteOrphanFiles);
+			List<MultipartFile> uploadFileList) {
+		uploadService.putUpload(pair, entity, uploadFileList);
 		put(pair, entity, oldEntity);
+	}
+
+	public <T, ID extends Serializable> Iterable<T> postIterable(EntityPair<T, ID> pair, Iterable<T> entities) {
+		return dbService.postIterable(pair, entities);
+	}
+
+	public <T, ID extends Serializable> Iterable<T> putIterable(EntityPair<T, ID> pair, Iterable<T> entities,
+			Iterable<T> oldEntities) {
+		return dbService.putIterable(pair, entities, oldEntities);
 	}
 
 	public <T, ID extends Serializable> long count(EntityPair<T, ID> pair, Specification<T> specification) {
 		return dbService.count(pair, specification);
 	}
 
-	public <T, ID extends Serializable> void delete(EntityPair<T, ID> pair, ID id, String realRootPath,
-			boolean uploadDeleteOrphanFiles) {
+	public <T, ID extends Serializable> void delete(EntityPair<T, ID> pair, ID id) {
 		dbService.delete(pair, id);
-		uploadService.deleteUpload(pair, id, realRootPath, uploadDeleteOrphanFiles);
+		uploadService.deleteUpload(pair, id);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T, ID extends Serializable> void deleteIterable(EntityPair<T, ID> pair, Iterable<T> entities) {
+		if (pair.getUploadField() != null) {
+			for (T entity : entities) {
+				delete(pair, (ID) Reflections.getFieldValue(entity, pair.getIdField()));
+			}
+		} else {
+			dbService.deleteIterable(pair, entities);
+		}
 	}
 }

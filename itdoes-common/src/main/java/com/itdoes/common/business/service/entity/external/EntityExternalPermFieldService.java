@@ -1,4 +1,4 @@
-package com.itdoes.common.business.service;
+package com.itdoes.common.business.service.entity.external;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -10,13 +10,14 @@ import org.springframework.stereotype.Service;
 
 import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.business.Perms;
+import com.itdoes.common.business.service.BaseService;
 import com.itdoes.common.core.util.Reflections;
 
 /**
  * @author Jalen Zhong
  */
 @Service
-public class EntityPermFieldService extends BaseService {
+public class EntityExternalPermFieldService extends BaseService {
 	private static interface PermFieldHandler {
 		PermFieldHandler GET = new PermFieldHandler() {
 			@Override

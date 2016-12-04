@@ -9,7 +9,8 @@ import com.google.common.collect.Sets;
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.EntityPerms;
 import com.itdoes.common.business.entity.FieldConstraintPair;
-import com.itdoes.common.business.service.EntityService;
+import com.itdoes.common.business.service.entity.external.EntityExternalService;
+import com.itdoes.common.business.service.entity.internal.EntityInternalService;
 import com.itdoes.common.core.cglib.CglibMapper;
 import com.itdoes.common.core.util.Collections3;
 
@@ -27,7 +28,8 @@ public class EntityPair<T, ID extends Serializable> {
 	private final Field uploadField;
 
 	private final Set<FieldConstraintPair> pkFieldConstraintPairSet = Sets.newHashSet();
-	private EntityService service;
+	private EntityInternalService internalService;
+	private EntityExternalService externalService;
 
 	public EntityPair(Class<T> entityClass, BaseDao<T, ID> dao, Field idField,
 			Set<FieldConstraintPair> fkFieldConstraintPairSet, EntityPerms entityPerms, List<Field> readPermFieldList,
@@ -89,11 +91,19 @@ public class EntityPair<T, ID extends Serializable> {
 		return pkFieldConstraintPairSet;
 	}
 
-	public EntityService getService() {
-		return service;
+	public EntityInternalService getInternalService() {
+		return internalService;
 	}
 
-	public void setService(EntityService service) {
-		this.service = service;
+	public void setInternalService(EntityInternalService internalService) {
+		this.internalService = internalService;
+	}
+
+	public EntityExternalService getExternalService() {
+		return externalService;
+	}
+
+	public void setExternalService(EntityExternalService service) {
+		this.externalService = service;
 	}
 }

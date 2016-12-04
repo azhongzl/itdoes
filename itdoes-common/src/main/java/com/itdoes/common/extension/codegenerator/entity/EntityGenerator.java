@@ -94,7 +94,7 @@ public class EntityGenerator {
 			writeJavaFile(entityDir, entityClassName, entityString);
 
 			// Generate Dao
-			final String daoClassName = EntityEnv.getDaoClassName(entityClassName);
+			final String daoClassName = EntityEnv.getDaoClassSimpleName(entityClassName);
 			final boolean queryCacheEnabled = queryCacheConfig.isEntityEnabled(tableName);
 			final DaoModel daoModel = new DaoModel(daoPackageName, entityPackageName, entityClassName, daoClassName,
 					queryCacheEnabled, mapIdType(tableName, entityModel.getFieldList()),

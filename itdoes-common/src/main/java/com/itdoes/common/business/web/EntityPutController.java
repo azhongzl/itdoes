@@ -34,7 +34,7 @@ public class EntityPutController extends EntityBaseController {
 			@Valid @ModelAttribute("entity") T entity, ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
-		pair.getService().put(pair, entity, oldEntity);
+		getEntityExternalService(pair).put(pair, entity, oldEntity);
 		return HttpResults.success();
 	}
 
@@ -46,8 +46,7 @@ public class EntityPutController extends EntityBaseController {
 			ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
 		final T oldEntity = (T) request.getAttribute("oldEntity");
-		pair.getService().putUpload(pair, entity, oldEntity, getUploadRealRootPath(), uploadFileList,
-				isUploadDeleteOrphanFiles());
+		getEntityExternalService(pair).putUpload(pair, entity, oldEntity, uploadFileList);
 		return HttpResults.success();
 	}
 
@@ -57,7 +56,7 @@ public class EntityPutController extends EntityBaseController {
 			Model model, ServletRequest request) {
 		final EntityPair<T, ID> pair = getEntityPair(ec);
 
-		final T entity = pair.getService().get(pair, convertId(pair, id));
+		final T entity = getEntityExternalService(pair).get(pair, convertId(pair, id));
 		model.addAttribute("entity", entity);
 
 		final T oldEntity = (T) CglibMapper.copy(entity);

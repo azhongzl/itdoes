@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.itdoes.common.business.EntityEnv;
 import com.itdoes.common.business.EntityPair;
+import com.itdoes.common.business.service.entity.external.EntityExternalService;
 import com.itdoes.common.core.util.Reflections;
 
 /**
@@ -90,9 +91,6 @@ import com.itdoes.common.core.util.Reflections;
 public abstract class EntityBaseController extends BaseController {
 	public static final String ENTITY_URL_PREFIX = "/e";
 
-	private static final String DEFAULT_UPLOAD_RELATIVE_ROOT_PATH = "uploads";
-	private static final boolean DEFAULT_UPLOAD_DELETE_ORPHAN_FILES = true;
-
 	@Autowired
 	private EntityEnv entityEnv;
 
@@ -100,16 +98,12 @@ public abstract class EntityBaseController extends BaseController {
 		return entityEnv.getPair(ec);
 	}
 
+	protected <T, ID extends Serializable> EntityExternalService getEntityExternalService(EntityPair<T, ID> pair) {
+		return pair.getExternalService();
+	}
+
 	@SuppressWarnings("unchecked")
 	protected <T, ID extends Serializable> ID convertId(EntityPair<T, ID> pair, String id) {
 		return (ID) Reflections.convert(id, pair.getIdField().getType());
-	}
-
-	protected String getUploadRealRootPath() {
-		return realRootPath + "/" + DEFAULT_UPLOAD_RELATIVE_ROOT_PATH;
-	}
-
-	protected boolean isUploadDeleteOrphanFiles() {
-		return DEFAULT_UPLOAD_DELETE_ORPHAN_FILES;
 	}
 }

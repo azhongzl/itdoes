@@ -1,4 +1,4 @@
-package com.itdoes.common.business.service;
+package com.itdoes.common.business.service.entity.internal;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -17,6 +17,7 @@ import com.itdoes.common.business.EntityEnv;
 import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.business.entity.FieldConstraintPair;
 import com.itdoes.common.business.entity.FieldConstraintStrategy;
+import com.itdoes.common.business.service.BaseTransactionalService;
 import com.itdoes.common.core.jpa.FindFilter;
 import com.itdoes.common.core.jpa.FindFilter.Operator;
 import com.itdoes.common.core.jpa.Specifications;
@@ -28,7 +29,7 @@ import com.itdoes.common.core.util.Reflections;
  * @author Jalen Zhong
  */
 @Service
-public class EntityDbService extends BaseTransactionalService {
+public class EntityInternalDbService extends BaseTransactionalService {
 	@Autowired
 	private EntityEnv env;
 

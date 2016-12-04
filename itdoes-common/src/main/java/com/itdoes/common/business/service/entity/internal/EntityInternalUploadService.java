@@ -1,4 +1,4 @@
-package com.itdoes.common.business.service;
+package com.itdoes.common.business.service.entity.internal;
 
 import java.io.File;
 import java.io.Serializable;
@@ -7,15 +7,17 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
+
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.itdoes.common.business.EntityPair;
-import com.itdoes.common.business.Perms;
+import com.itdoes.common.business.service.BaseService;
 import com.itdoes.common.core.spring.Springs;
 import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Files;
@@ -27,13 +29,24 @@ import com.itdoes.common.core.web.MultipartFiles;
  * @author Jalen Zhong
  */
 @Service
-public class EntityUploadService extends BaseService {
+public class EntityInternalUploadService extends BaseService {
 	public static final char UPLOAD_FILENAME_SEPARATOR = ',';
 
+	private static final String UPLOAD_RELATIVE_ROOT_PATH = "uploads";
 	private static final String UPLOAD_TEMP_RELATIVE_PATH = "_temp";
 
+	@Autowired
+	private ServletContext context;
+
+	private String uploadRealRootPath;
+
+	@PostConstruct
+	public void myInit() {
+		uploadRealRootPath = context.getRealPath("/") + "/" + UPLOAD_RELATIVE_ROOT_PATH;
+	}
+
 	public <T, ID extends Serializable> String postUploadPre(EntityPair<T, ID> pair, T entity,
-			String uploadRealRootPath, List<MultipartFile> uploadFileList) {
+			List<MultipartFile> uploadFileList) {
 		String uploadTempDir = null;
 		if (isPostUploadable(pair, uploadFileList)) {
 			uploadTempDir = getUploadTempDir(pair, uploadRealRootPath, Ids.uuid());
@@ -50,7 +63,7 @@ public class EntityUploadService extends BaseService {
 		return uploadTempDir;
 	}
 
-	public <T, ID extends Serializable> void postUploadPost(EntityPair<T, ID> pair, T entity, String uploadRealRootPath,
+	public <T, ID extends Serializable> void postUploadPost(EntityPair<T, ID> pair, T entity,
 			List<MultipartFile> uploadFileList, ID id, String uploadTempDir) {
 		if (isPostUploadable(pair, uploadFileList)) {
 			Files.moveDirectory(uploadTempDir, getUploadDir(pair, uploadRealRootPath, id.toString()));
@@ -58,8 +71,8 @@ public class EntityUploadService extends BaseService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity, String uploadRealRootPath,
-			List<MultipartFile> uploadFileList, boolean uploadDeleteOrphanFiles) {
+	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity,
+			List<MultipartFile> uploadFileList) {
 		if (isPutUploadable(pair)) {
 			final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField());
 			final String uploadDir = getUploadDir(pair, uploadRealRootPath, id.toString());
@@ -72,18 +85,15 @@ public class EntityUploadService extends BaseService {
 				}
 			}
 
-			if (uploadDeleteOrphanFiles) {
-				deleteUploadOrphanFiles(uploadDir, uploadFilenameSet);
-			}
+			deleteUploadOrphanFiles(uploadDir, uploadFilenameSet);
 
 			Reflections.setFieldValue(entity, pair.getUploadField(),
 					StringUtils.join(uploadFilenameSet, UPLOAD_FILENAME_SEPARATOR));
 		}
 	}
 
-	public <T, ID extends Serializable> void deleteUpload(EntityPair<T, ID> pair, ID id, String uploadRealRootPath,
-			boolean uploadDeleteOrphanFiles) {
-		if (!hasUploadField(pair) || !uploadDeleteOrphanFiles) {
+	public <T, ID extends Serializable> void deleteUpload(EntityPair<T, ID> pair, ID id) {
+		if (!hasUploadField(pair)) {
 			return;
 		}
 
@@ -93,21 +103,15 @@ public class EntityUploadService extends BaseService {
 
 	private static <T, ID extends Serializable> boolean isPostUploadable(EntityPair<T, ID> pair,
 			List<MultipartFile> uploadFileList) {
-		return hasUploadField(pair) && isUploadPermitted(pair) && !isUploadFileEmpty(uploadFileList);
+		return hasUploadField(pair) && !isUploadFileEmpty(uploadFileList);
 	}
 
 	private static <T, ID extends Serializable> boolean isPutUploadable(EntityPair<T, ID> pair) {
-		return hasUploadField(pair) && isUploadPermitted(pair);
+		return hasUploadField(pair);
 	}
 
 	private static <T, ID extends Serializable> boolean hasUploadField(EntityPair<T, ID> pair) {
 		return pair.getUploadField() != null;
-	}
-
-	private static <T, ID extends Serializable> boolean isUploadPermitted(EntityPair<T, ID> pair) {
-		final Subject subject = SecurityUtils.getSubject();
-		return subject.isPermitted(Perms.getEntityOneEntityOneFieldWritePerm(pair.getEntityClass().getSimpleName(),
-				pair.getUploadField().getName()));
 	}
 
 	private static boolean isUploadFileEmpty(List<MultipartFile> uploadFileList) {
