@@ -58,7 +58,6 @@ public class EntityEnv implements ApplicationContextAware {
 
 	@Resource(name = "entityInternalService")
 	private EntityInternalService defaultInternalService;
-	private Map<String, EntityExternalService> externalServiceMap = Maps.newHashMap();
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -100,6 +99,7 @@ public class EntityEnv implements ApplicationContextAware {
 		for (Class<?> externalServiceClass : externalServiceClassList) {
 			externalServiceClassMap.put(externalServiceClass.getSimpleName(), externalServiceClass);
 		}
+		final Map<String, EntityExternalService> externalServiceMap = Maps.newHashMap();
 		for (EntityPair<?, ? extends Serializable> pair : pairMap.values()) {
 			// Initialize PK FieldConstraint
 			final Set<FieldConstraintPair> fkFieldConstraintPairSet = pair.getFkFieldConstraintPairSet();

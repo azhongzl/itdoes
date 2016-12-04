@@ -12,13 +12,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.itdoes.common.business.EntityPair;
+import com.itdoes.common.business.service.BaseService;
 import com.itdoes.common.core.util.Reflections;
 
 /**
  * @author Jalen Zhong
  */
 @Service
-public class EntityInternalService {
+public class EntityInternalService extends BaseService {
 	@Autowired
 	private EntityInternalDbService dbService;
 	@Autowired
