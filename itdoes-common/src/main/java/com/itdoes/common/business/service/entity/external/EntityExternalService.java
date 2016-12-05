@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,12 +20,8 @@ import com.itdoes.common.business.service.entity.internal.EntityInternalService;
  * @author Jalen Zhong
  */
 public class EntityExternalService extends BaseService {
-	private  EntityInternalService internalService;
-
-	@Autowired
-	private  EntityExternalPermFieldService permFieldService;
-	
-	public EntityExternalService(){}
+	private final EntityInternalService internalService;
+	private final EntityExternalPermFieldService permFieldService;
 
 	public EntityExternalService(EntityInternalService internalService,
 			EntityExternalPermFieldService permFieldService) {
