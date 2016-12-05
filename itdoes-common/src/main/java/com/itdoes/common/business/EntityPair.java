@@ -103,7 +103,7 @@ public class EntityPair<T, ID extends Serializable> {
 		return externalService;
 	}
 
-	public void setExternalService(EntityExternalService service) {
-		this.externalService = service;
+	public void setExternalService(EntityExternalService externalService) {
+		this.externalService = externalService;
 	}
 }
