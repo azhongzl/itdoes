@@ -71,7 +71,7 @@ public class EntityInternalUploadService extends BaseService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity,
+	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity, T oldEntity,
 			List<MultipartFile> uploadFileList) {
 		if (isPutUploadable(pair)) {
 			final ID id = (ID) Reflections.getFieldValue(entity, pair.getIdField());

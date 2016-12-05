@@ -63,7 +63,7 @@ public class EntityInternalService extends BaseService {
 
 	public <T, ID extends Serializable> void putUpload(EntityPair<T, ID> pair, T entity, T oldEntity,
 			List<MultipartFile> uploadFileList) {
-		uploadService.putUpload(pair, entity, uploadFileList);
+		uploadService.putUpload(pair, entity, oldEntity, uploadFileList);
 		put(pair, entity, oldEntity);
 	}
 
