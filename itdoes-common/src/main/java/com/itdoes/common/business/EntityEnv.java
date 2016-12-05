@@ -95,7 +95,7 @@ public class EntityEnv implements ApplicationContextAware {
 		final EntityExternalPermFieldService externalFieldPermService = (EntityExternalPermFieldService) context
 				.getBean(Springs.getBeanName(EntityExternalPermFieldService.class.getSimpleName()));
 		final Map<String, Class<?>> externalServiceClassMap = Maps.newHashMap();
-		final List<Class<?>> externalServiceClassList = Reflections.getClasses(basePackage + ".service.external",
+		final List<Class<?>> externalServiceClassList = Reflections.getClasses(basePackage + ".service.entity.external",
 				new Reflections.ClassFilter.SuperClassFilter(EntityExternalService.class),
 				EntityEnv.class.getClassLoader());
 		for (Class<?> externalServiceClass : externalServiceClassList) {
