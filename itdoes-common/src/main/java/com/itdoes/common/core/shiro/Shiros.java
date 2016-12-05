@@ -87,6 +87,10 @@ public class Shiros {
 		return shiroUser;
 	}
 
+	public static ShiroUser getShiroUser() {
+		return (ShiroUser) SecurityUtils.getSubject().getPrincipal();
+	}
+
 	private Shiros() {
 	}
 }
