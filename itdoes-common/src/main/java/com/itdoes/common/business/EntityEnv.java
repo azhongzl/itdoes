@@ -58,6 +58,7 @@ public class EntityEnv implements ApplicationContextAware {
 
 	@Resource(name = "entityInternalService")
 	private EntityInternalService defaultInternalService;
+	private EntityExternalPermFieldService externalFieldPermService;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -92,8 +93,10 @@ public class EntityEnv implements ApplicationContextAware {
 			initPair(entityClass);
 		}
 
+		externalFieldPermService = (EntityExternalPermFieldService) context
+				.getBean(Springs.getBeanName(EntityExternalPermFieldService.class.getSimpleName()));
 		final Map<String, Class<?>> externalServiceClassMap = Maps.newHashMap();
-		final List<Class<?>> externalServiceClassList = Reflections.getClasses(basePackage + ".service",
+		final List<Class<?>> externalServiceClassList = Reflections.getClasses(basePackage + ".service.external",
 				new Reflections.ClassFilter.SuperClassFilter(EntityExternalService.class),
 				EntityEnv.class.getClassLoader());
 		for (Class<?> externalServiceClass : externalServiceClassList) {
@@ -130,8 +133,7 @@ public class EntityEnv implements ApplicationContextAware {
 			} else {
 				externalService = (EntityExternalService) Reflections.newInstance(externalServiceClass,
 						new Class<?>[] { EntityInternalService.class, EntityExternalPermFieldService.class },
-						new Object[] { internalService, context
-								.getBean(Springs.getBeanName(EntityExternalPermFieldService.class.getSimpleName())) });
+						new Object[] { internalService, externalFieldPermService });
 				externalServiceMap.put(externalServiceMapKey, externalService);
 			}
 			pair.setExternalService(externalService);
