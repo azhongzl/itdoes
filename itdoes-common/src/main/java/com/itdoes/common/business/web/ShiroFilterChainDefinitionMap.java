@@ -91,6 +91,6 @@ public class ShiroFilterChainDefinitionMap extends AbstractShiroFilterChainDefin
 	}
 
 	private String getFilterUrl(Class<?> entityClass, String command) {
-		return EntityBaseController.ENTITY_URL_PREFIX + "/" + entityClass.getSimpleName() + "/" + command + URL_ANY;
+		return BaseEntityController.ENTITY_URL_PREFIX + "/" + entityClass.getSimpleName() + "/" + command + URL_ANY;
 	}
 }

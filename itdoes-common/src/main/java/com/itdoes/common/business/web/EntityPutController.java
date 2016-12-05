@@ -26,8 +26,8 @@ import com.itdoes.common.core.web.MediaTypes;
  * @author Jalen Zhong
  */
 @RestController
-@RequestMapping(value = EntityBaseController.ENTITY_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
-public class EntityPutController extends EntityBaseController {
+@RequestMapping(value = BaseEntityController.ENTITY_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
+public class EntityPutController extends BaseEntityController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/{ec}/" + EntityPermCommand.Command.PUT + "/{id}", method = RequestMethod.POST)
 	public <T, ID extends Serializable> Result put(@PathVariable("ec") String ec,

@@ -22,8 +22,8 @@ import com.itdoes.common.core.web.MediaTypes;
  * @author Jalen Zhong
  */
 @RestController
-@RequestMapping(value = EntityBaseController.ENTITY_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
-public class EntityMainController extends EntityBaseController {
+@RequestMapping(value = BaseEntityController.ENTITY_URL_PREFIX, produces = MediaTypes.APPLICATION_JSON_UTF_8)
+public class EntityMainController extends BaseEntityController {
 	@RequestMapping(value = "/{ec}/" + EntityPermCommand.Command.FIND, method = RequestMethod.GET)
 	public <T, ID extends Serializable> Result find(@PathVariable("ec") String ec,
 			@RequestParam(value = BaseController.OO_SORT, required = false) String ooSort,

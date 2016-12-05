@@ -88,7 +88,7 @@ import com.itdoes.common.core.util.Reflections;
  * 
  * @author Jalen Zhong
  */
-public abstract class EntityBaseController extends BaseController {
+public abstract class BaseEntityController extends BaseController {
 	public static final String ENTITY_URL_PREFIX = "/e";
 
 	@Autowired
