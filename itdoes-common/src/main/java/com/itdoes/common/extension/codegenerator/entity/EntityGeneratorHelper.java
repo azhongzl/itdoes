@@ -97,6 +97,7 @@ public class EntityGeneratorHelper {
 
 	private static class FileNotNullConfig implements NotNullConfig {
 		private static final String NOT_NULL = "@javax.validation.constraints.NotNull";
+		private static final String DEFAULT_ENABLED = "_default_enabled_";
 
 		private final PropertiesLoader pl;
 
@@ -107,7 +108,7 @@ public class EntityGeneratorHelper {
 		@Override
 		public String getFieldNotNull(String tableName, Column column) {
 			if (!column.isNullable() && !column.isPk()
-					&& pl.getBooleanMay(getColumnKey(tableName, column.getName()), true)) {
+					&& pl.getBooleanMust(new String[] { getColumnKey(tableName, column.getName()), DEFAULT_ENABLED })) {
 				return NOT_NULL;
 			}
 
