@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.persistence.Id;
 
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -21,13 +21,11 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.BaseEntity;
-import com.itdoes.common.business.entity.EntityPerms;
 import com.itdoes.common.business.entity.FieldConstraint;
 import com.itdoes.common.business.entity.FieldConstraintPair;
 import com.itdoes.common.business.entity.FieldPerm;
 import com.itdoes.common.business.entity.FieldPermType;
 import com.itdoes.common.business.entity.FieldUpload;
-import com.itdoes.common.business.service.entity.external.EntityExternalPermFieldService;
 import com.itdoes.common.business.service.entity.external.EntityExternalService;
 import com.itdoes.common.business.service.entity.internal.EntityInternalService;
 import com.itdoes.common.core.spring.LazyInitBeanLoader;
@@ -43,21 +41,16 @@ public class EntityEnv implements ApplicationContextAware {
 		return entityClassSimpleName + "Dao";
 	}
 
-	public static String getInternalServiceClassSimpleName(String entityClassSimpleName) {
-		return entityClassSimpleName + "InternalService";
-	}
+	private Map<String, EntityPair<?, ? extends Serializable>> pairMap;
 
-	public static String getExternalServiceClassSimpleName(String entityClassSimpleName) {
-		return entityClassSimpleName + "ExternalService";
-	}
+	@Autowired
+	private EntityInternalService internalService;
+
+	@Autowired
+	private EntityExternalService externalService;
 
 	private ConfigurableApplicationContext context;
 	private String basePackage;
-
-	private Map<String, EntityPair<?, ? extends Serializable>> pairMap;
-
-	@Resource(name = "entityInternalService")
-	private EntityInternalService defaultInternalService;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -92,16 +85,6 @@ public class EntityEnv implements ApplicationContextAware {
 			initPair(entityClass);
 		}
 
-		final EntityExternalPermFieldService externalFieldPermService = (EntityExternalPermFieldService) context
-				.getBean(Springs.getBeanName(EntityExternalPermFieldService.class.getSimpleName()));
-		final Map<String, Class<?>> externalServiceClassMap = Maps.newHashMap();
-		final List<Class<?>> externalServiceClassList = Reflections.getClasses(basePackage + ".service.entity.external",
-				new Reflections.ClassFilter.SuperClassFilter(EntityExternalService.class),
-				EntityEnv.class.getClassLoader());
-		for (Class<?> externalServiceClass : externalServiceClassList) {
-			externalServiceClassMap.put(externalServiceClass.getSimpleName(), externalServiceClass);
-		}
-		final Map<String, EntityExternalService> externalServiceMap = Maps.newHashMap();
 		for (EntityPair<?, ? extends Serializable> pair : pairMap.values()) {
 			// Initialize PK FieldConstraint
 			final Set<FieldConstraintPair> fkFieldConstraintPairSet = pair.getFkFieldConstraintPairSet();
@@ -111,31 +94,6 @@ public class EntityEnv implements ApplicationContextAware {
 					pkPair.getPkFieldConstraintPairSet().add(fieldConstraintPair);
 				}
 			}
-
-			// Initialize service after initPair to avoid "circular reference" between EntityService and EntityPair
-			final String entityClassSimpleName = pair.getEntityClass().getSimpleName();
-
-			final String internalServiceBeanName = Springs
-					.getBeanName(getInternalServiceClassSimpleName(entityClassSimpleName));
-			final EntityInternalService internalService = context.containsBean(internalServiceBeanName)
-					? (EntityInternalService) context.getBean(internalServiceBeanName) : defaultInternalService;
-			pair.setInternalService(internalService);
-
-			final EntityExternalService externalService;
-			final String externalServiceClassSimpleName = getExternalServiceClassSimpleName(entityClassSimpleName);
-			final Class<?> externalServiceClass = externalServiceClassMap.containsKey(externalServiceClassSimpleName)
-					? externalServiceClassMap.get(externalServiceClassSimpleName) : EntityExternalService.class;
-			final String externalServiceMapKey = getExternalServiceMapKey(externalServiceClass,
-					internalService.getClass());
-			if (externalServiceMap.containsKey(externalServiceMapKey)) {
-				externalService = externalServiceMap.get(externalServiceMapKey);
-			} else {
-				externalService = (EntityExternalService) Reflections.newInstance(externalServiceClass,
-						new Class<?>[] { EntityInternalService.class, EntityExternalPermFieldService.class },
-						new Object[] { internalService, externalFieldPermService });
-				externalServiceMap.put(externalServiceMapKey, externalService);
-			}
-			pair.setExternalService(externalService);
 		}
 	}
 
@@ -174,9 +132,6 @@ public class EntityEnv implements ApplicationContextAware {
 			}
 		}
 
-		// Entity Perm
-		final EntityPerms entityPerms = entityClass.getAnnotation(EntityPerms.class);
-
 		// Field Perm
 		final List<Field> permFieldList = Reflections.getFieldsWithAnnotation(entityClass, FieldPerm.class);
 		final List<Field> readPermFieldList = Lists.newArrayList();
@@ -203,15 +158,11 @@ public class EntityEnv implements ApplicationContextAware {
 		// Field Upload
 		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, FieldUpload.class);
 
-		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, idField, fkFieldConstraintPairSet, entityPerms,
-				readPermFieldList, writePermFieldList, uploadField));
+		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, idField, fkFieldConstraintPairSet, readPermFieldList,
+				writePermFieldList, uploadField, internalService, externalService));
 	}
 
 	private boolean isLazyInit(String beanName) {
 		return context.getBeanFactory().getBeanDefinition(beanName).isLazyInit();
-	}
-
-	private String getExternalServiceMapKey(Class<?> externalServiceClass, Class<?> internalServiceClass) {
-		return externalServiceClass.getSimpleName() + "-" + internalServiceClass.getSimpleName();
 	}
 }

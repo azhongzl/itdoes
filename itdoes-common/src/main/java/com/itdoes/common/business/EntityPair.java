@@ -7,7 +7,6 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.itdoes.common.business.dao.BaseDao;
-import com.itdoes.common.business.entity.EntityPerms;
 import com.itdoes.common.business.entity.FieldConstraintPair;
 import com.itdoes.common.business.service.entity.external.EntityExternalService;
 import com.itdoes.common.business.service.entity.internal.EntityInternalService;
@@ -22,26 +21,27 @@ public class EntityPair<T, ID extends Serializable> {
 	private final BaseDao<T, ID> dao;
 	private final Field idField;
 	private final Set<FieldConstraintPair> fkFieldConstraintPairSet;
-	private final EntityPerms entityPerms;
 	private final List<Field> readPermFieldList;
 	private final List<Field> writePermFieldList;
 	private final Field uploadField;
+	private final EntityInternalService internalService;
+	private final EntityExternalService externalService;
 
 	private final Set<FieldConstraintPair> pkFieldConstraintPairSet = Sets.newHashSet();
-	private EntityInternalService internalService;
-	private EntityExternalService externalService;
 
 	public EntityPair(Class<T> entityClass, BaseDao<T, ID> dao, Field idField,
-			Set<FieldConstraintPair> fkFieldConstraintPairSet, EntityPerms entityPerms, List<Field> readPermFieldList,
-			List<Field> writePermFieldList, Field uploadField) {
+			Set<FieldConstraintPair> fkFieldConstraintPairSet, List<Field> readPermFieldList,
+			List<Field> writePermFieldList, Field uploadField, EntityInternalService internalService,
+			EntityExternalService externalService) {
 		this.entityClass = entityClass;
 		this.dao = dao;
 		this.idField = idField;
 		this.fkFieldConstraintPairSet = fkFieldConstraintPairSet;
-		this.entityPerms = entityPerms;
 		this.readPermFieldList = readPermFieldList;
 		this.writePermFieldList = writePermFieldList;
 		this.uploadField = uploadField;
+		this.internalService = internalService;
+		this.externalService = externalService;
 
 		// (Optional) Initialize for performance concern, can be removed if it is not readable
 		CglibMapper.getBeanCopier(entityClass);
@@ -63,20 +63,12 @@ public class EntityPair<T, ID extends Serializable> {
 		return fkFieldConstraintPairSet;
 	}
 
-	public EntityPerms getEntityPerms() {
-		return entityPerms;
-	}
-
 	public List<Field> getReadPermFieldList() {
 		return readPermFieldList;
 	}
 
 	public List<Field> getWritePermFieldList() {
 		return writePermFieldList;
-	}
-
-	public Field getUploadField() {
-		return uploadField;
 	}
 
 	public boolean hasReadPermField() {
@@ -87,23 +79,19 @@ public class EntityPair<T, ID extends Serializable> {
 		return !Collections3.isEmpty(writePermFieldList);
 	}
 
-	public Set<FieldConstraintPair> getPkFieldConstraintPairSet() {
-		return pkFieldConstraintPairSet;
+	public Field getUploadField() {
+		return uploadField;
 	}
 
 	public EntityInternalService getInternalService() {
 		return internalService;
 	}
 
-	public void setInternalService(EntityInternalService internalService) {
-		this.internalService = internalService;
-	}
-
 	public EntityExternalService getExternalService() {
 		return externalService;
 	}
 
-	public void setExternalService(EntityExternalService externalService) {
-		this.externalService = externalService;
+	public Set<FieldConstraintPair> getPkFieldConstraintPairSet() {
+		return pkFieldConstraintPairSet;
 	}
 }
