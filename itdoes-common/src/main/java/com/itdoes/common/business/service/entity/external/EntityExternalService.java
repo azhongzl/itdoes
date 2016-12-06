@@ -28,10 +28,6 @@ public class EntityExternalService extends BaseService {
 	@Autowired
 	private EntityExternalPermFieldService permFieldService;
 
-	public EntityExternalPermFieldService getPermFieldService() {
-		return permFieldService;
-	}
-
 	public <T, ID extends Serializable> Page<T> find(EntityPair<T, ID> pair, Specification<T> specification,
 			PageRequest pageRequest) {
 		final Page<T> page = internalService.find(pair, specification, pageRequest);
