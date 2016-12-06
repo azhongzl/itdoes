@@ -8,7 +8,7 @@ import com.itdoes.common.core.cglib.CglibMapper;
  * @author Jalen Zhong
  */
 public abstract class BaseEntityPutController extends BaseEntityController {
-	private static final String ENTITY_KEY = "entity";
+	protected static final String ENTITY_KEY = "entity";
 	private static final String OLD_ENTITY_KEY = "oldEntity";
 
 	protected void cacheEntity(ServletRequest request, Object entity) {
