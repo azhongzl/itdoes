@@ -49,7 +49,7 @@ public class ${className} extends BaseEntity {
 </#list>
 <#list fieldList as field>
 
-	public ${field.type} <#if field.type == "boolean">is<#else>get</#if>${field.upperName}() {
+	public ${field.type} get${field.upperName}() {
 		return ${field.name};
 	}
 
