@@ -49,7 +49,6 @@ public class EntityModel {
 
 	private final String packageName;
 	private final String tableName;
-	private final String perm;
 	private final String search;
 	private final String className;
 	private final String serialVersionUID;
@@ -58,11 +57,10 @@ public class EntityModel {
 
 	private List<EntityField> fieldList;
 
-	public EntityModel(String packageName, String tableName, String perm, String search, String className,
-			String serialVersionUID, String idGeneratedValue, String extension) {
+	public EntityModel(String packageName, String tableName, String search, String className, String serialVersionUID,
+			String idGeneratedValue, String extension) {
 		this.packageName = packageName;
 		this.tableName = tableName;
-		this.perm = perm;
 		this.search = search;
 		this.className = className;
 		this.serialVersionUID = serialVersionUID;
@@ -76,10 +74,6 @@ public class EntityModel {
 
 	public String getTableName() {
 		return tableName;
-	}
-
-	public String getPerm() {
-		return perm;
 	}
 
 	public String getSearch() {

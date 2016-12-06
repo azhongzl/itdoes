@@ -93,18 +93,12 @@ public class EntityGeneratorHelper {
 	}
 
 	private static class FilePermConfig implements PermConfig {
-		private static final String DEFAULT_ENTITY = "_default_entity_";
 		private static final String DEFAULT_FIELD = "_default_field_";
 
 		private final PropertiesLoader pl;
 
 		public FilePermConfig(PropertiesLoader pl) {
 			this.pl = pl;
-		}
-
-		@Override
-		public String getEntityPerm(String tableName) {
-			return getValue(pl, tableName, DEFAULT_ENTITY, true);
 		}
 
 		@Override

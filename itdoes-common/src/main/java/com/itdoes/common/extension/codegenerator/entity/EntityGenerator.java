@@ -85,9 +85,8 @@ public class EntityGenerator {
 			// Generate Entity
 			final String entityClassName = mapEntityClassName(tableName, mappingConfig);
 			final EntityModel entityModel = new EntityModel(entityPackageName, tableName,
-					permConfig.getEntityPerm(tableName), searchConfig.getEntitySearch(tableName), entityClassName,
-					getSerialVersionUIDStr(entityClassName), idGeneratedValue,
-					getEntityExtension(baseExtensionDir, entityClassName));
+					searchConfig.getEntitySearch(tableName), entityClassName, getSerialVersionUIDStr(entityClassName),
+					idGeneratedValue, getEntityExtension(baseExtensionDir, entityClassName));
 			populateEntityFieldList(entityModel, tableName, table.getColumnList(), mappingConfig, constraintConfig,
 					permConfig, searchConfig, uploadConfig);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);

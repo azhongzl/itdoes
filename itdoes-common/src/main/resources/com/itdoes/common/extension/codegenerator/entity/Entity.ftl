@@ -18,9 +18,6 @@ import com.itdoes.common.business.entity.BaseEntity;
 @Entity
 @Table(name = "${tableName}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-<#if perm??>
-${perm}
-</#if>
 <#if search??>
 ${search}
 </#if>
