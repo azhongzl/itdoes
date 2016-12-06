@@ -2,6 +2,8 @@ package com.itdoes.common.business.web;
 
 import javax.servlet.ServletRequest;
 
+import org.springframework.ui.Model;
+
 import com.itdoes.common.core.cglib.CglibMapper;
 
 /**
@@ -11,8 +13,8 @@ public abstract class BaseEntityPutController extends BaseEntityController {
 	protected static final String ENTITY_KEY = "entity";
 	private static final String OLD_ENTITY_KEY = "oldEntity";
 
-	protected void cacheEntity(ServletRequest request, Object entity) {
-		request.setAttribute(ENTITY_KEY, entity);
+	protected void cacheEntity(Model model, ServletRequest request, Object entity) {
+		model.addAttribute(ENTITY_KEY, entity);
 
 		final Object oldEntity = CglibMapper.copy(entity);
 		request.setAttribute(OLD_ENTITY_KEY, oldEntity);
