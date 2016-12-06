@@ -32,6 +32,9 @@ public class ${className} extends BaseEntity {
   <#if field.constraint??>
 	${field.constraint}
   </#if>
+  <#if field.notNull??>
+	${field.notNull}
+  </#if>
   <#if field.perm??>
 	${field.perm}
   </#if>

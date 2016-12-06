@@ -24,6 +24,7 @@ import com.itdoes.common.core.util.Urls;
 import com.itdoes.common.extension.codegenerator.entity.config.ConstraintConfig;
 import com.itdoes.common.extension.codegenerator.entity.config.EhcacheConfig;
 import com.itdoes.common.extension.codegenerator.entity.config.MappingConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.NotNullConfig;
 import com.itdoes.common.extension.codegenerator.entity.config.PermConfig;
 import com.itdoes.common.extension.codegenerator.entity.config.QueryCacheConfig;
 import com.itdoes.common.extension.codegenerator.entity.config.SearchConfig;
@@ -57,7 +58,7 @@ public class EntityGenerator {
 	public static void generateEntities(String jdbcDriver, String jdbcUrl, String jdbcUsername, String jdbcPassword,
 			Class<?> loaderClass, String outputDir, String basePackageName, String idGeneratedValue,
 			SkipConfig skipConfig, MappingConfig mappingConfig, ConstraintConfig constraintConfig,
-			PermConfig permConfig, SearchConfig searchConfig, UploadConfig uploadConfig,
+			NotNullConfig notNullConfig, PermConfig permConfig, SearchConfig searchConfig, UploadConfig uploadConfig,
 			QueryCacheConfig queryCacheConfig, EhcacheConfig ehcacheConfig) {
 		final Configuration freeMarkerConfig = FreeMarkers.buildConfiguration(TEMPLATE_DIR);
 
@@ -88,7 +89,7 @@ public class EntityGenerator {
 					searchConfig.getEntitySearch(tableName), entityClassName, getSerialVersionUIDStr(entityClassName),
 					idGeneratedValue, getEntityExtension(baseExtensionDir, entityClassName));
 			populateEntityFieldList(entityModel, tableName, table.getColumnList(), mappingConfig, constraintConfig,
-					permConfig, searchConfig, uploadConfig);
+					notNullConfig, permConfig, searchConfig, uploadConfig);
 			final String entityString = FreeMarkers.render(entityTemplate, entityModel);
 			writeJavaFile(entityDir, entityClassName, entityString);
 
@@ -156,12 +157,13 @@ public class EntityGenerator {
 	}
 
 	private static void populateEntityFieldList(EntityModel entityModel, String tableName, List<Column> columnList,
-			MappingConfig mappingConfig, ConstraintConfig constraintConfig, PermConfig permConfig,
-			SearchConfig searchConfig, UploadConfig uploadConfig) {
+			MappingConfig mappingConfig, ConstraintConfig constraintConfig, NotNullConfig notNullConfig,
+			PermConfig permConfig, SearchConfig searchConfig, UploadConfig uploadConfig) {
 		final List<EntityField> entityFieldList = Lists.newArrayList();
 		for (Column column : columnList) {
 			final EntityField entityField = new EntityField(mapFieldName(tableName, column.getName(), mappingConfig),
 					mapFieldType(column), column, constraintConfig.getFieldConstraint(tableName, column.getName()),
+					notNullConfig.getFieldNotNull(tableName, column),
 					permConfig.getFieldPerm(tableName, column.getName()),
 					searchConfig.getFieldSearch(tableName, column.getName()),
 					uploadConfig.getFieldUpload(tableName, column.getName()));

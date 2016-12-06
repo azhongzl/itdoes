@@ -2,11 +2,13 @@ package com.itdoes.common.extension.codegenerator.entity;
 
 import java.util.List;
 
+import com.itdoes.common.core.jdbc.meta.Column;
 import com.itdoes.common.core.util.PropertiesLoader;
 import com.itdoes.common.core.util.TxtLoader;
 import com.itdoes.common.extension.codegenerator.entity.config.ConstraintConfig;
 import com.itdoes.common.extension.codegenerator.entity.config.EhcacheConfig;
 import com.itdoes.common.extension.codegenerator.entity.config.MappingConfig;
+import com.itdoes.common.extension.codegenerator.entity.config.NotNullConfig;
 import com.itdoes.common.extension.codegenerator.entity.config.PermConfig;
 import com.itdoes.common.extension.codegenerator.entity.config.QueryCacheConfig;
 import com.itdoes.common.extension.codegenerator.entity.config.SearchConfig;
@@ -24,6 +26,7 @@ public class EntityGeneratorHelper {
 	private static final String SKIP_FILE = CONFIG_DIR + "skip.ini";
 	private static final String MAPPING_FILE = CONFIG_DIR + "mapping.properties";
 	private static final String CONSTRAINT_FILE = CONFIG_DIR + "constraint.properties";
+	private static final String NOT_NULL_FILE = CONFIG_DIR + "notNull.properties";
 	private static final String PERM_FILE = CONFIG_DIR + "perm.properties";
 	private static final String SEARCH_FILE = CONFIG_DIR + "search.properties";
 	private static final String UPLOAD_FILE = CONFIG_DIR + "upload.properties";
@@ -89,6 +92,26 @@ public class EntityGeneratorHelper {
 		@Override
 		public String getFieldConstraint(String tableName, String columnName) {
 			return pl.getStringMay(getColumnKey(tableName, columnName), null);
+		}
+	}
+
+	private static class FileNotNullConfig implements NotNullConfig {
+		private static final String NOT_NULL = "@javax.validation.constraints.NotNull";
+
+		private final PropertiesLoader pl;
+
+		public FileNotNullConfig(PropertiesLoader pl) {
+			this.pl = pl;
+		}
+
+		@Override
+		public String getFieldNotNull(String tableName, Column column) {
+			if (!column.isNullable() && !column.isPk()
+					&& pl.getBooleanMay(getColumnKey(tableName, column.getName()), true)) {
+				return NOT_NULL;
+			}
+
+			return null;
 		}
 	}
 
@@ -200,6 +223,7 @@ public class EntityGeneratorHelper {
 		final SkipConfig skipConfig = new FileSkipConfig(new TxtLoader(SKIP_FILE));
 		final MappingConfig mappingConfig = new FileMappingConfig(new PropertiesLoader(MAPPING_FILE));
 		final ConstraintConfig constraintConfig = new FileConstraintConfig(new PropertiesLoader(CONSTRAINT_FILE));
+		final NotNullConfig notNullConfig = new FileNotNullConfig(new PropertiesLoader(NOT_NULL_FILE));
 		final PermConfig permConfig = new FilePermConfig(new PropertiesLoader(PERM_FILE));
 		final SearchConfig searchConfig = new FileSearchConfig(new PropertiesLoader(SEARCH_FILE));
 		final UploadConfig uploadConfig = new FileUploadConfig(new PropertiesLoader(UPLOAD_FILE));
@@ -208,7 +232,7 @@ public class EntityGeneratorHelper {
 
 		EntityGenerator.generateEntities(pl.getStringMust("jdbc.driver"), pl.getStringMust("jdbc.url"),
 				pl.getStringMust("jdbc.username"), pl.getStringMust("jdbc.password"), loaderClass, outputDir,
-				basePackageName, idGeneratedValue, skipConfig, mappingConfig, constraintConfig, permConfig,
-				searchConfig, uploadConfig, queryCacheConfig, ehcacheConfig);
+				basePackageName, idGeneratedValue, skipConfig, mappingConfig, constraintConfig, notNullConfig,
+				permConfig, searchConfig, uploadConfig, queryCacheConfig, ehcacheConfig);
 	}
 }

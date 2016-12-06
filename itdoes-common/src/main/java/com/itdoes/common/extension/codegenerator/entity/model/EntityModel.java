@@ -12,15 +12,17 @@ public class EntityModel {
 	public static class EntityField extends Field {
 		private final Column column;
 		private final String constraint;
+		private final String notNull;
 		private final String perm;
 		private final String search;
 		private final String upload;
 
-		public EntityField(String name, String type, Column column, String constraint, String perm, String search,
-				String upload) {
+		public EntityField(String name, String type, Column column, String constraint, String notNull, String perm,
+				String search, String upload) {
 			super(name, type);
 			this.column = column;
 			this.constraint = constraint;
+			this.notNull = notNull;
 			this.perm = perm;
 			this.search = search;
 			this.upload = upload;
@@ -32,6 +34,10 @@ public class EntityModel {
 
 		public String getConstraint() {
 			return constraint;
+		}
+
+		public String getNotNull() {
+			return notNull;
 		}
 
 		public String getPerm() {
