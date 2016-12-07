@@ -9,7 +9,7 @@ import com.itdoes.common.core.cglib.CglibMapper;
 /**
  * @author Jalen Zhong
  */
-public abstract class BaseEntityPutController extends BaseEntityController {
+public abstract class BasePutController extends BaseController {
 	protected static final String ENTITY_KEY = "entity";
 	private static final String OLD_ENTITY_KEY = "oldEntity";
 
