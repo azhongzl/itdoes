@@ -21,13 +21,12 @@ public class EntityPair<T, ID extends Serializable> {
 	private final BaseDao<T, ID> dao;
 	private final Field idField;
 	private final Set<FieldConstraintPair> fkFieldConstraintPairSet;
+	private final Set<FieldConstraintPair> pkFieldConstraintPairSet = Sets.newHashSet();
 	private final List<Field> readPermFieldList;
 	private final List<Field> writePermFieldList;
 	private final Field uploadField;
 	private final EntityInternalService internalService;
 	private final EntityExternalService externalService;
-
-	private final Set<FieldConstraintPair> pkFieldConstraintPairSet = Sets.newHashSet();
 
 	public EntityPair(Class<T> entityClass, BaseDao<T, ID> dao, Field idField,
 			Set<FieldConstraintPair> fkFieldConstraintPairSet, List<Field> readPermFieldList,
@@ -63,6 +62,10 @@ public class EntityPair<T, ID extends Serializable> {
 		return fkFieldConstraintPairSet;
 	}
 
+	public Set<FieldConstraintPair> getPkFieldConstraintPairSet() {
+		return pkFieldConstraintPairSet;
+	}
+
 	public List<Field> getReadPermFieldList() {
 		return readPermFieldList;
 	}
@@ -83,15 +86,11 @@ public class EntityPair<T, ID extends Serializable> {
 		return uploadField;
 	}
 
-	public EntityInternalService getInternalService() {
+	public EntityInternalService internal() {
 		return internalService;
 	}
 
-	public EntityExternalService getExternalService() {
+	public EntityExternalService external() {
 		return externalService;
-	}
-
-	public Set<FieldConstraintPair> getPkFieldConstraintPairSet() {
-		return pkFieldConstraintPairSet;
 	}
 }
