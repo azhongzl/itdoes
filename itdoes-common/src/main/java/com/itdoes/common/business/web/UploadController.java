@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.itdoes.common.core.Result;
 import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Strings;
-import com.itdoes.common.core.web.HttpResults;
 import com.itdoes.common.core.web.MediaTypes;
 import com.itdoes.common.core.web.MultipartFiles;
 
@@ -30,11 +29,11 @@ public class UploadController extends BaseController {
 	public Result upload(@RequestParam(BaseController.UPLOAD_FILE_PARAM) List<MultipartFile> files,
 			HttpServletRequest request) {
 		if (Collections3.isEmpty(files)) {
-			return HttpResults.fail(HttpStatus.BAD_REQUEST.value(), "No upload file");
+			return Result.fail(HttpStatus.BAD_REQUEST.value(), "No upload file");
 		}
 
 		final String path = Strings.substring(request.getRequestURI(), UPLOAD_URL_TO_FIND);
 		MultipartFiles.save(context, path, files);
-		return HttpResults.success(files.size());
+		return Result.success().addData("fileSize", files.size());
 	}
 }

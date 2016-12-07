@@ -17,7 +17,6 @@ import org.springframework.web.util.WebUtils;
 
 import com.itdoes.common.core.Result;
 import com.itdoes.common.core.util.Validators;
-import com.itdoes.common.core.web.HttpResults;
 import com.itdoes.common.core.web.MediaTypes;
 
 /**
@@ -33,7 +32,7 @@ public class GlobalExceptionHandler {
 			WebRequest request) {
 		final HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 		final Map<String, String> errors = Validators.propertyMessages(e);
-		final Result result = HttpResults.fail(httpStatus.value(), errors);
+		final Result result = Result.fail(httpStatus.value(), errors);
 		return handleExceptionInternal(e, result, null, httpStatus, request);
 	}
 
@@ -54,7 +53,7 @@ public class GlobalExceptionHandler {
 		LOGGER.error("Error occurred", e);
 
 		if (body == null) {
-			body = HttpResults.fail(status.value(), e.getMessage());
+			body = Result.fail(status.value(), e.getMessage());
 		}
 
 		if (headers == null) {

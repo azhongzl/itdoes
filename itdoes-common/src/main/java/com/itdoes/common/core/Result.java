@@ -1,6 +1,8 @@
 package com.itdoes.common.core;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -12,20 +14,22 @@ public class Result implements Serializable {
 	private static final long serialVersionUID = 3897944851811754407L;
 
 	public static Result success() {
-		return new Result(true);
+		return new Result(true, 0, null);
 	}
 
-	public static Result fail() {
-		return new Result(false);
+	public static Result fail(int code, Object message) {
+		return new Result(false, code, message);
 	}
 
 	private final boolean success;
-	private int code;
-	private Object message;
-	private Object data;
+	private final int code;
+	private final Object message;
+	private Map<Object, Object> data;
 
-	private Result(boolean success) {
+	public Result(boolean success, int code, Object message) {
 		this.success = success;
+		this.code = code;
+		this.message = message;
 	}
 
 	public boolean isSuccess() {
@@ -40,22 +44,15 @@ public class Result implements Serializable {
 		return message;
 	}
 
-	public Object getData() {
+	public Map<Object, Object> getData() {
 		return data;
 	}
 
-	public Result setCode(int code) {
-		this.code = code;
-		return this;
-	}
-
-	public Result setMessage(Object message) {
-		this.message = message;
-		return this;
-	}
-
-	public Result setData(Object data) {
-		this.data = data;
+	public Result addData(Object key, Object value) {
+		if (data == null) {
+			data = new HashMap<>();
+		}
+		data.put(key, value);
 		return this;
 	}
 }
