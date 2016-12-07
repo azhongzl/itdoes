@@ -17,6 +17,10 @@ public class SpringDatas {
 			pageSize = maxPageSize;
 		}
 
+		return newPageRequest(pageNo, pageSize, sort);
+	}
+
+	public static PageRequest newPageRequest(int pageNo, int pageSize, Sort sort) {
 		return new PageRequest(pageNo - 1, pageSize, sort);
 	}
 
