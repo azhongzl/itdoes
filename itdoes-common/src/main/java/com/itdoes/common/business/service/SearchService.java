@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.itdoes.common.core.spring.SpringDatas;
 import com.itdoes.common.core.util.Exceptions;
 
 /**
@@ -47,28 +48,30 @@ public class SearchService extends BaseService {
 		LOGGER.info("Search engine index created");
 	}
 
-	public Page<?> searchDefault(String searchString, Class<?> entityClass, String[] fields, Pageable pageable) {
-		return search(searchString, entityClass, new DefaultQueryFactory(fields), pageable);
+	public Page<?> searchDefault(String searchString, Class<?> entityClass, String[] fields, int pageNo, int pageSize) {
+		return search(searchString, entityClass, new DefaultQueryFactory(fields), pageNo, pageSize);
 	}
 
-	public Page<?> search(String searchString, Class<?> entityClass, QueryFactory queryFactory, Pageable pageable) {
+	public Page<?> search(String searchString, Class<?> entityClass, QueryFactory queryFactory, int pageNo,
+			int pageSize) {
 		final FullTextEntityManager ftem = getFullTextEntityManager();
 
 		final Query q = createQuery(searchString, ftem, entityClass, queryFactory);
 		final FullTextQuery ftq = ftem.createFullTextQuery(q, entityClass);
-		return createPage(ftq, pageable);
+		return createPage(ftq, pageNo, pageSize);
 	}
 
-	public Page<?> searchDefault(String searchString, Class<?>[] entityClasses, String[][] fields, Pageable pageable) {
+	public Page<?> searchDefault(String searchString, Class<?>[] entityClasses, String[][] fields, int pageNo,
+			int pageSize) {
 		final QueryFactory[] queryFactories = new QueryFactory[fields.length];
 		for (int i = 0; i < fields.length; i++) {
 			queryFactories[i] = new DefaultQueryFactory(fields[i]);
 		}
-		return search(searchString, entityClasses, queryFactories, pageable);
+		return search(searchString, entityClasses, queryFactories, pageNo, pageSize);
 	}
 
-	public Page<?> search(String searchString, Class<?>[] entityClasses, QueryFactory[] queryFactories,
-			Pageable pageable) {
+	public Page<?> search(String searchString, Class<?>[] entityClasses, QueryFactory[] queryFactories, int pageNo,
+			int pageSize) {
 		final FullTextEntityManager ftem = getFullTextEntityManager();
 
 		final BooleanQuery.Builder bqb = new BooleanQuery.Builder();
@@ -77,7 +80,7 @@ public class SearchService extends BaseService {
 			bqb.add(q, Occur.SHOULD);
 		}
 		final FullTextQuery ftq = ftem.createFullTextQuery(bqb.build(), entityClasses);
-		return createPage(ftq, pageable);
+		return createPage(ftq, pageNo, pageSize);
 	}
 
 	private FullTextEntityManager getFullTextEntityManager() {
@@ -108,7 +111,8 @@ public class SearchService extends BaseService {
 		return query;
 	}
 
-	private Page<?> createPage(FullTextQuery ftq, Pageable pageable) {
+	private Page<?> createPage(FullTextQuery ftq, int pageNo, int pageSize) {
+		final Pageable pageable = SpringDatas.newPageRequest(pageNo, pageSize, DEFAULT_MAX_PAGE_SIZE, null);
 		ftq.setFirstResult(pageable.getOffset());
 		ftq.setMaxResults(pageable.getPageSize());
 		return createPage(ftq.getResultList(), pageable, ftq.getResultSize());

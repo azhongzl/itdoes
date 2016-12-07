@@ -20,7 +20,7 @@ public class SpringDatas {
 		return new PageRequest(pageNo - 1, pageSize, sort);
 	}
 
-	public static Sort newSort(boolean asc, String field) {
+	public static Sort newSort(String field, boolean asc) {
 		return new Sort(asc ? Direction.ASC : Direction.DESC, field);
 	}
 
