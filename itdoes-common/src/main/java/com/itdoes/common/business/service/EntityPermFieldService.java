@@ -1,4 +1,4 @@
-package com.itdoes.common.business.service.entity.external;
+package com.itdoes.common.business.service;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -10,19 +10,18 @@ import org.springframework.stereotype.Service;
 
 import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.business.Perms;
-import com.itdoes.common.business.service.BaseService;
 import com.itdoes.common.core.util.Reflections;
 
 /**
  * @author Jalen Zhong
  */
 @Service
-public class EntityExternalPermFieldService extends BaseService {
+public class EntityPermFieldService extends BaseService {
 	private static interface PermFieldHandler {
 		PermFieldHandler GET = new PermFieldHandler() {
 			@Override
 			public <T> void handle(Subject subject, String entityName, String permFieldName, T entity, T oldEntity) {
-				if (!subject.isPermitted(Perms.getEntityOneEntityOneFieldReadPerm(entityName, permFieldName))) {
+				if (!subject.isPermitted(Perms.getEntityOneFieldReadPerm(entityName, permFieldName))) {
 					Reflections.invokeSet(entity, permFieldName, null);
 				}
 			}
@@ -30,7 +29,7 @@ public class EntityExternalPermFieldService extends BaseService {
 		PermFieldHandler POST = new PermFieldHandler() {
 			@Override
 			public <T> void handle(Subject subject, String entityName, String permFieldName, T entity, T oldEntity) {
-				if (!subject.isPermitted(Perms.getEntityOneEntityOneFieldWritePerm(entityName, permFieldName))) {
+				if (!subject.isPermitted(Perms.getEntityOneFieldWritePerm(entityName, permFieldName))) {
 					Reflections.invokeSet(entity, permFieldName, null);
 				}
 			}
@@ -38,7 +37,7 @@ public class EntityExternalPermFieldService extends BaseService {
 		PermFieldHandler PUT = new PermFieldHandler() {
 			@Override
 			public <T> void handle(Subject subject, String entityName, String permFieldName, T entity, T oldEntity) {
-				if (!subject.isPermitted(Perms.getEntityOneEntityOneFieldWritePerm(entityName, permFieldName))) {
+				if (!subject.isPermitted(Perms.getEntityOneFieldWritePerm(entityName, permFieldName))) {
 					Reflections.invokeSet(entity, permFieldName, Reflections.invokeGet(oldEntity, permFieldName));
 				}
 			}

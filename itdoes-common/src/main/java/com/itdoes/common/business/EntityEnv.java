@@ -26,8 +26,9 @@ import com.itdoes.common.business.entity.FieldConstraintPair;
 import com.itdoes.common.business.entity.FieldPerm;
 import com.itdoes.common.business.entity.FieldPermType;
 import com.itdoes.common.business.entity.FieldUpload;
-import com.itdoes.common.business.service.entity.external.EntityExternalService;
-import com.itdoes.common.business.service.entity.internal.EntityInternalService;
+import com.itdoes.common.business.service.EntityDbService;
+import com.itdoes.common.business.service.EntityPermFieldService;
+import com.itdoes.common.business.service.EntityUploadService;
 import com.itdoes.common.core.spring.LazyInitBeanLoader;
 import com.itdoes.common.core.spring.Springs;
 import com.itdoes.common.core.util.Collections3;
@@ -44,10 +45,11 @@ public class EntityEnv implements ApplicationContextAware {
 	private Map<String, EntityPair<?, ? extends Serializable>> pairMap;
 
 	@Autowired
-	private EntityInternalService internalService;
-
+	private EntityDbService dbService;
 	@Autowired
-	private EntityExternalService externalService;
+	private EntityUploadService uploadService;
+	@Autowired
+	private EntityPermFieldService permFieldService;
 
 	private ConfigurableApplicationContext context;
 	private String basePackage;
@@ -159,7 +161,7 @@ public class EntityEnv implements ApplicationContextAware {
 		final Field uploadField = Reflections.getFieldWithAnnotation(entityClass, FieldUpload.class);
 
 		pairMap.put(key, new EntityPair<T, ID>(entityClass, dao, idField, fkFieldConstraintPairSet, readPermFieldList,
-				writePermFieldList, uploadField, internalService, externalService));
+				writePermFieldList, uploadField, dbService, uploadService, permFieldService));
 	}
 
 	private boolean isLazyInit(String beanName) {

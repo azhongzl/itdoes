@@ -8,8 +8,9 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.FieldConstraintPair;
-import com.itdoes.common.business.service.entity.external.EntityExternalService;
-import com.itdoes.common.business.service.entity.internal.EntityInternalService;
+import com.itdoes.common.business.service.EntityDbService;
+import com.itdoes.common.business.service.EntityPermFieldService;
+import com.itdoes.common.business.service.EntityUploadService;
 import com.itdoes.common.core.cglib.CglibMapper;
 import com.itdoes.common.core.util.Collections3;
 
@@ -25,13 +26,15 @@ public class EntityPair<T, ID extends Serializable> {
 	private final List<Field> readPermFieldList;
 	private final List<Field> writePermFieldList;
 	private final Field uploadField;
-	private final EntityInternalService internalService;
-	private final EntityExternalService externalService;
+
+	private final EntityDbService dbService;
+	private final EntityUploadService uploadService;
+	private final EntityPermFieldService permFieldService;
 
 	public EntityPair(Class<T> entityClass, BaseDao<T, ID> dao, Field idField,
 			Set<FieldConstraintPair> fkFieldConstraintPairSet, List<Field> readPermFieldList,
-			List<Field> writePermFieldList, Field uploadField, EntityInternalService internalService,
-			EntityExternalService externalService) {
+			List<Field> writePermFieldList, Field uploadField, EntityDbService dbService,
+			EntityUploadService uploadService, EntityPermFieldService permFieldService) {
 		this.entityClass = entityClass;
 		this.dao = dao;
 		this.idField = idField;
@@ -39,8 +42,9 @@ public class EntityPair<T, ID extends Serializable> {
 		this.readPermFieldList = readPermFieldList;
 		this.writePermFieldList = writePermFieldList;
 		this.uploadField = uploadField;
-		this.internalService = internalService;
-		this.externalService = externalService;
+		this.dbService = dbService;
+		this.uploadService = uploadService;
+		this.permFieldService = permFieldService;
 
 		// (Optional) Initialize for performance concern, can be removed if it is not readable
 		CglibMapper.getBeanCopier(entityClass);
@@ -86,11 +90,15 @@ public class EntityPair<T, ID extends Serializable> {
 		return uploadField;
 	}
 
-	public EntityInternalService internal() {
-		return internalService;
+	public EntityDbService db() {
+		return dbService;
 	}
 
-	public EntityExternalService external() {
-		return externalService;
+	public EntityUploadService upload() {
+		return uploadService;
+	}
+
+	public EntityPermFieldService permField() {
+		return permFieldService;
 	}
 }

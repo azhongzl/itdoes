@@ -33,34 +33,6 @@ package com.itdoes.common.business;
  * </ul>
  * <tr>
  * <td><code>Entity</code>
- * <td>itdoes:entity:&lt;entity&gt;:class[:*]
- * <td>All entity commands for a specific entity <br />
- * (not including field authorization)
- * <td>
- * <ul>
- * <li>itdoes:entity:User:class
- * <li>itdoes:entity:User:class:*
- * </ul>
- * <tr style="background-color: rgb(238, 238, 255);">
- * <td><code>Entity</code>
- * <td>itdoes:entity:&lt;entity&gt;:class:&lt;command&gt;
- * <td>Specific entity operation for a specific entity <br/>
- * (not including field authorization)
- * <td>
- * <ul>
- * <li>itdoes:entity:User:class:find
- * <li>itdoes:entity:User:class:findAll
- * <li>itdoes:entity:User:class:findOne
- * <li>itdoes:entity:User:class:count
- * <li>itdoes:entity:User:class:get
- * <li>itdoes:entity:User:class:delete
- * <li>itdoes:entity:User:class:post
- * <li>itdoes:entity:User:class:put
- * <li>itdoes:entity:User:class:postUpload
- * <li>itdoes:entity:User:class:putUpload
- * </ul>
- * <tr>
- * <td><code>Entity</code>
  * <td>itdoes:entity:&lt;entity&gt;:field:[:*][:*]
  * <td>All entity commands for all fields of a specific entity <br />
  * (not including entity authorization)
@@ -117,7 +89,6 @@ public class Perms {
 	private static final char PERM_SEPARATOR = ':';
 	private static final String PERM_ROOT = "itdoes";
 	private static final String PERM_ENTITY = "entity";
-	private static final String PERM_ENTITY_CLASS = "class";
 	private static final String PERM_ENTITY_FIELD = "field";
 	private static final String PERM_READ = "read";
 	private static final String PERM_WRITE = "write";
@@ -138,40 +109,25 @@ public class Perms {
 		return getResourceAllPerm(resource) + PERM_SEPARATOR + command;
 	}
 
-	public static String getEntityAllPerm() {
-		return PERM_ROOT + PERM_SEPARATOR + PERM_ENTITY;
+	public static String getEntityAllFieldsAllPerm(String entityName) {
+		return PERM_ROOT + PERM_SEPARATOR + PERM_ENTITY + PERM_SEPARATOR + entityName + PERM_SEPARATOR
+				+ PERM_ENTITY_FIELD;
 	}
 
-	public static String getEntityOneEntityAllPerm(String entityName) {
-		return getEntityAllPerm() + PERM_SEPARATOR + entityName;
+	public static String getEntityOneFieldAllPerm(String entityName, String fieldName) {
+		return getEntityAllFieldsAllPerm(entityName) + PERM_SEPARATOR + fieldName;
 	}
 
-	public static String getEntityOneEntityClassAllPerm(String entityName) {
-		return getEntityOneEntityAllPerm(entityName) + PERM_SEPARATOR + PERM_ENTITY_CLASS;
+	public static String getEntityOneFieldReadPerm(String entityName, String fieldName) {
+		return getEntityOneFieldPerm(entityName, fieldName, PERM_READ);
 	}
 
-	public static String getEntityOneEntityClassPerm(String entityName, String command) {
-		return getEntityOneEntityClassAllPerm(entityName) + PERM_SEPARATOR + command;
+	public static String getEntityOneFieldWritePerm(String entityName, String fieldName) {
+		return getEntityOneFieldPerm(entityName, fieldName, PERM_WRITE);
 	}
 
-	public static String getEntityOneEntityAllFieldsAllPerm(String entityName) {
-		return getEntityOneEntityAllPerm(entityName) + PERM_SEPARATOR + PERM_ENTITY_FIELD;
-	}
-
-	public static String getEntityOneEntityOneFieldAllPerm(String entityName, String fieldName) {
-		return getEntityOneEntityAllFieldsAllPerm(entityName) + PERM_SEPARATOR + fieldName;
-	}
-
-	public static String getEntityOneEntityOneFieldReadPerm(String entityName, String fieldName) {
-		return getEntityOneEntityOneFieldPerm(entityName, fieldName, PERM_READ);
-	}
-
-	public static String getEntityOneEntityOneFieldWritePerm(String entityName, String fieldName) {
-		return getEntityOneEntityOneFieldPerm(entityName, fieldName, PERM_WRITE);
-	}
-
-	private static String getEntityOneEntityOneFieldPerm(String entityName, String fieldName, String mode) {
-		return getEntityOneEntityOneFieldAllPerm(entityName, fieldName) + PERM_SEPARATOR + mode;
+	private static String getEntityOneFieldPerm(String entityName, String fieldName, String mode) {
+		return getEntityOneFieldAllPerm(entityName, fieldName) + PERM_SEPARATOR + mode;
 	}
 
 	private Perms() {

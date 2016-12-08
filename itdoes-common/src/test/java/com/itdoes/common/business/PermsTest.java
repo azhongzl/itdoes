@@ -17,19 +17,13 @@ public class PermsTest {
 
 		String entityName = "MyEntity";
 		String fieldName = "myField";
-		assertThat(Perms.getEntityAllPerm()).isEqualTo("itdoes:entity");
-		assertThat(Perms.getEntityOneEntityAllPerm(entityName)).isEqualTo("itdoes:entity:" + entityName);
-		assertThat(Perms.getEntityOneEntityClassAllPerm(entityName))
-				.isEqualTo("itdoes:entity:" + entityName + ":class");
-		assertThat(Perms.getEntityOneEntityClassPerm(entityName, "post"))
-				.isEqualTo("itdoes:entity:" + entityName + ":class:post");
-		assertThat(Perms.getEntityOneEntityAllFieldsAllPerm(entityName))
+		assertThat(Perms.getEntityAllFieldsAllPerm(entityName))
 				.isEqualTo("itdoes:entity:" + entityName + ":field");
-		assertThat(Perms.getEntityOneEntityOneFieldAllPerm(entityName, fieldName))
+		assertThat(Perms.getEntityOneFieldAllPerm(entityName, fieldName))
 				.isEqualTo("itdoes:entity:" + entityName + ":field:" + fieldName);
-		assertThat(Perms.getEntityOneEntityOneFieldReadPerm(entityName, fieldName))
+		assertThat(Perms.getEntityOneFieldReadPerm(entityName, fieldName))
 				.isEqualTo("itdoes:entity:" + entityName + ":field:" + fieldName + ":read");
-		assertThat(Perms.getEntityOneEntityOneFieldWritePerm(entityName, fieldName))
+		assertThat(Perms.getEntityOneFieldWritePerm(entityName, fieldName))
 				.isEqualTo("itdoes:entity:" + entityName + ":field:" + fieldName + ":write");
 	}
 }
