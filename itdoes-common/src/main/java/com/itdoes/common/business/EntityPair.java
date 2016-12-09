@@ -9,8 +9,10 @@ import com.google.common.collect.Sets;
 import com.itdoes.common.business.dao.BaseDao;
 import com.itdoes.common.business.entity.FieldConstraintPair;
 import com.itdoes.common.business.service.EntityDbService;
+import com.itdoes.common.business.service.EntityDbServiceBuilder;
 import com.itdoes.common.business.service.EntityPermFieldService;
 import com.itdoes.common.business.service.EntityUploadService;
+import com.itdoes.common.business.service.EntityUploadServiceBuilder;
 import com.itdoes.common.core.cglib.CglibMapper;
 import com.itdoes.common.core.util.Collections3;
 
@@ -90,15 +92,23 @@ public class EntityPair<T, ID extends Serializable> {
 		return uploadField;
 	}
 
-	public EntityDbService db() {
+	public EntityDbService getDbService() {
 		return dbService;
 	}
 
-	public EntityUploadService upload() {
+	public EntityUploadService getUploadService() {
 		return uploadService;
 	}
 
-	public EntityPermFieldService permField() {
+	public EntityPermFieldService getPermFieldService() {
 		return permFieldService;
+	}
+
+	public EntityDbServiceBuilder<T, ID> db() {
+		return new EntityDbServiceBuilder<>(this);
+	}
+
+	public EntityUploadServiceBuilder<T, ID> upload() {
+		return new EntityUploadServiceBuilder<>(this);
 	}
 }
