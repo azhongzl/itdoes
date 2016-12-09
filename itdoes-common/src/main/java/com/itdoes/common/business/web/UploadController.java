@@ -26,7 +26,7 @@ public class UploadController extends BaseController {
 	private static final String UPLOAD_URL_TO_FIND = UPLOAD_URL_PREFIX + "/";
 
 	@RequestMapping(value = "/**", method = RequestMethod.POST)
-	public Result upload(@RequestParam(BaseController.UPLOAD_FILE_PARAM) List<MultipartFile> files,
+	public Result upload(@RequestParam(BaseController.UPLOAD_FILE) List<MultipartFile> files,
 			HttpServletRequest request) {
 		if (Collections3.isEmpty(files)) {
 			return Result.fail(HttpStatus.BAD_REQUEST.value(), "No upload file");

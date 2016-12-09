@@ -26,7 +26,7 @@ public abstract class BaseController {
 	public static final String PAGE_NO = "page_no";
 	public static final String PAGE_SIZE = "page_size";
 
-	public static final String UPLOAD_FILE_PARAM = "uploadFile";
+	public static final String UPLOAD_FILE = "uploadFile";
 
 	@Autowired
 	protected ServletContext context;
