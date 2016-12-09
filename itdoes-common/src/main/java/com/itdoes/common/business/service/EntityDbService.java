@@ -32,7 +32,7 @@ public class EntityDbService extends BaseTransactionalService {
 	@Autowired
 	private EntityEnv env;
 
-	public <T, ID extends Serializable> Page<T> find(EntityPair<T, ID> pair, Specification<T> specification,
+	public <T, ID extends Serializable> Page<T> findPage(EntityPair<T, ID> pair, Specification<T> specification,
 			PageRequest pageRequest) {
 		return pair.getDao().findAll(specification, pageRequest);
 	}
