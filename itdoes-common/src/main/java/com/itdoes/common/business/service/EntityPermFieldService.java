@@ -18,7 +18,7 @@ import com.itdoes.common.core.util.Reflections;
 @Service
 public class EntityPermFieldService extends BaseService {
 	private static interface PermFieldHandler {
-		PermFieldHandler GET = new PermFieldHandler() {
+		PermFieldHandler READ = new PermFieldHandler() {
 			@Override
 			public <T> void handle(Subject subject, String entityName, String permFieldName, T entity, T oldEntity) {
 				if (!subject.isPermitted(Perms.getEntityOneFieldReadPerm(entityName, permFieldName))) {
@@ -78,18 +78,18 @@ public class EntityPermFieldService extends BaseService {
 		handlePermFields(pair, handler, entity, oldEntity, false);
 	}
 
-	public <T, ID extends Serializable> void handleGetPermFields(EntityPair<T, ID> pair, List<T> entityList) {
+	public <T, ID extends Serializable> void handleReadPermFields(EntityPair<T, ID> pair, List<T> entityList) {
 		if (!pair.hasReadPermField()) {
 			return;
 		}
 
 		for (T entity : entityList) {
-			handleGetPermFields(pair, entity);
+			handleReadPermFields(pair, entity);
 		}
 	}
 
-	public <T, ID extends Serializable> void handleGetPermFields(EntityPair<T, ID> pair, T entity) {
-		handleReadPermFields(pair, PermFieldHandler.GET, entity, null);
+	public <T, ID extends Serializable> void handleReadPermFields(EntityPair<T, ID> pair, T entity) {
+		handleReadPermFields(pair, PermFieldHandler.READ, entity, null);
 	}
 
 	public <T, ID extends Serializable> void handlePostPermFields(EntityPair<T, ID> pair, T entity) {

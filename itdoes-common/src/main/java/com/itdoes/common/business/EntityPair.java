@@ -11,6 +11,7 @@ import com.itdoes.common.business.entity.FieldConstraintPair;
 import com.itdoes.common.business.service.EntityDbService;
 import com.itdoes.common.business.service.EntityDbServiceBuilder;
 import com.itdoes.common.business.service.EntityPermFieldService;
+import com.itdoes.common.business.service.EntityPermFieldServiceBuilder;
 import com.itdoes.common.business.service.EntityUploadService;
 import com.itdoes.common.business.service.EntityUploadServiceBuilder;
 import com.itdoes.common.core.cglib.CglibMapper;
@@ -110,5 +111,9 @@ public class EntityPair<T, ID extends Serializable> {
 
 	public EntityUploadServiceBuilder<T, ID> upload() {
 		return new EntityUploadServiceBuilder<>(this);
+	}
+
+	public EntityPermFieldServiceBuilder<T, ID> permField() {
+		return new EntityPermFieldServiceBuilder<>(this);
 	}
 }
