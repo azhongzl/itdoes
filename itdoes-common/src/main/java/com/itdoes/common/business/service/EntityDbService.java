@@ -39,11 +39,7 @@ public class EntityDbService extends BaseTransactionalService {
 
 	public <T, ID extends Serializable> List<T> findAll(EntityPair<T, ID> pair, Specification<T> specification,
 			Sort sort) {
-		if (sort == null) {
-			return pair.getDao().findAll(specification);
-		} else {
-			return pair.getDao().findAll(specification, sort);
-		}
+		return sort == null ? pair.getDao().findAll(specification) : pair.getDao().findAll(specification, sort);
 	}
 
 	public <T, ID extends Serializable> T findOne(EntityPair<T, ID> pair, Specification<T> specification) {
