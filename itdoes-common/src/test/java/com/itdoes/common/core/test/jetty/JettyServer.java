@@ -57,6 +57,21 @@ public class JettyServer {
 		}
 	}
 
+	public void stop() {
+		try {
+			LOGGER.info("Jetty Server stopping...");
+			server.stop();
+			LOGGER.info("Jetty Server stopped");
+		} catch (Throwable t) {
+			throw Exceptions.unchecked(t);
+		}
+	}
+
+	public void restart() {
+		stop();
+		start();
+	}
+
 	public void reload() {
 		try {
 			final WebAppContext context = (WebAppContext) server.getHandler();
