@@ -59,6 +59,22 @@ public class Urls {
 		}
 	}
 
+	public static String concat(String... urls) {
+		Validate.isTrue(!Collections3.isEmpty(urls), "Urls are empty");
+
+		if (urls.length == 1) {
+			return urls[0];
+		} else if (urls.length == 2) {
+			return concat(urls[0], urls[1]);
+		} else {
+			String result = concat(urls[0], urls[1]);
+			for (int i = 2; i < urls.length; i++) {
+				result = concat(result, urls[i]);
+			}
+			return result;
+		}
+	}
+
 	public static boolean isRelative(String urlString) {
 		Validate.notNull(urlString, "urlString is null");
 		return urlString.indexOf("://") == -1;
