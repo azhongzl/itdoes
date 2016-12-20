@@ -91,7 +91,15 @@ public class EntityDbServiceBuilder<T, ID extends Serializable> {
 		return this;
 	}
 
-	public EntityDbServiceBuilder<T, ID> sort(String sortField, boolean sortAsc) {
+	public EntityDbServiceBuilder<T, ID> sortAsc(String sortField) {
+		return sort(sortField, true);
+	}
+
+	public EntityDbServiceBuilder<T, ID> sortDesc(String sortField) {
+		return sort(sortField, false);
+	}
+
+	private EntityDbServiceBuilder<T, ID> sort(String sortField, boolean sortAsc) {
 		this.sortField = sortField;
 		this.sortAsc = sortAsc;
 		return this;
