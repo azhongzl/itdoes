@@ -36,7 +36,7 @@ public class EntityDbService extends BaseTransactionalService {
 		return pair.getDao().findAll(specification, pageRequest);
 	}
 
-	public <T, ID extends Serializable> List<T> findList(EntityPair<T, ID> pair, Specification<T> specification,
+	public <T, ID extends Serializable> List<T> findAll(EntityPair<T, ID> pair, Specification<T> specification,
 			Sort sort) {
 		return sort == null ? pair.getDao().findAll(specification) : pair.getDao().findAll(specification, sort);
 	}
@@ -82,7 +82,7 @@ public class EntityDbService extends BaseTransactionalService {
 					final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
 					final Specification spec = Specifications.build(constraint.getFkEntity(),
 							Lists.newArrayList(FindFilter.equal(constraint.getFkField().getName(), oldPkFieldValue)));
-					final List fkEntityList = findList(fkPair, spec, null);
+					final List fkEntityList = findAll(fkPair, spec, null);
 					if (!Collections3.isEmpty(fkEntityList)) {
 						for (Object fkEntity : fkEntityList) {
 							Reflections.setFieldValue(fkEntity, constraint.getFkField(), pkFieldValue);
@@ -99,7 +99,7 @@ public class EntityDbService extends BaseTransactionalService {
 					final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
 					final Specification spec = Specifications.build(constraint.getFkEntity(),
 							Lists.newArrayList(FindFilter.equal(constraint.getFkField().getName(), oldPkFieldValue)));
-					final List fkEntityList = findList(fkPair, spec, null);
+					final List fkEntityList = findAll(fkPair, spec, null);
 					if (!Collections3.isEmpty(fkEntityList)) {
 						final Object fkFieldValue = strategy.equals(FieldConstraintStrategy.SET_NULL) ? null
 								: constraint.getDefaultValue();
@@ -186,7 +186,7 @@ public class EntityDbService extends BaseTransactionalService {
 				if (count > 0) {
 					final FieldConstraintStrategy strategy = constraint.getDeleteStrategy();
 					if (strategy.equals(FieldConstraintStrategy.CASCADE)) {
-						final List fkEntityList = findList(fkPair, spec, null);
+						final List fkEntityList = findAll(fkPair, spec, null);
 						if (!Collections3.isEmpty(fkEntityList)) {
 							deleteIterable(fkPair, fkEntityList);
 						}
@@ -198,7 +198,7 @@ public class EntityDbService extends BaseTransactionalService {
 								+ constraint.getFkField().getName() + "]");
 					} else if (strategy.equals(FieldConstraintStrategy.SET_NULL)
 							|| strategy.equals(FieldConstraintStrategy.SET_DEFAULT)) {
-						final List fkEntityList = findList(fkPair, spec, null);
+						final List fkEntityList = findAll(fkPair, spec, null);
 						if (!Collections3.isEmpty(fkEntityList)) {
 							final Object fkFieldValue = strategy.equals(FieldConstraintStrategy.SET_NULL) ? null
 									: constraint.getDefaultValue();
