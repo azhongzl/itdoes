@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.data.jpa.domain.Specification;
 
-import com.itdoes.common.core.jpa.FindFilter.Operator;
 import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Reflections;
 
@@ -42,44 +41,40 @@ public class Specifications {
 							expression = expression.get(names[i]);
 						}
 
-						Object value = filter.value;
-						if (value == null) {
-							continue;
-						}
-
-						Object value2 = null;
-						if (filter.operator == Operator.BTWN) {
-							final Object[] values = (Object[]) value;
-							value = convertString(values[0], expression.getJavaType());
-							value2 = convertString(values[1], expression.getJavaType());
-						} else {
-							value = convertString(value, expression.getJavaType());
-						}
+						final Object[] values = filter.values;
 
 						switch (filter.operator) {
 						case EQ:
-							predicateList.add(builder.equal(expression, value));
+							predicateList
+									.add(builder.equal(expression, convertString(values[0], expression.getJavaType())));
 							break;
 						case NOT_EQ:
-							predicateList.add(builder.notEqual(expression, value));
+							predicateList.add(
+									builder.notEqual(expression, convertString(values[0], expression.getJavaType())));
 							break;
 						case LIKE:
-							predicateList.add(builder.like(expression, "%" + value + "%"));
+							predicateList.add(builder.like(expression,
+									"%" + convertString(values[0], expression.getJavaType()) + "%"));
 							break;
 						case NOT_LIKE:
-							predicateList.add(builder.notLike(expression, "%" + value + "%"));
+							predicateList.add(builder.notLike(expression,
+									"%" + convertString(values[0], expression.getJavaType()) + "%"));
 							break;
 						case GT:
-							predicateList.add(builder.greaterThan(expression, (Comparable) value));
+							predicateList.add(builder.greaterThan(expression,
+									(Comparable) convertString(values[0], expression.getJavaType())));
 							break;
 						case LT:
-							predicateList.add(builder.lessThan(expression, (Comparable) value));
+							predicateList.add(builder.lessThan(expression,
+									(Comparable) convertString(values[0], expression.getJavaType())));
 							break;
 						case GTE:
-							predicateList.add(builder.greaterThanOrEqualTo(expression, (Comparable) value));
+							predicateList.add(builder.greaterThanOrEqualTo(expression,
+									(Comparable) convertString(values[0], expression.getJavaType())));
 							break;
 						case LTE:
-							predicateList.add(builder.lessThanOrEqualTo(expression, (Comparable) value));
+							predicateList.add(builder.lessThanOrEqualTo(expression,
+									(Comparable) convertString(values[0], expression.getJavaType())));
 							break;
 						case NULL:
 							predicateList.add(builder.isNull(expression));
@@ -88,7 +83,9 @@ public class Specifications {
 							predicateList.add(builder.isNotNull(expression));
 							break;
 						case BTWN:
-							predicateList.add(builder.between(expression, (Comparable) value, (Comparable) value2));
+							predicateList.add(builder.between(expression,
+									(Comparable) convertString(values[0], expression.getJavaType()),
+									(Comparable) convertString(values[1], expression.getJavaType())));
 							break;
 						default:
 							throw new IllegalArgumentException("Cannot find Operator: " + filter.operator);

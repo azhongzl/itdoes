@@ -11,7 +11,6 @@ import org.springframework.data.jpa.domain.Specification;
 import com.google.common.collect.Lists;
 import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.core.jpa.FindFilter;
-import com.itdoes.common.core.jpa.FindFilter.Operator;
 import com.itdoes.common.core.jpa.Specifications;
 import com.itdoes.common.core.spring.SpringDatas;
 
@@ -32,12 +31,12 @@ public class EntityDbServiceBuilder<T, ID extends Serializable> {
 		this.pair = pair;
 	}
 
-	public EntityDbServiceBuilder<T, ID> filter(String name, Operator operator, Object value) {
+	public EntityDbServiceBuilder<T, ID> filter(FindFilter filter) {
 		if (filterList == null) {
 			filterList = Lists.newLinkedList();
 		}
 
-		filterList.add(new FindFilter(name, operator, value));
+		filterList.add(filter);
 		return this;
 	}
 

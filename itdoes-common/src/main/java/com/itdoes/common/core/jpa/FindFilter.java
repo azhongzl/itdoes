@@ -10,24 +10,68 @@ public class FindFilter {
 		EQ, NOT_EQ, LIKE, NOT_LIKE, GT, LT, GTE, LTE, NULL, NOT_NULL, BTWN
 	}
 
+	public static FindFilter eq(String field, Object value) {
+		Validate.notNull(value, "Filter EQ value is null");
+		return new FindFilter(field, Operator.EQ, value);
+	}
+
+	public static FindFilter notEq(String field, Object value) {
+		Validate.notNull(value, "Filter NOT_EQ value is null");
+		return new FindFilter(field, Operator.NOT_EQ, value);
+	}
+
+	public static FindFilter like(String field, Object value) {
+		Validate.notNull(value, "Filter LIKE value is null");
+		return new FindFilter(field, Operator.LIKE, value);
+	}
+
+	public static FindFilter notLike(String field, Object value) {
+		Validate.notNull(value, "Filter NOT_LIKE value is null");
+		return new FindFilter(field, Operator.NOT_LIKE, value);
+	}
+
+	public static FindFilter gt(String field, Object value) {
+		Validate.notNull(value, "Filter GT value is null");
+		return new FindFilter(field, Operator.GT, value);
+	}
+
+	public static FindFilter lt(String field, Object value) {
+		Validate.notNull(value, "Filter LT value is null");
+		return new FindFilter(field, Operator.LT, value);
+	}
+
+	public static FindFilter gte(String field, Object value) {
+		Validate.notNull(value, "Filter GTE value is null");
+		return new FindFilter(field, Operator.GTE, value);
+	}
+
+	public static FindFilter lte(String field, Object value) {
+		Validate.notNull(value, "Filter LTE value is null");
+		return new FindFilter(field, Operator.LTE, value);
+	}
+
+	public static FindFilter isNull(String field) {
+		return new FindFilter(field, Operator.NULL);
+	}
+
+	public static FindFilter isNotNull(String field) {
+		return new FindFilter(field, Operator.NOT_NULL);
+	}
+
+	public static FindFilter between(String field, Object beginValue, Object endValue) {
+		Validate.notNull(beginValue, "Filter begin value is null");
+		Validate.notNull(endValue, "Filter end value is null");
+		return new FindFilter(field, Operator.BTWN, beginValue, endValue);
+	}
+
 	public final String field;
 	public final Operator operator;
-	public final Object value;
+	public final Object[] values;
 
-	public FindFilter(String field, Operator operator, Object value) {
+	private FindFilter(String field, Operator operator, Object... values) {
+		Validate.notBlank(field, "Filter field is blank");
 		this.field = field;
 		this.operator = operator;
-
-		if (Operator.BTWN.equals(operator)) {
-			final Object[] values = (Object[]) value;
-			Validate.isTrue(values != null && values.length == 2);
-			Validate.notNull(values[0]);
-			Validate.notNull(values[1]);
-		} else if (Operator.EQ.equals(operator) || Operator.NOT_EQ.equals(operator) || Operator.LIKE.equals(operator)
-				|| Operator.NOT_LIKE.equals(operator) || Operator.GT.equals(operator) || Operator.LT.equals(operator)
-				|| Operator.GTE.equals(operator) || Operator.LTE.equals(operator)) {
-			Validate.notNull(value);
-		}
-		this.value = value;
+		this.values = values;
 	}
 }

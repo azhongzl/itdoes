@@ -18,7 +18,6 @@ import com.itdoes.common.business.EntityPair;
 import com.itdoes.common.business.entity.FieldConstraintPair;
 import com.itdoes.common.business.entity.FieldConstraintStrategy;
 import com.itdoes.common.core.jpa.FindFilter;
-import com.itdoes.common.core.jpa.FindFilter.Operator;
 import com.itdoes.common.core.jpa.Specifications;
 import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Objects;
@@ -81,8 +80,8 @@ public class EntityDbService extends BaseTransactionalService {
 				final FieldConstraintStrategy strategy = constraint.getUpdateStrategy();
 				if (strategy.equals(FieldConstraintStrategy.CASCADE)) {
 					final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
-					final Specification spec = Specifications.build(constraint.getFkEntity(), Lists.newArrayList(
-							new FindFilter(constraint.getFkField().getName(), Operator.EQ, oldPkFieldValue)));
+					final Specification spec = Specifications.build(constraint.getFkEntity(),
+							Lists.newArrayList(FindFilter.eq(constraint.getFkField().getName(), oldPkFieldValue)));
 					final List fkEntityList = findAll(fkPair, spec, null);
 					if (!Collections3.isEmpty(fkEntityList)) {
 						for (Object fkEntity : fkEntityList) {
@@ -98,8 +97,8 @@ public class EntityDbService extends BaseTransactionalService {
 				} else if (strategy.equals(FieldConstraintStrategy.SET_NULL)
 						|| strategy.equals(FieldConstraintStrategy.SET_DEFAULT)) {
 					final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
-					final Specification spec = Specifications.build(constraint.getFkEntity(), Lists.newArrayList(
-							new FindFilter(constraint.getFkField().getName(), Operator.EQ, oldPkFieldValue)));
+					final Specification spec = Specifications.build(constraint.getFkEntity(),
+							Lists.newArrayList(FindFilter.eq(constraint.getFkField().getName(), oldPkFieldValue)));
 					final List fkEntityList = findAll(fkPair, spec, null);
 					if (!Collections3.isEmpty(fkEntityList)) {
 						final Object fkFieldValue = strategy.equals(FieldConstraintStrategy.SET_NULL) ? null
@@ -127,7 +126,7 @@ public class EntityDbService extends BaseTransactionalService {
 
 			final EntityPair pkPair = env.getPair(constraint.getPkEntity().getSimpleName());
 			final Specification spec = Specifications.build(constraint.getPkEntity(),
-					Lists.newArrayList(new FindFilter(constraint.getPkField().getName(), Operator.EQ, fkFieldValue)));
+					Lists.newArrayList(FindFilter.eq(constraint.getPkField().getName(), fkFieldValue)));
 			final long count = count(pkPair, spec);
 			if (count <= 0) {
 				throw new IllegalArgumentException("Cannot save [" + constraint.getFkEntity().getSimpleName() + "."
@@ -181,8 +180,8 @@ public class EntityDbService extends BaseTransactionalService {
 				}
 
 				final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
-				final Specification spec = Specifications.build(constraint.getFkEntity(), Lists
-						.newArrayList(new FindFilter(constraint.getFkField().getName(), Operator.EQ, pkFieldValue)));
+				final Specification spec = Specifications.build(constraint.getFkEntity(),
+						Lists.newArrayList(FindFilter.eq(constraint.getFkField().getName(), pkFieldValue)));
 				final long count = count(fkPair, spec);
 				if (count > 0) {
 					final FieldConstraintStrategy strategy = constraint.getDeleteStrategy();
