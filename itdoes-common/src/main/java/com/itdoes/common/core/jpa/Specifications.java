@@ -50,10 +50,6 @@ public class Specifications {
 						Object value2 = null;
 						if (filter.operator == Operator.BTWN) {
 							final Object[] values = (Object[]) value;
-							if (Collections3.isEmpty(values) || values[0] == null || values[1] == null) {
-								continue;
-							}
-
 							value = convertString(values[0], expression.getJavaType());
 							value2 = convertString(values[1], expression.getJavaType());
 						} else {
@@ -64,11 +60,14 @@ public class Specifications {
 						case EQ:
 							predicateList.add(builder.equal(expression, value));
 							break;
-						case NEQ:
+						case NOT_EQ:
 							predicateList.add(builder.notEqual(expression, value));
 							break;
 						case LIKE:
 							predicateList.add(builder.like(expression, "%" + value + "%"));
+							break;
+						case NOT_LIKE:
+							predicateList.add(builder.notLike(expression, "%" + value + "%"));
 							break;
 						case GT:
 							predicateList.add(builder.greaterThan(expression, (Comparable) value));
@@ -81,6 +80,12 @@ public class Specifications {
 							break;
 						case LTE:
 							predicateList.add(builder.lessThanOrEqualTo(expression, (Comparable) value));
+							break;
+						case NULL:
+							predicateList.add(builder.isNull(expression));
+							break;
+						case NOT_NULL:
+							predicateList.add(builder.isNotNull(expression));
 							break;
 						case BTWN:
 							predicateList.add(builder.between(expression, (Comparable) value, (Comparable) value2));
