@@ -81,7 +81,7 @@ public class EntityDbService extends BaseTransactionalService {
 				if (strategy.equals(FieldConstraintStrategy.CASCADE)) {
 					final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
 					final Specification spec = Specifications.build(constraint.getFkEntity(),
-							Lists.newArrayList(FindFilter.eq(constraint.getFkField().getName(), oldPkFieldValue)));
+							Lists.newArrayList(FindFilter.equal(constraint.getFkField().getName(), oldPkFieldValue)));
 					final List fkEntityList = findAll(fkPair, spec, null);
 					if (!Collections3.isEmpty(fkEntityList)) {
 						for (Object fkEntity : fkEntityList) {
@@ -98,7 +98,7 @@ public class EntityDbService extends BaseTransactionalService {
 						|| strategy.equals(FieldConstraintStrategy.SET_DEFAULT)) {
 					final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
 					final Specification spec = Specifications.build(constraint.getFkEntity(),
-							Lists.newArrayList(FindFilter.eq(constraint.getFkField().getName(), oldPkFieldValue)));
+							Lists.newArrayList(FindFilter.equal(constraint.getFkField().getName(), oldPkFieldValue)));
 					final List fkEntityList = findAll(fkPair, spec, null);
 					if (!Collections3.isEmpty(fkEntityList)) {
 						final Object fkFieldValue = strategy.equals(FieldConstraintStrategy.SET_NULL) ? null
@@ -126,7 +126,7 @@ public class EntityDbService extends BaseTransactionalService {
 
 			final EntityPair pkPair = env.getPair(constraint.getPkEntity().getSimpleName());
 			final Specification spec = Specifications.build(constraint.getPkEntity(),
-					Lists.newArrayList(FindFilter.eq(constraint.getPkField().getName(), fkFieldValue)));
+					Lists.newArrayList(FindFilter.equal(constraint.getPkField().getName(), fkFieldValue)));
 			final long count = count(pkPair, spec);
 			if (count <= 0) {
 				throw new IllegalArgumentException("Cannot save [" + constraint.getFkEntity().getSimpleName() + "."
@@ -181,7 +181,7 @@ public class EntityDbService extends BaseTransactionalService {
 
 				final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
 				final Specification spec = Specifications.build(constraint.getFkEntity(),
-						Lists.newArrayList(FindFilter.eq(constraint.getFkField().getName(), pkFieldValue)));
+						Lists.newArrayList(FindFilter.equal(constraint.getFkField().getName(), pkFieldValue)));
 				final long count = count(fkPair, spec);
 				if (count > 0) {
 					final FieldConstraintStrategy strategy = constraint.getDeleteStrategy();

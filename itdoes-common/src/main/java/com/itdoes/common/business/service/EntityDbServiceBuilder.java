@@ -31,7 +31,51 @@ public class EntityDbServiceBuilder<T, ID extends Serializable> {
 		this.pair = pair;
 	}
 
-	public EntityDbServiceBuilder<T, ID> filter(FindFilter filter) {
+	public EntityDbServiceBuilder<T, ID> filterEqual(String field, Object value) {
+		return filter(FindFilter.equal(field, value));
+	}
+
+	public EntityDbServiceBuilder<T, ID> filterNotEqual(String field, Object value) {
+		return filter(FindFilter.notEqual(field, value));
+	}
+
+	public EntityDbServiceBuilder<T, ID> filterLike(String field, Object value) {
+		return filter(FindFilter.like(field, value));
+	}
+
+	public EntityDbServiceBuilder<T, ID> filterNotLike(String field, Object value) {
+		return filter(FindFilter.notLike(field, value));
+	}
+
+	public EntityDbServiceBuilder<T, ID> filterGreater(String field, Object value) {
+		return filter(FindFilter.greater(field, value));
+	}
+
+	public EntityDbServiceBuilder<T, ID> filterLess(String field, Object value) {
+		return filter(FindFilter.less(field, value));
+	}
+
+	public EntityDbServiceBuilder<T, ID> filterGreaterEqual(String field, Object value) {
+		return filter(FindFilter.greaterEqual(field, value));
+	}
+
+	public EntityDbServiceBuilder<T, ID> filterLessEqual(String field, Object value) {
+		return filter(FindFilter.lessEqual(field, value));
+	}
+
+	public EntityDbServiceBuilder<T, ID> filterIsNull(String field) {
+		return filter(FindFilter.isNull(field));
+	}
+
+	public EntityDbServiceBuilder<T, ID> filterIsNotNull(String field) {
+		return filter(FindFilter.isNotNull(field));
+	}
+
+	public EntityDbServiceBuilder<T, ID> filterBetween(String field, Object beginValue, Object endValue) {
+		return filter(FindFilter.between(field, beginValue, endValue));
+	}
+
+	private EntityDbServiceBuilder<T, ID> filter(FindFilter filter) {
 		if (filterList == null) {
 			filterList = Lists.newLinkedList();
 		}

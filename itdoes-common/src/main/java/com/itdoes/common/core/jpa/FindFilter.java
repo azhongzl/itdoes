@@ -7,17 +7,17 @@ import org.apache.commons.lang3.Validate;
  */
 public class FindFilter {
 	public enum Operator {
-		EQ, NOT_EQ, LIKE, NOT_LIKE, GT, LT, GTE, LTE, NULL, NOT_NULL, BTWN
+		EQ, NEQ, LIKE, NLIKE, GT, LT, GTE, LTE, NULL, NNULL, BTWN
 	}
 
-	public static FindFilter eq(String field, Object value) {
+	public static FindFilter equal(String field, Object value) {
 		Validate.notNull(value, "Filter EQ value is null");
 		return new FindFilter(field, Operator.EQ, value);
 	}
 
-	public static FindFilter notEq(String field, Object value) {
-		Validate.notNull(value, "Filter NOT_EQ value is null");
-		return new FindFilter(field, Operator.NOT_EQ, value);
+	public static FindFilter notEqual(String field, Object value) {
+		Validate.notNull(value, "Filter NEQ value is null");
+		return new FindFilter(field, Operator.NEQ, value);
 	}
 
 	public static FindFilter like(String field, Object value) {
@@ -26,26 +26,26 @@ public class FindFilter {
 	}
 
 	public static FindFilter notLike(String field, Object value) {
-		Validate.notNull(value, "Filter NOT_LIKE value is null");
-		return new FindFilter(field, Operator.NOT_LIKE, value);
+		Validate.notNull(value, "Filter NLIKE value is null");
+		return new FindFilter(field, Operator.NLIKE, value);
 	}
 
-	public static FindFilter gt(String field, Object value) {
+	public static FindFilter greater(String field, Object value) {
 		Validate.notNull(value, "Filter GT value is null");
 		return new FindFilter(field, Operator.GT, value);
 	}
 
-	public static FindFilter lt(String field, Object value) {
+	public static FindFilter less(String field, Object value) {
 		Validate.notNull(value, "Filter LT value is null");
 		return new FindFilter(field, Operator.LT, value);
 	}
 
-	public static FindFilter gte(String field, Object value) {
+	public static FindFilter greaterEqual(String field, Object value) {
 		Validate.notNull(value, "Filter GTE value is null");
 		return new FindFilter(field, Operator.GTE, value);
 	}
 
-	public static FindFilter lte(String field, Object value) {
+	public static FindFilter lessEqual(String field, Object value) {
 		Validate.notNull(value, "Filter LTE value is null");
 		return new FindFilter(field, Operator.LTE, value);
 	}
@@ -55,12 +55,12 @@ public class FindFilter {
 	}
 
 	public static FindFilter isNotNull(String field) {
-		return new FindFilter(field, Operator.NOT_NULL);
+		return new FindFilter(field, Operator.NNULL);
 	}
 
 	public static FindFilter between(String field, Object beginValue, Object endValue) {
-		Validate.notNull(beginValue, "Filter begin value is null");
-		Validate.notNull(endValue, "Filter end value is null");
+		Validate.notNull(beginValue, "Filter BTWN begin value is null");
+		Validate.notNull(endValue, "Filter BTWN end value is null");
 		return new FindFilter(field, Operator.BTWN, beginValue, endValue);
 	}
 

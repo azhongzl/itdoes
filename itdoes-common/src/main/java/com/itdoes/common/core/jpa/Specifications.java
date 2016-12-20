@@ -48,7 +48,7 @@ public class Specifications {
 							predicateList
 									.add(builder.equal(expression, convertString(values[0], expression.getJavaType())));
 							break;
-						case NOT_EQ:
+						case NEQ:
 							predicateList.add(
 									builder.notEqual(expression, convertString(values[0], expression.getJavaType())));
 							break;
@@ -56,7 +56,7 @@ public class Specifications {
 							predicateList.add(builder.like(expression,
 									"%" + convertString(values[0], expression.getJavaType()) + "%"));
 							break;
-						case NOT_LIKE:
+						case NLIKE:
 							predicateList.add(builder.notLike(expression,
 									"%" + convertString(values[0], expression.getJavaType()) + "%"));
 							break;
@@ -79,7 +79,7 @@ public class Specifications {
 						case NULL:
 							predicateList.add(builder.isNull(expression));
 							break;
-						case NOT_NULL:
+						case NNULL:
 							predicateList.add(builder.isNotNull(expression));
 							break;
 						case BTWN:
