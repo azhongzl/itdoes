@@ -109,8 +109,8 @@ public class EntityDbServiceBuilder<T, ID extends Serializable> {
 		return pair.getDbService().findPage(pair, buildSpecification(), buildPageRequest());
 	}
 
-	public List<T> exeFindAll() {
-		return pair.getDbService().findAll(pair, buildSpecification(), buildSort());
+	public List<T> exeFindList() {
+		return pair.getDbService().findList(pair, buildSpecification(), buildSort());
 	}
 
 	public T exeFindOne() {
