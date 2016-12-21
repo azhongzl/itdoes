@@ -72,8 +72,12 @@ public class EntityEnv implements ApplicationContextAware {
 		return pairMap;
 	}
 
+	public <T, ID extends Serializable> EntityPair<T, ID> getPair(Class<T> entityClass) {
+		return getPair(entityClass.getSimpleName());
+	}
+
 	@SuppressWarnings("unchecked")
-	public <T, ID extends Serializable> EntityPair<T, ID> getPair(String entityClassSimpleName) {
+	private <T, ID extends Serializable> EntityPair<T, ID> getPair(String entityClassSimpleName) {
 		final EntityPair<T, ID> pair = (EntityPair<T, ID>) pairMap.get(entityClassSimpleName);
 		Validate.notNull(pair, "Cannot find pair for class [%s]", entityClassSimpleName);
 		return pair;

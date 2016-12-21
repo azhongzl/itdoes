@@ -79,7 +79,7 @@ public class EntityDbService extends BaseTransactionalService {
 			if (!Objects.isEqual(pkFieldValue, oldPkFieldValue)) {
 				final FieldConstraintStrategy strategy = constraint.getUpdateStrategy();
 				if (strategy.equals(FieldConstraintStrategy.CASCADE)) {
-					final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
+					final EntityPair fkPair = env.getPair(constraint.getFkEntity());
 					final Specification spec = Specifications.build(constraint.getFkEntity(),
 							Lists.newArrayList(FindFilter.equal(constraint.getFkField().getName(), oldPkFieldValue)));
 					final List fkEntityList = findAll(fkPair, spec, null);
@@ -96,7 +96,7 @@ public class EntityDbService extends BaseTransactionalService {
 							+ constraint.getFkField().getName() + "]");
 				} else if (strategy.equals(FieldConstraintStrategy.SET_NULL)
 						|| strategy.equals(FieldConstraintStrategy.SET_DEFAULT)) {
-					final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
+					final EntityPair fkPair = env.getPair(constraint.getFkEntity());
 					final Specification spec = Specifications.build(constraint.getFkEntity(),
 							Lists.newArrayList(FindFilter.equal(constraint.getFkField().getName(), oldPkFieldValue)));
 					final List fkEntityList = findAll(fkPair, spec, null);
@@ -124,7 +124,7 @@ public class EntityDbService extends BaseTransactionalService {
 				continue;
 			}
 
-			final EntityPair pkPair = env.getPair(constraint.getPkEntity().getSimpleName());
+			final EntityPair pkPair = env.getPair(constraint.getPkEntity());
 			final Specification spec = Specifications.build(constraint.getPkEntity(),
 					Lists.newArrayList(FindFilter.equal(constraint.getPkField().getName(), fkFieldValue)));
 			final long count = count(pkPair, spec);
@@ -179,7 +179,7 @@ public class EntityDbService extends BaseTransactionalService {
 					pkFieldValue = Reflections.getFieldValue(entity, constraint.getPkField());
 				}
 
-				final EntityPair fkPair = env.getPair(constraint.getFkEntity().getSimpleName());
+				final EntityPair fkPair = env.getPair(constraint.getFkEntity());
 				final Specification spec = Specifications.build(constraint.getFkEntity(),
 						Lists.newArrayList(FindFilter.equal(constraint.getFkField().getName(), pkFieldValue)));
 				final long count = count(fkPair, spec);
