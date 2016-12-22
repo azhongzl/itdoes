@@ -2,18 +2,23 @@ package com.itdoes.common.core.shiro;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Collection;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.Permission;
+import org.apache.shiro.authz.permission.PermissionResolver;
+import org.apache.shiro.authz.permission.WildcardPermissionResolver;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.SavedRequest;
 import org.apache.shiro.web.util.WebUtils;
 
+import com.itdoes.common.core.util.Collections3;
 import com.itdoes.common.core.util.Reflections;
 import com.itdoes.common.core.util.Urls;
 
@@ -26,6 +31,8 @@ public class Shiros {
 	public static final String SAVED_REQUEST_KEY = WebUtils.SAVED_REQUEST_KEY;
 
 	public static final String SUCCESS_URL_KEY = "successUrl";
+
+	private static final PermissionResolver PERMISSION_RESOLVER = new WildcardPermissionResolver();
 
 	public static void saveRequestAjax(ServletRequest request) {
 		final Subject subject = SecurityUtils.getSubject();
@@ -89,6 +96,24 @@ public class Shiros {
 
 	public static ShiroUser getShiroUser() {
 		return (ShiroUser) SecurityUtils.getSubject().getPrincipal();
+	}
+
+	public static boolean isPermitted(Collection<Permission> permissions, Permission permissionToCheck) {
+		if (Collections3.isEmpty(permissions)) {
+			return false;
+		}
+
+		for (Permission permission : permissions) {
+			if (permission.implies(permissionToCheck)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static Permission toPermission(String permissionString) {
+		return PERMISSION_RESOLVER.resolvePermission(permissionString);
 	}
 
 	private Shiros() {
