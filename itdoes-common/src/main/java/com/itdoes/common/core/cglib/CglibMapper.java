@@ -13,12 +13,12 @@ import com.itdoes.common.core.util.Exceptions;
 public class CglibMapper {
 	private static final ConcurrentMap<Class<?>, BeanCopier> BEAN_COPIERS = new ConcurrentHashMap<Class<?>, BeanCopier>();
 
-	public static Object copy(Object source, Object target) {
+	public static <T> T copy(Object source, T target) {
 		getBeanCopier(source.getClass()).copy(source, target, null);
 		return target;
 	}
 
-	public static Object copy(Object source, Class<?> targetClass) {
+	public static <T> T copy(Object source, Class<T> targetClass) {
 		try {
 			return copy(source, targetClass.newInstance());
 		} catch (InstantiationException | IllegalAccessException e) {
@@ -26,8 +26,9 @@ public class CglibMapper {
 		}
 	}
 
-	public static Object copy(Object source) {
-		return copy(source, source.getClass());
+	@SuppressWarnings("unchecked")
+	public static <T> T copy(T source) {
+		return copy(source, (Class<T>) source.getClass());
 	}
 
 	public static BeanCopier getBeanCopier(Class<?> clazz) {
