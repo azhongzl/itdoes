@@ -105,7 +105,7 @@ public class Webs {
 	}
 
 	public static Map<String, Object> getRequestParamMap(HttpServletRequest request) {
-		final Map<String, Object> paramMap = Maps.newLinkedHashMap();
+		final Map<String, Object> paramMap = Maps.newHashMap();
 		final Enumeration<String> paramNames = request.getParameterNames();
 		while (paramNames.hasMoreElements()) {
 			final String paramName = paramNames.nextElement();
