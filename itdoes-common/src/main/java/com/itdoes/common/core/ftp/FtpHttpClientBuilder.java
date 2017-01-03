@@ -7,17 +7,10 @@ import org.apache.commons.net.ftp.FTPHTTPClient;
  * @author Jalen Zhong
  */
 public class FtpHttpClientBuilder extends AbstractFtpClientBuilder<FTPHTTPClient> {
-	public static FtpHttpClientBuilder getInstance() {
-		return new FtpHttpClientBuilder();
-	}
-
 	private String proxyHost;
 	private int proxyPort;
 	private String proxyUsername;
 	private String proxyPassword;
-
-	private FtpHttpClientBuilder() {
-	}
 
 	public FtpHttpClientBuilder setProxyHost(String proxyHost) {
 		this.proxyHost = proxyHost;

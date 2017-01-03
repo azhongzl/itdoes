@@ -44,7 +44,7 @@ public class FtpsTest {
 		GenericObjectPoolConfig poolConfig = Ftps.createFtpClientPoolConfig();
 		poolConfig.setMaxTotal(POOL_MAX_TOTAL);
 		FtpClientPool<FTPClient> pool = Ftps.createFtpClientPool(
-				FtpClientBuilder.getInstance().setHost(HOST).setUsername(USERNAME).setPassword(PASSWORD)
+				Ftps.createFtpClientBuilder().setHost(HOST).setUsername(USERNAME).setPassword(PASSWORD)
 						.setConnectionModePassiveLocal().setConfig(Ftps.createFtpClientConfig()),
 				poolConfig);
 

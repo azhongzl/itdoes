@@ -15,18 +15,11 @@ import com.itdoes.common.core.util.Exceptions;
  * @author Jalen Zhong
  */
 public class FtpsClientBuilder extends AbstractFtpClientBuilder<FTPSClient> {
-	public static FtpsClientBuilder getInstance() {
-		return new FtpsClientBuilder();
-	}
-
 	private String protocol;
 	private Boolean isImplicit;
 	private SSLContext context;
 
 	private TrustManager trustManager;
-
-	private FtpsClientBuilder() {
-	}
 
 	public FtpsClientBuilder setProtocol(String protocol) {
 		this.protocol = protocol;

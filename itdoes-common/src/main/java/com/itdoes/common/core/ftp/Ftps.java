@@ -41,11 +41,11 @@ public class Ftps {
 	}
 
 	public static FtpsClientBuilder createFtpsClientBuilder() {
-		return FtpsClientBuilder.getInstance();
+		return new FtpsClientBuilder();
 	}
 
 	public static FtpHttpClientBuilder createFtpHttpClientBuilder() {
-		return FtpHttpClientBuilder.getInstance();
+		return new FtpHttpClientBuilder();
 	}
 
 	public static FTPClientConfig createFtpClientConfig() {

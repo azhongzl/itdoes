@@ -11,7 +11,7 @@ import com.itdoes.common.core.util.Exceptions;
  * @author Jalen Zhong
  */
 public class CglibMapper {
-	private static final ConcurrentMap<Class<?>, BeanCopier> BEAN_COPIERS = new ConcurrentHashMap<Class<?>, BeanCopier>();
+	private static final ConcurrentMap<Class<?>, BeanCopier> BEAN_COPIERS = new ConcurrentHashMap<>();
 
 	public static <T> T copy(Object source, T target) {
 		getBeanCopier(source.getClass()).copy(source, target, null);

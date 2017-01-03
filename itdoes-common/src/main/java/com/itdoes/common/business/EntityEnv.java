@@ -114,8 +114,7 @@ public class EntityEnv implements ApplicationContextAware {
 		if (!isLazyInit(daoBeanName)) {
 			dao = (BaseDao<T, ID>) context.getBean(daoBeanName);
 		} else {
-			dao = (BaseDao<T, ID>) LazyInitBeanLoader.getInstance().loadBean(context, daoBeanName,
-					new Class[] { BaseDao.class });
+			dao = (BaseDao<T, ID>) LazyInitBeanLoader.loadBean(context, daoBeanName, new Class[] { BaseDao.class });
 		}
 		Validate.notNull(dao, "Cannot find bean for name [%s]", daoBeanName);
 

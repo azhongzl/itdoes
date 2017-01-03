@@ -12,19 +12,16 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Jalen Zhong
  */
-public class ShutdownHookThread extends Thread {
+public enum ShutdownHook implements Runnable {
+	INSTANCE;
+
 	public static interface ShutdownHookCallback {
 		void shutdown();
 	}
 
-	private static final ShutdownHookThread INSTANCE = new ShutdownHookThread();
+	private static final Logger LOGGER = LoggerFactory.getLogger(ShutdownHook.class);
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ShutdownHookThread.class);
-
-	public static ShutdownHookThread getInstance() {
-		return INSTANCE;
-	}
-
+	private final Thread thread = new Thread(this);
 	private final ConcurrentMap<Object, ShutdownHookCallback> callbackMap = new ConcurrentHashMap<Object, ShutdownHookCallback>();
 	private boolean hooked;
 
@@ -48,14 +45,14 @@ public class ShutdownHookThread extends Thread {
 
 	private synchronized void hook() {
 		if (!hooked) {
-			Runtime.getRuntime().addShutdownHook(this);
+			Runtime.getRuntime().addShutdownHook(thread);
 			hooked = true;
 		}
 	}
 
 	private synchronized void unhook() {
 		if (hooked) {
-			Runtime.getRuntime().removeShutdownHook(this);
+			Runtime.getRuntime().removeShutdownHook(thread);
 			hooked = false;
 		}
 	}

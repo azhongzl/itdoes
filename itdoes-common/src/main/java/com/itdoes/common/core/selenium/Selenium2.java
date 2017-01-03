@@ -23,8 +23,8 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Predicate;
-import com.itdoes.common.core.shutdownhook.ShutdownHookThread;
-import com.itdoes.common.core.shutdownhook.ShutdownHookThread.ShutdownHookCallback;
+import com.itdoes.common.core.shutdownhook.ShutdownHook;
+import com.itdoes.common.core.shutdownhook.ShutdownHook.ShutdownHookCallback;
 import com.itdoes.common.core.util.Exceptions;
 import com.itdoes.common.core.util.Urls;
 
@@ -572,7 +572,7 @@ public class Selenium2 {
 		if (stop) {
 			// and we weren't stopping before
 			if (!stopAtShutdown) {
-				ShutdownHookThread.getInstance().register(this, new ShutdownHookCallback() {
+				ShutdownHook.INSTANCE.register(this, new ShutdownHookCallback() {
 					@Override
 					public void shutdown() {
 						quit();
@@ -581,7 +581,7 @@ public class Selenium2 {
 			}
 		} else {
 			if (stopAtShutdown) {
-				ShutdownHookThread.getInstance().unregister(this);
+				ShutdownHook.INSTANCE.unregister(this);
 			}
 		}
 		stopAtShutdown = stop;

@@ -9,11 +9,8 @@ import javax.mail.internet.MimeMessage;
 /**
  * @author Jalen Zhong
  */
-public class NopMailMimeMessages implements MailMimeMessages {
-	public static final NopMailMimeMessages INSTANCE = new NopMailMimeMessages();
-
-	private NopMailMimeMessages() {
-	}
+public enum NopMailMimeMessages implements MailMimeMessages {
+	INSTANCE;
 
 	@Override
 	public MimeMessage getMimeMessage() {

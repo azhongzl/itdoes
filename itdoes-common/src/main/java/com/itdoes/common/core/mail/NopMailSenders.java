@@ -10,11 +10,8 @@ import javax.mail.internet.MimeMessage;
 /**
  * @author Jalen Zhong
  */
-public class NopMailSenders implements MailSenders {
-	public static final NopMailSenders INSTANCE = new NopMailSenders();
-
-	private NopMailSenders() {
-	}
+public enum NopMailSenders implements MailSenders {
+	INSTANCE;
 
 	@Override
 	public MimeMessage createMimeMessage() {
