@@ -25,7 +25,7 @@ public class LazyInitBeanLoader {
 		}
 	}
 
-	public static Object loadBean(ApplicationContext context, String beanName, Class<?>[] interfaces) {
+	public static Object loadBean(ApplicationContext context, String beanName, Class<?>... interfaces) {
 		return Proxy.newProxyInstance(context.getClassLoader(), interfaces, new BeanProxyHandler(context, beanName));
 	}
 
