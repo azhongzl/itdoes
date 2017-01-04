@@ -37,7 +37,7 @@ public class Ftps {
 	}
 
 	public static FtpClientBuilder createFtpClientBuilder() {
-		return FtpClientBuilder.getInstance();
+		return FtpClientBuilder.INSTANCE;
 	}
 
 	public static FtpsClientBuilder createFtpsClientBuilder() {

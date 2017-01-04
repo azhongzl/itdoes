@@ -6,11 +6,7 @@ import org.apache.commons.net.ftp.FTPClient;
  * @author Jalen Zhong
  */
 public class FtpClientBuilder extends AbstractFtpClientBuilder<FTPClient> {
-	private static final FtpClientBuilder INSTANCE = new FtpClientBuilder();
-
-	public static FtpClientBuilder getInstance() {
-		return INSTANCE;
-	}
+	public static final FtpClientBuilder INSTANCE = new FtpClientBuilder();
 
 	private FtpClientBuilder() {
 	}
