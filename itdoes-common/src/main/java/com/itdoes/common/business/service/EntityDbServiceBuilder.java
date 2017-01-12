@@ -76,13 +76,15 @@ public class EntityDbServiceBuilder<T, ID extends Serializable> {
 	}
 
 	private EntityDbServiceBuilder<T, ID> filter(FindFilter filter) {
+		if (filter == null) {
+			return this;
+		}
+
 		if (filterList == null) {
 			filterList = Lists.newLinkedList();
 		}
 
-		if (filter != null) {
-			filterList.add(filter);
-		}
+		filterList.add(filter);
 		return this;
 	}
 
