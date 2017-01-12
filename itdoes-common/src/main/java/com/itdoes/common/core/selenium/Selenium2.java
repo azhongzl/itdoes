@@ -17,7 +17,6 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -77,13 +76,14 @@ public class Selenium2 {
 	}
 
 	public void quit() {
-		if (!isQuit()) {
-			driver.quit();
-		}
+		driver.quit();
 	}
 
-	public boolean isQuit() {
-		return ((RemoteWebDriver) driver).getSessionId() == null;
+	public void quitIgnoreException() {
+		try {
+			quit();
+		} catch (Exception e) {
+		}
 	}
 
 	public WebDriver getDriver() {
@@ -582,7 +582,7 @@ public class Selenium2 {
 				ShutdownHook.INSTANCE.register(this, new ShutdownHookCallback() {
 					@Override
 					public void shutdown() {
-						quit();
+						quitIgnoreException();
 					}
 				});
 			}
