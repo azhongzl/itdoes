@@ -59,9 +59,15 @@ public class FindFilter {
 	}
 
 	public static FindFilter between(String field, Object beginValue, Object endValue) {
-		Validate.notNull(beginValue, "Filter BTWN begin value is null");
-		Validate.notNull(endValue, "Filter BTWN end value is null");
-		return new FindFilter(field, Operator.BTWN, beginValue, endValue);
+		if (beginValue != null && endValue != null) {
+			return new FindFilter(field, Operator.BTWN, beginValue, endValue);
+		} else if (beginValue != null) {
+			return greaterEqual(field, beginValue);
+		} else if (endValue != null) {
+			return lessEqual(field, endValue);
+		} else {
+			return null;
+		}
 	}
 
 	public final String field;

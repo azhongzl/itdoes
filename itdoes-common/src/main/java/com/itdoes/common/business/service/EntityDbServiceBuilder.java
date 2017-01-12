@@ -80,7 +80,9 @@ public class EntityDbServiceBuilder<T, ID extends Serializable> {
 			filterList = Lists.newLinkedList();
 		}
 
-		filterList.add(filter);
+		if (filter != null) {
+			filterList.add(filter);
+		}
 		return this;
 	}
 
