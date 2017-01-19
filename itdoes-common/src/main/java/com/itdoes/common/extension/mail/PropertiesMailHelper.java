@@ -140,7 +140,12 @@ public class PropertiesMailHelper implements MailHelper {
 	}
 
 	private String getSubject(boolean success) {
-		final String templateString = pl.getStringMust("mail.subject");
+		final String templateString;
+		if (success) {
+			templateString = pl.getStringMust("mail.subject.success");
+		} else {
+			templateString = pl.getStringMust(new String[] { "mail.subject.fail", "mail.subject.success" });
+		}
 		final Map<String, String> model = Maps.newHashMap();
 		model.put("result", success ? "success" : "fail");
 		model.put("localhostName", Nets.getLocalHost().getCanonicalHostName());
