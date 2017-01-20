@@ -3,6 +3,7 @@ package com.itdoes.common.core.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
@@ -81,11 +82,12 @@ public class Files {
 	}
 
 	public static Collection<File> listFiles(File dir, IOFileFilter fileFilter, IOFileFilter dirFilter) {
-		Validate.notNull(dir, "Dir is null");
 		Validate.notNull(fileFilter, "File Filter is null");
 		Validate.notNull(fileFilter, "Dir Filter is null");
-		Validate.isTrue(dir.exists(), "Dir " + dir + " does not exist");
-		Validate.isTrue(dir.isDirectory(), "Dir " + dir + " is not a directory");
+
+		if (dir == null || !dir.exists() || !dir.isDirectory()) {
+			return Collections.emptyList();
+		}
 
 		return FileUtils.listFiles(dir, fileFilter, dirFilter);
 	}
