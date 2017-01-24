@@ -15,9 +15,9 @@ Following is just notes for each layer while designing the framework. It would b
 -	For Date<->String convert, register a @InitBinder in BaseController to only accept number instead of date display format to avoid timezone issue.   
 -	Use @RestController to return all data in Json format instead of render a JSP.  
 -	Use a Forcade Controller to handle all the simple table-entity data.  
--	The real Restful is not defined in HTML5 and can only be supported in HTTP which means only APIs using XmlHttpRequest can be acted as a Restful client. The normal Html form cannot be used. As a common framework, finally use a pattern which is: <Resoucce>/<Operation>/[ID].
+-	The real Restful is not defined in HTML5 and can only be supported in HTTP which means only APIs using XmlHttpRequest can be acted as a Restful client. The normal Html form cannot be used. As a common framework, finally use a pattern which is: <Resource>/<Operation>/[ID].  
 ### 2.2	Media Type
--	Use Json/html/text/xml withUTF8 to support multi-byte languages.
+-	Use Json/html/text/xml withUTF8 to support multi-byte languages.  
 ## 3.	Service
 ### 3.1	Spring
 -	Use profile to separate different environment, such as: production, development, unit-test, function-test.
