@@ -6,7 +6,7 @@ It provides common features including database access, transaction management, c
 
 It encapsulates may popular frameworks/libs, like Spring, Hibernate, Shiro, SpringMvc, Spring-Data-Jpa, Validator, MySQL, Slf4j/logback, Jackson, JAXB, Cglib, Dozer, FreeMarker, JPA, Digest, Crypto, POI, Seleinum. It also provides examples for unit (Mockito, PowerMock), integeration, functional test (Spring-test, Selenium).  
 
-Following is just notes for each layer while designing the framework. It would be refined in the future to add user-friendly documentations.  
+Following are just some notes for each layer while designing the framework. It would be refined in the future to add user-friendly documentations.  
 
 ## 2.	Web
 
