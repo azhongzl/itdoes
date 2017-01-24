@@ -1,8 +1,11 @@
 # itdoes
 ## 1.	Introduction
 Itdoes is a web development framework which can be easily extended to add/configure new features for common web software systems. User can focus only on their own business logics based on this framework.  
+
 It provides common features including database access, transaction management, cache control, authentication/authorization, full text search, security, Restful services, file upload, email, ftp, Web socket, XMPP, code generator, and many other useful utilities like reflections, bean populators, object pool.  
+
 It encapsulates may popular frameworks/libs, like Spring, Hibernate, Shiro, SpringMvc, Spring-Data-Jpa, Validator, MySQL, Slf4j/logback, Jackson, JAXB, Cglib, Dozer, FreeMarker, JPA, Digest, Crypto, POI, Seleinum. It also provides examples for unit (Mockito, PowerMock), integeration, functional test (Spring-test, Selenium).  
+
 Following is just notes for each layer while designing the framework. It would be refined in the future to add user-friendly documentations.  
 
 ## 2.	Web
