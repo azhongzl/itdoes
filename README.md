@@ -1,21 +1,21 @@
 # itdoes
 ## 1.	Introduction
-Itdoes is a web development framework which can be easily extended to add/configure new features for common web software systems. User can focus only on their own business logics based on this framework. 
-It provides common features including database access, transaction management, cache control, authentication/authorization, full text search, security, Restful services, file upload, email, ftp, Web socket, XMPP, code generator, and many other useful utilities like reflections, bean populators, object pool. 
-It encapsulates may popular frameworks/libs, like Spring, Hibernate, Shiro, SpringMvc, Spring-Data-Jpa, Validator, MySQL, Slf4j/logback, Jackson, JAXB, Cglib, Dozer, FreeMarker, JPA, Digest, Crypto, POI, Seleinum. It also provides examples for unit (Mockito, PowerMock), integeration, functional test (Spring-test, Selenium).
-Following is just notes for each layer while designing the framework. It would be refined in the future to add user-friendly documentations.
+    Itdoes is a web development framework which can be easily extended to add/configure new features for common web software systems. User can focus only on their own business logics based on this framework.  
+    It provides common features including database access, transaction management, cache control, authentication/authorization, full text search, security, Restful services, file upload, email, ftp, Web socket, XMPP, code generator, and many other useful utilities like reflections, bean populators, object pool.  
+    It encapsulates may popular frameworks/libs, like Spring, Hibernate, Shiro, SpringMvc, Spring-Data-Jpa, Validator, MySQL, Slf4j/logback, Jackson, JAXB, Cglib, Dozer, FreeMarker, JPA, Digest, Crypto, POI, Seleinum. It also provides examples for unit (Mockito, PowerMock), integeration, functional test (Spring-test, Selenium).  
+    Following is just notes for each layer while designing the framework. It would be refined in the future to add user-friendly documentations.  
 
 ## 2.	Web
 ### 2.1	SpringMvc & Restful
-o	SpringMvc is a single framework which is easy to implement Restful comparing Struts2 and other Web frameworks.
-o	Separate definition of Service and Web. Web definition is a child of service one, which means it can get all information from Service, but Service cannot be the information form Web. Service will scan all @Component expect @Controller and @ControllerAdvice.
-o	Use @ModelAttribute for post and put which needs populate POs at runtime.
-o	Use @ExceptionHandler to handle all the exceptions thrown in any space. Other exceptions handlers are defined either in a SimpleMappingExceptionResolver and web.xml.
-o	Use Validation framework to validate the POs when post and put. This is a check for “hack” only since client UI has already checked that.
-o	For Date<->String convert, register a @InitBinder in BaseController to only accept number instead of date display format to avoid timezone issue. 
-o	Use @RestController to return all data in Json format instead of render a JSP.
-o	Use a Forcade Controller to handle all the simple table-entity data.
-o	The real Restful is not defined in HTML5 and can only be supported in HTTP which means only APIs using XmlHttpRequest can be acted as a Restful client. The normal Html form cannot be used. As a common framework, finally use a pattern which is: <Resoucce>/<Operation>/[ID].
+- SpringMvc is a single framework which is easy to implement Restful comparing Struts2 and other Web frameworks.  
+-	Separate definition of Service and Web. Web definition is a child of service one, which means it can get all information from Service, but Service cannot be the information form Web. Service will scan all @Component expect @Controller and @ControllerAdvice.  
+-	Use @ModelAttribute for post and put which needs populate POs at runtime.  
+-	Use @ExceptionHandler to handle all the exceptions thrown in any space. Other exceptions handlers are defined either in a SimpleMappingExceptionResolver and web.xml.  
+-	Use Validation framework to validate the POs when post and put. This is a check for “hack” only since client UI has already checked that.  
+-	For Date<->String convert, register a @InitBinder in BaseController to only accept number instead of date display format to avoid timezone issue.   
+-	Use @RestController to return all data in Json format instead of render a JSP.  
+-	Use a Forcade Controller to handle all the simple table-entity data.  
+-	The real Restful is not defined in HTML5 and can only be supported in HTTP which means only APIs using XmlHttpRequest can be acted as a Restful client. The normal Html form cannot be used. As a common framework, finally use a pattern which is: <Resoucce>/<Operation>/[ID].
 ### 2.2	Media Type
 o	Use Json/html/text/xml withUTF8 to support multi-byte languages.
 ## 3.	Service
